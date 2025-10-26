@@ -1,11 +1,16 @@
-import MainLayout from "../../layouts/MainLayout";
+import Background from "../../components/Background";
+import Header from "../../components/Header";
+import Hero from "../../components/Hero";
 
 const Home = () => {
+  let heroData = { text1: "Por unas islas", text2: "accesibles para todos" };
+
   return (
-    <MainLayout>
-      <div>hola mundo</div>
-      <p>caca</p>
-    </MainLayout>
+    <>
+      <Background />
+      <Header />
+      <Hero heroData={heroData} />
+    </>
   );
 };
 
