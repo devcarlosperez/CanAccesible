@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      indidenceStatusId: {
+      incidenceStatusId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -58,7 +58,8 @@ module.exports = {
         allowNull: true,
       },
       island: {
-        type: Sequelize.ENUM('isla1', 'isla2', 'isla3'),
+        type: Sequelize.ENUM('Gran Canaria', 'Tenerife', 'La Gomera', 'Lanzarote',
+        'Fuerteventura', 'El Hierro', 'La Palma'),
         allowNull: true,
       },
       address: {
