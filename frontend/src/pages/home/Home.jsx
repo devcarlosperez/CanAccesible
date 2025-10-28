@@ -7,9 +7,37 @@ const Home = () => {
 
   return (
     <>
-      <Background />
-      <Header />
-      <Hero heroData={heroData} />
+      <section className="relative min-h-screen overflow-hidden">
+        <Background />
+        <Header />
+        <Hero heroData={heroData} />
+      </section>
+
+      {/* 🔽 Resto del contenido */}
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
+      <section className="bg-white text-black p-12">
+        <h2>Contenido adicional</h2>
+        <p>Aquí el fondo ya no aparece, bro 😎</p>
+      </section>
     </>
   );
 };

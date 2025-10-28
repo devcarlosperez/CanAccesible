@@ -2,7 +2,7 @@ import image1 from "../assets/background-hero.jpg";
 
 const Background = () => {
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="absolute inset-0 -z-10">
       <img
         src={image1}
         alt="Fondo Canarias Accesible"
