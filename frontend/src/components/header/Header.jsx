@@ -36,7 +36,6 @@ const Header = () => {
     document.body.style.overflow = open ? "hidden" : "auto";
   }, [open]);
 
-  // Navigation items
   const menuItems = [
     { text: "Inicio", to: "/home", icon: "home" },
     { text: "Incidencias", to: "/", icon: "assignment" },
@@ -99,7 +98,9 @@ const Header = () => {
         {/* MOBILE BURGER ICON */}
         {isMobile && (
           <span
-            className="material-symbols-outlined menu-icon text-neutral-2 cursor-pointer z-101"
+            className={`material-symbols-outlined menu-icon cursor-pointer z-101 transition-colors duration-300 ${
+              scrolled ? "text-amber-50" : "text-neutral-2"
+            }`}
             onClick={() => setOpen(true)}
           >
             menu
