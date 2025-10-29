@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "root",
+    "password": "cji_canaccesible",
+    "database": "db_canaccesible",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
