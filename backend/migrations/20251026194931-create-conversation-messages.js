@@ -3,13 +3,23 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('AdminMessages', {
+    await queryInterface.createTable('ConversationMessages', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      userId: {
+      conversationId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Conversations',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      senderId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -19,17 +29,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       message: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       dateMessage: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
+        allowNull: false,
         defaultValue: Sequelize.NOW,
       },
       createdAt: {
@@ -46,6 +52,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('AdminMessages');
+    await queryInterface.dropTable('ConversationMessages');
   }
 };

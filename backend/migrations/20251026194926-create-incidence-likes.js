@@ -31,7 +31,7 @@ module.exports = {
       },
       dateLike: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
+        allowNull: false,
         defaultValue: Sequelize.NOW,
       },
       createdAt: {

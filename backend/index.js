@@ -1,21 +1,23 @@
-const express = require("express")
+const express = require("express");
 const sequelize = require("./db");
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-
-app.use(express.urlencoded({ extended: true}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("Hola mundo")
-})
+  res.send("Hola mundo");
+});
 
-sequelize.authenticate()
+// Verify database connection at startup
+sequelize
+  .authenticate()
   .then(() => console.log("Successful mysql connection"))
-  .catch(err => console.error("Error", err));
+  .catch((err) => console.error("Error", err));
 
-const port = process.env.port || 8080
+// Use environment variable for port or default to 8080
+const port = process.env.port || 8080;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}.`)
-})
+  console.log(`Server is running on port ${port}.`);
+});

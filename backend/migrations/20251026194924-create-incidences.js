@@ -62,6 +62,10 @@ module.exports = {
         'Fuerteventura', 'El Hierro', 'La Palma'),
         allowNull: true,
       },
+      area: {
+        type: Sequelize.ENUM('mobility', 'sensory', 'architecture', 'transport', 'other'),
+        allowNull: false,
+      },
       address: {
         type: Sequelize.STRING,
         allowNull: true,
