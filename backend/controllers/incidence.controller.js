@@ -28,21 +28,23 @@ async function reverseGeocode(latitude, longitude) {
 }
 
 exports.create = async (req, res) => {
+  const locationData = await reverseGeocode(
+    req.body.latitude,
+    req.body.longitude
+  );
 
-  const locationData = await reverseGeocode(req.body.latitude, req.body.longitude)
+  const roadFromBody = locationData?.address?.road || null;
+  const suburbFromBody = locationData?.address?.suburb || null;
+  const cityDistrictFromBody = locationData?.address?.city_district || null;
+  const cityFromBody = locationData?.address?.city || null;
+  const provinceFromBody = locationData?.address?.province || null;
+  const postcodeFromBody = locationData?.address?.postcode || null;
 
-  const roadFromBody = locationData?.address?.road || null
-  const suburbFromBody = locationData?.address?.suburb || null
-  const cityDistrictFromBody = locationData?.address?.city_district || null
-  const cityFromBody = locationData?.address?.city || null
-  const provinceFromBody = locationData?.address?.province || null
-  const postcodeFromBody = locationData?.address?.postcode || null
-
-  let isApprovedDefault = false
-  let incidenceSeverityIdFromBody = null
+  let isApprovedDefault = false;
+  let incidenceSeverityIdFromBody = null;
 
   if (req.body.incidenceTypeId === 2) {
-    incidenceSeveritydFromBody = req.body.incidenceSeverityId
+    incidenceSeveritydFromBody = req.body.incidenceSeverityId;
   }
 
   const incidenceToCreate = {
@@ -64,53 +66,134 @@ exports.create = async (req, res) => {
     longitude: req.body.longitude,
     dateIncidence: req.body.dateIncidence,
     isApproved: isApprovedDefault,
-  }
+  };
 
-  incidenceObject.create(incidenceToCreate).then((data) => {
-    res.send(data)
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error ocurred while creating the incidence."
+  incidenceObject
+    .create(incidenceToCreate)
+    .then((data) => {
+      res.send(data);
     })
-  })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error ocurred while creating the incidence.",
+      });
+    });
 };
 
 exports.findAll = (req, res) => {
-  incidenceObject.findAll().then((data) => {
-    res.send(data)
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error ocurred while retrieving the incidences."
+  incidenceObject
+    .findAll()
+    .then((data) => {
+      res.send(data);
     })
-  })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error ocurred while retrieving the incidences.",
+      });
+    });
 };
 
 exports.findOne = (req, res) => {
   const incidenceId = req.params.id;
 
-  incidenceObject.findOne({ where: { id: incidenceId} })
-  .then((data) => {
-    res.send(data)
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error ocurred while retrieving the incidence."
+  incidenceObject
+    .findOne({ where: { id: incidenceId } })
+    .then((data) => {
+      res.send(data);
     })
-  })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error ocurred while retrieving the incidence.",
+      });
+    });
 };
 
-exports.update = (req, res) => {};
+exports.update = async (req, res) => {
+  const incidenceToUpdate = {};
+  const incidenceId = req.params.id;
+
+  if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
+    const locationData = await reverseGeocode(
+      req.body.latitude,
+      req.body.longitude
+    );
+    incidenceToUpdate.latitude = req.body.latitude;
+    incidenceToUpdate.longitude = req.body.longitude;
+
+    incidenceToUpdate.road = locationData?.address?.road || null;
+    incidenceToUpdate.suburb = locationData?.address?.suburb || null;
+    incidenceToUpdate.cityDistrict = locationData?.address?.city_district || null;
+    incidenceToUpdate.city = locationData?.address?.city || null;
+    incidenceToUpdate.province = locationData?.address?.province || null;
+    incidenceToUpdate.postcode = locationData?.address?.postcode || null;
+  }
+
+  if (req.body.name !== undefined) {
+    incidenceToUpdate.name = req.body.name;
+  }
+  if (req.body.description !== undefined) {
+    incidenceToUpdate.description = req.body.description;
+  }
+  if (req.body.incidenceStatusId !== undefined) {
+    incidenceToUpdate.incidenceStatusId = req.body.incidenceStatusId;
+  }
+  if (req.body.incidenceTypeId !== undefined) {
+    incidenceToUpdate.incidenceTypeId = req.body.incidenceTypeId;
+  }
+  if (req.body.isApproved !== undefined) {
+    incidenceToUpdate.isApproved = req.body.isApproved;
+  }
+  if (req.body.userId !== undefined) {
+    incidenceToUpdate.userId = req.body.userId;
+  }
+  if (req.body.area !== undefined) {
+    incidenceToUpdate.area = req.body.area;
+  }
+  if (req.body.island !== undefined) {
+    incidenceToUpdate.island = req.body.island;
+  }
+  if (req.body.dateIncidence !== undefined) {
+    incidenceToUpdate.dateIncidence = req.body.dateIncidence;
+  }
+
+  if (req.body.incidenceTypeId !== undefined) {
+    if (req.body.incidenceTypeId === 2) {
+      incidenceToUpdate.incidenceSeverityId = req.body.incidenceSeverityId;
+    } else {
+      incidenceToUpdate.incidenceSeverityId = null;
+    }
+  }
+
+  incidenceObject
+    .update(incidenceToUpdate, { where: { id: incidenceId } })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error ocurred while updating the incidence.",
+      });
+    });
+};
 
 exports.delete = (req, res) => {
   const incidenceId = req.params.id;
 
-  incidenceObject.destroy({ where: { id: incidenceId } })
-  .then((data) => {
-    res.send({
-      message: "Incidence has been deleted.",
+  incidenceObject
+    .destroy({ where: { id: incidenceId } })
+    .then((data) => {
+      res.send({
+        message: "Incidence has been deleted.",
+      });
     })
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error ocurred while deleting the incidence."
-    })
-  })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error ocurred while deleting the incidence.",
+      });
+    });
 };
