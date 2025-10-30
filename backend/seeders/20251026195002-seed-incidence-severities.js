@@ -5,17 +5,17 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert('IncidenceSeverities', [
       {
-        severity: 'low',
+        severity: 'baja',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        severity: 'medium',
+        severity: 'media',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        severity: 'high',
+        severity: 'alta',
         createdAt: new Date(),
         updatedAt: new Date(),
       },

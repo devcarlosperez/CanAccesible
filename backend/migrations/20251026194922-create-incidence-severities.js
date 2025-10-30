@@ -10,7 +10,7 @@ module.exports = {
         autoIncrement: true,
       },
       severity: {
-        type: Sequelize.ENUM('low', 'medium', 'high'),
+        type: Sequelize.ENUM('baja', 'media', 'alta'),
         allowNull: false,
       },
       createdAt: {

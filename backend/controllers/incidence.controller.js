@@ -2,6 +2,7 @@ const db = require("../models");
 const axios = require("axios");
 const incidenceObject = db.incidence;
 
+// Using OpenStreetMap's Nominatim reverse geocoding service
 async function reverseGeocode(latitude, longitude) {
   try {
     const responseNominatin = await axios.get(
@@ -27,7 +28,9 @@ async function reverseGeocode(latitude, longitude) {
   }
 }
 
+// Create a new incidence report
 exports.create = async (req, res) => {
+  // Get address from coordinates using reverse geocoding
   const locationData = await reverseGeocode(
     req.body.latitude,
     req.body.longitude
@@ -35,9 +38,11 @@ exports.create = async (req, res) => {
 
   const addressFromBody = locationData?.display_name || null;
 
+  // New incidences are not approved by default
   let isApprovedDefault = false;
   let incidenceSeverityIdFromBody = null;
 
+  // Severity is only applicable for incidenceTypeId = 2
   if (Number(req.body.incidenceTypeId) === 2) {
     incidenceSeverityIdFromBody = req.body.incidenceSeverityId;
   }
@@ -71,6 +76,7 @@ exports.create = async (req, res) => {
     });
 };
 
+// Retrieves all incidences from the database
 exports.findAll = (req, res) => {
   incidenceObject
     .findAll()
@@ -85,6 +91,7 @@ exports.findAll = (req, res) => {
     });
 };
 
+// Retrieves a single incidence by ID
 exports.findOne = (req, res) => {
   const incidenceId = req.params.id;
 
@@ -101,10 +108,12 @@ exports.findOne = (req, res) => {
     });
 };
 
+// Updates an existing incidence
 exports.update = async (req, res) => {
   const incidenceToUpdate = {};
   const incidenceId = req.params.id;
 
+  // If coordinates are provided, update location and re-geocode address
   if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
     const locationData = await reverseGeocode(
       req.body.latitude,
@@ -115,6 +124,7 @@ exports.update = async (req, res) => {
     incidenceToUpdate.address = locationData?.display_name || null;
   }
 
+  // Update other fields only if they are provided
   if (req.body.name !== undefined) {
     incidenceToUpdate.name = req.body.name;
   }
@@ -143,6 +153,7 @@ exports.update = async (req, res) => {
     incidenceToUpdate.dateIncidence = req.body.dateIncidence;
   }
 
+  // Handle severity assignment - only for incidenceTypeId = 2
   if (req.body.incidenceTypeId !== undefined) {
     if (req.body.incidenceTypeId === 2) {
       incidenceToUpdate.incidenceSeverityId = req.body.incidenceSeverityId;
@@ -164,6 +175,7 @@ exports.update = async (req, res) => {
     });
 };
 
+// Deletes an incidence by ID
 exports.delete = (req, res) => {
   const incidenceId = req.params.id;
 

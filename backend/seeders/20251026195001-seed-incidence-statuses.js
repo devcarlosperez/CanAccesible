@@ -5,17 +5,17 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert('IncidenceStatuses', [
       {
-        status: 'pending',
+        status: 'pendiente',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        status: 'in_progress',
+        status: 'en_progreso',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        status: 'resolved',
+        status: 'resuelta',
         createdAt: new Date(),
         updatedAt: new Date(),
       },

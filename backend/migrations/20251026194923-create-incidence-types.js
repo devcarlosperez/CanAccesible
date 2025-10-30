@@ -10,7 +10,7 @@ module.exports = {
         autoIncrement: true,
       },
       type: {
-        type: Sequelize.ENUM('bad_practise', 'good_practise'),
+        type: Sequelize.ENUM('mala_practica', 'buena_practica'),
         allowNull: false,
       },
       createdAt: {

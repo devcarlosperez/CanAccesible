@@ -5,12 +5,12 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert('IncidenceTypes', [
       {
-        type: 'good_practise',
+        type: 'buena_practica',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        type: 'bad_practise',
+        type: 'mala_practica',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
