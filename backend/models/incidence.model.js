@@ -55,27 +55,27 @@ module.exports = (sequelize, DataTypes) => {
     },
     road: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     suburb: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
     },
     cityDistrict: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
     },
     province: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
     },
     postcode: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     latitude: {
       type: DataTypes.DECIMAL(10, 8),

@@ -68,27 +68,27 @@ module.exports = {
       },
       road: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       suburb: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       cityDistrict: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       city: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       province: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       postcode: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       latitude: {
         type: Sequelize.DECIMAL(10, 8),
