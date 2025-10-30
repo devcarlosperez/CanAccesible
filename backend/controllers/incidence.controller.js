@@ -43,8 +43,8 @@ exports.create = async (req, res) => {
   let isApprovedDefault = false;
   let incidenceSeverityIdFromBody = null;
 
-  if (req.body.incidenceTypeId === 2) {
-    incidenceSeveritydFromBody = req.body.incidenceSeverityId;
+  if (Number(req.body.incidenceTypeId) === 2) {
+    incidenceSeverityIdFromBody = req.body.incidenceSeverityId;
   }
 
   const incidenceToCreate = {
