@@ -33,12 +33,7 @@ exports.create = async (req, res) => {
     req.body.longitude
   );
 
-  const roadFromBody = locationData?.address?.road || null;
-  const suburbFromBody = locationData?.address?.suburb || null;
-  const cityDistrictFromBody = locationData?.address?.city_district || null;
-  const cityFromBody = locationData?.address?.city || null;
-  const provinceFromBody = locationData?.address?.province || null;
-  const postcodeFromBody = locationData?.address?.postcode || null;
+  const addressFromBody = locationData?.display_name || null;
 
   let isApprovedDefault = false;
   let incidenceSeverityIdFromBody = null;
@@ -56,12 +51,7 @@ exports.create = async (req, res) => {
     description: req.body.description,
     island: req.body.island,
     area: req.body.area,
-    road: roadFromBody,
-    suburb: suburbFromBody,
-    cityDistrict: cityDistrictFromBody,
-    city: cityFromBody,
-    province: provinceFromBody,
-    postcode: postcodeFromBody,
+    address: addressFromBody,
     latitude: req.body.latitude,
     longitude: req.body.longitude,
     dateIncidence: req.body.dateIncidence,
@@ -122,13 +112,7 @@ exports.update = async (req, res) => {
     );
     incidenceToUpdate.latitude = req.body.latitude;
     incidenceToUpdate.longitude = req.body.longitude;
-
-    incidenceToUpdate.road = locationData?.address?.road || null;
-    incidenceToUpdate.suburb = locationData?.address?.suburb || null;
-    incidenceToUpdate.cityDistrict = locationData?.address?.city_district || null;
-    incidenceToUpdate.city = locationData?.address?.city || null;
-    incidenceToUpdate.province = locationData?.address?.province || null;
-    incidenceToUpdate.postcode = locationData?.address?.postcode || null;
+    incidenceToUpdate.address = locationData?.display_name || null;
   }
 
   if (req.body.name !== undefined) {

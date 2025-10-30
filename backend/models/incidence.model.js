@@ -53,28 +53,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('mobility', 'sensory', 'architecture', 'transport', 'other'),
       allowNull: false,
     },
-    road: {
+    address: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    suburb: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    cityDistrict: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    province: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    postcode: {
-      type: DataTypes.INTEGER,
       allowNull: true,
     },
     latitude: {
