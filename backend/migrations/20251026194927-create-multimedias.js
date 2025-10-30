@@ -31,11 +31,11 @@ module.exports = {
       },
       type: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       url: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       altText: {
         type: Sequelize.STRING,

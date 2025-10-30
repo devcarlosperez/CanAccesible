@@ -21,7 +21,7 @@ module.exports = {
       },
       incidenceSeverityId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'IncidenceSeverities',
           key: 'id',
@@ -51,32 +51,52 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       island: {
         type: Sequelize.ENUM('Gran Canaria', 'Tenerife', 'La Gomera', 'Lanzarote',
         'Fuerteventura', 'El Hierro', 'La Palma'),
-        allowNull: true,
+        allowNull: false,
       },
       area: {
         type: Sequelize.ENUM('mobility', 'sensory', 'architecture', 'transport', 'other'),
         allowNull: false,
       },
-      address: {
+      road: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
+      },
+      suburb: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      cityDistrict: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      province: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      postcode: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       latitude: {
         type: Sequelize.DECIMAL(10, 8),
-        allowNull: true,
+        allowNull: false,
       },
       longitude: {
         type: Sequelize.DECIMAL(11, 8),
-        allowNull: true,
+        allowNull: false,
       },
       dateIncidence: {
         type: Sequelize.DATEONLY,

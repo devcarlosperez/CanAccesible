@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     message: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
     },
     dateNotification: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
+      allowNull: false,
       defaultValue: DataTypes.NOW,
     },
   }, {

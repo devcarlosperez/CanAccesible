@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     incidenceSeverityId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'IncidenceSeverities',
         key: 'id',
@@ -39,31 +39,51 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
     },
     island: {
       type: DataTypes.ENUM('Gran Canaria', 'Tenerife', 'La Gomera', 'Lanzarote', 'Fuerteventura', 'El Hierro', 'La Palma'),
-      allowNull: true,
+      allowNull: false,
     },
     area: {
       type: DataTypes.ENUM('mobility', 'sensory', 'architecture', 'transport', 'other'),
       allowNull: false,
     },
-    address: {
+    road: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+    },
+    suburb: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    cityDistrict: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    province: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    postcode: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     latitude: {
-      type: DataTypes.DECIMAL(),
-      allowNull: true,
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: false,
     },
     longitude: {
-      type: DataTypes.DECIMAL(),
-      allowNull: true,
+      type: DataTypes.DECIMAL(11, 8),
+      allowNull: false,
     },
     dateIncidence: {
       type: DataTypes.DATEONLY,
