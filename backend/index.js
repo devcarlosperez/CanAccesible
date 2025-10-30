@@ -1,12 +1,13 @@
 const express = require("express");
-const { sequelize } = require('./models');
+const { sequelize } = require("./models");
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-require('./routes/incidence.routes')(app);
+require("./routes/incidence.routes")(app);
+require("./routes/user.routes")(app);
 
 app.get("/", (req, res) => {
   res.send("Hola mundo");
