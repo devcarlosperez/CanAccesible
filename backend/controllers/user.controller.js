@@ -1,8 +1,7 @@
 const db = require("../models");
-const User = db.User; // Asegúrate de que coincide con el nombre del modelo
-const bcrypt = require("bcryptjs"); // para hashear passwords
+const User = db.user;
+const bcrypt = require("bcrypt");
 
-// Crear un nuevo usuario
 exports.create = async (req, res) => {
   try {
     const { firstName, lastName, email, password, rol } = req.body;
@@ -11,16 +10,20 @@ exports.create = async (req, res) => {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    // Verificar si el email ya existe
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ message: "El email tiene un formato inválido" });
+    }
+
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: "El email ya está registrado" });
     }
 
-    // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear usuario
     const user = await User.create({
       firstName,
       lastName,
@@ -36,8 +39,7 @@ exports.create = async (req, res) => {
   }
 };
 
-// Obtener todos los usuarios
-exports.getAll = async (res) => {
+exports.findAll = async (req, res) => {
   try {
     const users = await User.findAll({
       include: [
@@ -58,7 +60,7 @@ exports.getAll = async (res) => {
 };
 
 // Obtener un usuario por ID
-exports.getById = async (req, res) => {
+exports.findOne = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id, {

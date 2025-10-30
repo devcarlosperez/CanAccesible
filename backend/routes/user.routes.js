@@ -6,10 +6,10 @@ module.exports = (app) => {
   router.post("/", user.create);
 
   // Obtener todos los usuarios
-  router.get("/", user.getAll);
+  router.get("/", user.findAll);
 
   // Obtener un usuario por ID
-  router.get("/:id", user.getById);
+  router.get("/:id", user.findOne);
 
   // Actualizar un usuario por ID
   router.put("/:id", user.update);
@@ -17,6 +17,6 @@ module.exports = (app) => {
   // Eliminar un usuario por ID
   router.delete("/:id", user.delete);
 
-  // Conectar las rutas con el prefijo /users
-  app.use("/users", router);
+  // Conectar las rutas con el prefijo /api/users
+  app.use("/api/users", router);
 };
