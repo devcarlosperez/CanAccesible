@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     comment: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
     },
     dateComment: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       defaultValue: DataTypes.NOW,
     },
   }, {

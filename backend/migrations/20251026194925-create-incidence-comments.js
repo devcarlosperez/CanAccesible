@@ -31,11 +31,11 @@ module.exports = {
       },
       comment: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       dateComment: {
         type: Sequelize.DATE,
-        allowNull: true,
+        allowNull: false,
         defaultValue: Sequelize.NOW,
       },
       createdAt: {

@@ -21,11 +21,11 @@ module.exports = {
       },
       message: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       dateNotification: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
+        allowNull: false,
         defaultValue: Sequelize.NOW,
       },
       createdAt: {

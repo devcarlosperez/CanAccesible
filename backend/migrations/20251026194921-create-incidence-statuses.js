@@ -10,7 +10,7 @@ module.exports = {
         autoIncrement: true,
       },
       status: {
-        type: Sequelize.ENUM('pending', 'in_progress', 'resolved'),
+        type: Sequelize.ENUM('pendiente', 'en_progreso', 'resuelta'),
         allowNull: false,
       },
       createdAt: {

@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Incidences', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("Incidences", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -13,57 +13,70 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'IncidenceStatuses',
-          key: 'id',
+          model: "IncidenceStatuses",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
       },
       incidenceSeverityId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: 'IncidenceSeverities',
-          key: 'id',
+          model: "IncidenceSeverities",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
       },
       incidenceTypeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'IncidenceTypes',
-          key: 'id',
+          model: "IncidenceTypes",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',
-          key: 'id',
+          model: "Users",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       island: {
-        type: Sequelize.ENUM('Gran Canaria', 'Tenerife', 'La Gomera', 'Lanzarote',
-        'Fuerteventura', 'El Hierro', 'La Palma'),
-        allowNull: true,
+        type: Sequelize.ENUM(
+          "Gran Canaria",
+          "Tenerife",
+          "La Gomera",
+          "Lanzarote",
+          "Fuerteventura",
+          "El Hierro",
+          "La Palma"
+        ),
+        allowNull: false,
       },
       area: {
-        type: Sequelize.ENUM('mobility', 'sensory', 'architecture', 'transport', 'other'),
+        type: Sequelize.ENUM(
+          "movilidad",
+          "sensorial",
+          "arquitectura",
+          "transporte",
+          "otro"
+        ),
         allowNull: false,
       },
       address: {
@@ -72,11 +85,11 @@ module.exports = {
       },
       latitude: {
         type: Sequelize.DECIMAL(10, 8),
-        allowNull: true,
+        allowNull: false,
       },
       longitude: {
         type: Sequelize.DECIMAL(11, 8),
-        allowNull: true,
+        allowNull: false,
       },
       dateIncidence: {
         type: Sequelize.DATEONLY,
@@ -100,7 +113,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Incidences');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("Incidences");
+  },
 };
