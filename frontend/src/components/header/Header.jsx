@@ -13,6 +13,9 @@ const Header = () => {
   // State to detect if page has been scrolled past threshold
   const [scrolled, setScrolled] = useState(false);
 
+  // State for notification amount
+  const [notificationsCount, setNotificationsCount] = useState(2);
+
   // Effect to handle resize and scroll events
   useEffect(() => {
     // Update isMobile on window resize
@@ -41,6 +44,7 @@ const Header = () => {
     { text: "Incidencias", to: "/", icon: "assignment" },
     { text: "Islas", to: "/lugares", icon: "public" },
     { text: "Contacto", to: "/contacto", icon: "contact_mail" },
+    // { text: "Notificaciones", icon: "notifications" },
     { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
   ];
 
@@ -49,7 +53,6 @@ const Header = () => {
       {/* HEADER */}
       <header
         className={`fixed top-0 left-0 w-full flex justify-between items-center text-white z-100 transition-all duration-300 ${
-          // Change background and padding on scroll
           scrolled
             ? "bg-[#0c0c22]/95 shadow-lg p-5 md:p-5 backdrop-blur-md"
             : "bg-transparent p-4.5 md:p-10"
@@ -84,27 +87,63 @@ const Header = () => {
               </ul>
             </nav>
 
-            {/* Desktop login button */}
-            <Link
-              to="/login"
-              className="bg-[#1b226b] text-neutral-1 px-6 py-2 md:px-8 md:py-3 text-lg md:text-xl rounded-xl font-semibold 
-                         hover:bg-[#162053] hover:scale-105 transition duration-200"
-            >
-              Iniciar Sesión
-            </Link>
+            {/* Desktop notifications + login button */}
+            <div className="flex items-center gap-4">
+              {/* Desktop notification button */}
+              <button
+                type="button"
+                className="relative text-white hover:text-accent-1 transition-colors focus:outline-none"
+                aria-label="Notificaciones"
+              >
+                <span className="material-symbols-outlined">notifications</span>
+                {/* Notification amount */}
+                {notificationsCount > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {notificationsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Desktop login button */}
+              <Link
+                to="/login"
+                className="bg-[#1b226b] text-neutral-1 px-6 py-2 md:px-8 md:py-3 text-lg md:text-xl rounded-xl font-semibold 
+                           hover:bg-[#162053] hover:scale-105 transition duration-200"
+              >
+                Iniciar Sesión
+              </Link>
+            </div>
           </>
         )}
 
-        {/* MOBILE BURGER ICON */}
+        {/* MOBILE BURGER AND NOTIFICATION ICONS */}
         {isMobile && (
-          <span
-            className={`material-symbols-outlined menu-icon cursor-pointer z-101 transition-colors duration-300 ${
-              scrolled ? "text-amber-50" : "text-neutral-2"
-            }`}
-            onClick={() => setOpen(true)}
-          >
-            menu
-          </span>
+          <div className="flex items-center gap-4">
+            {/* Mobile notification button */}
+            <button
+              type="button"
+              className="relative text-white hover:text-accent-1 transition-colors focus:outline-none"
+              aria-label="Notificaciones"
+            >
+              <span className="material-symbols-outlined">notifications</span>
+              {/* Notification amount */}
+              {notificationsCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {notificationsCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile burger icon */}
+            <span
+              className={`material-symbols-outlined menu-icon cursor-pointer z-101 transition-colors duration-300 ${
+                scrolled ? "text-amber-50" : "text-neutral-2"
+              }`}
+              onClick={() => setOpen(true)}
+            >
+              menu
+            </span>
+          </div>
         )}
       </header>
 
