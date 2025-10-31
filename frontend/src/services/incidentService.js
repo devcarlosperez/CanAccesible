@@ -1,5 +1,5 @@
-// Base API URL for incident endpoints
-const apiUrl = "http://localhost:85/api/incidents";
+// Base API URL for incident endpoints - uses environment variable
+const apiUrl = `${import.meta.env.VITE_API_URL}/api/incidents`;
 
 // Fetch all incidents from the server
 export const getAllIncidents = async () => {
