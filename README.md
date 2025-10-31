@@ -1,93 +1,93 @@
 # CANACCESIBLE
 
-## Descripción
+## Description
 
-**CanAccesible** es una plataforma web canaria que permite a los ciudadanos:
+**CanAccesible** is a Canary Islands web platform that enables citizens to:
 
-- **Reportar incidencias de accesibilidad** en espacios públicos o privados.
-- **Compartir buenas prácticas de accesibilidad** para inspirar y mejorar la inclusión.
+- **Report accessibility incidents** in public or private spaces.
+- **Share accessibility best practices** to inspire and improve inclusion.
 
-El proyecto busca promover una **sociedad más accesible** y consciente de las necesidades de todas las personas, combinando un diseño moderno y accesible con herramientas fáciles de usar para la comunidad.
+The project aims to promote a **more accessible society** and awareness of the needs of all people, combining modern and accessible design with easy-to-use tools for the community.
 
-## Tecnologías principales
+## Main Technologies
 
 - **Frontend:** ![React](https://img.shields.io/badge/React-19.1-blue?logo=react&logoColor=white)
-- **Estilos:** ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1-blue?logo=tailwind-css&logoColor=white)
+- **Styles:** ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1-blue?logo=tailwind-css&logoColor=white)
 - **Backend:** ![ExpressJS](https://img.shields.io/badge/Express-5.1-black?logo=express&logoColor=white)
 - **ORM:** ![Sequelize](https://img.shields.io/badge/Sequelize-6.37-blue?logo=sequelize&logoColor=white)
-- **Base de datos:** ![MySQL](https://img.shields.io/badge/MySQL-8-blue?logo=mysql&logoColor=white)
-- **Control de versiones:** ![Git](https://img.shields.io/badge/Git-2.41-red?logo=git&logoColor=white)
-- **Gestión de endpoints:** ![Postman](https://img.shields.io/badge/Postman-orange?logo=postman&logoColor=white)
+- **Database:** ![MySQL](https://img.shields.io/badge/MySQL-8-blue?logo=mysql&logoColor=white)
+- **Version Control:** ![Git](https://img.shields.io/badge/Git-2.41-red?logo=git&logoColor=white)
+- **API Endpoint Management:** ![Postman](https://img.shields.io/badge/Postman-orange?logo=postman&logoColor=white)
 
-### Tecnologías adicionales
+### Additional Technologies
 
-- **React-Router-Dom:** Librería que permite gestionar rutas y navegación dentro de la aplicación React de manera dinámica.
-- **Axios:** Cliente HTTP para hacer solicitudes al backend, manejar APIs y recibir respuestas de forma sencilla.
-- **BCrypt:** Librería para encriptar contraseñas y asegurar la información sensible de los usuarios.
-- **Motion (Framer Motion):** Librería para animaciones y transiciones fluidas en los componentes React, mejorando la experiencia de usuario.
+- **React-Router-Dom:** Library for managing routes and navigation within the React application dynamically.
+- **Axios:** HTTP client for making requests to the backend, handling APIs and receiving responses easily.
+- **BCrypt:** Library for encrypting passwords and securing sensitive user information.
+- **Motion (Framer Motion):** Library for animations and smooth transitions in React components, improving user experience.
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 frontend/
 ├── public/
 ├── src/
-│ ├── assets/ # Imágenes, logos, ...
+│ ├── assets/ # Images, logos, ...
 │ ├── components/
 │ ├── pages/
-│ ├── services/ # Lógica de llamadas a APIs
+│ ├── services/ # API call logic
 │ ├── App.jsx
 │ └── index.js
-└── package.json # Dependencias y scripts del frontend
+└── package.json # Frontend dependencies and scripts
 
 backend/
-├── config/ # Configuración del servidor y DB
-├── controllers/ # Controladores de rutas
-├── migrations/ # Migraciones de base de datos
-├── models/ # Modelos de Sequelize
-├── routes/ # Definición de rutas
-├── seeders/ # Datos iniciales de la DB
-├── db.js # Conexión principal a la base de datos
-└── package.json # Dependencias y scripts del backend
+├── config/ # Server and DB configuration
+├── controllers/ # Route controllers
+├── migrations/ # Database migrations
+├── models/ # Sequelize models
+├── routes/ # Route definitions
+├── seeders/ # Initial DB data
+├── db.js # Main database connection
+└── package.json # Backend dependencies and scripts
 
-docs/ # Documentación, diagramas, o recursos adicionales
+docs/ # Documentation, diagrams, or additional resources
 ```
 
-## Diagrama de casos de uso
+## Use Case Diagram
 
-![Diagrama de casos de uso](./docs/use-case-diagram.png)
+![Use Case Diagram](./docs/use-case-diagram.png)
 
-## Diagrama Entidad-Relación
+## Entity-Relationship Diagram
 
-![Diagrama-ER](./docs/er-diagram.jpg)
+![ER Diagram](./docs/er-diagram.jpg)
 
-## Instalación de proyecto
+## Project Installation
 
-### Requisitos previos
+### Prerequisites
 
-- Tener descargado NodeJS, NPM y MySQL.
+- Have NodeJS, NPM, and MySQL installed.
 
-### Clonar repositorio
+### Clone Repository
 
 ```
 git clone https://github.com/devcarlosperez/CanAccesible
 ```
 
-### Configuración del backend
+### Backend Configuration
 
-- Entrar al directorio del backend
+- Enter the backend directory
 
 ```
 cd backend
 ```
 
-- Instalar dependencias
+- Install dependencies
 
 ```
 npm install
 ```
 
-- Ejecutar migraciones y seeders
+- Run migrations and seeders
 
 ```
 NODE_ENV=development npx sequelize-cli db:migrate
@@ -95,29 +95,27 @@ NODE_ENV=development npx sequelize-cli db:migrate
 NODE_ENV=development npx sequelize-cli db:seed:all
 ```
 
-- Iniciar backend
+- Start backend
 
 ```
 node index.js
 ```
 
-### Configuración del frontend
+### Frontend Configuration
 
 ```
-
 cd frontend
 
 npm install
 
 npm run dev
-
 ```
 
-## Enlaces
+## Links
 
-- **Documentación de la API en Postman:** [Acceder aquí](https://documenter.getpostman.com/view/48689306/2sB3Wnxhsu)
+- **API Documentation in Postman:** [Access here](https://documenter.getpostman.com/view/48689306/2sB3Wnxhsu)
 
-## Autores
+## Authors
 
 - Jonathan Morera Apaza
 - Carlos Pérez Santana
