@@ -96,22 +96,18 @@ function Incident() {
 
   // Handle incident deletion with confirmation
   const handleDelete = async (id) => {
-    if (window.confirm("¿Estás seguro de eliminar esta incidencia?")) {
-      try {
-        await deleteIncident(id);
-        fetchIncidents();
-      } catch (err) {
-        console.error("Error eliminando incidencia:", err);
-      }
+    try {
+      await deleteIncident(id);
+      fetchIncidents();
+    } catch (err) {
+      console.error("Error eliminando incidencia:", err);
     }
   };
 
   return (
     <section>
-      <Background />
-      <Header />
-
-      <div className="pt-155 p-8">
+      <Header/>
+      <div className="pt-50 p-8">
         <h1 className="text-3xl font-bold text-black mb-6 text-center">
           Gestión de Incidencias
         </h1>
