@@ -1,5 +1,13 @@
+import Header from "../../components/header/Header";
+import Background from "../../components/Background";
+
 function Incidence() {
-  return <></>;
+  return (
+    <>
+      <Background />
+      <Header/>
+    </>
+  );
 }
 
 export default Incidence;
