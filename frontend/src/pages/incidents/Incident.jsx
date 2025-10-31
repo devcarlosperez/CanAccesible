@@ -275,14 +275,14 @@ function Incident() {
                 <p className="text-sm text-gray-600">
                   Ubicación: {incident.island} - {incident.area}
                 </p>
-                <p className="text-sm text-gray-600">
-                  Coordenadas: {incident.latitude}, {incident.longitude}
-                </p>
                 {incident.address && (
                   <p className="text-sm text-gray-600">
                     Dirección: {incident.address}
                   </p>
                 )}
+                <p className="text-sm text-gray-600">
+                  Coordenadas: {incident.latitude}, {incident.longitude}
+                </p>
                 <p className="text-sm text-gray-600">
                   Fecha: {incident.dateIncident}
                 </p>
