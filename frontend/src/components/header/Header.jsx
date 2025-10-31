@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/canaccesible-logo.png";
 import "./Header.css";
-import { getNotifications, deleteNotification } from "../../services/notificationService";
+import {
+  getNotifications,
+  deleteNotification,
+} from "../../services/notificationService";
 
-const Header = () => {
+const Header = ({ transparent = true }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1150);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -18,31 +21,35 @@ const Header = () => {
       .catch(() => setNotifications([]));
   }, []);
 
-  // Update notification amount
   const notificationsCount = notifications.length;
 
-  // Delete notification
   const handleDelete = async (id) => {
     try {
       await deleteNotification(id);
       setNotifications(notifications.filter((n) => n.id !== id));
     } catch {
-      error("Error eliminando notificación");
+      console.error("Error eliminando notificación");
     }
   };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1150);
-    const handleScroll = () => setScrolled(window.scrollY >= 150);
+
+    // Solo aplicar efecto de scroll si el header es transparente
+    const handleScroll = () => {
+      if (transparent) {
+        setScrolled(window.scrollY >= 150);
+      }
+    };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
+    if (transparent) window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
+      if (transparent) window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [transparent]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
@@ -63,7 +70,7 @@ const Header = () => {
     setShowNotifications,
     handleDelete,
     iconSize = "text-xl md:text-2xl lg:text-3xl",
-    dropdownWidth = "w-80"
+    dropdownWidth = "w-80",
   }) => (
     <div className="relative">
       <button
@@ -82,9 +89,13 @@ const Header = () => {
         )}
       </button>
       {showNotifications && (
-        <div className={`absolute right-0 mt-2 ${dropdownWidth} bg-white rounded-xl shadow-xl z-200 border border-gray-200`}>
+        <div
+          className={`absolute right-0 mt-2 ${dropdownWidth} bg-white rounded-xl shadow-xl z-200 border border-gray-200`}
+        >
           <div className="flex justify-between items-center px-4 py-3 border-b">
-            <span className="text-lg font-bold text-[#1b226b]">Notificaciones</span>
+            <span className="text-lg font-bold text-[#1b226b]">
+              Notificaciones
+            </span>
           </div>
           <div className="p-4 max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
@@ -118,21 +129,25 @@ const Header = () => {
     <>
       <header
         className={`fixed top-0 left-0 w-full flex justify-between items-center text-white z-100 transition-all duration-300 ${
-          scrolled
-            ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
-            : "bg-transparent p-4 md:p-8 lg:p-10"
+          // Si el header es transparente, aplicamos el efecto de scroll normal
+          transparent
+            ? scrolled
+              ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
+              : "bg-transparent p-4 md:p-8 lg:p-10"
+            : // Si NO es transparente, siempre color fijo (sin scroll effect)
+              "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
         }`}
       >
-        {/* Logo responsive */}
+        {/* Logo */}
         <div className="transition-all duration-300">
           <img
             src={logo}
             alt="Canarias Accesible"
             className={`w-auto transition-all duration-300 
               ${
-                scrolled
-                  ? "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-18"
-                  : "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+                transparent && !scrolled
+                  ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+                  : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-18"
               }`}
           />
         </div>
@@ -171,7 +186,6 @@ const Header = () => {
                 iconSize="text-xl md:text-2xl lg:text-3xl"
                 dropdownWidth="w-80"
               />
-              {/* Login Button responsive */}
               <Link
                 to="/login"
                 className="bg-[#1b226b] text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5
