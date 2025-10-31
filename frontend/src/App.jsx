@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/Home";
-import Incidence from "./pages/incidences/Incidence";
+import Incident from "./pages/incidents/Incident";
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/incidences" element={<Incidence />}/>
+        <Route path="/incidents" element={<Incident />}/>
         <Route />
         <Route />
       </Routes>

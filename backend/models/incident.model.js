@@ -1,33 +1,33 @@
 module.exports = (sequelize, DataTypes) => {
-  const Incidence = sequelize.define(
-    "Incidence",
+  const Incident = sequelize.define(
+    "Incident",
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      incidenceStatusId: {
+      incidentStatusId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "IncidenceStatuses",
+          model: "IncidentStatuses",
           key: "id",
         },
       },
-      incidenceSeverityId: {
+      incidentSeverityId: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "IncidenceSeverities",
+          model: "IncidentSeverities",
           key: "id",
         },
       },
-      incidenceTypeId: {
+      incidentTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "IncidenceTypes",
+          model: "IncidentTypes",
           key: "id",
         },
       },
@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(11, 8),
         allowNull: false,
       },
-      dateIncidence: {
+      dateIncident: {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },
@@ -92,38 +92,38 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "Incidences",
+      tableName: "Incidents",
       timestamps: true,
     }
   );
 
-  Incidence.associate = (models) => {
-    Incidence.belongsTo(models.User, { foreignKey: "userId", as: "user" });
-    Incidence.belongsTo(models.IncidenceStatus, {
-      foreignKey: "incidenceStatusId",
+  Incident.associate = (models) => {
+    Incident.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+    Incident.belongsTo(models.IncidentStatus, {
+      foreignKey: "incidentStatusId",
       as: "status",
     });
-    Incidence.belongsTo(models.IncidenceSeverity, {
-      foreignKey: "incidenceSeverityId",
+    Incident.belongsTo(models.IncidentSeverity, {
+      foreignKey: "incidentSeverityId",
       as: "severity",
     });
-    Incidence.belongsTo(models.IncidenceType, {
-      foreignKey: "incidenceTypeId",
+    Incident.belongsTo(models.IncidentType, {
+      foreignKey: "incidentTypeId",
       as: "type",
     });
-    Incidence.hasMany(models.IncidenceComment, {
-      foreignKey: "incidenceId",
+    Incident.hasMany(models.IncidentComment, {
+      foreignKey: "incidentId",
       as: "comments",
     });
-    Incidence.hasMany(models.IncidenceLike, {
-      foreignKey: "incidenceId",
+    Incident.hasMany(models.IncidentLike, {
+      foreignKey: "incidentId",
       as: "likes",
     });
-    Incidence.hasMany(models.Multimedia, {
-      foreignKey: "incidenceId",
+    Incident.hasMany(models.Multimedia, {
+      foreignKey: "incidentId",
       as: "multimedias",
     });
   };
 
-  return Incidence;
+  return Incident;
 };

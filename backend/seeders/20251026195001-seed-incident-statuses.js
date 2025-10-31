@@ -3,14 +3,19 @@
 /** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('IncidenceTypes', [
+    await queryInterface.bulkInsert('IncidentStatuses', [
       {
-        type: 'buena_practica',
+        status: 'pendiente',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        type: 'mala_practica',
+        status: 'en_progreso',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        status: 'resuelta',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -18,6 +23,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('IncidenceTypes', null, {});
+    await queryInterface.bulkDelete('IncidentStatuses', null, {});
   }
 };

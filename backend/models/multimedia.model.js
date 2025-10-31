@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Incidences',
+        model: 'Incidents',
         key: 'id',
       },
     },
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Multimedia.associate = (models) => {
-    Multimedia.belongsTo(models.Incidence, { foreignKey: 'incidenceId', as: 'incidence' });
+    Multimedia.belongsTo(models.Incident, { foreignKey: 'incidenceId', as: 'incident' });
     Multimedia.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
   };
 

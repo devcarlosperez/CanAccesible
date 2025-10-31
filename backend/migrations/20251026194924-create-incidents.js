@@ -3,37 +3,37 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Incidences", {
+    await queryInterface.createTable("Incidents", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      incidenceStatusId: {
+      incidentStatusId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "IncidenceStatuses",
+          model: "IncidentStatuses",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "RESTRICT",
       },
-      incidenceSeverityId: {
+      incidentSeverityId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: "IncidenceSeverities",
+          model: "IncidentSeverities",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "RESTRICT",
       },
-      incidenceTypeId: {
+      incidentTypeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "IncidenceTypes",
+          model: "IncidentTypes",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -91,7 +91,7 @@ module.exports = {
         type: Sequelize.DECIMAL(11, 8),
         allowNull: false,
       },
-      dateIncidence: {
+      dateIncident: {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },
@@ -114,6 +114,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Incidences");
+    await queryInterface.dropTable("Incidents");
   },
 };

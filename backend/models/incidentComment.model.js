@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const IncidenceComment = sequelize.define('IncidenceComment', {
+  const IncidentComment = sequelize.define('IncidentComment', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
-    incidenceId: {
+    incidentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Incidences',
+        model: 'Incidents',
         key: 'id',
       },
     },
@@ -31,14 +31,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
     },
   }, {
-    tableName: 'IncidenceComments',
+    tableName: 'IncidentComments',
     timestamps: true,
   });
 
-  IncidenceComment.associate = (models) => {
-    IncidenceComment.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
-    IncidenceComment.belongsTo(models.Incidence, { foreignKey: 'incidenceId', as: 'incidence' });
+  IncidentComment.associate = (models) => {
+    IncidentComment.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+    IncidentComment.belongsTo(models.Incident, { foreignKey: 'incidentId', as: 'incident' });
   };
 
-  return IncidenceComment;
+  return IncidentComment;
 };

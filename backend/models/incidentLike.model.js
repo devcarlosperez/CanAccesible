@@ -1,15 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
-  const IncidenceLike = sequelize.define('IncidenceLike', {
+  const IncidentLike = sequelize.define('IncidentLike', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    incidenceId: {
+    incidentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Incidences',
+        model: 'Incidents',
         key: 'id',
       },
     },
@@ -27,14 +27,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
     },
   }, {
-    tableName: 'IncidenceLikes',
+    tableName: 'IncidentLikes',
     timestamps: true,
   });
 
-  IncidenceLike.associate = (models) => {
-    IncidenceLike.belongsTo(models.Incidence, { foreignKey: 'incidenceId', as: 'incidence' });
-    IncidenceLike.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+  IncidentLike.associate = (models) => {
+    IncidentLike.belongsTo(models.Incident, { foreignKey: 'incidentId', as: 'incident' });
+    IncidentLike.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
   };
 
-  return IncidenceLike;
+  return IncidentLike;
 };

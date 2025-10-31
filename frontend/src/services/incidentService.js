@@ -1,11 +1,11 @@
-const apiUrl = 'http://localhost:85/api/incidences';
+const apiUrl = 'http://localhost:85/api/incidents';
 
-export const getAllIncidences = async () => {
+export const getAllIncidents = async () => {
   try {
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
-      throw new Error("Error fetching incidences")
+      throw new Error("Error cargando incidencias")
     }
     return await response.json()
   } catch (err) {
@@ -14,12 +14,12 @@ export const getAllIncidences = async () => {
   }
 }
 
-export const getIncidenceById = async (id) => {
+export const getIncidentById = async (id) => {
   try {
     const response = await fetch(`${apiUrl}/${id}`)
 
     if (!response.ok) {
-      throw new Error("Error fetching incidence by id")
+      throw new Error("Error cargando incidencia con id")
     }
     return await response.json()
   } catch (err) {
@@ -28,18 +28,18 @@ export const getIncidenceById = async (id) => {
   }
 }
 
-export const createIncidence = async (incidenceData) => {
+export const createIncident = async (incidentData) => {
   try {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(incidenceData)
+      body: JSON.stringify(incidentData)
     })
 
     if (!response.ok) {
-      throw new Error("Error creating incidence")
+      throw new Error("Error creando incidencia")
     }
     return await response.json()
   } catch (err) {
@@ -48,18 +48,18 @@ export const createIncidence = async (incidenceData) => {
   }
 }
 
-export const updateIncidence = async (id, incidenceData) => {
+export const updateIncident = async (id, incidentData) => {
   try {
     const response = await fetch(`${apiUrl}/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(incidenceData)
+      body: JSON.stringify(incidentData)
     })
 
     if (!response.ok) {
-      throw new Error("Error updating incidence")
+      throw new Error("Error actualizando incidencia")
     }
     return await response.json()
   } catch (err) {
@@ -68,14 +68,14 @@ export const updateIncidence = async (id, incidenceData) => {
   }
 }
 
-export const deleteIncidence = async (id) => {
+export const deleteIncident = async (id) => {
   try {
     const response = await fetch(`${apiUrl}/${id}`, {
       method: 'DELETE',
     })
 
     if (!response.ok) {
-      throw new Error("Error deleting the incidence")
+      throw new Error("Error eliminando incidencia")
     }
     return await response.json()
   } catch (err) {
