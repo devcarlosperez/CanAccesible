@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/canaccesible-logo.png";
 import "./Header.css";
@@ -7,7 +7,29 @@ const Header = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1150);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [notificationsCount, setNotificationsCount] = useState(4);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Fetch notifications from backend
+  useEffect(() => {
+    fetch("/api/notifications")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setNotifications(Array.isArray(data) ? data : []))
+      .catch(() => setNotifications([]));
+  }, []);
+
+  // Update notification amount
+  const notificationsCount = notifications.length;
+
+  // Delete notification
+  const handleDelete = async (id) => {
+    const response = await fetch(`/api/notifications/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      setNotifications(notifications.filter((n) => n.id !== id));
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1150);
@@ -87,6 +109,7 @@ const Header = () => {
                 type="button"
                 className="relative text-white hover:text-accent-1 transition-colors focus:outline-none cursor-pointer"
                 aria-label="Notificaciones"
+                onClick={() => setShowNotifications(true)}
               >
                 <span className="material-symbols-outlined text-xl md:text-2xl lg:text-3xl">
                   notifications
@@ -117,6 +140,7 @@ const Header = () => {
               type="button"
               className="relative text-white hover:text-accent-1 transition-colors focus:outline-none"
               aria-label="Notificaciones"
+              onClick={() => setShowNotifications(true)}
             >
               <span className="material-symbols-outlined text-2xl">
                 notifications
@@ -186,6 +210,44 @@ const Header = () => {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Notification window */}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black/40 z-200 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl relative">
+            <button
+              className="absolute top-2 right-2 text-gray-600"
+              onClick={() => setShowNotifications(false)}
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <h2 className="text-lg font-bold mb-4 text-[#1b226b]">
+              Notificaciones
+            </h2>
+            {notifications.length === 0 ? (
+              <p className="text-gray-500">No tienes notificaciones.</p>
+            ) : (
+              <ul className="space-y-3">
+                {notifications.map((n) => (
+                  <li
+                    key={n.id}
+                    className="flex justify-between items-center bg-gray-100 rounded-lg px-3 py-2"
+                  >
+                    <span>{n.message}</span>
+                    <button
+                      className="text-red-500 hover:text-red-700 ml-4"
+                      onClick={() => handleDelete(n.id)}
+                      title="Borrar notificación"
+                    >
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </>
