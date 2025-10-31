@@ -42,14 +42,13 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
   try {
     const users = await User.findAll({
-      include: [
-        { association: "incidents" },
-        { association: "comments" },
-        { association: "likes" },
-        { association: "multimedias" },
-        { association: "notifications" },
-        { association: "conversations" },
-        { association: "messages" },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "rol",
       ],
     });
     res.json(users);
