@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-require('./routes/incidence.routes')(app);
+require('./routes/incident.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/notification.routes')(app);
 

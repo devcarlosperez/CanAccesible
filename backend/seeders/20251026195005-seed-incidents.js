@@ -3,11 +3,11 @@
 /** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Incidences', [
+    await queryInterface.bulkInsert('Incidents', [
       {
-        incidenceStatusId: 1,
-        incidenceSeverityId: 2,
-        incidenceTypeId: 2,
+        incidentStatusId: 1,
+        incidentSeverityId: 2,
+        incidentTypeId: 2,
         userId: 1,
         name: 'Rampa insuficiente en edificio público',
         description: 'La rampa principal es muy empinada y dificulta el acceso en silla de ruedas',
@@ -16,15 +16,15 @@ module.exports = {
         address: 'Calle Pintor',
         latitude: 28.2915926,
         longitude: -16.6291304,
-        dateIncidence: new Date('2025-10-15'),
+        dateIncident: new Date('2025-10-15'),
         isApproved: true,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        incidenceStatusId: 3,
-        incidenceSeverityId: 3,
-        incidenceTypeId: 2,
+        incidentStatusId: 3,
+        incidentSeverityId: 3,
+        incidentTypeId: 2,
         userId: 2,
         name: 'Parada de autobús sin espacio accesible',
         description: 'No hay zona adaptada para personas con movilidad reducida en la parada',
@@ -33,15 +33,15 @@ module.exports = {
         address: 'Avenida de Canarias',
         latitude: 28.2916,
         longitude: -16.6292,
-        dateIncidence: new Date('2025-10-18'),
+        dateIncident: new Date('2025-10-18'),
         isApproved: true,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        incidenceStatusId: 1,
-        incidenceSeverityId: 1,
-        incidenceTypeId: 2,
+        incidentStatusId: 1,
+        incidentSeverityId: 1,
+        incidentTypeId: 2,
         userId: 1,
         name: 'Señalización con pictogramas confusos',
         description: 'Los símbolos de accesibilidad no son claros y generan confusión',
@@ -50,7 +50,7 @@ module.exports = {
         address: 'Calle San Sebastián',
         latitude: 28.2917,
         longitude: -16.6293,
-        dateIncidence: new Date('2025-10-20'),
+        dateIncident: new Date('2025-10-20'),
         isApproved: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -59,6 +59,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Incidences', null, {});
+    await queryInterface.bulkDelete('Incidents', null, {});
   }
 };

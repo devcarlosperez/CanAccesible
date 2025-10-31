@@ -38,9 +38,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = (models) => {
-    User.hasMany(models.Incidence, { foreignKey: 'userId', as: 'incidences' });
-    User.hasMany(models.IncidenceComment, { foreignKey: 'userId', as: 'comments' });
-    User.hasMany(models.IncidenceLike, { foreignKey: 'userId', as: 'likes' });
+    User.hasMany(models.Incident, { foreignKey: 'userId', as: 'incidents' });
+    User.hasMany(models.IncidentComment, { foreignKey: 'userId', as: 'comments' });
+    User.hasMany(models.IncidentLike, { foreignKey: 'userId', as: 'likes' });
     User.hasMany(models.Multimedia, { foreignKey: 'userId', as: 'multimedias' });
     User.hasMany(models.Notification, { foreignKey: 'userId', as: 'notifications' });
     User.hasMany(models.Conversation, { foreignKey: 'userId', as: 'conversations' });

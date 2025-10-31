@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('IncidenceSeverities', [
+    await queryInterface.bulkInsert('IncidentSeverities', [
       {
         severity: 'baja',
         createdAt: new Date(),
@@ -23,6 +23,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('IncidenceSeverities', null, {});
+    await queryInterface.bulkDelete('IncidentSeverities', null, {});
   }
 };

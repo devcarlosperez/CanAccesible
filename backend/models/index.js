@@ -3,12 +3,12 @@ const DataTypes = require('sequelize').DataTypes;
 
 // Import all models
 const user = require('./user.model')(sequelize, DataTypes);
-const incidenceStatus = require('./incidenceStatus.model')(sequelize, DataTypes);
-const incidenceSeverity = require('./incidenceSeverity.model')(sequelize, DataTypes);
-const incidenceType = require('./incidenceType.model')(sequelize, DataTypes);
-const incidence = require('./incidence.model')(sequelize, DataTypes);
-const incidenceComment = require('./incidenceComment.model')(sequelize, DataTypes);
-const incidenceLike = require('./incidenceLike.model')(sequelize, DataTypes);
+const incidentStatus = require('./incidentStatus.model')(sequelize, DataTypes);
+const incidentSeverity = require('./incidentSeverity.model')(sequelize, DataTypes);
+const incidentType = require('./incidentType.model')(sequelize, DataTypes);
+const incident = require('./incident.model')(sequelize, DataTypes);
+const incidentComment = require('./incidentComment.model')(sequelize, DataTypes);
+const incidentLike = require('./incidentLike.model')(sequelize, DataTypes);
 const multimedia = require('./multimedia.model')(sequelize, DataTypes);
 const notification = require('./notification.model')(sequelize, DataTypes);
 const conversation = require('./conversation.model')(sequelize, DataTypes);
@@ -25,12 +25,12 @@ Object.values(sequelize.models).forEach(model => {
 module.exports = {
   sequelize,
   user,
-  incidenceStatus,
-  incidenceSeverity,
-  incidenceType,
-  incidence,
-  incidenceComment,
-  incidenceLike,
+  incidentStatus,
+  incidentSeverity,
+  incidentType,
+  incident,
+  incidentComment,
+  incidentLike,
   multimedia,
   notification,
   conversation,

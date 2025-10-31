@@ -3,14 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('IncidenceTypes', {
+    await queryInterface.createTable('IncidentTypes', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
       type: {
-        type: Sequelize.ENUM('mala_practica', 'buena_practica'),
+        type: Sequelize.ENUM('buena_practica', 'mala_practica'),
         allowNull: false,
       },
       createdAt: {
@@ -27,6 +27,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('IncidenceTypes');
+    await queryInterface.dropTable('IncidentTypes');
   }
 };

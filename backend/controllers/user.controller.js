@@ -43,7 +43,7 @@ exports.findAll = async (req, res) => {
   try {
     const users = await User.findAll({
       include: [
-        { association: "incidences" },
+        { association: "incidents" },
         { association: "comments" },
         { association: "likes" },
         { association: "multimedias" },
@@ -65,7 +65,7 @@ exports.findOne = async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id, {
       include: [
-        { association: "incidences" },
+        { association: "incidents" },
         { association: "comments" },
         { association: "likes" },
         { association: "multimedias" },

@@ -1,6 +1,6 @@
 const db = require("../models");
 const axios = require("axios");
-const incidenceObject = db.incidence;
+const incidentObject = db.incident;
 
 // Using OpenStreetMap's Nominatim reverse geocoding service
 async function reverseGeocode(latitude, longitude) {
@@ -23,12 +23,12 @@ async function reverseGeocode(latitude, longitude) {
 
     return nominatinData;
   } catch (err) {
-    console.error("Error finding the location", err);
+    console.error("Error encontrando la localización", err);
     return null;
   }
 }
 
-// Create a new incidence report
+// Create a new incident report
 exports.create = async (req, res) => {
   // Get address from coordinates using reverse geocoding
   const locationData = await reverseGeocode(
@@ -38,19 +38,19 @@ exports.create = async (req, res) => {
 
   const addressFromBody = locationData?.display_name || null;
 
-  // New incidences are not approved by default
+  // New incidents are not approved by default
   let isApprovedDefault = false;
-  let incidenceSeverityIdFromBody = null;
+  let incidentSeverityIdFromBody = null;
 
-  // Severity is only applicable for incidenceTypeId = 2
-  if (Number(req.body.incidenceTypeId) === 2) {
-    incidenceSeverityIdFromBody = req.body.incidenceSeverityId;
+  // Severity is only applicable for incidentTypeId = 2
+  if (Number(req.body.incidentTypeId) === 2) {
+    incidentSeverityIdFromBody = req.body.incidentSeverityId;
   }
 
-  const incidenceToCreate = {
-    incidenceStatusId: req.body.incidenceStatusId,
-    incidenceSeverityId: incidenceSeverityIdFromBody,
-    incidenceTypeId: req.body.incidenceTypeId,
+  const incidentToCreate = {
+    incidentStatusId: req.body.incidentStatusId,
+    incidentSeverityId: incidentSeverityIdFromBody,
+    incidentTypeId: req.body.incidentTypeId,
     userId: req.body.userId,
     name: req.body.name,
     description: req.body.description,
@@ -59,26 +59,26 @@ exports.create = async (req, res) => {
     address: addressFromBody,
     latitude: req.body.latitude,
     longitude: req.body.longitude,
-    dateIncidence: req.body.dateIncidence,
+    dateIncident: req.body.dateIncident,
     isApproved: isApprovedDefault,
   };
 
-  incidenceObject
-    .create(incidenceToCreate)
+  incidentObject
+    .create(incidentToCreate)
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error ocurred while creating the incidence.",
+          err.message || "Algún error ocurrió mientras se creaba la incidencia.",
       });
     });
 };
 
-// Retrieves all incidences from the database
+// Retrieves all incidents from the database
 exports.findAll = (req, res) => {
-  incidenceObject
+  incidentObject
     .findAll()
     .then((data) => {
       res.send(data);
@@ -86,32 +86,32 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error ocurred while retrieving the incidences.",
+          err.message || "Algún error ocurrió mientras se leían las incidencias.",
       });
     });
 };
 
-// Retrieves a single incidence by ID
+// Retrieves a single incident by ID
 exports.findOne = (req, res) => {
-  const incidenceId = req.params.id;
+  const incidentId = req.params.id;
 
-  incidenceObject
-    .findOne({ where: { id: incidenceId } })
+  incidentObject
+    .findOne({ where: { id: incidentId } })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error ocurred while retrieving the incidence.",
+          err.message || "Algún error ocurrió mientras se leía la incidencia.",
       });
     });
 };
 
-// Updates an existing incidence
+// Updates an existing incident
 exports.update = async (req, res) => {
-  const incidenceToUpdate = {};
-  const incidenceId = req.params.id;
+  const incidentToUpdate = {};
+  const incidentId = req.params.id;
 
   // If coordinates are provided, update location and re-geocode address
   if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
@@ -119,77 +119,77 @@ exports.update = async (req, res) => {
       req.body.latitude,
       req.body.longitude
     );
-    incidenceToUpdate.latitude = req.body.latitude;
-    incidenceToUpdate.longitude = req.body.longitude;
-    incidenceToUpdate.address = locationData?.display_name || null;
+    incidentToUpdate.latitude = req.body.latitude;
+    incidentToUpdate.longitude = req.body.longitude;
+    incidentToUpdate.address = locationData?.display_name || null;
   }
 
   // Update other fields only if they are provided
   if (req.body.name !== undefined) {
-    incidenceToUpdate.name = req.body.name;
+    incidentToUpdate.name = req.body.name;
   }
   if (req.body.description !== undefined) {
-    incidenceToUpdate.description = req.body.description;
+    incidentToUpdate.description = req.body.description;
   }
-  if (req.body.incidenceStatusId !== undefined) {
-    incidenceToUpdate.incidenceStatusId = req.body.incidenceStatusId;
+  if (req.body.incidentStatusId !== undefined) {
+    incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
   }
-  if (req.body.incidenceTypeId !== undefined) {
-    incidenceToUpdate.incidenceTypeId = req.body.incidenceTypeId;
+  if (req.body.incidentTypeId !== undefined) {
+    incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
   }
   if (req.body.isApproved !== undefined) {
-    incidenceToUpdate.isApproved = req.body.isApproved;
+    incidentToUpdate.isApproved = req.body.isApproved;
   }
   if (req.body.userId !== undefined) {
-    incidenceToUpdate.userId = req.body.userId;
+    incidentToUpdate.userId = req.body.userId;
   }
   if (req.body.area !== undefined) {
-    incidenceToUpdate.area = req.body.area;
+    incidentToUpdate.area = req.body.area;
   }
   if (req.body.island !== undefined) {
-    incidenceToUpdate.island = req.body.island;
+    incidentToUpdate.island = req.body.island;
   }
-  if (req.body.dateIncidence !== undefined) {
-    incidenceToUpdate.dateIncidence = req.body.dateIncidence;
+  if (req.body.dateIncident !== undefined) {
+    incidentToUpdate.dateIncident = req.body.dateIncident;
   }
 
-  // Handle severity assignment - only for incidenceTypeId = 2
-  if (req.body.incidenceTypeId !== undefined) {
-    if (req.body.incidenceTypeId === 2) {
-      incidenceToUpdate.incidenceSeverityId = req.body.incidenceSeverityId;
+  // Handle severity assignment - only for incidentTypeId = 2
+  if (req.body.incidentTypeId !== undefined) {
+    if (req.body.incidentTypeId === 2) {
+      incidentToUpdate.incidentSeverityId = req.body.incidentSeverityId;
     } else {
-      incidenceToUpdate.incidenceSeverityId = null;
+      incidentToUpdate.incidentSeverityId = null;
     }
   }
 
-  incidenceObject
-    .update(incidenceToUpdate, { where: { id: incidenceId } })
+  incidentObject
+    .update(incidentToUpdate, { where: { id: incidentId } })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error ocurred while updating the incidence.",
+          err.message || "Algún error ocurrió mientras se actualizaba la incidencia.",
       });
     });
 };
 
 // Deletes an incidence by ID
 exports.delete = (req, res) => {
-  const incidenceId = req.params.id;
+  const incidentId = req.params.id;
 
-  incidenceObject
-    .destroy({ where: { id: incidenceId } })
+  incidentObject
+    .destroy({ where: { id: incidentId } })
     .then((data) => {
       res.send({
-        message: "Incidence has been deleted.",
+        message: "La incidencia ha sido eliminada.",
       });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error ocurred while deleting the incidence.",
+          err.message || "Algún error ocurrió mientras se eliminaba la inciencia.",
       });
     });
 };

@@ -28,9 +28,9 @@ const Header = () => {
 
   const menuItems = [
     { text: "Inicio", to: "/home", icon: "home" },
-    { text: "Incidencias", to: "/", icon: "assignment" },
-    { text: "Islas", to: "/lugares", icon: "public" },
-    { text: "Contacto", to: "/contacto", icon: "contact_mail" },
+    { text: "Incidencias", to: "/incidents", icon: "assignment" },
+    { text: "Islas", to: "/islands", icon: "public" },
+    { text: "Contacto", to: "/contact", icon: "contact_mail" },
     { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
   ];
 
