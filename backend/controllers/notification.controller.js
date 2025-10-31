@@ -48,6 +48,8 @@ exports.update = async (req, res) => {
     if (updated) {
       const updatedNotification = await Notification.findByPk(id);
       return res.json(updatedNotification);
+    }else{
+      res.status(404).json({ message: "Notification not found." });
     }
   } catch (err) {
     res.status(500).json({ message: err.message || "Error updating notification." });
@@ -61,6 +63,8 @@ exports.delete = async (req, res) => {
     const deleted = await Notification.destroy({ where: { id } });
     if (deleted) {
       return res.json({ message: "Notification deleted." });
+    } else {
+      res.status(404).json({ message: "Notification not found." });
     }
   } catch (err) {
     res.status(500).json({ message: err.message || "Error deleting notification." });
