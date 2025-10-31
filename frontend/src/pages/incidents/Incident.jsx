@@ -106,7 +106,7 @@ function Incident() {
 
   return (
     <section>
-      <Header/>
+      <Header transparent={false} />
       <div className="pt-50 p-8">
         <h1 className="text-3xl font-bold text-black mb-6 text-center">
           Gestión de Incidencias
