@@ -59,7 +59,7 @@ exports.findAll = async (req, res) => {
   }
 };
 
-// Obtener un usuario por ID
+// Get an user by ID
 exports.findOne = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +84,7 @@ exports.findOne = async (req, res) => {
   }
 };
 
-// Actualizar un usuario
+// Update an user
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,7 +94,7 @@ exports.update = async (req, res) => {
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
-    // Si hay password, hashéalo
+    // If exist password, hash it
     if (password) {
       req.body.password = await bcrypt.hash(password, 10);
     }
@@ -113,7 +113,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// Eliminar un usuario
+// Delete an user
 exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
