@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:85/api/notifications";
+// Base API URL - uses environment variable with fallback
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:85';
+const API_URL = `${API_BASE}/api/notifications`;
 
 export const getNotifications = async () => {
   const response = await fetch(API_URL);
