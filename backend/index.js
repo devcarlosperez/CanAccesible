@@ -12,10 +12,12 @@ app.get("/", (req, res) => {
   res.send("Hola mundo");
 });
 
+const env = process.env.NODE_ENV;
+
 // Verify database connection at startup
 sequelize
   .authenticate()
-  .then(() => console.log("Successful mysql connection"))
+  .then(() => console.log(`Successful mysql connection: env=${env}`))
   .catch((err) => console.error("Error", err));
 
 // Use environment variable for port or default to 8080
