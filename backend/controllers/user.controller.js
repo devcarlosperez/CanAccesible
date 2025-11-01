@@ -58,24 +58,25 @@ exports.findAll = async (req, res) => {
   }
 };
 
-// Get an user by ID
+// Get a single user by ID
 exports.findOne = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id, {
-      include: [
-        { association: "incidents" },
-        { association: "comments" },
-        { association: "likes" },
-        { association: "multimedias" },
-        { association: "notifications" },
-        { association: "conversations" },
-        { association: "messages" },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "rol",
       ],
     });
 
-    if (!user)
+    if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
     res.json(user);
   } catch (error) {
     console.error("Error obteniendo usuario:", error);
