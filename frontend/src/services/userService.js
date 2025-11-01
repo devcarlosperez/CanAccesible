@@ -6,3 +6,6 @@ export const createUser = (userData) =>
   api.post("/users", userData).then((res) => res.data);
 
 export const deleteUser = (id) => api.delete(`/users/${id}`);
+
+export const updateUser = (id, userData) =>
+  api.put(`/users/${id}`, userData).then((res) => res.data);

@@ -1,19 +1,20 @@
 import { deleteUser } from "../../../services/userService";
 
-const RegisterList = ({ users, onUserDeleted }) => {
+const RegisterList = ({ users, onUserDeleted, onUserEdit }) => {
   const handleDelete = async (id) => {
-    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+    const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
+    if (!confirmed) return;
 
     try {
       await deleteUser(id);
       onUserDeleted();
     } catch (err) {
       console.error("Error al eliminar usuario:", err);
-      alert("No se pudo eliminar el usuario ");
+      alert("No se pudo eliminar el usuario ❌");
     }
   };
 
-  if (users.length === 0) {
+  if (!users || users.length === 0) {
     return <p className="text-black">No hay usuarios registrados.</p>;
   }
 
@@ -43,10 +44,21 @@ const RegisterList = ({ users, onUserDeleted }) => {
               <td className="px-4 py-2">{user.email}</td>
               <td className="px-4 py-2">{user.dateRegister}</td>
               <td className="px-4 py-2 capitalize">{user.rol}</td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 flex gap-2">
+                {/* Botón Editar */}
+                <button
+                  onClick={() => onUserEdit(user)}
+                  className="flex items-center gap-1 bg-yellow-600 hover:bg-yellow-500 px-2 py-1 rounded text-white font-semibold transition-colors"
+                  title="Editar usuario"
+                >
+                  <span className="material-symbols-outlined">edit</span>
+                </button>
+
+                {/* Botón Eliminar */}
                 <button
                   onClick={() => handleDelete(user.id)}
                   className="flex items-center gap-1 bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-white font-semibold transition-colors"
+                  title="Eliminar usuario"
                 >
                   <span className="material-symbols-outlined">delete</span>
                 </button>

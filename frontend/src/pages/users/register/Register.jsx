@@ -7,6 +7,7 @@ import Header from "../../../components/header/Header";
 const Register = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+  const [userToEdit, setUserToEdit] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -16,6 +17,14 @@ const Register = () => {
       console.error("Error al obtener usuarios:", err);
       setError("No se pudieron cargar los usuarios");
     }
+  };
+
+  const handleEdit = (user) => {
+    setUserToEdit(user);
+  };
+
+  const handleCancelEdit = () => {
+    setUserToEdit(null);
   };
 
   useEffect(() => {
@@ -31,11 +40,21 @@ const Register = () => {
           Gestión de Usuarios
         </h2>
 
-        <RegisterForm onUserCreated={fetchUsers} />
+        <RegisterForm
+          onUserCreated={fetchUsers}
+          userToEdit={userToEdit}
+          onCancelEdit={handleCancelEdit}
+        />
 
         {error && <p className="text-red-400 mb-4">{error}</p>}
 
-        {!error && <RegisterList users={users} onUserDeleted={fetchUsers} />}
+        {!error && (
+          <RegisterList
+            users={users}
+            onUserDeleted={fetchUsers}
+            onUserEdit={handleEdit}
+          />
+        )}
       </div>
     </>
   );
