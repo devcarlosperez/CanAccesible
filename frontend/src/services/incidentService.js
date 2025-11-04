@@ -1,91 +1,14 @@
-// Base API URL for incident endpoints - uses environment variable
-const apiUrl = `${import.meta.env.VITE_API_URL}/api/incidents`;
+import api from "./api";
 
-// Fetch all incidents from the server
-export const getAllIncidents = async () => {
-  try {
-    const response = await fetch(apiUrl);
+export const getAllIncidents = () => api.get("/incidents").then((res) => res.data);
 
-    if (!response.ok) {
-      throw new Error("Error cargando incidencias");
-    }
-    return await response.json();
-  } catch (err) {
-    console.error("Error: ", err);
-    throw err;
-  }
-};
+export const getIncidentById = (id) =>
+  api.get(`/incidents/${id}`).then((res) => res.data);
 
-// Fetch a single incident by ID
-export const getIncidentById = async (id) => {
-  try {
-    const response = await fetch(`${apiUrl}/${id}`);
+export const createIncident = (incidentData) =>
+  api.post("/incidents", incidentData).then((res) => res.data);
 
-    if (!response.ok) {
-      throw new Error("Error cargando incidencia con id");
-    }
-    return await response.json();
-  } catch (err) {
-    console.error("Error: ", err);
-    throw err;
-  }
-};
+export const updateIncident = (id, incidentData) =>
+  api.put(`/incidents/${id}`, incidentData).then((res) => res.data);
 
-// Create a new incident
-export const createIncident = async (incidentData) => {
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(incidentData),
-    });
-
-    if (!response.ok) {
-      throw new Error("Error creando incidencia");
-    }
-    return await response.json();
-  } catch (err) {
-    console.error("Error: ", err);
-    throw err;
-  }
-};
-
-// Update an existing incident
-export const updateIncident = async (id, incidentData) => {
-  try {
-    const response = await fetch(`${apiUrl}/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(incidentData),
-    });
-
-    if (!response.ok) {
-      throw new Error("Error actualizando incidencia");
-    }
-    return await response.json();
-  } catch (err) {
-    console.error("Error: ", err);
-    throw err;
-  }
-};
-
-// Delete an incident by ID
-export const deleteIncident = async (id) => {
-  try {
-    const response = await fetch(`${apiUrl}/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error("Error eliminando incidencia");
-    }
-    return await response.json();
-  } catch (err) {
-    console.error("Error: ", err);
-    throw err;
-  }
-};
+export const deleteIncident = (id) => api.delete(`/incidents/${id}`).then((res) => res.data);
