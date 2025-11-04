@@ -60,7 +60,7 @@ const Header = ({ transparent = true }) => {
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
     { text: "Islas", to: "/islands", icon: "public" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
-    { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
+    { text: "Iniciar Sesión", to: "/register", icon: "login", login: true },
   ];
 
   const NotificationDropdown = ({
@@ -187,7 +187,7 @@ const Header = ({ transparent = true }) => {
                 dropdownWidth="w-80"
               />
               <Link
-                to="/login"
+                to="/register"
                 className="bg-[#1b226b] text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5
                 lg:text-md xl:text-base rounded-xl font-semibold hover:bg-[#162053] hover:scale-105 transition-all duration-200"
               >
