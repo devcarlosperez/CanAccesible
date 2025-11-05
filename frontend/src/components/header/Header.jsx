@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/canaccesible-logo.png";
 import "./Header.css";
 import {
-  getNotifications,
+  getAllNotifications,
   deleteNotification,
 } from "../../services/notificationService";
 
@@ -16,7 +16,7 @@ const Header = ({ transparent = true }) => {
 
   // Fetch notifications
   useEffect(() => {
-    getNotifications()
+    getAllNotifications()
       .then((data) => setNotifications(Array.isArray(data) ? data : []))
       .catch(() => setNotifications([]));
   }, []);
