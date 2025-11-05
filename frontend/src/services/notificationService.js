@@ -1,20 +1,7 @@
-// Base API URL - uses environment variable with fallback
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:85';
-const API_URL = `${API_BASE}/api/notifications`;
+import api from "./api";
 
-export const getNotifications = async () => {
-  const response = await fetch(API_URL);
-  if (!response.ok) {
-    throw new Error("Error cargando notificaciones");
-  }
-  return await response.json();
-};
+export const getAllNotifications = () =>
+  api.get("/notifications").then((res) => res.data);
 
-export const deleteNotification = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error("Error eliminando notificación");
-  }
-};
+export const deleteNotification = (id) =>
+  api.delete(`/notifications/${id}`).then((res) => res.data);
