@@ -6,9 +6,10 @@
   --color-primary-2: #004aad;
 
   /* Accent colors */
-  --color-accent-1: #427097;
-  --color-accent-2: #ccc06a;
-  --color-accent-3: #68868b;
+  --color-accent-1: #e5edfa;
+  --color-accent-2: #bccff2;
+  --color-accent-3: #92b2ea;
+  --color-accent-4: #6794e2;
 
   /* State colors */
   --color-success: #22c55e;
@@ -21,7 +22,7 @@
   --color-neutral-2: #333138;
   --color-neutral-3: #515052;
 
-  /* Tipografías */
+  /* Fonts */
   --font-poppins: "Poppins, sans-serif";
   --font-roboto: "Roboto, sans-serif";
 }

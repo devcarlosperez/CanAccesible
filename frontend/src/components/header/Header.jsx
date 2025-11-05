@@ -166,7 +166,7 @@ const Header = ({ transparent = true }) => {
                   <li key={item.text}>
                     <Link
                       to={item.to}
-                      className="hover:text-accent-1 transition-colors"
+                      className="hover:text-accent-3 transition-colors"
                     >
                       {item.text}
                     </Link>
