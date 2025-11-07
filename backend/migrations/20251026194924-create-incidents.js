@@ -91,7 +91,7 @@ module.exports = {
         type: Sequelize.DECIMAL(11, 8),
         allowNull: false,
       },
-      dateIncidence: {
+      dateIncident: {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },

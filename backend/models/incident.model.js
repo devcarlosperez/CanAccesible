@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(11, 8),
         allowNull: false,
       },
-      dateIncidence: {
+      dateIncident: {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },

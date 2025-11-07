@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
       lastName,
       email,
       password: hashedPassword,
-      rol: rol || "user",
+      rol: rol || "usuario",
     });
 
     res.status(201).json(user);
