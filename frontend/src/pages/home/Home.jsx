@@ -1,4 +1,5 @@
 import Background from "../../components/Background";
+import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import Hero from "../../components/Hero";
 
@@ -38,6 +39,7 @@ const Home = () => {
         <h2>Contenido adicional</h2>
         <p>Aquí el fondo ya no aparece, bro 😎</p>
       </section>
+      <Footer />
     </>
   );
 };
