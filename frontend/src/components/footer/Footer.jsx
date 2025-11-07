@@ -6,7 +6,7 @@ const Footer = () => {
       {/* Contenedor principal */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full max-w-7xl mb-10">
         {/* IZQUIERDA: Logo, texto y redes */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0 md:w-1/3">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0 md:w-2/3 ">
           {/* Logo */}
           <div className="transition-all duration-300 hover:scale-105 mb-4">
             <img
@@ -81,12 +81,12 @@ const Footer = () => {
                 Soporte
               </li>
               <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Términos y <br className="block md:hidden" />
+                Términos y <br className="block lg:hidden" />
                 <span className="hidden md:inline"> </span>
                 Condiciones
               </li>
               <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Política de <br className="block md:hidden" />
+                Política de <br className="block lg:hidden" />
                 <span className="hidden md:inline"> </span>
                 Privacidad
               </li>
