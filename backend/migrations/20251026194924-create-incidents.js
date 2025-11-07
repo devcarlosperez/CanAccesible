@@ -91,8 +91,12 @@ module.exports = {
         type: Sequelize.DECIMAL(11, 8),
         allowNull: false,
       },
-      dateIncident: {
+      dateIncidence: {
         type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      nameFile: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       isApproved: {

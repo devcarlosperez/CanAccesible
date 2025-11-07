@@ -3,42 +3,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('IncidentFollows', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      firstName: {
-        type: Sequelize.STRING,
+      userId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      lastName: {
-        type: Sequelize.STRING,
+      incidentId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Incidents',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      dateRegister: {
+      dateFollowed: {
         type: Sequelize.DATEONLY,
         allowNull: false,
         defaultValue: Sequelize.NOW,
-      },
-      rol: {
-        type: Sequelize.ENUM('usuario', 'admin', 'municipio'),
-        allowNull: false,
-        defaultValue: 'usuario',
-      },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      nameFile: {
-        type: Sequelize.STRING,
-        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -54,6 +48,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('IncidentFollows');
   }
 };

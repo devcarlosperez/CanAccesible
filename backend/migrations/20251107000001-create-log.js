@@ -3,21 +3,11 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Multimedias', {
+    await queryInterface.createTable('Logs', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-      },
-      incidenceId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Incidents',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -29,17 +19,32 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      type: {
+      action: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      url: {
-        type: Sequelize.STRING,
+      entity: {
+        type: Sequelize.ENUM(
+          'User',
+          'Incident',
+          'IncidentComment',
+          'IncidentLike',
+          'IncidentFollow',
+          'Blog',
+          'Notification',
+          'Conversation',
+          'ConversationMessage'
+        ),
         allowNull: false,
       },
-      altText: {
-        type: Sequelize.STRING,
+      entityId: {
+        type: Sequelize.INTEGER,
         allowNull: true,
+      },
+      dateLog: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -55,6 +60,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Multimedias');
+    await queryInterface.dropTable('Logs');
   }
 };
