@@ -21,8 +21,9 @@
   --color-neutral-1: #fffffa;
   --color-neutral-2: #333138;
   --color-neutral-3: #515052;
+}
 
-  /* Fonts */
-  --font-poppins: "Poppins, sans-serif";
-  --font-roboto: "Roboto, sans-serif";
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
 }
