@@ -85,6 +85,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },
+      nameFile: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       isApproved: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -119,9 +123,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "incidentId",
       as: "likes",
     });
-    Incident.hasMany(models.Multimedia, {
+    Incident.hasMany(models.IncidentFollow, {
       foreignKey: "incidentId",
-      as: "multimedias",
+      as: "followers",
     });
   };
 

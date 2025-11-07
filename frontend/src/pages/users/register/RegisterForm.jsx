@@ -122,8 +122,9 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
           required
         >
           <option value="">Selecciona un rol</option>
+          <option value="usuario">Usuario</option>
           <option value="admin">Administrador</option>
-          <option value="user">Usuario</option>
+          <option value="municipio">Municipio</option>
         </select>
       </div>
 

@@ -9,7 +9,9 @@ const incidentType = require('./incidentType.model')(sequelize, DataTypes);
 const incident = require('./incident.model')(sequelize, DataTypes);
 const incidentComment = require('./incidentComment.model')(sequelize, DataTypes);
 const incidentLike = require('./incidentLike.model')(sequelize, DataTypes);
-const multimedia = require('./multimedia.model')(sequelize, DataTypes);
+const incidentFollow = require('./incidentFollow.model')(sequelize, DataTypes);
+const blog = require('./blog.model')(sequelize, DataTypes);
+const log = require('./log.model')(sequelize, DataTypes);
 const notification = require('./notification.model')(sequelize, DataTypes);
 const conversation = require('./conversation.model')(sequelize, DataTypes);
 const conversationMessage = require('./conversationMessage.model')(sequelize, DataTypes);
@@ -31,7 +33,9 @@ module.exports = {
   incident,
   incidentComment,
   incidentLike,
-  multimedia,
+  incidentFollow,
+  blog,
+  log,
   notification,
   conversation,
   conversationMessage,
