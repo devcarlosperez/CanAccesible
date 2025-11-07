@@ -24,13 +24,17 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
     },
     rol: {
-      type: DataTypes.ENUM('user', 'admin'),
+      type: DataTypes.ENUM('usuario', 'admin', 'municipio'),
       allowNull: false,
-      defaultValue: 'user',
+      defaultValue: 'usuario',
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    nameFile: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   }, {
     tableName: 'Users',
@@ -41,10 +45,12 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Incident, { foreignKey: 'userId', as: 'incidents' });
     User.hasMany(models.IncidentComment, { foreignKey: 'userId', as: 'comments' });
     User.hasMany(models.IncidentLike, { foreignKey: 'userId', as: 'likes' });
-    User.hasMany(models.Multimedia, { foreignKey: 'userId', as: 'multimedias' });
+    User.hasMany(models.IncidentFollow, { foreignKey: 'userId', as: 'incidentFollows' });
+    User.hasMany(models.Blog, { foreignKey: 'userId', as: 'blogs' });
     User.hasMany(models.Notification, { foreignKey: 'userId', as: 'notifications' });
     User.hasMany(models.Conversation, { foreignKey: 'userId', as: 'conversations' });
     User.hasMany(models.ConversationMessage, { foreignKey: 'senderId', as: 'messages' });
+    User.hasMany(models.Log, { foreignKey: 'userId', as: 'logs' });
   };
 
   return User;
