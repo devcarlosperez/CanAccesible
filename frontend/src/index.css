@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   /* Primary colors */
   --color-primary-1: #ffde59;
   --color-primary-2: #004aad;
@@ -21,9 +21,8 @@
   --color-neutral-1: #fffffa;
   --color-neutral-2: #333138;
   --color-neutral-3: #515052;
-}
 
-@theme {
+  /* Fonts */
   --font-poppins: "Poppins", sans-serif;
   --font-roboto: "Roboto", sans-serif;
 }

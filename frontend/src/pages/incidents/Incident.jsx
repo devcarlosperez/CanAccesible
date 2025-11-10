@@ -8,7 +8,7 @@ import {
   deleteIncident,
 } from "../../services/incidentService";
 
-function Incident() {
+const Incident = () => {
   // State management for incidents and form
   const [incidents, setIncidents] = useState([]);
   const [editingIncident, setEditingIncident] = useState(null);
