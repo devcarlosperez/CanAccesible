@@ -1,6 +1,6 @@
 module.exports = {
   jwtConfig: {
-    secret: "Canaccesible_ultra_super_secret_key_2025",
-    expiresIn: 60 * 60 * 24,
+    secret: process.env.JWT_SECRET,
+    expiresIn: 60 * 60 * 24, // 1 day
   },
 };
