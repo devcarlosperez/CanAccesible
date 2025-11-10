@@ -24,112 +24,140 @@ exports.create = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
       roleId,
       nameFile: nameFile || null,
-    });
-
-    res.status(201).send(user);
+    })
+      .then((user) => {
+        res.status(201).send(user);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Error al crear el usuario",
+        });
+      });
   } catch (error) {
     console.error("Error creando usuario:", error);
     res.status(500).send({ message: "Error del servidor" });
   }
 };
 
-exports.findAll = async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "dateRegister",
-        "roleId",
-        "nameFile",
-      ],
+exports.findAll = (req, res) => {
+  User.findAll({
+    attributes: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "dateRegister",
+      "roleId",
+      "nameFile",
+    ],
+  })
+    .then((users) => {
+      res.send(users);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error al obtener usuarios",
+      });
     });
-    res.send(users);
-  } catch (error) {
-    console.error("Error obteniendo usuarios:", error);
-    res.status(500).send({ message: "Error del servidor" });
-  }
 };
 
 // Get a single user by ID
-exports.findOne = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByPk(id, {
-      attributes: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "dateRegister",
-        "roleId",
-        "nameFile",
-      ],
+exports.findOne = (req, res) => {
+  const { id } = req.params;
+
+  User.findByPk(id, {
+    attributes: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "dateRegister",
+      "roleId",
+      "nameFile",
+    ],
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "Usuario no encontrado" });
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error al obtener el usuario",
+      });
     });
-
-    if (!user) {
-      return res.status(404).send({ message: "Usuario no encontrado" });
-    }
-
-    res.send(user);
-  } catch (error) {
-    console.error("Error obteniendo usuario:", error);
-    res.status(500).send({ message: "Error del servidor" });
-  }
 };
 
 // Update an user
-exports.update = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
+exports.update = (req, res) => {
+  const { id } = req.params;
+  const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
-    const user = await User.findByPk(id);
-    if (!user)
-      return res.status(404).send({ message: "Usuario no encontrado" });
+  User.findByPk(id)
+    .then(async (user) => {
+      if (!user) {
+        return res.status(404).send({ message: "Usuario no encontrado" });
+      }
 
-    // If exist password, hash it
-    let hashedPassword = user.password;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
+      // If password is provided, hash it
+      let hashedPassword = user.password;
+      if (password) {
+        hashedPassword = await bcrypt.hash(password, 10);
+      }
 
-    await user.update({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      roleId,
-      nameFile,
+      User.update(
+        {
+          firstName,
+          lastName,
+          email,
+          password: hashedPassword,
+          roleId,
+          nameFile,
+        },
+        { where: { id } }
+      )
+        .then(() => {
+          return User.findByPk(id);
+        })
+        .then((updatedUser) => {
+          res.send(updatedUser);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: err.message || "Error al actualizar el usuario",
+          });
+        });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error al buscar el usuario",
+      });
     });
-    res.send(user);
-  } catch (error) {
-    console.error("Error actualizando usuario:", error);
-    res.status(500).send({ message: "Error del servidor" });
-  }
 };
 
 // Delete an user
-exports.delete = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user)
-      return res.status(404).send({ message: "Usuario no encontrado" });
+exports.delete = (req, res) => {
+  const { id } = req.params;
 
-    await user.destroy();
-    res.send({ message: "Usuario eliminado correctamente" });
-  } catch (error) {
-    console.error("Error eliminando usuario:", error);
-    res.status(500).send({ message: "Error del servidor" });
-  }
+  User.destroy({ where: { id } })
+    .then((deleted) => {
+      if (deleted) {
+        res.send({ message: "Usuario eliminado correctamente" });
+      } else {
+        res.status(404).send({ message: "Usuario no encontrado" });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error al eliminar el usuario",
+      });
+    });
 };
