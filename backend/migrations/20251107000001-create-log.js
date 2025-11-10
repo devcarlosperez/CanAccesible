@@ -39,7 +39,7 @@ module.exports = {
       },
       entityId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
       dateLog: {
         type: Sequelize.DATE,

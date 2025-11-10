@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     entityId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
     dateLog: {
       type: DataTypes.DATE,
