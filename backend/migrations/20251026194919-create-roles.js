@@ -3,28 +3,16 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Blogs', {
+    await queryInterface.createTable('Roles', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      title: {
-        type: Sequelize.STRING,
+      role: {
+        type: Sequelize.ENUM('usuario', 'admin', 'municipio'),
         allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      dateCreation: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
-      nameFile: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        unique: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -40,6 +28,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Blogs');
+    await queryInterface.dropTable('Roles');
   }
 };

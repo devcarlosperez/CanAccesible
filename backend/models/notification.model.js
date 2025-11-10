@@ -13,6 +13,23 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
+    entity: {
+      type: DataTypes.ENUM(
+        'User',
+        'Incident',
+        'IncidentComment',
+        'IncidentLike',
+        'IncidentFollow',
+        'Blog',
+        'Conversation',
+        'ConversationMessage'
+      ),
+      allowNull: false,
+    },
+    entityId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     message: {
       type: DataTypes.TEXT,
       allowNull: false,

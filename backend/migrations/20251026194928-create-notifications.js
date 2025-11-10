@@ -19,6 +19,23 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      entity: {
+        type: Sequelize.ENUM(
+          'User',
+          'Incident',
+          'IncidentComment',
+          'IncidentLike',
+          'IncidentFollow',
+          'Blog',
+          'Conversation',
+          'ConversationMessage'
+        ),
+        allowNull: false,
+      },
+      entityId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       message: {
         type: Sequelize.TEXT,
         allowNull: false,

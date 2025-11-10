@@ -97,7 +97,7 @@ module.exports = {
       },
       nameFile: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       isApproved: {
         type: Sequelize.BOOLEAN,

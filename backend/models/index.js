@@ -2,6 +2,7 @@ const sequelize = require('../db');
 const DataTypes = require('sequelize').DataTypes;
 
 // Import all models
+const role = require('./role.model')(sequelize, DataTypes);
 const user = require('./user.model')(sequelize, DataTypes);
 const incidentStatus = require('./incidentStatus.model')(sequelize, DataTypes);
 const incidentSeverity = require('./incidentSeverity.model')(sequelize, DataTypes);
@@ -26,6 +27,7 @@ Object.values(sequelize.models).forEach(model => {
 // Export all models
 module.exports = {
   sequelize,
+  role,
   user,
   incidentStatus,
   incidentSeverity,

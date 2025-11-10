@@ -27,10 +27,15 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      rol: {
-        type: Sequelize.ENUM('usuario', 'admin', 'municipio'),
+      roleId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 'usuario',
+        references: {
+          model: 'Roles',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
       },
       password: {
         type: Sequelize.STRING,
