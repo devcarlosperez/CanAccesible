@@ -30,6 +30,13 @@ async function reverseGeocode(latitude, longitude) {
 
 // Create a new incident report
 exports.create = async (req, res) => {
+  // Validate required fields
+  if (!req.body.nameFile) {
+    return res.status(400).send({
+      message: "El campo nameFile es obligatorio",
+    });
+  }
+
   // Get address from coordinates using reverse geocoding
   const locationData = await reverseGeocode(
     req.body.latitude,
@@ -60,13 +67,14 @@ exports.create = async (req, res) => {
     latitude: req.body.latitude,
     longitude: req.body.longitude,
     dateIncident: req.body.dateIncident,
+    nameFile: req.body.nameFile,
     isApproved: isApprovedDefault,
   };
 
   incidentObject
     .create(incidentToCreate)
     .then((data) => {
-      res.send(data);
+      res.status(201).send(data);
     })
     .catch((err) => {
       res.status(500).send({
@@ -151,6 +159,9 @@ exports.update = async (req, res) => {
   }
   if (req.body.dateIncident !== undefined) {
     incidentToUpdate.dateIncident = req.body.dateIncident;
+  }
+  if (req.body.nameFile !== undefined) {
+    incidentToUpdate.nameFile = req.body.nameFile;
   }
 
   // Handle severity assignment - only for incidentTypeId = 2

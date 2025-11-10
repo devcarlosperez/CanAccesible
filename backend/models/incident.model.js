@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nameFile: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       isApproved: {
         type: DataTypes.BOOLEAN,

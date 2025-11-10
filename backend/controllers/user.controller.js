@@ -4,22 +4,22 @@ const bcrypt = require("bcrypt");
 
 exports.create = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, rol } = req.body;
+    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({ message: "Faltan datos obligatorios" });
+    if (!firstName || !lastName || !email || !password || !roleId) {
+      return res.status(400).send({ message: "Faltan datos obligatorios" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ message: "El email tiene un formato inválido" });
+        .send({ message: "El email tiene un formato inválido" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "El email ya está registrado" });
+      return res.status(400).send({ message: "El email ya está registrado" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,13 +29,14 @@ exports.create = async (req, res) => {
       lastName,
       email,
       password: hashedPassword,
-      rol: rol || "usuario",
+      roleId,
+      nameFile: nameFile || null,
     });
 
-    res.status(201).json(user);
+    res.status(201).send(user);
   } catch (error) {
     console.error("Error creando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -48,13 +49,14 @@ exports.findAll = async (req, res) => {
         "lastName",
         "email",
         "dateRegister",
-        "rol",
+        "roleId",
+        "nameFile",
       ],
     });
-    res.json(users);
+    res.send(users);
   } catch (error) {
     console.error("Error obteniendo usuarios:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -69,18 +71,19 @@ exports.findOne = async (req, res) => {
         "lastName",
         "email",
         "dateRegister",
-        "rol",
+        "roleId",
+        "nameFile",
       ],
     });
 
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
     }
 
-    res.json(user);
+    res.send(user);
   } catch (error) {
     console.error("Error obteniendo usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -88,28 +91,30 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, password, rol } = req.body;
+    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
     const user = await User.findByPk(id);
     if (!user)
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
 
     // If exist password, hash it
+    let hashedPassword = user.password;
     if (password) {
-      req.body.password = await bcrypt.hash(password, 10);
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
     await user.update({
       firstName,
       lastName,
       email,
-      password: req.body.password,
-      rol,
+      password: hashedPassword,
+      roleId,
+      nameFile,
     });
-    res.json(user);
+    res.send(user);
   } catch (error) {
     console.error("Error actualizando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -119,12 +124,12 @@ exports.delete = async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);
     if (!user)
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
 
     await user.destroy();
-    res.json({ message: "Usuario eliminado correctamente" });
+    res.send({ message: "Usuario eliminado correctamente" });
   } catch (error) {
     console.error("Error eliminando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };

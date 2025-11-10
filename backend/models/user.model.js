@@ -23,10 +23,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    rol: {
-      type: DataTypes.ENUM('usuario', 'admin', 'municipio'),
+    roleId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 'usuario',
+      references: {
+        model: 'Roles',
+        key: 'id',
+      },
     },
     password: {
       type: DataTypes.STRING,
@@ -42,11 +45,11 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = (models) => {
+    User.belongsTo(models.Role, { foreignKey: 'roleId', as: 'role' });
     User.hasMany(models.Incident, { foreignKey: 'userId', as: 'incidents' });
     User.hasMany(models.IncidentComment, { foreignKey: 'userId', as: 'comments' });
     User.hasMany(models.IncidentLike, { foreignKey: 'userId', as: 'likes' });
     User.hasMany(models.IncidentFollow, { foreignKey: 'userId', as: 'incidentFollows' });
-    User.hasMany(models.Blog, { foreignKey: 'userId', as: 'blogs' });
     User.hasMany(models.Notification, { foreignKey: 'userId', as: 'notifications' });
     User.hasMany(models.Conversation, { foreignKey: 'userId', as: 'conversations' });
     User.hasMany(models.ConversationMessage, { foreignKey: 'senderId', as: 'messages' });
