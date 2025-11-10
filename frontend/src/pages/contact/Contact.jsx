@@ -1,7 +1,11 @@
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 const Contact = () => {
+
+  const positionIesElRincon = [28.127549871601353, -15.446679030776401]
 
   const contactLiveChats = [
     {
@@ -35,7 +39,7 @@ const Contact = () => {
       <Header transparent={false} />
 
       {/* Main Content */}
-      <main className="min-h-screen py-12 mt-15 md:mt-20 lg:mt-25 px-6" style={{ backgroundColor: "var(--color-accent-1)" }}>
+      <main className="min-h-screen py-12 mt-15 md:mt-20 lg:mt-25 px-6 bg-gray-200">
         <div className="max-w-4xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-12">
@@ -109,7 +113,7 @@ const Contact = () => {
                     Número de teléfono
                   </p>
                   <p className="font-roboto text-base border-b-2" style={{ color: "var(--color-neutral-3)", borderColor: "var(--color-primary-1)" }}>
-                    928 61 67 89
+                    928 30 43 67
                   </p>
                 </div>
 
@@ -119,7 +123,7 @@ const Contact = () => {
                     Localización
                   </p>
                   <p className="font-roboto text-base border-b-2 mb-4" style={{ color: "var(--color-neutral-3)", borderColor: "var(--color-primary-1)" }}>
-                    3501l, Las Palmas GC, IES EL RINCÓN
+                    35011, Las Palmas GC, IES EL RINCÓN
                   </p>
                 </div>
 
@@ -129,19 +133,28 @@ const Contact = () => {
                     Soporte de accesibilidad
                   </p>
                   <p className="font-roboto text-base" style={{ color: "var(--color-neutral-3)" }}>
-                    ¿Necesito ayuda? Estamos comprometidos con la inclusión.
+                    ¿Necesita ayuda? Estamos comprometidos con la inclusión.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Map Image for Desktop/Tablet */}
-            <div className="hidden md:block rounded-xl overflow-hidden shadow-lg md:h-56 lg:h-full">
-              <img
-                src="https://maps.googleapis.com/maps/api/staticmap?center=3501l,+Las+Palmas+GC&zoom=15&size=600x400&key=YOUR_API_KEY"
-                alt="Mapa de ubicación"
-                className="w-full h-full object-cover"
-              />
+            {/* Map Image for Desktop/Tablet */} 
+            <div className="hidden md:block w-full rounded-xl overflow-hidden shadow-lg md:h-96 lg:h-96 z-0">
+              <MapContainer center={positionIesElRincon} zoom={18} style={{ width: "100%", height: "100%" }}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <Marker position={positionIesElRincon}>
+                  <Popup>
+                    <div className="text-sm font-poppins">
+                      <p className="font-semibold">IES EL RINCÓN</p>
+                      <p>35011, Las Palmas GC</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              </MapContainer>
             </div>
           </div>
 
