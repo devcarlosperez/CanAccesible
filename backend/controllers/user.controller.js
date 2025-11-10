@@ -4,9 +4,9 @@ const bcrypt = require("bcrypt");
 
 exports.create = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, rol } = req.body;
+    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password || !roleId) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
@@ -29,7 +29,8 @@ exports.create = async (req, res) => {
       lastName,
       email,
       password: hashedPassword,
-      rol: rol || "usuario",
+      roleId,
+      nameFile: nameFile || null,
     });
 
     res.status(201).json(user);
@@ -48,7 +49,8 @@ exports.findAll = async (req, res) => {
         "lastName",
         "email",
         "dateRegister",
-        "rol",
+        "roleId",
+        "nameFile",
       ],
     });
     res.json(users);
@@ -69,7 +71,8 @@ exports.findOne = async (req, res) => {
         "lastName",
         "email",
         "dateRegister",
-        "rol",
+        "roleId",
+        "nameFile",
       ],
     });
 
@@ -88,23 +91,25 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, password, rol } = req.body;
+    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
     const user = await User.findByPk(id);
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
     // If exist password, hash it
+    let hashedPassword = user.password;
     if (password) {
-      req.body.password = await bcrypt.hash(password, 10);
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
     await user.update({
       firstName,
       lastName,
       email,
-      password: req.body.password,
-      rol,
+      password: hashedPassword,
+      roleId,
+      nameFile,
     });
     res.json(user);
   } catch (error) {

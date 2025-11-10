@@ -4,9 +4,26 @@ const Notification = db.notification;
 // Create a notification
 exports.create = async (req, res) => {
   try {
-    const { userId, message, dateNotification } = req.body;
+    const { userId, entity, entityId, message, dateNotification } = req.body;
+
+    // Validate required fields
+    if (!userId) {
+      return res.status(400).json({ message: "userId es obligatorio" });
+    }
+    if (!entity) {
+      return res.status(400).json({ message: "entity es obligatorio" });
+    }
+    if (entityId === undefined || entityId === null) {
+      return res.status(400).json({ message: "entityId es obligatorio" });
+    }
+    if (!message) {
+      return res.status(400).json({ message: "message es obligatorio" });
+    }
+
     const notification = await Notification.create({
       userId,
+      entity,
+      entityId,
       message,
       dateNotification,
     });
