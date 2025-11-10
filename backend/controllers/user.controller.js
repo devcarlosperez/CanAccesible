@@ -7,19 +7,19 @@ exports.create = async (req, res) => {
     const { firstName, lastName, email, password, roleId, nameFile } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).json({ message: "Faltan datos obligatorios" });
+      return res.status(400).send({ message: "Faltan datos obligatorios" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ message: "El email tiene un formato inválido" });
+        .send({ message: "El email tiene un formato inválido" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "El email ya está registrado" });
+      return res.status(400).send({ message: "El email ya está registrado" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,10 +33,10 @@ exports.create = async (req, res) => {
       nameFile: nameFile || null,
     });
 
-    res.status(201).json(user);
+    res.status(201).send(user);
   } catch (error) {
     console.error("Error creando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -53,10 +53,10 @@ exports.findAll = async (req, res) => {
         "nameFile",
       ],
     });
-    res.json(users);
+    res.send(users);
   } catch (error) {
     console.error("Error obteniendo usuarios:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -77,13 +77,13 @@ exports.findOne = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
     }
 
-    res.json(user);
+    res.send(user);
   } catch (error) {
     console.error("Error obteniendo usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -95,7 +95,7 @@ exports.update = async (req, res) => {
 
     const user = await User.findByPk(id);
     if (!user)
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
 
     // If exist password, hash it
     let hashedPassword = user.password;
@@ -111,10 +111,10 @@ exports.update = async (req, res) => {
       roleId,
       nameFile,
     });
-    res.json(user);
+    res.send(user);
   } catch (error) {
     console.error("Error actualizando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
 
@@ -124,12 +124,12 @@ exports.delete = async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);
     if (!user)
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).send({ message: "Usuario no encontrado" });
 
     await user.destroy();
-    res.json({ message: "Usuario eliminado correctamente" });
+    res.send({ message: "Usuario eliminado correctamente" });
   } catch (error) {
     console.error("Error eliminando usuario:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).send({ message: "Error del servidor" });
   }
 };
