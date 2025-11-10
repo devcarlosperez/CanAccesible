@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../../assets/canaccesible-logo.png";
 
 const Footer = () => {
@@ -8,13 +9,15 @@ const Footer = () => {
         {/* IZQUIERDA: Logo, texto y redes */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0 md:w-2/3 ">
           {/* Logo */}
-          <div className="transition-all duration-300 hover:scale-105 mb-4">
-            <img
-              src={logo}
-              alt="canaccesible-logo"
-              className="h-16 lg:h-18 w-auto"
-            />
-          </div>
+          <Link to="/">
+            <div className="transition-all duration-300 hover:scale-105 mb-4">
+              <img
+                src={logo}
+                alt="canaccesible-logo"
+                className="h-16 lg:h-18 w-auto"
+              />
+            </div>
+          </Link>
 
           {/* Texto visible solo en tablet y desktop */}
           <p className="hidden md:block text-sm text-neutral-600 font-roboto leading-relaxed max-w-sm mb-4">

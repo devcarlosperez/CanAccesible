@@ -135,22 +135,23 @@ const Header = ({ transparent = true }) => {
               ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
               : "bg-transparent p-4 md:p-8 lg:p-10"
             : // Si NO es transparente, siempre color fijo (sin scroll effect)
-              "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
-        }`}
+            "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
+          }`}
       >
         {/* Logo */}
-        <div className="transition-all duration-300">
-          <img
-            src={logo}
-            alt="Canarias Accesible"
-            className={`w-auto transition-all duration-300 
-              ${
-                transparent && !scrolled
+        <Link to="/">
+          <div className="transition-all duration-300">
+            <img
+              src={logo}
+              alt="Canarias Accesible"
+              className={`w-auto transition-all duration-300 
+                ${transparent && !scrolled
                   ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
                   : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-18"
-              }`}
-          />
-        </div>
+                }`}
+            />
+          </div>
+        </Link>
 
         {/* DESKTOP NAVIGATION */}
         {!isMobile && (
@@ -211,9 +212,8 @@ const Header = ({ transparent = true }) => {
             />
 
             <span
-              className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${
-                scrolled ? "text-amber-50" : "text-neutral-2"
-              }`}
+              className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${scrolled ? "text-amber-50" : "text-neutral-2"
+                }`}
               onClick={() => setOpen(true)}
             >
               menu
@@ -225,9 +225,8 @@ const Header = ({ transparent = true }) => {
       {/* MOBILE OVERLAY */}
       {isMobile && (
         <div
-          className={`fixed inset-0 bg-black/50 z-110 transition-opacity duration-300 ${
-            open ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
+          className={`fixed inset-0 bg-black/50 z-110 transition-opacity duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
           onClick={() => setOpen(false)}
         ></div>
       )}
@@ -235,9 +234,8 @@ const Header = ({ transparent = true }) => {
       {/* MOBILE SIDE MENU */}
       {isMobile && (
         <div
-          className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${
-            open ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${open ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <div className="flex justify-end p-6">
             <span
@@ -254,11 +252,10 @@ const Header = ({ transparent = true }) => {
                 <Link
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${
-                    item.login
+                  className={`flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${item.login
                       ? "bg-white text-[#1b226b] hover:bg-gray-200"
                       : "text-white hover:text-[#92B2EA]"
-                  }`}
+                    }`}
                 >
                   <span className="material-symbols-outlined mr-3">
                     {item.icon}
