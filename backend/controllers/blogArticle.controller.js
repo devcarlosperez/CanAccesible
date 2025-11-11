@@ -1,5 +1,5 @@
-const db = require("../models")
-const BlogArticle = db.blogArticle
+const db = require("../models");
+const BlogArticle = db.blogArticle;
 
 // Create a blog article
 exports.create = async (req, res) => {
@@ -7,10 +7,14 @@ exports.create = async (req, res) => {
     const { title, description, dateCreation } = req.body;
 
     // Validate required fields
-    if (!title) return res.status(400).json({ message: "title es obligatorio" });
-    if (!description) return res.status(400).json({ message: "description es obligatorio" });
-    if (!dateCreation) return res.status(400).json({ message: "dateCreation es obligatorio" });
-    if (!req.file) return res.status(400).json({ message: "Image es obligatorio" });
+    if (!title)
+      return res.status(400).json({ message: "title es obligatorio" });
+    if (!description)
+      return res.status(400).json({ message: "description es obligatorio" });
+    if (!dateCreation)
+      return res.status(400).json({ message: "dateCreation es obligatorio" });
+    if (!req.file)
+      return res.status(400).json({ message: "Image es obligatorio" });
 
     const nameFile = req.file.location;
 
@@ -18,12 +22,14 @@ exports.create = async (req, res) => {
       title,
       description,
       dateCreation,
-      nameFile
+      nameFile,
     });
 
     res.status(201).json(newArticle);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error creando el artículo del blog" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error creando el artículo del blog" });
   }
 };
 
@@ -33,7 +39,11 @@ exports.findAll = async (req, res) => {
     const articles = await BlogArticle.findAll();
     res.status(200).json(articles);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error leyendo los artículos del blog." });
+    res
+      .status(500)
+      .json({
+        message: err.message || "Error leyendo los artículos del blog.",
+      });
   }
 };
 
@@ -41,10 +51,17 @@ exports.findAll = async (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const article = await BlogArticle.findOne({ where: { id: req.params.id } });
-    if (!article) return res.status(404).json({ message: "Artículo de blog no encontrado." });
+    if (!article)
+      return res
+        .status(404)
+        .json({ message: "Artículo de blog no encontrado." });
     res.status(200).json(article);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error encontrando el artículo del blog." });
+    res
+      .status(500)
+      .json({
+        message: err.message || "Error encontrando el artículo del blog.",
+      });
   }
 };
 
@@ -71,34 +88,43 @@ exports.update = async (req, res) => {
 
   try {
     const [updated] = await BlogArticle.update(articleToUpdate, {
-      where: { id: articleId }
+      where: { id: articleId },
     });
 
     if (updated) {
-      const updatedArticle = await BlogArticle.findOne({ where: { id: articleId } });
+      const updatedArticle = await BlogArticle.findOne({
+        where: { id: articleId },
+      });
       return res.status(200).json(updatedArticle);
     }
 
     res.status(404).json({ message: "Artículo del blog no encontrado." });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se actualizaba el artículo."
+      message:
+        err.message ||
+        "Algún error ocurrió mientras se actualizaba el artículo.",
     });
   }
 };
 
-// Delete a blog article 
+// Delete a blog article
 exports.delete = async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
 
-  BlogArticle.destroy({ where: { id }}).then((deleted) => {
-    if (deleted) {
-      res.send({ message: "El artículo del blog ha sido eliminado." })
-    } else {
-      res.status(404).send({ message: "Artículo del blog no encontrado." });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({ message: err.message || "Error borrando el artículo del blog." });
-  })
-}
+  BlogArticle.destroy({ where: { id } })
+    .then((deleted) => {
+      if (deleted) {
+        res.send({ message: "El artículo del blog ha sido eliminado." });
+      } else {
+        res.status(404).send({ message: "Artículo del blog no encontrado." });
+      }
+    })
+    .catch((err) => {
+      res
+        .status(500)
+        .send({
+          message: err.message || "Error borrando el artículo del blog.",
+        });
+    });
+};
