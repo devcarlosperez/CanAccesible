@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
 
     res.status(201).json(newArticle);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error creating blog article" });
+    res.status(500).json({ message: err.message || "Error creando el artículo del blog" });
   }
 };
 
@@ -33,7 +33,7 @@ exports.findAll = async (req, res) => {
     const articles = await BlogArticle.findAll();
     res.status(200).json(articles);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving articles" });
+    res.status(500).json({ message: err.message || "Error leyendo los artículos del blog." });
   }
 };
 
@@ -41,10 +41,10 @@ exports.findAll = async (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const article = await BlogArticle.findOne({ where: { id: req.params.id } });
-    if (!article) return res.status(404).json({ message: "Article not found" });
+    if (!article) return res.status(404).json({ message: "Artículo de blog no encontrado." });
     res.status(200).json(article);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving article" });
+    res.status(500).json({ message: err.message || "Error encontrando el artículo del blog." });
   }
 };
 
@@ -82,7 +82,7 @@ exports.update = async (req, res) => {
     res.status(404).json({ message: "Artículo del blog no encontrado." });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se eliminaba el artículo."
+      message: err.message || "Algún error ocurrió mientras se actualizaba el artículo."
     });
   }
 };
