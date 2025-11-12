@@ -4,13 +4,15 @@ const BlogArticle = db.blogArticle;
 // Create a blog article
 exports.create = async (req, res) => {
   try {
-    const { title, description, dateCreation } = req.body;
+    const { title, description, content, dateCreation } = req.body;
 
     // Validate required fields
     if (!title)
       return res.status(400).json({ message: "title es obligatorio" });
     if (!description)
       return res.status(400).json({ message: "description es obligatorio" });
+    if (!content)
+      return res.status(400).json({ message: "content es obligatorio" });
     if (!dateCreation)
       return res.status(400).json({ message: "dateCreation es obligatorio" });
     if (!req.file)
@@ -21,6 +23,7 @@ exports.create = async (req, res) => {
     const newArticle = await BlogArticle.create({
       title,
       description,
+      content,
       dateCreation,
       nameFile,
     });
@@ -76,6 +79,9 @@ exports.update = async (req, res) => {
   }
   if (req.body.description !== undefined) {
     articleToUpdate.description = req.body.description;
+  }
+  if (req.body.content !== undefined) {
+    articleToUpdate.content = req.body.content;
   }
   if (req.body.dateCreation !== undefined) {
     articleToUpdate.dateCreation = req.body.dateCreation;
