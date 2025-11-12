@@ -566,4 +566,5 @@ export default function CircularGallery({
       ref={containerRef}
     />
   );
+  a;
 }

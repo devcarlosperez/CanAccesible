@@ -1,21 +1,27 @@
 import logo from "../../../assets/canaccesible-logo-2.png";
 
-const LeftSide = () => {
+const LoginForm = () => {
   return (
-    <div className="bg-white w-1/2 flex flex-col items-center justify-center p-10">
-      {/* Logo */}
-      <img src={logo} alt="canaccesible-logo" className="h-26 w-auto mb-4" />
-
-      {/* Descripción */}
-      <p className="text-gray-500 text-center max-w-md mb-10">
+    <div
+      className="
+      bg-white 
+      w-full lg:w-1/2 
+      flex flex-col items-center justify-center 
+      p-6 sm:p-8 lg:p-10
+      h-screen lg:h-auto
+    "
+    >
+      <img
+        src={logo}
+        alt="canaccesible-logo"
+        className="h-20 sm:h-24 w-auto mb-4"
+      />
+      <p className="text-gray-500 text-center max-w-md mb-10 text-sm sm:text-base px-4">
         CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología y la
         accesibilidad digital.
       </p>
-
-      {/* Formulario */}
       <form className="w-full max-w-md font-roboto">
-        {/* Correo */}
-        <label className="block mb-2 font-medium text-gray-700">
+        <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
           Correo electrónico
         </label>
         <input
@@ -23,9 +29,7 @@ const LeftSide = () => {
           placeholder="Email"
           className="w-full mb-4 p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
         />
-
-        {/* Contraseña */}
-        <label className="block mb-2 font-medium text-gray-700">
+        <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
           Contraseña
         </label>
         <input
@@ -33,9 +37,7 @@ const LeftSide = () => {
           placeholder="Contraseña"
           className="w-full mb-4 p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
         />
-
-        {/* Opciones */}
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-6 gap-2">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="accent-primary-2" />
             Recuérdame
@@ -44,13 +46,9 @@ const LeftSide = () => {
             Olvidé mi contraseña
           </a>
         </div>
-
-        {/* Botón */}
         <button className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer">
           Iniciar Sesión
         </button>
-
-        {/* Enlace inferior */}
         <p className="text-center text-sm text-gray-600 mt-6">
           ¿No tienes una cuenta?{" "}
           <a
@@ -65,4 +63,4 @@ const LeftSide = () => {
   );
 };
 
-export default LeftSide;
+export default LoginForm;

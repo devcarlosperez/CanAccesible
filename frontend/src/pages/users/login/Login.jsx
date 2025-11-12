@@ -1,49 +1,50 @@
 import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import LoginForm from "./LoginForm";
+import bgHero from "../../../assets/background-hero.jpg";
 
 const imagenes = [
   {
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+    image: new URL(bgHero, import.meta.url).href,
     text: "Montaña nevada",
   },
   {
-    image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
-    text: "Bosque al amanecer",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
-    text: "Ciudad moderna",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://images.unsplash.com/photo-1481277542470-605612bd2d61",
-    text: "Café con arte",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://picsum.photos/800/600?random=1",
-    text: "Foto aleatoria 1",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://picsum.photos/800/600?random=2",
-    text: "Foto aleatoria 2",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://picsum.photos/800/600?random=3",
-    text: "Foto aleatoria 3",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://images.unsplash.com/photo-1519608487953-e999c86e7455",
-    text: "Desierto al atardecer",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
   {
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-    text: "Perro feliz",
+    image: new URL(bgHero, import.meta.url).href,
+    text: "Montaña nevada",
   },
 ];
 
 const Login = () => {
   return (
     <section className="flex h-screen">
-      <div className="bg-primary-2 w-2/3 flex flex-col items-start justify-start">
+      <div className="hidden lg:flex bg-primary-2 w-2/3 flex-col items-start justify-start">
         <h1 className="text-white text-5xl font-poppins font-semibold text-center mt-32">
           ¡Bienvenido/a de vuelta a nuestra comunidad!
         </h1>
