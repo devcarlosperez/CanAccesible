@@ -20,7 +20,7 @@ const Blog = () => {
             className="text-base font-roboto"
             style={{ color: "var(--color-neutral-3)" }}
           >
-            Consulta nuestras noticias más relevantes
+            Descubre los artículos más relevantes
           </p>
         </div>
       </main>
