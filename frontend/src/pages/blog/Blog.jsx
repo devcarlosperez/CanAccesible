@@ -33,7 +33,7 @@ const Blog = () => {
       id: 5,
       title: 'Responsivo y Multiplataforma: Canarias Accesible en tu Dispositivo',
       description: 'Descubre cómo Canarias Accesible es accesible desde cualquier dispositivo: móvil, tablet o computadora.',
-      nameFile: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
+      nameFile: 'https://images-cruds.fra1.digitaloceanspaces.com/blog-image/walls-io-VkhP-zriXZQ-unsplash.jpg',
     },
   ]
 

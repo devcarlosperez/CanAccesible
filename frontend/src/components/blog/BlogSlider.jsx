@@ -32,11 +32,11 @@ const BlogSlider = ({ blogArticles }) => {
   }, [emblaApi]);
 
   return (
-    <div className="w-full max-w-6xl">
+    <div className="w-full max-w-6xl relative">
       <div className="overflow-hidden rounded-lg" ref={emblaRef}>
         <div className="flex gap-4">
           {blogArticles && blogArticles.map((article) => (
-            <div key={article.id} className="flex-[0_0_100%] md:flex-[0_0_33.333%] min-w-0 p-2">
+            <div key={article.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 p-1 md:p-2">
               <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
                 <div className="aspect-square bg-gray-200 flex items-center justify-center overflow-hidden">
                   <img
@@ -45,11 +45,11 @@ const BlogSlider = ({ blogArticles }) => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg line-clamp-2 text-gray-800">
+                <div className="p-2 md:p-4">
+                  <h3 className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mt-2">
+                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2">
                     {article.description}
                   </p>
                 </div>
@@ -59,22 +59,18 @@ const BlogSlider = ({ blogArticles }) => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-4 mt-6">
-        <button
-          onClick={scrollPrev}
-          disabled={prevBtnDisabled}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          ← Anterior
-        </button>
-        <button
-          onClick={scrollNext}
-          disabled={nextBtnDisabled}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          Siguiente →
-        </button>
-      </div>
+      <button
+        onClick={scrollPrev}
+        className="absolute left-1 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-4 z-10 bg-white rounded-full p-1.5 md:p-3 shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+      >
+        <i className="fa-solid fa-arrow-left text-sm md:text-base"></i>
+      </button>
+      <button
+        onClick={scrollNext}
+        className="absolute right-1 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-4 z-10 bg-white rounded-full p-1.5 md:p-3 shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+      >
+        <i className="fa-solid fa-arrow-right text-sm md:text-base"></i>
+      </button>
     </div>
   );
 };
