@@ -11,7 +11,7 @@ const incident = require('./incident.model')(sequelize, DataTypes);
 const incidentComment = require('./incidentComment.model')(sequelize, DataTypes);
 const incidentLike = require('./incidentLike.model')(sequelize, DataTypes);
 const incidentFollow = require('./incidentFollow.model')(sequelize, DataTypes);
-const blog = require('./blog.model')(sequelize, DataTypes);
+const blogArticle = require('./blogArticle.model')(sequelize, DataTypes);
 const log = require('./log.model')(sequelize, DataTypes);
 const notification = require('./notification.model')(sequelize, DataTypes);
 const conversation = require('./conversation.model')(sequelize, DataTypes);
@@ -36,7 +36,7 @@ module.exports = {
   incidentComment,
   incidentLike,
   incidentFollow,
-  blog,
+  blogArticle,
   log,
   notification,
   conversation,
