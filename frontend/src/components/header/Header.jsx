@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../assets/canaccesible-logo.png";
+import logo from "../../assets/canaccesible-logo-2.png";
 import "./Header.css";
 import {
   getAllNotifications,
@@ -61,7 +61,7 @@ const Header = ({ transparent = true }) => {
     { text: "Islas", to: "/islands", icon: "public" },
     { text: "Blog", to: "/blog", icon: "article" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
-    { text: "Iniciar Sesión", to: "/register", icon: "login", login: true },
+    { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
   ];
 
   const NotificationDropdown = ({
@@ -136,8 +136,8 @@ const Header = ({ transparent = true }) => {
               ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
               : "bg-transparent p-4 md:p-8 lg:p-10"
             : // Si NO es transparente, siempre color fijo (sin scroll effect)
-            "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
-          }`}
+              "bg-accent-4 shadow-lg p-4 md:p-5 backdrop-blur-md"
+        }`}
       >
         {/* Logo */}
         <Link to="/">
@@ -146,9 +146,10 @@ const Header = ({ transparent = true }) => {
               src={logo}
               alt="Canarias Accesible"
               className={`w-auto transition-all duration-300 
-                ${transparent && !scrolled
-                  ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
-                  : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-18"
+                ${
+                  transparent && !scrolled
+                    ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+                    : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-15"
                 }`}
             />
           </div>
@@ -189,9 +190,9 @@ const Header = ({ transparent = true }) => {
                 dropdownWidth="w-80"
               />
               <Link
-                to="/register"
-                className="bg-[#1b226b] text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5
-                lg:text-md xl:text-base rounded-xl font-semibold hover:bg-[#162053] hover:scale-105 transition-all duration-200"
+                to="/login"
+                className="bg-blue-600 text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5
+                lg:text-md xl:text-base rounded-xl font-semibold hover:bg-blue-700 hover:scale-105 transition-all duration-200"
               >
                 Iniciar Sesión
               </Link>
@@ -213,8 +214,9 @@ const Header = ({ transparent = true }) => {
             />
 
             <span
-              className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${scrolled ? "text-amber-50" : "text-neutral-2"
-                }`}
+              className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${
+                scrolled ? "text-amber-50" : "text-neutral-2"
+              }`}
               onClick={() => setOpen(true)}
             >
               menu
@@ -226,8 +228,9 @@ const Header = ({ transparent = true }) => {
       {/* MOBILE OVERLAY */}
       {isMobile && (
         <div
-          className={`fixed inset-0 bg-black/50 z-110 transition-opacity duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"
-            }`}
+          className={`fixed inset-0 bg-black/50 z-110 transition-opacity duration-300 ${
+            open ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
           onClick={() => setOpen(false)}
         ></div>
       )}
@@ -235,8 +238,9 @@ const Header = ({ transparent = true }) => {
       {/* MOBILE SIDE MENU */}
       {isMobile && (
         <div
-          className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${open ? "translate-x-0" : "translate-x-full"
-            }`}
+          className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${
+            open ? "translate-x-0" : "translate-x-full"
+          }`}
         >
           <div className="flex justify-end p-6">
             <span
@@ -253,10 +257,11 @@ const Header = ({ transparent = true }) => {
                 <Link
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${item.login
+                  className={`flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${
+                    item.login
                       ? "bg-white text-[#1b226b] hover:bg-gray-200"
                       : "text-white hover:text-[#92B2EA]"
-                    }`}
+                  }`}
                 >
                   <span className="material-symbols-outlined mr-3">
                     {item.icon}
