@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Blogs', [
+    await queryInterface.bulkInsert('BlogArticles', [
       {
         title: 'Mejoras en accesibilidad en Tenerife',
         description: 'Este blog comparte las últimas mejoras implementadas en infraestructuras accesibles en la isla de Tenerife durante el último trimestre.',
@@ -32,6 +32,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Blogs', null, {});
+    await queryInterface.bulkDelete('BlogArticles', null, {});
   }
 };
