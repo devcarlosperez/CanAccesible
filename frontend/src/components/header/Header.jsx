@@ -59,6 +59,7 @@ const Header = ({ transparent = true }) => {
     { text: "Inicio", to: "/home", icon: "home" },
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
     { text: "Islas", to: "/islands", icon: "public" },
+    { text: "Blog", to: "/blog", icon: "article" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
     { text: "Iniciar Sesión", to: "/register", icon: "login", login: true },
   ];
@@ -163,7 +164,7 @@ const Header = ({ transparent = true }) => {
                   lg:text-lg xl:text-xl
                   font-semibold transition-all duration-300"
               >
-                {menuItems.slice(0, 4).map((item) => (
+                {menuItems.slice(0, 5).map((item) => (
                   <li key={item.text}>
                     <Link
                       to={item.to}
