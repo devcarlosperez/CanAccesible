@@ -3,27 +3,19 @@ import { getAllBlogArticles } from '../../services/blogArticleService';
 
 const BlogArticlesList = () => {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        setLoading(true);
         const data = await getAllBlogArticles();
         setArticles(data);
       } catch (err) {
         console.error('Error al cargar artículos:', err);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchArticles();
   }, []);
-
-  if (loading) {
-    return null;
-  }
 
   if (!articles || articles.length === 0) {
     return (
@@ -61,7 +53,7 @@ const BlogArticlesList = () => {
                 </div>
 
                 {/* Content Container */}
-                <div className="p-2 md:p-4 flex flex-col flex-grow">
+                <div className="p-2 md:p-4 flex flex-col grow">
                   <a 
                     href={`/blog/${article.id}`} 
                     className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block"
@@ -69,7 +61,7 @@ const BlogArticlesList = () => {
                     {article.title}
                   </a>
                   
-                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 flex-grow">
+                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
                     {article.description}
                   </p>
 
