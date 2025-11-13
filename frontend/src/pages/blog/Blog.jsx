@@ -1,6 +1,7 @@
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import BlogSlider from "../../components/blog/BlogSlider";
+import BlogArticlesList from "../../components/blog/BlogArticlesList";
 
 const Blog = () => {
 
@@ -60,8 +61,23 @@ const Blog = () => {
         </div>
 
         {/* Blog Slider */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-16">
           <BlogSlider blogArticles={blogArticles} />
+        </div>
+
+        {/* Blog Articles List */}
+        <div className="mb-12">
+          <h2
+            className="text-2xl md:text-3xl font-poppins font-bold mb-8 text-center"
+            style={{ color: "var(--color-neutral-2)" }}
+          >
+            Todos los Artículos
+          </h2>
+          <div className="px-4 md:px-6 lg:px-0 flex justify-center">
+            <div className="w-full max-w-sm md:max-w-4xl lg:max-w-6xl">
+              <BlogArticlesList />
+            </div>
+          </div>
         </div>
       </main>
       <Footer />

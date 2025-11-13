@@ -1,10 +1,10 @@
 import api from "./api";
 
 export const getAllBlogArticles = () =>
-  api.get("/blog-articles").then((res) => res.data);
+  api.get("/blogArticles").then((res) => res.data);
 
 export const getBlogArticleById = (id) =>
-  api.get(`/blog-articles/${id}`).then((res) => res.data);
+  api.get(`/blogArticles/${id}`).then((res) => res.data);
 
 export const createBlogArticle = (articleData, imageFile) => {
   const formData = new FormData();
@@ -14,7 +14,7 @@ export const createBlogArticle = (articleData, imageFile) => {
   if (imageFile) formData.append("image", imageFile);
 
   return api
-    .post("/blog-articles", formData, {
+    .post("/blogArticles", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => res.data);
@@ -30,11 +30,11 @@ export const updateBlogArticle = (id, articleData, imageFile) => {
   if (imageFile) formData.append("image", imageFile);
 
   return api
-    .put(`/blog-articles/${id}`, formData, {
+    .put(`/blogArticles/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => res.data);
 };
 
 export const deleteBlogArticle = (id) =>
-  api.delete(`/blog-articles/${id}`).then((res) => res.data);
+  api.delete(`/blogArticles/${id}`).then((res) => res.data);
