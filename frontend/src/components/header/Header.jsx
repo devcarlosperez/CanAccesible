@@ -34,8 +34,6 @@ const Header = ({ transparent = true }) => {
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1150);
-
-    // Solo aplicar efecto de scroll si el header es transparente
     const handleScroll = () => {
       if (transparent) {
         setScrolled(window.scrollY >= 150);
@@ -129,13 +127,11 @@ const Header = ({ transparent = true }) => {
     <>
       <header
         className={`fixed top-0 left-0 w-full flex justify-between items-center text-white z-100 transition-all duration-300 ${
-          // Si el header es transparente, aplicamos el efecto de scroll normal
           transparent
             ? scrolled
               ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
               : "bg-transparent p-4 md:p-8 lg:p-10"
-            : // Si NO es transparente, siempre color fijo (sin scroll effect)
-              "bg-accent-4 shadow-lg p-4 md:p-5 backdrop-blur-md"
+            : "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
         }`}
       >
         {/* Logo */}
