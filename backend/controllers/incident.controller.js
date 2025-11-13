@@ -30,58 +30,70 @@ async function reverseGeocode(latitude, longitude) {
 
 // Create a new incident report
 exports.create = async (req, res) => {
-  // Validate required fields
-  if (!req.body.nameFile) {
-    return res.status(400).send({
-      message: "El campo nameFile es obligatorio",
+  try {
+    // Validate required fields
+    if (!req.body.title)
+      return res.status(400).json({ message: "title es obligatorio" });
+    if (!req.body.description)
+      return res.status(400).json({ message: "description es obligatorio" });
+    if (!req.body.latitude)
+      return res.status(400).json({ message: "latitude es obligatorio" });
+    if (!req.body.longitude)
+      return res.status(400).json({ message: "longitude es obligatorio" });
+    if (!req.body.userId)
+      return res.status(400).json({ message: "userId es obligatorio" });
+    if (!req.body.incidentTypeId)
+      return res.status(400).json({ message: "incidentTypeId es obligatorio" });
+    if (!req.body.incidentSeverityId)
+      return res.status(400).json({ message: "incidentSeverityId es obligatorio" });
+    if (!req.body.incidentStatusId)
+      return res.status(400).json({ message: "incidentStatusId es obligatorio" });
+    if (!req.file)
+      return res.status(400).json({ message: "Image es obligatorio" });
+
+    // Get address from coordinates using reverse geocoding
+    const locationData = await reverseGeocode(
+      req.body.latitude,
+      req.body.longitude
+    );
+
+    const addressFromBody = locationData?.display_name || null;
+
+    // New incidents are not approved by default
+    let isApprovedDefault = false;
+    let incidentSeverityIdFromBody = null;
+
+    // Severity is only applicable for incidentTypeId = 2
+    if (Number(req.body.incidentTypeId) === 2) {
+      incidentSeverityIdFromBody = req.body.incidentSeverityId;
+    }
+
+    const nameFile = req.file.location;
+
+    const incidentToCreate = {
+      incidentStatusId: req.body.incidentStatusId,
+      incidentSeverityId: incidentSeverityIdFromBody,
+      incidentTypeId: req.body.incidentTypeId,
+      userId: req.body.userId,
+      title: req.body.title,
+      description: req.body.description,
+      island: req.body.island,
+      area: req.body.area,
+      address: addressFromBody,
+      latitude: req.body.latitude,
+      longitude: req.body.longitude,
+      dateIncident: req.body.dateIncident,
+      nameFile: nameFile,
+      isApproved: isApprovedDefault,
+    };
+
+    const newIncident = await incidentObject.create(incidentToCreate);
+    res.status(201).json(newIncident);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "Algún error ocurrió mientras se creaba la incidencia.",
     });
   }
-
-  // Get address from coordinates using reverse geocoding
-  const locationData = await reverseGeocode(
-    req.body.latitude,
-    req.body.longitude
-  );
-
-  const addressFromBody = locationData?.display_name || null;
-
-  // New incidents are not approved by default
-  let isApprovedDefault = false;
-  let incidentSeverityIdFromBody = null;
-
-  // Severity is only applicable for incidentTypeId = 2
-  if (Number(req.body.incidentTypeId) === 2) {
-    incidentSeverityIdFromBody = req.body.incidentSeverityId;
-  }
-
-  const incidentToCreate = {
-    incidentStatusId: req.body.incidentStatusId,
-    incidentSeverityId: incidentSeverityIdFromBody,
-    incidentTypeId: req.body.incidentTypeId,
-    userId: req.body.userId,
-    name: req.body.name,
-    description: req.body.description,
-    island: req.body.island,
-    area: req.body.area,
-    address: addressFromBody,
-    latitude: req.body.latitude,
-    longitude: req.body.longitude,
-    dateIncident: req.body.dateIncident,
-    nameFile: req.body.nameFile,
-    isApproved: isApprovedDefault,
-  };
-
-  incidentObject
-    .create(incidentToCreate)
-    .then((data) => {
-      res.status(201).send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Algún error ocurrió mientras se creaba la incidencia.",
-      });
-    });
 };
 
 // Retrieves all incidents from the database
@@ -133,8 +145,8 @@ exports.update = async (req, res) => {
   }
 
   // Update other fields only if they are provided
-  if (req.body.name !== undefined) {
-    incidentToUpdate.name = req.body.name;
+  if (req.body.title !== undefined) {
+    incidentToUpdate.title = req.body.title;
   }
   if (req.body.description !== undefined) {
     incidentToUpdate.description = req.body.description;
@@ -160,8 +172,10 @@ exports.update = async (req, res) => {
   if (req.body.dateIncident !== undefined) {
     incidentToUpdate.dateIncident = req.body.dateIncident;
   }
-  if (req.body.nameFile !== undefined) {
-    incidentToUpdate.nameFile = req.body.nameFile;
+
+  // Handle image update if a new file is uploaded
+  if (req.file) {
+    incidentToUpdate.nameFile = req.file.location;
   }
 
   // Handle severity assignment - only for incidentTypeId = 2
@@ -173,17 +187,24 @@ exports.update = async (req, res) => {
     }
   }
 
-  incidentObject
-    .update(incidentToUpdate, { where: { id: incidentId } })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Algún error ocurrió mientras se actualizaba la incidencia.",
-      });
+  try {
+    const [updated] = await incidentObject.update(incidentToUpdate, {
+      where: { id: incidentId },
     });
+
+    if (updated) {
+      const updatedIncident = await incidentObject.findOne({
+        where: { id: incidentId },
+      });
+      return res.status(200).json(updatedIncident);
+    }
+
+    res.status(404).json({ message: "Incidencia no encontrada." });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "Algún error ocurrió mientras se actualizaba la incidencia.",
+    });
+  }
 };
 
 // Deletes an incidence by ID
