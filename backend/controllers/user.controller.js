@@ -1,13 +1,19 @@
 const db = require("../models");
 const User = db.user;
 const bcrypt = require("bcrypt");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const s3 = require("../config/doSpacesClient");
 
 exports.create = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
+    const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
       return res.status(400).send({ message: "Faltan datos obligatorios" });
+    }
+
+    if (!req.file) {
+      return res.status(400).send({ message: "Image es obligatorio" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,6 +29,7 @@ exports.create = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const nameFile = req.file.location;
 
     User.create({
       firstName,
@@ -30,7 +37,7 @@ exports.create = async (req, res) => {
       email,
       password: hashedPassword,
       roleId,
-      nameFile: nameFile || null,
+      nameFile,
     })
       .then((user) => {
         res.status(201).send(user);
@@ -97,67 +104,103 @@ exports.findOne = (req, res) => {
 };
 
 // Update an user
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   const { id } = req.params;
-  const { firstName, lastName, email, password, roleId, nameFile } = req.body;
+  const { firstName, lastName, email, password, roleId } = req.body;
 
-  User.findByPk(id)
-    .then(async (user) => {
-      if (!user) {
-        return res.status(404).send({ message: "Usuario no encontrado" });
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send({ message: "Usuario no encontrado" });
+    }
+
+    const userToUpdate = {};
+
+    // Update fields only if they are provided
+    if (firstName !== undefined) {
+      userToUpdate.firstName = firstName;
+    }
+    if (lastName !== undefined) {
+      userToUpdate.lastName = lastName;
+    }
+    if (email !== undefined) {
+      userToUpdate.email = email;
+    }
+    if (password) {
+      userToUpdate.password = await bcrypt.hash(password, 10);
+    }
+    if (roleId !== undefined) {
+      userToUpdate.roleId = roleId;
+    }
+
+    // Handle image update if a new file is uploaded
+    if (req.file) {
+      // If there's an old image, delete it from DO Spaces
+      if (user.nameFile) {
+        const urlParts = user.nameFile.split('/');
+        const oldKey = urlParts.slice(-2).join('/');
+
+        try {
+          await s3.send(new DeleteObjectCommand({
+            Bucket: process.env.DO_SPACE_NAME,
+            Key: oldKey,
+          }));
+          console.log(`Imagen anterior eliminada del storage: ${oldKey}`);
+        } catch (deleteErr) {
+          console.error("Error eliminando la imagen anterior del storage:", deleteErr);
+          // Continue with update even if old image deletion fails
+        }
       }
 
-      // If password is provided, hash it
-      let hashedPassword = user.password;
-      if (password) {
-        hashedPassword = await bcrypt.hash(password, 10);
-      }
+      userToUpdate.nameFile = req.file.location;
+    }
 
-      User.update(
-        {
-          firstName,
-          lastName,
-          email,
-          password: hashedPassword,
-          roleId,
-          nameFile,
-        },
-        { where: { id } }
-      )
-        .then(() => {
-          return User.findByPk(id);
-        })
-        .then((updatedUser) => {
-          res.send(updatedUser);
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: err.message || "Error al actualizar el usuario",
-          });
-        });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al buscar el usuario",
-      });
+    await User.update(userToUpdate, { where: { id } });
+    const updatedUser = await User.findByPk(id);
+    res.send(updatedUser);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Error al actualizar el usuario",
     });
+  }
 };
 
 // Delete an user
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
   const { id } = req.params;
 
-  User.destroy({ where: { id } })
-    .then((deleted) => {
-      if (deleted) {
-        res.send({ message: "Usuario eliminado correctamente" });
-      } else {
-        res.status(404).send({ message: "Usuario no encontrado" });
+  try {
+    // Find the user to get the image file name
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send({ message: "Usuario no encontrado" });
+    }
+
+    // If there's an image, delete it from DO Spaces
+    if (user.nameFile) {
+      const urlParts = user.nameFile.split('/');
+      const key = urlParts.slice(-2).join('/'); // Get the last two parts
+
+      try {
+        await s3.send(new DeleteObjectCommand({
+          Bucket: process.env.DO_SPACE_NAME,
+          Key: key,
+        }));
+        console.log(`Imagen eliminada del storage: ${key}`);
+      } catch (deleteErr) {
+        console.error("Error eliminando la imagen del storage:", deleteErr);
+        // Continue with record deletion even if image deletion fails
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al eliminar el usuario",
-      });
+    }
+
+    // Delete the user record
+    await User.destroy({ where: { id } });
+    res.send({
+      message: "Usuario y su imagen asociada han sido eliminados correctamente.",
     });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Error al eliminar el usuario",
+    });
+  }
 };
