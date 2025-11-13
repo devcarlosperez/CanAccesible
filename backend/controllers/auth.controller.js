@@ -19,7 +19,11 @@ exports.signIn = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
     );
@@ -30,6 +34,7 @@ exports.signIn = async (req, res) => {
         id: user.id,
         nombre: user.nombre,
         email: user.email,
+        role: user.role,
       },
       token,
     });
