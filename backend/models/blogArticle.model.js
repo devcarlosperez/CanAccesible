@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     dateCreation: {
       type: DataTypes.DATEONLY,
       allowNull: false,
