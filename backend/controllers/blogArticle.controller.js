@@ -83,7 +83,12 @@ exports.update = async (req, res) => {
   if (req.body.content !== undefined) {
     articleToUpdate.content = req.body.content;
   }
-  if (req.body.dateCreation !== undefined) {
+  if (req.body.dateCreation !== undefined && req.body.dateCreation !== null && req.body.dateCreation !== '') {
+    // Validate date format
+    const dateValue = new Date(req.body.dateCreation);
+    if (isNaN(dateValue.getTime())) {
+      return res.status(400).json({ message: "dateCreation debe ser una fecha válida" });
+    }
     articleToUpdate.dateCreation = req.body.dateCreation;
   }
 
