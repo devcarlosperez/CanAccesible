@@ -4,203 +4,151 @@ const bcrypt = require("bcrypt");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
 
+// Utility function to delete image from DO Spaces
+async function deleteImageFromStorage(nameFile) {
+  if (!nameFile) return;
+  try {
+    const urlParts = nameFile.split('/');
+    const key = urlParts.slice(-2).join('/');
+    await s3.send(new DeleteObjectCommand({
+      Bucket: process.env.DO_SPACE_NAME,
+      Key: key,
+    }));
+  } catch (err) {
+    console.error("Error eliminando imagen del storage:", err.message);
+  }
+}
+
 exports.create = async (req, res) => {
   try {
     const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).send({ message: "Faltan datos obligatorios" });
+      return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
     if (!req.file) {
-      return res.status(400).send({ message: "Image es obligatorio" });
+      return res.status(400).json({ message: "Image es obligatorio" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .send({ message: "El email tiene un formato inválido" });
+      return res.status(400).json({ message: "El email tiene un formato inválido" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).send({ message: "El email ya está registrado" });
+      return res.status(400).json({ message: "El email ya está registrado" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const nameFile = req.file.location;
 
-    User.create({
+    const newUser = await User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
       roleId,
       nameFile,
-    })
-      .then((user) => {
-        res.status(201).send(user);
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "Error al crear el usuario",
-        });
-      });
-  } catch (error) {
-    console.error("Error creando usuario:", error);
-    res.status(500).send({ message: "Error del servidor" });
+    });
+
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al crear el usuario" });
   }
 };
 
-exports.findAll = (req, res) => {
-  User.findAll({
-    attributes: [
-      "id",
-      "firstName",
-      "lastName",
-      "email",
-      "dateRegister",
-      "roleId",
-      "nameFile",
-    ],
-  })
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener usuarios",
-      });
-    });
-};
-
-// Get a single user by ID
-exports.findOne = (req, res) => {
-  const { id } = req.params;
-
-  User.findByPk(id, {
-    attributes: [
-      "id",
-      "firstName",
-      "lastName",
-      "email",
-      "dateRegister",
-      "roleId",
-      "nameFile",
-    ],
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "Usuario no encontrado" });
-      }
-      res.send(user);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener el usuario",
-      });
-    });
-};
-
-// Update an user
-exports.update = async (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, email, password, roleId } = req.body;
-
+exports.findAll = async (req, res) => {
   try {
+    const users = await User.findAll({
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
+    });
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al obtener usuarios" });
+  }
+};
+
+exports.findOne = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al obtener el usuario" });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email, password, roleId } = req.body;
+
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).send({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     const userToUpdate = {};
 
-    // Update fields only if they are provided
-    if (firstName !== undefined) {
-      userToUpdate.firstName = firstName;
-    }
-    if (lastName !== undefined) {
-      userToUpdate.lastName = lastName;
-    }
-    if (email !== undefined) {
-      userToUpdate.email = email;
-    }
-    if (password) {
-      userToUpdate.password = await bcrypt.hash(password, 10);
-    }
-    if (roleId !== undefined) {
-      userToUpdate.roleId = roleId;
-    }
+    if (firstName !== undefined) userToUpdate.firstName = firstName;
+    if (lastName !== undefined) userToUpdate.lastName = lastName;
+    if (email !== undefined) userToUpdate.email = email;
+    if (password) userToUpdate.password = await bcrypt.hash(password, 10);
+    if (roleId !== undefined) userToUpdate.roleId = roleId;
 
-    // Handle image update if a new file is uploaded
     if (req.file) {
-      // If there's an old image, delete it from DO Spaces
-      if (user.nameFile) {
-        const urlParts = user.nameFile.split('/');
-        const oldKey = urlParts.slice(-2).join('/');
-
-        try {
-          await s3.send(new DeleteObjectCommand({
-            Bucket: process.env.DO_SPACE_NAME,
-            Key: oldKey,
-          }));
-          console.log(`Imagen anterior eliminada del storage: ${oldKey}`);
-        } catch (deleteErr) {
-          console.error("Error eliminando la imagen anterior del storage:", deleteErr);
-          // Continue with update even if old image deletion fails
-        }
-      }
-
+      await deleteImageFromStorage(user.nameFile);
       userToUpdate.nameFile = req.file.location;
     }
 
     await User.update(userToUpdate, { where: { id } });
     const updatedUser = await User.findByPk(id);
-    res.send(updatedUser);
+
+    res.status(200).json(updatedUser);
   } catch (err) {
-    res.status(500).send({
-      message: err.message || "Error al actualizar el usuario",
-    });
+    res.status(500).json({ message: err.message || "Error al actualizar el usuario" });
   }
 };
 
-// Delete an user
 exports.delete = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    // Find the user to get the image file name
+    const { id } = req.params;
     const user = await User.findByPk(id);
+
     if (!user) {
-      return res.status(404).send({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // If there's an image, delete it from DO Spaces
-    if (user.nameFile) {
-      const urlParts = user.nameFile.split('/');
-      const key = urlParts.slice(-2).join('/'); // Get the last two parts
-
-      try {
-        await s3.send(new DeleteObjectCommand({
-          Bucket: process.env.DO_SPACE_NAME,
-          Key: key,
-        }));
-        console.log(`Imagen eliminada del storage: ${key}`);
-      } catch (deleteErr) {
-        console.error("Error eliminando la imagen del storage:", deleteErr);
-        // Continue with record deletion even if image deletion fails
-      }
-    }
-
-    // Delete the user record
+    await deleteImageFromStorage(user.nameFile);
     await User.destroy({ where: { id } });
-    res.send({
-      message: "Usuario y su imagen asociada han sido eliminados correctamente.",
-    });
+
+    res.status(200).json({ message: "Usuario y su imagen asociada han sido eliminados correctamente" });
   } catch (err) {
-    res.status(500).send({
-      message: err.message || "Error al eliminar el usuario",
-    });
+    res.status(500).json({ message: err.message || "Error al eliminar el usuario" });
   }
 };

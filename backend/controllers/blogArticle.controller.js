@@ -3,12 +3,26 @@ const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
 const BlogArticle = db.blogArticle;
 
+// Utility function to delete image from DO Spaces
+async function deleteImageFromStorage(nameFile) {
+  if (!nameFile) return;
+  try {
+    const urlParts = nameFile.split('/');
+    const key = urlParts.slice(-2).join('/');
+    await s3.send(new DeleteObjectCommand({
+      Bucket: process.env.DO_SPACE_NAME,
+      Key: key,
+    }));
+  } catch (err) {
+    console.error("Error eliminando imagen del storage:", err.message);
+  }
+}
+
 // Create a blog article
 exports.create = async (req, res) => {
   try {
     const { title, description, content, dateCreation } = req.body;
 
-    // Validate required fields
     if (!title)
       return res.status(400).json({ message: "title es obligatorio" });
     if (!description)
@@ -32,62 +46,50 @@ exports.create = async (req, res) => {
 
     res.status(201).json(newArticle);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error creando el artículo del blog" });
+    res.status(500).json({
+      message: err.message || "Error creando el artículo del blog",
+    });
   }
 };
 
-// Retrieve all notifications
+// Retrieve all blog articles
 exports.findAll = async (req, res) => {
   try {
     const articles = await BlogArticle.findAll();
     res.status(200).json(articles);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: err.message || "Error leyendo los artículos del blog.",
-      });
+    res.status(500).json({
+      message: err.message || "Error leyendo los artículos del blog.",
+    });
   }
 };
 
-// Retrieve one notification by ID
+// Retrieve one blog article by ID
 exports.findOne = async (req, res) => {
   try {
     const article = await BlogArticle.findOne({ where: { id: req.params.id } });
     if (!article)
-      return res
-        .status(404)
-        .json({ message: "Artículo de blog no encontrado." });
+      return res.status(404).json({ message: "Artículo de blog no encontrado." });
+
     res.status(200).json(article);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: err.message || "Error encontrando el artículo del blog.",
-      });
+    res.status(500).json({
+      message: err.message || "Error encontrando el artículo del blog.",
+    });
   }
 };
 
 // Update a blog article
 exports.update = async (req, res) => {
-  const articleToUpdate = {};
-  const articleId = req.params.id;
-
   try {
-    // Update fields only if they are provided
-    if (req.body.title !== undefined) {
-      articleToUpdate.title = req.body.title;
-    }
-    if (req.body.description !== undefined) {
-      articleToUpdate.description = req.body.description;
-    }
-    if (req.body.content !== undefined) {
-      articleToUpdate.content = req.body.content;
-    }
+    const articleToUpdate = {};
+    const articleId = req.params.id;
+
+    if (req.body.title !== undefined) articleToUpdate.title = req.body.title;
+    if (req.body.description !== undefined) articleToUpdate.description = req.body.description;
+    if (req.body.content !== undefined) articleToUpdate.content = req.body.content;
+
     if (req.body.dateCreation !== undefined && req.body.dateCreation !== null && req.body.dateCreation !== '') {
-      // Validate date format
       const dateValue = new Date(req.body.dateCreation);
       if (isNaN(dateValue.getTime())) {
         return res.status(400).json({ message: "dateCreation debe ser una fecha válida" });
@@ -95,30 +97,9 @@ exports.update = async (req, res) => {
       articleToUpdate.dateCreation = req.body.dateCreation;
     }
 
-    // Handle image update if a new file is uploaded
     if (req.file) {
-      // Get the old article to retrieve the old image URL
-      const oldArticle = await BlogArticle.findOne({
-        where: { id: articleId },
-      });
-
-      // If there's an old image, delete it from DO Spaces
-      if (oldArticle && oldArticle.nameFile) {
-        const urlParts = oldArticle.nameFile.split('/');
-        const oldKey = urlParts.slice(-2).join('/');
-
-        try {
-          await s3.send(new DeleteObjectCommand({
-            Bucket: process.env.DO_SPACE_NAME,
-            Key: oldKey,
-          }));
-          console.log(`Imagen anterior eliminada del storage: ${oldKey}`);
-        } catch (deleteErr) {
-          console.error("Error eliminando la imagen anterior del storage:", deleteErr);
-          // Continue with update even if old image deletion fails
-        }
-      }
-
+      const oldArticle = await BlogArticle.findOne({ where: { id: articleId } });
+      if (oldArticle) await deleteImageFromStorage(oldArticle.nameFile);
       articleToUpdate.nameFile = req.file.location;
     }
 
@@ -145,40 +126,22 @@ exports.update = async (req, res) => {
 
 // Delete a blog article
 exports.delete = async (req, res) => {
-  const id = req.params.id;
-
   try {
-    // Find the article to get the image file name
+    const id = req.params.id;
     const article = await BlogArticle.findOne({ where: { id } });
+
     if (!article) {
       return res.status(404).json({ message: "Artículo del blog no encontrado." });
     }
 
-    // If there's an image, delete it from DO Spaces
-    if (article.nameFile) {
-      // Extract the key from the URL (e.g., "blog-image/filename.jpg")
-      const urlParts = article.nameFile.split('/');
-      const key = urlParts.slice(-2).join('/'); // Get the last two parts
-
-      try {
-        await s3.send(new DeleteObjectCommand({
-          Bucket: process.env.DO_SPACE_NAME,
-          Key: key,
-        }));
-        console.log(`Imagen eliminada del storage: ${key}`);
-      } catch (deleteErr) {
-        console.error("Error eliminando la imagen del storage:", deleteErr);
-        // Continue with record deletion even if image deletion fails
-      }
-    }
-
-    // Delete the article record
+    await deleteImageFromStorage(article.nameFile);
     await BlogArticle.destroy({ where: { id } });
-    res.send({
+
+    res.status(200).json({
       message: "El artículo del blog y su imagen asociada han sido eliminados.",
     });
   } catch (err) {
-    res.status(500).send({
+    res.status(500).json({
       message: err.message || "Error borrando el artículo del blog.",
     });
   }
