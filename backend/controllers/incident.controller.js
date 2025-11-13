@@ -1,5 +1,7 @@
 const db = require("../models");
 const axios = require("axios");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const s3 = require("../config/doSpacesClient");
 const incidentObject = db.incident;
 
 // Using OpenStreetMap's Nominatim reverse geocoding service
@@ -133,61 +135,83 @@ exports.update = async (req, res) => {
   const incidentToUpdate = {};
   const incidentId = req.params.id;
 
-  // If coordinates are provided, update location and re-geocode address
-  if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
-    const locationData = await reverseGeocode(
-      req.body.latitude,
-      req.body.longitude
-    );
-    incidentToUpdate.latitude = req.body.latitude;
-    incidentToUpdate.longitude = req.body.longitude;
-    incidentToUpdate.address = locationData?.display_name || null;
-  }
-
-  // Update other fields only if they are provided
-  if (req.body.title !== undefined) {
-    incidentToUpdate.title = req.body.title;
-  }
-  if (req.body.description !== undefined) {
-    incidentToUpdate.description = req.body.description;
-  }
-  if (req.body.incidentStatusId !== undefined) {
-    incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
-  }
-  if (req.body.incidentTypeId !== undefined) {
-    incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
-  }
-  if (req.body.isApproved !== undefined) {
-    incidentToUpdate.isApproved = req.body.isApproved;
-  }
-  if (req.body.userId !== undefined) {
-    incidentToUpdate.userId = req.body.userId;
-  }
-  if (req.body.area !== undefined) {
-    incidentToUpdate.area = req.body.area;
-  }
-  if (req.body.island !== undefined) {
-    incidentToUpdate.island = req.body.island;
-  }
-  if (req.body.dateIncident !== undefined) {
-    incidentToUpdate.dateIncident = req.body.dateIncident;
-  }
-
-  // Handle image update if a new file is uploaded
-  if (req.file) {
-    incidentToUpdate.nameFile = req.file.location;
-  }
-
-  // Handle severity assignment - only for incidentTypeId = 2
-  if (req.body.incidentTypeId !== undefined) {
-    if (req.body.incidentTypeId === 2) {
-      incidentToUpdate.incidentSeverityId = req.body.incidentSeverityId;
-    } else {
-      incidentToUpdate.incidentSeverityId = null;
-    }
-  }
-
   try {
+    // If coordinates are provided, update location and re-geocode address
+    if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
+      const locationData = await reverseGeocode(
+        req.body.latitude,
+        req.body.longitude
+      );
+      incidentToUpdate.latitude = req.body.latitude;
+      incidentToUpdate.longitude = req.body.longitude;
+      incidentToUpdate.address = locationData?.display_name || null;
+    }
+
+    // Update other fields only if they are provided
+    if (req.body.title !== undefined) {
+      incidentToUpdate.title = req.body.title;
+    }
+    if (req.body.description !== undefined) {
+      incidentToUpdate.description = req.body.description;
+    }
+    if (req.body.incidentStatusId !== undefined) {
+      incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
+    }
+    if (req.body.incidentTypeId !== undefined) {
+      incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
+    }
+    if (req.body.isApproved !== undefined) {
+      incidentToUpdate.isApproved = req.body.isApproved;
+    }
+    if (req.body.userId !== undefined) {
+      incidentToUpdate.userId = req.body.userId;
+    }
+    if (req.body.area !== undefined) {
+      incidentToUpdate.area = req.body.area;
+    }
+    if (req.body.island !== undefined) {
+      incidentToUpdate.island = req.body.island;
+    }
+    if (req.body.dateIncident !== undefined) {
+      incidentToUpdate.dateIncident = req.body.dateIncident;
+    }
+
+    // Handle image update if a new file is uploaded
+    if (req.file) {
+      // Get the old incident to retrieve the old image URL
+      const oldIncident = await incidentObject.findOne({
+        where: { id: incidentId },
+      });
+
+      // If there's an old image, delete it from DO Spaces
+      if (oldIncident && oldIncident.nameFile) {
+        const urlParts = oldIncident.nameFile.split('/');
+        const oldKey = urlParts.slice(-2).join('/');
+
+        try {
+          await s3.send(new DeleteObjectCommand({
+            Bucket: process.env.DO_SPACE_NAME,
+            Key: oldKey,
+          }));
+          console.log(`Imagen anterior eliminada del storage: ${oldKey}`);
+        } catch (deleteErr) {
+          console.error("Error eliminando la imagen anterior del storage:", deleteErr);
+          // Continue with update even if old image deletion fails
+        }
+      }
+
+      incidentToUpdate.nameFile = req.file.location;
+    }
+
+    // Handle severity assignment - only for incidentTypeId = 2
+    if (req.body.incidentTypeId !== undefined) {
+      if (req.body.incidentTypeId === 2) {
+        incidentToUpdate.incidentSeverityId = req.body.incidentSeverityId;
+      } else {
+        incidentToUpdate.incidentSeverityId = null;
+      }
+    }
+
     const [updated] = await incidentObject.update(incidentToUpdate, {
       where: { id: incidentId },
     });
@@ -208,20 +232,43 @@ exports.update = async (req, res) => {
 };
 
 // Deletes an incidence by ID
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
   const incidentId = req.params.id;
 
-  incidentObject
-    .destroy({ where: { id: incidentId } })
-    .then((data) => {
-      res.send({
-        message: "La incidencia ha sido eliminada.",
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Algún error ocurrió mientras se eliminaba la inciencia.",
-      });
+  try {
+    // Find the incident to get the image file name
+    const incident = await incidentObject.findOne({ where: { id: incidentId } });
+    if (!incident) {
+      return res.status(404).json({ message: "Incidencia no encontrada." });
+    }
+
+    // If there's an image, delete it from DO Spaces
+    if (incident.nameFile) {
+      // Extract the key from the URL (e.g., "incident-image/filename.jpg")
+      const urlParts = incident.nameFile.split('/');
+      const key = urlParts.slice(-2).join('/'); // Get the last two parts
+
+      try {
+        await s3.send(new DeleteObjectCommand({
+          Bucket: process.env.DO_SPACE_NAME,
+          Key: key,
+        }));
+        console.log(`Imagen eliminada del storage: ${key}`);
+      } catch (deleteErr) {
+        console.error("Error eliminando la imagen del storage:", deleteErr);
+        // Continue with record deletion even if image deletion fails
+      }
+    }
+
+    // Delete the incident record
+    await incidentObject.destroy({ where: { id: incidentId } });
+    res.send({
+      message: "La incidencia y su imagen asociada han sido eliminadas.",
     });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || "Algún error ocurrió mientras se eliminaba la incidencia.",
+    });
+  }
 };
