@@ -50,33 +50,27 @@ const Header = ({ transparent = true }) => {
     { text: "Inicio", to: "/home", icon: "home" },
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
     { text: "Islas", to: "/islands", icon: "public" },
+    { text: "Blog", to: "/blog", icon: "article" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
     { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
   ];
+
+  const filteredMenuItems = menuItems.filter((item) => {
+    // si es login y ya está autenticado, lo quitamos
+    if (item.login && isAuthenticated) return false;
+    return true;
+  });
 
   return (
     <header
       className={`fixed top-0 left-0 w-full flex justify-between items-center text-white z-100 transition-all duration-300 ${
         transparent
           ? scrolled
-            ? "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
+            ? "bg-[#0c0c22] shadow-lg p-4 md:p-5"
             : "bg-transparent p-4 md:p-8 lg:p-10"
-          : "bg-[#0c0c22]/95 shadow-lg p-4 md:p-5 backdrop-blur-md"
+          : "bg-[#0c0c22] shadow-lg p-4 md:p-5"
       }`}
     >
-      {/* Logo */}
-      <Link to="/">
-        <img
-          src={logo}
-          alt="Canarias Accesible"
-          className={`w-auto transition-all duration-300 ${
-            transparent && !scrolled
-              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
-              : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-15"
-          }`}
-        />
-      </Link>
-
       {/* Desktop / Mobile */}
       {!isMobile ? (
         <HeaderDesktop
@@ -94,8 +88,9 @@ const Header = ({ transparent = true }) => {
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
           setNotifications={setNotifications}
-          menuItems={menuItems}
+          menuItems={filteredMenuItems}
           scrolled={scrolled}
+          isAuthenticated={isAuthenticated}
         />
       )}
     </header>

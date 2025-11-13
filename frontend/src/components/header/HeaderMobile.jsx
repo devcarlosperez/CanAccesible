@@ -1,7 +1,10 @@
+import { Link } from "react-router-dom";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import MobileMenu from "./HeaderMobileMenu.jsx";
 import useAuthStore from "../../services/authService.js";
 import UserMenu from "./HeaderUserMenu.jsx";
+import logo from "../../assets/canaccesible-logo-2.png";
+import "./Header.css";
 
 const HeaderMobile = ({
   open,
@@ -13,42 +16,57 @@ const HeaderMobile = ({
   menuItems,
   scrolled,
 }) => {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        {isAuthenticated && (
-          <NotificationDropdown
-            notificationsCount={notificationsCount}
-            notifications={notifications}
-            showNotifications={showNotifications}
-            setShowNotifications={setShowNotifications}
-            handleDelete={(id) =>
-              setNotifications((prev) => prev.filter((n) => n.id !== id))
-            }
-            iconSize="text-2xl"
-            dropdownWidth="w-72"
+      <div className="flex items-center justify-between w-full px-4">
+        {/* Logo */}
+        <Link to="/">
+          <img
+            src={logo}
+            alt="Canarias Accesible"
+            className="w-auto h-12 sm:h-14 md:h-15 transition-all duration-300"
           />
-        )}
+        </Link>
 
-        {isAuthenticated ? (
-          <UserMenu user={user} onLogout={logout} />
-        ) : (
+        {/* Notificaciones + Menú hamburguesa */}
+        <div className="flex items-center gap-4">
+          {isAuthenticated && (
+            <NotificationDropdown
+              notificationsCount={notificationsCount}
+              notifications={notifications}
+              showNotifications={showNotifications}
+              setShowNotifications={setShowNotifications}
+              handleDelete={(id) =>
+                setNotifications((prev) => prev.filter((n) => n.id !== id))
+              }
+              iconSize="text-2xl"
+              dropdownWidth="w-72"
+            />
+          )}
+
+          {/* Siempre mostrar el menú hamburguesa */}
           <span
             className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${
-              scrolled ? "text-amber-50" : "text-amber-50"
+              scrolled ? "text-amber-50" : "text-neutral-2"
             }`}
             onClick={() => setOpen(true)}
           >
             menu
           </span>
-        )}
+        </div>
       </div>
 
       {/* Mobile side menu */}
-      <MobileMenu open={open} setOpen={setOpen} menuItems={menuItems} />
+      <MobileMenu
+        open={open}
+        setOpen={setOpen}
+        menuItems={menuItems}
+        isAuthenticated={isAuthenticated}
+        user={user}
+      />
     </>
   );
 };

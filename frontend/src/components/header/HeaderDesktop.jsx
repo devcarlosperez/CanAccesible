@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../../services/authService.js";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import UserMenu from "./HeaderUserMenu.jsx";
-import NavLinks from "./HeaderNavLinks.jsx";
+import logo from "../../assets/canaccesible-logo-2.png";
 
 const HeaderDesktop = ({
   menuItems,
@@ -10,18 +10,41 @@ const HeaderDesktop = ({
   showNotifications,
   setShowNotifications,
   setNotifications,
+  transparent,
+  scrolled,
 }) => {
   const { isAuthenticated, user, logout } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
-    <div className="flex items-center gap-6">
-      {/* Navegación */}
-      <nav>
-        <NavLinks menuItems={menuItems.slice(0, 4)} showIcons={false} />
+    <div className="flex items-center w-full">
+      <Link to="/">
+        <img
+          src={logo}
+          alt="Canarias Accesible"
+          className={`w-auto transition-all duration-300 ${
+            transparent && !scrolled
+              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+              : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-15"
+          }`}
+        />
+      </Link>
+
+      <nav className="flex-1 flex justify-center">
+        <ul className="flex list-none gap-6 sm:gap-8 md:gap-12 lg:gap-14 xl:gap-16 font-semibold">
+          {menuItems.slice(0, 5).map((item) => (
+            <li key={item.text}>
+              <Link
+                to={item.to}
+                className="hover:text-blue-700 transition-colors"
+              >
+                {item.text}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
 
-      {/* Notificaciones + Login / Avatar */}
       <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
         {isAuthenticated && (
           <NotificationDropdown

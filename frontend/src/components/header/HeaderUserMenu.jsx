@@ -5,7 +5,6 @@ const UserMenu = ({ user, onLogout }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
 
-  // Cerrar dropdown al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -16,8 +15,7 @@ const UserMenu = ({ user, onLogout }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Obtenemos inicial del usuario
-  const initial = user?.nombre?.charAt(0).toUpperCase() || "U";
+  const initial = "U";
 
   return (
     <div className="relative" ref={menuRef}>
@@ -30,7 +28,7 @@ const UserMenu = ({ user, onLogout }) => {
 
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg z-50 border border-gray-200">
-          <ul className="flex flex-col p-2">
+          <ul className="flex flex-col p-2 text-black">
             <li>
               <Link
                 to="/profile"

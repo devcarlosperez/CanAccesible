@@ -15,7 +15,7 @@ const LoginForm = () => {
   };
 
   if (isAuthenticated) {
-    navigate("/dashboard");
+    navigate("/home");
   }
 
   return (
