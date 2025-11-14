@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import api from "../services/api";
+import { getUserById } from "../services/userService";
 
 const useAuthStore = create((set) => ({
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
   token: localStorage.getItem("token") || null,
   isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
@@ -13,15 +14,18 @@ const useAuthStore = create((set) => ({
     try {
       const res = await api.post("/auth/signin", { email, password });
       const token = res.data.token;
-      const user = res.data.user;
+      const loggedUser = res.data.user;
 
       localStorage.setItem("token", token);
-
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      const fullUser = await getUserById(loggedUser.id);
+
+      localStorage.setItem("user", JSON.stringify(fullUser));
 
       set({
         token,
-        user,
+        user: fullUser,
         isAuthenticated: true,
         loading: false,
       });
@@ -35,6 +39,7 @@ const useAuthStore = create((set) => ({
 
   logout: () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     delete api.defaults.headers.common["Authorization"];
     set({
       user: null,

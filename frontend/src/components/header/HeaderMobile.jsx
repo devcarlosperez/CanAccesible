@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import MobileMenu from "./HeaderMobileMenu.jsx";
 import useAuthStore from "../../services/authService.js";
-import UserMenu from "./HeaderUserMenu.jsx";
 import logo from "../../assets/canaccesible-logo-2.png";
 import "./Header.css";
 

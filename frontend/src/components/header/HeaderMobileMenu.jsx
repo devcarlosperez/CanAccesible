@@ -55,8 +55,18 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
                 onClick={() => setOpen(false)}
                 className="flex items-center px-4 py-2 rounded-xl font-semibold text-white bg-blue-700 hover:bg-blue-600 transition duration-200"
               >
-                <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center mr-3 text-blue-600  font-bold text-md">
-                  U
+                <span className="w-6 h-6 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                  {user.nameFile ? (
+                    <img
+                      src={user.nameFile}
+                      alt="avatar"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <span className="text-blue-600 font-bold text-md">
+                      {user.firstName?.[0]?.toUpperCase() || "U"}
+                    </span>
+                  )}
                 </span>
                 Mi cuenta
               </Link>
