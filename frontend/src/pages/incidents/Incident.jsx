@@ -324,7 +324,7 @@ const Incident = () => {
                 <Grid item>
                   <TextField
                     fullWidth
-                    label="Latitud"
+                    label="Latitud (entre -90 y 90)"
                     name="latitude"
                     type="number"
                     value={formData.latitude}
@@ -337,7 +337,7 @@ const Incident = () => {
                 <Grid item>
                   <TextField
                     fullWidth
-                    label="Longitud"
+                    label="Longitud (entre -180 y 180)"
                     name="longitude"
                     type="number"
                     value={formData.longitude}

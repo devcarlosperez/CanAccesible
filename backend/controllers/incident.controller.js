@@ -45,10 +45,6 @@ async function deleteImageFromStorage(nameFile) {
 
 // Create a new incident report
 exports.create = async (req, res) => {
-  console.log("===== NUEVA INCIDENCIA =====");
-  console.log("BODY:", req.body);
-  console.log("FILE:", req.file);
-
   try {
     // Validate required fields
     if (!req.body.name)
@@ -106,7 +102,6 @@ exports.create = async (req, res) => {
     const newIncident = await incidentObject.create(incidentToCreate);
     res.status(201).json(newIncident);
   } catch (err) {
-    console.error("Error creando incidencia:", err);
     res.status(500).json({
       message: err.message || "Algún error ocurrió mientras se creaba la incidencia.",
     });
