@@ -7,6 +7,7 @@ import Login from "./pages/users/login/Login";
 import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
 import PublicRoute from "./routes/PublicRoute";
+import ErrorPage from "./pages/others/ErrorPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/error" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
   );

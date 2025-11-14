@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../services/authService.js";
 import logo from "../../../assets/canaccesible-logo-2.png";
@@ -14,9 +14,11 @@ const LoginForm = () => {
     await login(email, password);
   };
 
-  if (isAuthenticated) {
-    navigate("/home");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div
@@ -38,7 +40,6 @@ const LoginForm = () => {
         accesibilidad digital.
       </p>
 
-      {/* Formulario de login */}
       <form onSubmit={handleSubmit} className="w-full max-w-md font-roboto">
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
           Correo electrónico
