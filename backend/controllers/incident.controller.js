@@ -45,9 +45,14 @@ async function deleteImageFromStorage(nameFile) {
 
 // Create a new incident report
 exports.create = async (req, res) => {
+  console.log("===== NUEVA INCIDENCIA =====");
+  console.log("BODY:", req.body);
+  console.log("FILE:", req.file);
+
   try {
-    if (!req.body.title)
-      return res.status(400).json({ message: "title es obligatorio" });
+    // Validate required fields
+    if (!req.body.name)
+      return res.status(400).json({ message: "name es obligatorio" });
     if (!req.body.description)
       return res.status(400).json({ message: "description es obligatorio" });
     if (!req.body.latitude)
@@ -86,7 +91,7 @@ exports.create = async (req, res) => {
       incidentSeverityId: incidentSeverityIdFromBody,
       incidentTypeId: req.body.incidentTypeId,
       userId: req.body.userId,
-      title: req.body.title,
+      name: req.body.name,
       description: req.body.description,
       island: req.body.island,
       area: req.body.area,
@@ -101,6 +106,7 @@ exports.create = async (req, res) => {
     const newIncident = await incidentObject.create(incidentToCreate);
     res.status(201).json(newIncident);
   } catch (err) {
+    console.error("Error creando incidencia:", err);
     res.status(500).json({
       message: err.message || "Algún error ocurrió mientras se creaba la incidencia.",
     });
@@ -155,7 +161,7 @@ exports.update = async (req, res) => {
       incidentToUpdate.address = locationData?.display_name || null;
     }
 
-    if (req.body.title !== undefined) incidentToUpdate.title = req.body.title;
+    if (req.body.name !== undefined) incidentToUpdate.title = req.body.name;
     if (req.body.description !== undefined) incidentToUpdate.description = req.body.description;
     if (req.body.incidentStatusId !== undefined) incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
     if (req.body.incidentTypeId !== undefined) incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
