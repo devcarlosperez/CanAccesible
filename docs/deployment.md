@@ -1,132 +1,158 @@
 # Deployment
 
-## DigitalOcean
+## Overview
 
-DigitalOcean is a cloud infrastructure provider that offers scalable and developer-friendly computing solutions. They provide virtual servers (Droplets), managed databases, object storage (Spaces), and private networks.
-
-**Key features:**
-- Easy-to-use control panel
-- Competitive pricing
-- Excellent community support
-- Integration with popular tools
+CanAccesible is deployed on **DigitalOcean** with both frontend and backend running on a single Droplet (VPS) managed by **PM2**. We use DigitalOcean's managed MySQL database for data storage and Spaces for image storage.
 
 ---
 
-## Droplet / PM2
+## Deployment Process
 
-We cloned the CanAccesible repository on a **DigitalOcean Droplet** (VPS with Ubuntu 24.04 LTS). We installed **PM2** to keep both frontend and backend running 24/7.
+### Step 1: Initial Droplet Setup
 
-![PM2 Status](./images/pm2-status.png)
+Connect via SSH and update the system:
 
-**Frontend setup:**
+```bash
+# Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js 18.x
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install PM2 globally
+sudo npm install -g pm2
+
+# Install Git
+sudo apt install -y git
+```
+
+### Step 2: Clone the Repository
+
+```bash
+git clone https://github.com/devcarlosperez/CanAccesible.git
+cd CanAccesible
+```
+
+### Step 3: Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+### Step 4: Backend Setup
+
+```bash
+cd ../backend
+npm install
+
+# Create .env file with environment variables
+nano .env.production
+```
+
+**Add these environment variables to `.env.production`:**
+
+```env
+# Node Environment
+NODE_ENV=production
+
+# Server Port
+PORT=85
+
+# Database Configuration
+DB_HOST=your-db-cluster.db.ondigitalocean.com
+DB_PORT=25060
+DB_USER=doadmin
+DB_PASSWORD=your_db_password
+DB_NAME=canaccesible
+
+# DigitalOcean Spaces Configuration
+DO_SPACE_NAME=your-space-name
+DO_REGION=fra1
+DO_ACCESS_KEY=your_spaces_access_key
+DO_SECRET_KEY=your_spaces_secret_key
+
+# JWT Secret (if using authentication)
+JWT_SECRET=your_jwt_secret_key
+```
+
+### Step 5: Database Initialization
+
+```bash
+# Run migrations
+NODE_ENV=production npx sequelize-cli db:migrate
+
+# Run seeders
+NODE_ENV=production npx sequelize-cli db:seed:all
+```
+
+### Step 6: Start Applications with PM2
+
+**For the frontend:**
+
 ```bash
 pm2 start "npm run dev -- --host 0.0.0.0" --name frontend
 ```
 
-**Backend setup:**
+**For the backend:**
+
 ```bash
 pm2 start "NODE_ENV=production node index.js" --name backend
 ```
 
-PM2 handles:
-- Automatic app restart if they crash
-- Maintains a log history
-- Automatic restart on server reboot
-
----
-
-## Database
-
-We host the **MySQL** database on DigitalOcean as a managed service. This provides:
-- Automatic backups
-- Easy scalability
-- No server maintenance
-- Firewall configured only for connections from the Droplet
-
----
-
-## Spaces Storage
-
-DigitalOcean Spaces is object storage similar to AWS S3. We use it to store all images uploaded through the CRUDs:
-
-- **Multer** handles uploads from the backend
-- Images are stored in Spaces (Frankfurt region)
-- Automatic deletion on record update or deletion
-- Public URLs for frontend display
-
-**Image lifecycle:**
-- **Upload**: Images are sent to Spaces via Multer
-- **Update**: Old images are deleted, new ones are uploaded
-- **Delete**: Images are removed when a record is deleted
-
----
-
-## Architecture
-
-```
-┌──────────────────────────────┐
-│  DigitalOcean Droplet        │
-├──────────────────────────────┤
-│ Frontend (React/Vite) - PM2  │
-│ Backend (Node.js/Express)    │
-│ Nginx (Reverse Proxy)        │
-└────────────┬─────────────────┘
-             │
-        ┌────┴────────────┐
-        │                 │
-    ┌───▼──────┐    ┌─────▼──────┐
-    │ MySQL DB │    │   Spaces   │
-    │(Managed) │    │  (Images)  │
-    └──────────┘    └────────────┘
-```
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React + Vite |
-| Backend | Node.js + Express + Sequelize |
-| Database | MySQL 8.0 |
-| Process Manager | PM2 |
-| Reverse Proxy | Nginx |
-| Image Storage | DigitalOcean Spaces |
-| File Upload | Multer |
-
----
-
-## Monthly Costs
-
-| Service | Description | Price |
-|---------|-------------|-------|
-| Droplet | Frontend + Backend + PM2 | $5-20 |
-| MySQL Database | Application data | $15-50 |
-| Spaces (5GB) | Image storage | $5 |
-| **Total** | **Complete infrastructure** | **~$25-75** |
-
----
-
-## Useful Commands
+**Save PM2 configuration and enable startup on reboot:**
 
 ```bash
-# View application status
+# Save current PM2 configuration
+pm2 save
+
+# Enable PM2 to start on system reboot
+sudo pm2 startup
+```
+
+### Step 7: Verify Deployment
+
+Check that both applications are running:
+
+```bash
 pm2 status
+```
 
-# View logs in real-time
-pm2 logs
+![PM2 Status](./images/pm2-status.png)
 
-# Restart application
-pm2 restart backend
+Both applications should show status **"online"** in the PM2 list.
 
-# Live monitoring
-pm2 monit
+## Image Storage
 
-# Update code and restart
-cd ~/CanAccesible
+Images are stored in **DigitalOcean Spaces** (Frankfurt region):
+
+- **Upload**: Via Multer middleware in the backend.
+- **Storage**: Persistent storage in Spaces.
+- **Access**: Public URLs returned to frontend.
+- **Lifecycle**: Automatic deletion when records are updated or deleted.
+
+---
+
+## Updating the Application
+
+To update the code and restart applications:
+
+```bash
+cd /CanAccesible
+
+# Pull latest changes
 git pull origin main
-cd frontend && npm install && npm run build
-cd ../backend && npm install && npm run migrate
+
+# Update frontend
+cd frontend
+npm install
+
+# Update backend
+cd ../backend
+npm install
+
+# Restart all PM2 processes
 pm2 restart all
 ```
 
@@ -135,5 +161,4 @@ pm2 restart all
 ## References
 
 - [DigitalOcean Docs](https://docs.digitalocean.com)
-- [PM2 Docs](https://pm2.keymetrics.io)
-- [Nginx Docs](https://nginx.org/en/docs)
+- [PM2 Documentation](https://pm2.keymetrics.io/docs/usage/quick-start/)
