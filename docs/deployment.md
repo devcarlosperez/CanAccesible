@@ -123,6 +123,8 @@ pm2 status
 
 Both applications should show status **"online"** in the PM2 list.
 
+---
+
 ## Image Storage
 
 Images are stored in **DigitalOcean Spaces** (Frankfurt region):
@@ -155,5 +157,3 @@ npm install
 # Restart all PM2 processes
 pm2 restart all
 ```
-
----
