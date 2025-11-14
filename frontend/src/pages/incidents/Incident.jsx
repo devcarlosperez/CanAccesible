@@ -8,6 +8,8 @@ import {
   deleteIncident,
 } from "../../services/incidentService";
 
+import { getAllUsers } from "../../services/userService";
+
 import {
   Card,
   CardHeader,
@@ -38,7 +40,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
-// === MUI Styled Expand Button ===
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -52,6 +53,7 @@ const ExpandMore = styled((props) => {
 
 const Incident = () => {
   const [incidents, setIncidents] = useState([]);
+  const [users, setUsers] = useState([]);
   const [editingIncident, setEditingIncident] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
@@ -74,9 +76,17 @@ const Incident = () => {
 
   const [formData, setFormData] = useState(initialFormData);
 
+  // Cargar incidencias Y usuarios
   useEffect(() => {
     fetchIncidents();
+    fetchUsers();
   }, []);
+
+  const getUserName = (id) => {
+    const user = users.find(u => Number(u.id) === Number(id));
+    if (!user) return "Desconocido";
+    return `${user.firstName} ${user.lastName || ""}`.trim();
+  };
 
   const fetchIncidents = async () => {
     try {
@@ -84,6 +94,16 @@ const Incident = () => {
       setIncidents(data);
     } catch (err) {
       console.error("Error cargando incidencias:", err);
+    }
+  };
+
+  // Obtener usuarios
+  const fetchUsers = async () => {
+    try {
+      const data = await getAllUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error cargando usuarios:", err);
     }
   };
 
@@ -420,7 +440,7 @@ const Incident = () => {
           </Paper>
         )}
 
-        {/* LISTA DE INCIDENCIAS */}  
+        {/* LISTA DE INCIDENCIAS */}
         {incidents.length === 0 ? (
           <Typography>No hay incidencias registradas.</Typography>
         ) : (
@@ -440,18 +460,35 @@ const Incident = () => {
                   >
                     <CardHeader
                       avatar={
-                        <Avatar sx={{ bgcolor: red[500] }}>
-                          {incident.name?.charAt(0).toUpperCase() || "I"}
-                        </Avatar>
+                        (() => {
+                          const user = users.find((u) => Number(u.id) === Number(incident.userId));
+
+                          return (
+                            <Avatar
+                              src={user?.nameFile || undefined}
+                              alt={`${user?.firstName} ${user?.lastName}`}
+                              sx={{ bgcolor: red[500] }}
+                            >
+                              {user
+                                ? user.firstName?.charAt(0)?.toUpperCase()
+                                : "U"}
+                            </Avatar>
+                          );
+                        })()
                       }
-                      action={
-                        <IconButton>
-                          <MoreVertIcon />
-                        </IconButton>
+                      action={<IconButton><MoreVertIcon /></IconButton>}
+                      title={
+                        <>
+                          {incident.name}
+                          <Typography variant="body2" color="text.secondary">
+                            Reportado por: {getUserName(incident.userId)}
+                          </Typography>
+                        </>
                       }
-                      title={incident.name}
-                      subheader={incident.dateIncident}
+                      subheader={new Date(incident.dateIncident).toLocaleDateString()}
                     />
+
+
                     <CardMedia
                       component="img"
                       image={incident.nameFile}
