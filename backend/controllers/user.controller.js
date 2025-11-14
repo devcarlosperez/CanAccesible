@@ -1,163 +1,154 @@
 const db = require("../models");
 const User = db.user;
 const bcrypt = require("bcrypt");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const s3 = require("../config/doSpacesClient");
+
+// Utility function to delete image from DO Spaces
+async function deleteImageFromStorage(nameFile) {
+  if (!nameFile) return;
+  try {
+    const urlParts = nameFile.split('/');
+    const key = urlParts.slice(-2).join('/');
+    await s3.send(new DeleteObjectCommand({
+      Bucket: process.env.DO_SPACE_NAME,
+      Key: key,
+    }));
+  } catch (err) {
+    console.error("Error eliminando imagen del storage:", err.message);
+  }
+}
 
 exports.create = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, roleId, nameFile } = req.body;
+    const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).send({ message: "Faltan datos obligatorios" });
+      return res.status(400).json({ message: "Faltan datos obligatorios" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Image es obligatorio" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .send({ message: "El email tiene un formato inválido" });
+      return res.status(400).json({ message: "El email tiene un formato inválido" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).send({ message: "El email ya está registrado" });
+      return res.status(400).json({ message: "El email ya está registrado" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const nameFile = req.file.location;
 
-    User.create({
+    const newUser = await User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
       roleId,
-      nameFile: nameFile || null,
-    })
-      .then((user) => {
-        res.status(201).send(user);
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "Error al crear el usuario",
-        });
-      });
-  } catch (error) {
-    console.error("Error creando usuario:", error);
-    res.status(500).send({ message: "Error del servidor" });
+      nameFile,
+    });
+
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al crear el usuario" });
   }
 };
 
-exports.findAll = (req, res) => {
-  User.findAll({
-    attributes: [
-      "id",
-      "firstName",
-      "lastName",
-      "email",
-      "dateRegister",
-      "roleId",
-      "nameFile",
-    ],
-  })
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener usuarios",
-      });
+exports.findAll = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
     });
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al obtener usuarios" });
+  }
 };
 
-// Get a single user by ID
-exports.findOne = (req, res) => {
-  const { id } = req.params;
-
-  User.findByPk(id, {
-    attributes: [
-      "id",
-      "firstName",
-      "lastName",
-      "email",
-      "dateRegister",
-      "roleId",
-      "nameFile",
-    ],
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "Usuario no encontrado" });
-      }
-      res.send(user);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al obtener el usuario",
-      });
+exports.findOne = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
     });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al obtener el usuario" });
+  }
 };
 
-// Update an user
-exports.update = (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, email, password, roleId, nameFile } = req.body;
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email, password, roleId } = req.body;
 
-  User.findByPk(id)
-    .then(async (user) => {
-      if (!user) {
-        return res.status(404).send({ message: "Usuario no encontrado" });
-      }
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
 
-      // If password is provided, hash it
-      let hashedPassword = user.password;
-      if (password) {
-        hashedPassword = await bcrypt.hash(password, 10);
-      }
+    const userToUpdate = {};
 
-      User.update(
-        {
-          firstName,
-          lastName,
-          email,
-          password: hashedPassword,
-          roleId,
-          nameFile,
-        },
-        { where: { id } }
-      )
-        .then(() => {
-          return User.findByPk(id);
-        })
-        .then((updatedUser) => {
-          res.send(updatedUser);
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: err.message || "Error al actualizar el usuario",
-          });
-        });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al buscar el usuario",
-      });
-    });
+    if (firstName !== undefined) userToUpdate.firstName = firstName;
+    if (lastName !== undefined) userToUpdate.lastName = lastName;
+    if (email !== undefined) userToUpdate.email = email;
+    if (password) userToUpdate.password = await bcrypt.hash(password, 10);
+    if (roleId !== undefined) userToUpdate.roleId = roleId;
+
+    if (req.file) {
+      await deleteImageFromStorage(user.nameFile);
+      userToUpdate.nameFile = req.file.location;
+    }
+
+    await User.update(userToUpdate, { where: { id } });
+    const updatedUser = await User.findByPk(id);
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al actualizar el usuario" });
+  }
 };
 
-// Delete an user
-exports.delete = (req, res) => {
-  const { id } = req.params;
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
 
-  User.destroy({ where: { id } })
-    .then((deleted) => {
-      if (deleted) {
-        res.send({ message: "Usuario eliminado correctamente" });
-      } else {
-        res.status(404).send({ message: "Usuario no encontrado" });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error al eliminar el usuario",
-      });
-    });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    await deleteImageFromStorage(user.nameFile);
+    await User.destroy({ where: { id } });
+
+    res.status(200).json({ message: "Usuario y su imagen asociada han sido eliminados correctamente" });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Error al eliminar el usuario" });
+  }
 };
