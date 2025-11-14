@@ -157,8 +157,3 @@ pm2 restart all
 ```
 
 ---
-
-## References
-
-- [DigitalOcean Docs](https://docs.digitalocean.com)
-- [PM2 Documentation](https://pm2.keymetrics.io/docs/usage/quick-start/)
