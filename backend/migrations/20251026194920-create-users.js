@@ -27,14 +27,23 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      rol: {
-        type: Sequelize.ENUM('user', 'admin'),
+      roleId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 'user',
+        references: {
+          model: 'Roles',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      nameFile: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

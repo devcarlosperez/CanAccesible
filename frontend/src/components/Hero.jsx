@@ -1,4 +1,4 @@
-import BlurText from "./motion/BlurText";
+import BlurText from "./react-bits/BlurText";
 
 const Hero = ({ heroData }) => {
   const handleAnimationComplete = () => {
@@ -6,7 +6,7 @@ const Hero = ({ heroData }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center min-h-180 text-left text-white px-8 md:px-24">
+    <div className="flex flex-col justify-center min-h-180 text-left text-white px-10 md:px-24 mt-20">
       <div className="max-w-4xl">
         <BlurText
           text={heroData.text1}

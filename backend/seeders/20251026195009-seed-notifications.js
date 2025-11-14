@@ -6,6 +6,8 @@ module.exports = {
     await queryInterface.bulkInsert('Notifications', [
       {
         userId: 2,
+        entity: 'Incident',
+        entityId: 1,
         message: 'Tu incidencia "Escaleras sin rampa" ha sido aprobada',
         dateNotification: new Date(),
         createdAt: new Date(),
@@ -13,6 +15,8 @@ module.exports = {
       },
       {
         userId: 1,
+        entity: 'IncidentComment',
+        entityId: 1,
         message: 'Nueva respuesta a tu incidencia "Parada de autobús sin accesibilidad"',
         dateNotification: new Date(),
         createdAt: new Date(),

@@ -5,12 +5,12 @@ const NotificationDropdown = ({
   setShowNotifications,
   handleDelete,
   iconSize = "text-xl md:text-2xl lg:text-3xl",
-  dropdownWidth = "w-80"
+  dropdownWidth = "w-80",
 }) => (
   <div className="relative">
     <button
       type="button"
-      className="relative text-white hover:text-accent-1 transition-colors focus:outline-none cursor-pointer"
+      className="relative text-white hover:text-accent-1 transition-colors focus:outline-none cursor-pointer mt-2"
       aria-label="Notificaciones"
       onClick={() => setShowNotifications((prev) => !prev)}
     >
@@ -24,9 +24,13 @@ const NotificationDropdown = ({
       )}
     </button>
     {showNotifications && (
-      <div className={`absolute right-0 mt-2 ${dropdownWidth} bg-white rounded-xl shadow-xl z-200 border border-gray-200`}>
+      <div
+        className={`absolute right-0 mt-2 ${dropdownWidth} bg-white rounded-xl shadow-xl z-200 border border-gray-200`}
+      >
         <div className="flex justify-between items-center px-4 py-3 border-b">
-          <span className="text-lg font-bold text-[#1b226b]">Notificaciones</span>
+          <span className="text-lg font-bold text-[#1b226b]">
+            Notificaciones
+          </span>
         </div>
         <div className="p-4 max-h-80 overflow-y-auto">
           {notifications.length === 0 ? (

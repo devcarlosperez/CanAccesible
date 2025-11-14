@@ -95,6 +95,10 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },
+      nameFile: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       isApproved: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
