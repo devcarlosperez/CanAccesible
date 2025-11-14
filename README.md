@@ -76,67 +76,139 @@ backend/
 docs/
 ├── images/               # Diagrams and screenshots
 ├── deployment.md         # Deployment guide
-├── diagrams.md           # System architecture diagrams
-└── README.md             # Documentation index
+└── diagrams.md           # System architecture diagrams
 ```
 ---
 
-## Project Installation
+## Getting Started
 
 ### Prerequisites
 
-- Have NodeJS, NPM, and MySQL installed.
+Before you begin, make sure you have the following installed on your machine:
 
-### Clone Repository
+- **Node.js**
+- **NPM**
+- **MySQL**
+- **Git**
 
+### Clone the Repository
+
+```bash
+git clone https://github.com/devcarlosperez/CanAccesible.git
+cd CanAccesible
 ```
-git clone https://github.com/devcarlosperez/CanAccesible
+
+### 1. Database Setup
+
+First, you need to create the MySQL database manually:
+
+**Open MySQL and execute:**
+
+```sql
+CREATE DATABASE db_canaccesible;
 ```
 
-### Backend Configuration
+Make sure you have a MySQL user with appropriate permissions. You can use the default `root` user or create a new one.
 
-- Enter the backend directory
+### 2. Backend Configuration
 
-```
+Navigate to the backend directory:
+
+```bash
 cd backend
 ```
 
-- Install dependencies
+**Copy the environment file:**
 
+```bash
+cp .env.example .env.development
 ```
+
+**Edit `.env.development` with your credentials:**
+
+```env
+# Application Environment
+NODE_ENV=development                          # Environment mode (development or production)
+
+# Database Configuration
+DB_HOST=localhost                             # MySQL server host
+DB_PORT=3306                                  # MySQL server port
+DB_USER=your_mysql_username                   # MySQL username
+DB_PASS=your_mysql_password                   # MySQL password
+DB_NAME=canaccesible_db                       # Database name to create and use
+DB_SSL=false                                  # Enable SSL for database connection
+
+# Authentication
+JWT_SECRET=your_super_secret_jwt_key_here    # Secret key for JWT token generation and validation
+
+# DigitalOcean Spaces (Image Storage) - Optional for local development
+DO_ACCESS_KEY=your_digitalocean_access_key   # DigitalOcean Spaces API access key
+DO_SECRET_KEY=your_digitalocean_secret_key   # DigitalOcean Spaces API secret key
+DO_SPACE_NAME=your_space_name                # DigitalOcean Spaces bucket name
+DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
+```
+
+**Install dependencies:**
+
+```bash
 npm install
 ```
 
-- Run migrations and seeders
+**Run database migrations and seeders:**
 
-```
+```bash
 NODE_ENV=development npx sequelize-cli db:migrate
 
 NODE_ENV=development npx sequelize-cli db:seed:all
 ```
 
-- Start backend
+**Start the backend server:**
 
-```
-node index.js
+```bash
+NODE_ENV=development node index.js
 ```
 
-### Frontend Configuration
+The backend will be running on `http://localhost:85`
 
-```
+### 3. Frontend Configuration
+
+Open a new terminal and navigate to the frontend directory:
+
+```bash
 cd frontend
+```
 
+**Install dependencies:**
+
+```bash
 npm install
+```
 
+**Start the development server:**
+
+```bash
 npm run dev
 ```
+
+The frontend will be running on `http://localhost:5173`
+
+### 4. Access the Application
+
+Open your browser and navigate to:
+
+```
+http://localhost:5173
+```
+
+You should now see the CanAccesible application running locally!
+
 ---
 
 ## Acknowledgments
 
 We would like to thank:
 
-- **Our teachers and instructors** for their guidance, mentorship, and valuable feedback throughout the project.
+- **Our teachers** for their guidance, mentorship, and valuable feedback throughout the project.
 - **Our colleagues and classmates** for their constructive feedback, code reviews, and support.
 - **DigitalOcean** for providing reliable cloud infrastructure and services.
 
