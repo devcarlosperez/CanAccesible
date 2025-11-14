@@ -15,15 +15,25 @@ const UserMenu = ({ user, onLogout }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const initial = "U";
+  // Avatar o inicial
+  const avatarSrc = user?.nameFile || null;
+  const initial = user?.firstName?.[0]?.toUpperCase() || "U";
 
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:bg-blue-700 transition-colors"
+        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:brightness-90 transition-colors overflow-hidden"
       >
-        {initial}
+        {avatarSrc ? (
+          <img
+            src={avatarSrc}
+            alt="avatar"
+            className="w-full h-full object-cover rounded-full"
+          />
+        ) : (
+          initial
+        )}
       </button>
 
       {open && (
