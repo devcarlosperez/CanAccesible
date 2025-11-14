@@ -455,7 +455,7 @@ const Incident = () => {
                     <CardMedia
                       component="img"
                       image={incident.nameFile}
-                      alt={incident.title}
+                      alt={incident.name}
                       sx={{
                         width: "100%",
                         maxHeight: expandedId === incident.id ? 768 : 300,

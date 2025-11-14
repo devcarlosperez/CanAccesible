@@ -156,7 +156,7 @@ exports.update = async (req, res) => {
       incidentToUpdate.address = locationData?.display_name || null;
     }
 
-    if (req.body.name !== undefined) incidentToUpdate.title = req.body.name;
+    if (req.body.name !== undefined) incidentToUpdate.name = req.body.name;
     if (req.body.description !== undefined) incidentToUpdate.description = req.body.description;
     if (req.body.incidentStatusId !== undefined) incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
     if (req.body.incidentTypeId !== undefined) incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
