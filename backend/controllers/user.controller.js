@@ -8,12 +8,14 @@ const s3 = require("../config/doSpacesClient");
 async function deleteImageFromStorage(nameFile) {
   if (!nameFile) return;
   try {
-    const urlParts = nameFile.split('/');
-    const key = urlParts.slice(-2).join('/');
-    await s3.send(new DeleteObjectCommand({
-      Bucket: process.env.DO_SPACE_NAME,
-      Key: key,
-    }));
+    const urlParts = nameFile.split("/");
+    const key = urlParts.slice(-2).join("/");
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.DO_SPACE_NAME,
+        Key: key,
+      })
+    );
   } catch (err) {
     console.error("Error eliminando imagen del storage:", err.message);
   }
@@ -27,13 +29,11 @@ exports.create = async (req, res) => {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Image es obligatorio" });
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "El email tiene un formato inválido" });
+      return res
+        .status(400)
+        .json({ message: "El email tiene un formato inválido" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const nameFile = req.file.location;
+    const nameFile = req.file ? req.file.location : null;
 
     const newUser = await User.create({
       firstName,
@@ -55,7 +55,9 @@ exports.create = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al crear el usuario" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error al crear el usuario" });
   }
 };
 
@@ -74,7 +76,9 @@ exports.findAll = async (req, res) => {
     });
     res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al obtener usuarios" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error al obtener usuarios" });
   }
 };
 
@@ -99,7 +103,9 @@ exports.findOne = async (req, res) => {
 
     res.status(200).json(user);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al obtener el usuario" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error al obtener el usuario" });
   }
 };
 
@@ -131,7 +137,9 @@ exports.update = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al actualizar el usuario" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error al actualizar el usuario" });
   }
 };
 
@@ -147,8 +155,12 @@ exports.delete = async (req, res) => {
     await deleteImageFromStorage(user.nameFile);
     await User.destroy({ where: { id } });
 
-    res.status(200).json({ message: "Usuario y su imagen asociada han sido eliminados correctamente" });
+    res.status(200).json({
+      message: "Usuario y su imagen asociada han sido eliminados correctamente",
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al eliminar el usuario" });
+    res
+      .status(500)
+      .json({ message: err.message || "Error al eliminar el usuario" });
   }
 };
