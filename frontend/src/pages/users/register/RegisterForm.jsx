@@ -8,20 +8,21 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
     email: "",
     password: "",
     rol: "",
+    avatar: null,
   });
 
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
 
-  // Cargar los datos del usuario a editar si existe
   useEffect(() => {
     if (userToEdit) {
       setNewUser({
         firstName: userToEdit.firstName,
         lastName: userToEdit.lastName,
         email: userToEdit.email,
-        password: "", // vacía por seguridad
-        rol: userToEdit.rol,
+        password: "",
+        rol: userToEdit.roleId || userToEdit.rol,
+        avatar: null,
       });
     } else {
       setNewUser({
@@ -30,6 +31,7 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
         email: "",
         password: "",
         rol: "",
+        avatar: null,
       });
     }
   }, [userToEdit]);
@@ -44,13 +46,30 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
     setSuccess(null);
 
     try {
+      const formData = new FormData();
+      formData.append("firstName", newUser.firstName);
+      formData.append("lastName", newUser.lastName);
+      formData.append("email", newUser.email);
+
+      if (!userToEdit || newUser.password !== "") {
+        formData.append("password", newUser.password);
+      }
+
+      // roleId es lo que espera el backend
+      formData.append("roleId", newUser.rol);
+
+      // Multer espera "image"
+      if (newUser.avatar) {
+        formData.append("image", newUser.avatar);
+      }
+
       if (userToEdit) {
-        await updateUser(userToEdit.id, newUser);
-        setSuccess("Usuario actualizado con éxito ✅");
-        onCancelEdit(); // cerrar modo edición
+        await updateUser(userToEdit.id, formData);
+        setSuccess("Usuario actualizado con éxito");
+        onCancelEdit();
       } else {
-        await createUser(newUser);
-        setSuccess("Usuario creado con éxito ✅");
+        await createUser(formData);
+        setSuccess("Usuario creado con éxito");
       }
 
       setNewUser({
@@ -59,9 +78,10 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
         email: "",
         password: "",
         rol: "",
+        avatar: null,
       });
 
-      onUserCreated(); // recargar lista
+      onUserCreated();
     } catch (err) {
       console.error("Error:", err);
       setError(userToEdit ? "No se pudo actualizar ❌" : "No se pudo crear ❌");
@@ -72,6 +92,7 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
     <form
       onSubmit={handleSubmit}
       className="bg-gray-800 p-6 rounded-lg shadow-md mb-8"
+      encType="multipart/form-data"
     >
       <h3 className="text-xl font-semibold mb-4">
         {userToEdit ? "Editar usuario" : "Registrar nuevo usuario"}
@@ -112,7 +133,7 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
           value={newUser.password}
           onChange={handleChange}
           className="p-2 rounded bg-gray-700 text-white col-span-2"
-          required={!userToEdit} // obligatorio solo al crear
+          required={!userToEdit}
         />
         <select
           name="rol"
@@ -122,12 +143,29 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
           required
         >
           <option value="">Selecciona un rol</option>
-          <option value="usuario">Usuario</option>
-          <option value="admin">Administrador</option>
-          <option value="municipio">Municipio</option>
+          <option value="1">Usuario</option>
+          <option value="2">Administrador</option>
+          <option value="3">Municipio</option>
         </select>
-      </div>
+        <input
+          type="file"
+          name="avatar"
+          accept="image/*"
+          onChange={(e) =>
+            setNewUser({ ...newUser, avatar: e.target.files[0] })
+          }
+          className="p-2 rounded bg-gray-700 text-white col-span-2"
+        />
 
+        {/* AVATAR PREVIEW */}
+        {newUser.avatar && (
+          <img
+            src={URL.createObjectURL(newUser.avatar)}
+            alt="preview"
+            className="mt-2 w-24 h-24 object-cover rounded-full border border-gray-500 col-span-2"
+          />
+        )}
+      </div>
       <div className="mt-4 flex gap-2">
         <button
           type="submit"
@@ -150,7 +188,6 @@ const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
           </button>
         )}
       </div>
-
       {success && <p className="text-green-400 mt-4">{success}</p>}
       {error && <p className="text-red-400 mt-4">{error}</p>}
     </form>
