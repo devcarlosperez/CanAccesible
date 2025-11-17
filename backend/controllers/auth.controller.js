@@ -32,7 +32,7 @@ exports.signIn = async (req, res) => {
       message: "Inicio de sesión exitoso",
       user: {
         id: user.id,
-        nombre: user.nombre,
+        nombre: user.firstName,
         email: user.email,
         role: user.role,
       },

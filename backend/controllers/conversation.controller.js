@@ -30,12 +30,7 @@ exports.findAll = async (req, res) => {
     const where = req.user.role === 'admin' ? {} : { userId };
 
     const conversations = await Conversation.findAll({
-      where,
-      include: [{
-        model: db.user,
-        as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'email']
-      }]
+      where
     });
 
     res.status(200).json(conversations);
@@ -52,12 +47,7 @@ exports.findOne = async (req, res) => {
     const isAdmin = req.user.role === 'admin';
 
     const conversation = await Conversation.findOne({
-      where: { id: conversationId },
-      include: [{
-        model: db.user,
-        as: 'user',
-        attributes: ['id', 'firstName', 'lastName', 'email']
-      }]
+      where: { id: conversationId }
     });
 
     if (!conversation) {
@@ -106,7 +96,6 @@ exports.delete = async (req, res) => {
 
     res.status(200).json({ 
       message: "Conversación eliminada correctamente.",
-      conversationId: conversationId
     });
   } catch (err) {
     res.status(500).json({ message: err.message || "Error al eliminar la conversación." });
