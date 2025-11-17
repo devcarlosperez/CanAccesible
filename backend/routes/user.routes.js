@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const user = require("../controllers/user.controller");
-  const userImageUpload = require("../middleware/userImageUpload");
+  const userImageUpload = require("../middlewares/userImageUpload");
 
   const router = require("express").Router();
 

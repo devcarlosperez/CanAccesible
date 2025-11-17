@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const incidents = require("../controllers/incident.controller");
-  const incidentImageUpload = require("../middleware/incidentImageUpload");
+  const incidentImageUpload = require("../middlewares/incidentImageUpload");
 
   const router = require("express").Router();
 

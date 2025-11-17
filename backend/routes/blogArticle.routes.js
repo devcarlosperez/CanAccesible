@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const blogArticle = require("../controllers/blogArticle.controller");
-  const blogArticleImageUpload = require("../middleware/blogArticleImageUpload");
+  const blogArticleImageUpload = require("../middlewares/blogArticleImageUpload");
 
   const router = require("express").Router();
 
