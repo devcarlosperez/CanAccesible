@@ -1,17 +1,18 @@
 module.exports = (app) => {
   const conversations = require("../controllers/conversation.controller");
+  const { verifyToken } = require("../middlewares/auth.middleware");
 
   const router = require("express").Router();
 
-  router.post("/", conversations.create);
+  router.post("/", verifyToken, conversations.create);
 
-  router.get("/", conversations.findAll);
+  router.get("/", verifyToken, conversations.findAll);
 
-  router.get("/:id", conversations.findOne);
+  router.get("/:id", verifyToken, conversations.findOne);
 
-  router.put("/:id", conversations.update);
+  router.put("/:id", verifyToken, conversations.update);
 
-  router.delete("/:id", conversations.delete);
+  router.delete("/:id", verifyToken, conversations.delete);
 
   app.use("/api/conversations", router);
 };
