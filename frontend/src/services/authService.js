@@ -40,7 +40,9 @@ const useAuthStore = create((set) => ({
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     delete api.defaults.headers.common["Authorization"];
+
     set({
       user: null,
       token: null,

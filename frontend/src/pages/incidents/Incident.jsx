@@ -9,6 +9,7 @@ import {
 } from "../../services/incidentService";
 
 import { getAllUsers } from "../../services/userService";
+import useAuthStore from "../../services/authService.js";
 
 import {
   Card,
@@ -76,7 +77,6 @@ const Incident = () => {
 
   const [formData, setFormData] = useState(initialFormData);
 
-  // Cargar incidencias Y usuarios
   useEffect(() => {
     fetchIncidents();
     fetchUsers();
@@ -97,7 +97,6 @@ const Incident = () => {
     }
   };
 
-  // Obtener usuarios
   const fetchUsers = async () => {
     try {
       const data = await getAllUsers();
@@ -106,6 +105,8 @@ const Incident = () => {
       console.error("Error cargando usuarios:", err);
     }
   };
+
+  const { isAuthenticated, user } = useAuthStore();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -184,20 +185,30 @@ const Incident = () => {
         </Typography>
 
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <Button
-            variant="contained"
-            color={showForm ? "error" : "primary"}
-            startIcon={showForm ? <CancelIcon /> : <AddIcon />}
-            onClick={() => {
-              setShowForm(!showForm);
-              if (showForm) {
-                setFormData(initialFormData);
-                setEditingIncident(null);
-              }
-            }}
-          >
-            {showForm ? "Cancelar" : "Nueva Incidencia"}
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              variant="contained"
+              color={showForm ? "error" : "primary"}
+              startIcon={showForm ? <CancelIcon /> : <AddIcon />}
+              onClick={() => {
+                setShowForm(!showForm);
+                if (showForm) {
+                  setFormData(initialFormData);
+                  setEditingIncident(null);
+                }
+              }}
+            >
+              {showForm ? "Cancelar" : "Nueva Incidencia"}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => (window.location.href = "/login")}
+            >
+              Inicia sesión para poder crear incidencias
+            </Button>
+          )}
         </div>
 
         {/* FORMULARIO */}
