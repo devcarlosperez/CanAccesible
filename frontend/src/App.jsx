@@ -9,10 +9,12 @@ import Blog from "./pages/blog/Blog";
 import PublicRoute from "./routes/PublicRoute";
 import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
+import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTopRoutes/>
       <Routes>
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
