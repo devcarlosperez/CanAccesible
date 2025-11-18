@@ -93,7 +93,7 @@ const LoginForm = () => {
             href="/register"
             className="text-primary-2 font-medium hover:underline"
           >
-            Crear cuenta gratis
+            Regístrate aquí
           </a>
         </p>
       </form>

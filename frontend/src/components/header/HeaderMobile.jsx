@@ -21,7 +21,6 @@ const HeaderMobile = ({
   return (
     <>
       <div className="flex items-center justify-between w-full px-4">
-        {/* Logo */}
         <Link to="/">
           <img
             src={logo}
@@ -30,7 +29,6 @@ const HeaderMobile = ({
           />
         </Link>
 
-        {/* Notificaciones + Menú hamburguesa */}
         <div className="flex items-center gap-4">
           {isAuthenticated && (
             <NotificationDropdown
@@ -46,7 +44,6 @@ const HeaderMobile = ({
             />
           )}
 
-          {/* Siempre mostrar el menú hamburguesa */}
           <span
             className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${
               scrolled ? "text-amber-50" : "text-neutral-2"
@@ -58,7 +55,6 @@ const HeaderMobile = ({
         </div>
       </div>
 
-      {/* Mobile side menu */}
       <MobileMenu
         open={open}
         setOpen={setOpen}

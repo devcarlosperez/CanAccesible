@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import logo from "../../assets/canaccesible-logo-2.png";
 import useAuthStore from "../../services/authService.js";
 import HeaderDesktop from "./HeaderDesktop";
 import HeaderMobile from "./HeaderMobile";
@@ -56,7 +54,6 @@ const Header = ({ transparent = true }) => {
   ];
 
   const filteredMenuItems = menuItems.filter((item) => {
-    // si es login y ya está autenticado, lo quitamos
     if (item.login && isAuthenticated) return false;
     return true;
   });
