@@ -14,5 +14,5 @@ module.exports = (app) => {
 
   router.delete("/:id", verifyToken, conversationMessages.delete);
 
-  app.use("/api/conversations", router);
+  app.use("/api/conversationMessages", router);
 };
