@@ -35,15 +35,13 @@ const LoginForm = () => {
         <img
           src={logo}
           alt="canaccesible-logo"
-          className="h-20 sm:h-24 w-auto mb-4"
+          className="h-20 sm:h-22 w-auto"
         />
       </Link>
-      <p className="text-gray-500 text-center max-w-md mb-10 text-sm sm:text-base px-4">
-        CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología y la
-        accesibilidad digital.
-      </p>
-
-      <form onSubmit={handleSubmit} className="w-full max-w-md font-roboto">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md font-roboto mt-11"
+      >
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
           Correo electrónico
         </label>

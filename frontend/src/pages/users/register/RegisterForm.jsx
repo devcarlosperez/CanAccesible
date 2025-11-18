@@ -66,13 +66,13 @@ const RegisterForm = () => {
         <img
           src={logo}
           alt="canaccesible-logo"
-          className="h-20 sm:h-24 w-auto mb-4"
+          className="h-20 sm:h-22 w-auto"
         />
       </Link>
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md font-roboto"
+        className="w-full max-w-md font-roboto mt-10"
         encType="multipart/form-data"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
