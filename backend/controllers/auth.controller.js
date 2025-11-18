@@ -8,7 +8,10 @@ exports.signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email },
+      include: [{ model: db.role, as: 'role' }]
+    });
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
@@ -22,7 +25,7 @@ exports.signIn = async (req, res) => {
       {
         id: user.id,
         email: user.email,
-        role: user.role,
+        role: user.role.role,
       },
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
@@ -32,9 +35,9 @@ exports.signIn = async (req, res) => {
       message: "Inicio de sesión exitoso",
       user: {
         id: user.id,
-        nombre: user.nombre,
+        nombre: user.firstName,
         email: user.email,
-        role: user.role,
+        role: user.role.role,
       },
       token,
     });
