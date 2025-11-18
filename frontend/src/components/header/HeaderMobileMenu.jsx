@@ -11,7 +11,6 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
         onClick={() => setOpen(false)}
       ></div>
 
-      {/* Menu lateral */}
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${
           open ? "translate-x-0" : "translate-x-full"
@@ -27,7 +26,6 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
         </div>
 
         <ul className="flex flex-col p-4 gap-4">
-          {/* Links filtrados */}
           {menuItems.map((item) => (
             <li key={item.text}>
               <Link
@@ -47,7 +45,6 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
             </li>
           ))}
 
-          {/* Mi cuenta si autenticado */}
           {isAuthenticated && user && (
             <li>
               <Link
