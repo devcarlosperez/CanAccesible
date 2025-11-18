@@ -47,7 +47,7 @@ const Header = ({ transparent = true }) => {
   const menuItems = [
     { text: "Inicio", to: "/home", icon: "home" },
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
-    { text: "Islas", to: "/islands", icon: "public" },
+    { text: "Mapa", to: "/map", icon: "map" },
     { text: "Blog", to: "/blog", icon: "article" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
     { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },

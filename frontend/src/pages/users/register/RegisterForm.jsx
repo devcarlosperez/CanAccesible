@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../services/authService.js";
@@ -61,11 +62,13 @@ const RegisterForm = () => {
 
   return (
     <div className="bg-white w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-10 h-screen lg:h-auto">
-      <img
-        src={logo}
-        alt="canaccesible-logo"
-        className="h-20 sm:h-24 w-auto mb-4"
-      />
+      <Link to="/">
+        <img
+          src={logo}
+          alt="canaccesible-logo"
+          className="h-20 sm:h-24 w-auto mb-4"
+        />
+      </Link>
 
       <form
         onSubmit={handleSubmit}
