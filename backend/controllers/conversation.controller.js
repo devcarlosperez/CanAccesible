@@ -6,13 +6,19 @@ const Conversation = db.conversation;
 exports.create = async (req, res) => {
   try {
     const userId = req.user.id; // Extracted from the JWT token
+    const { type } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "userId es obligatorio" });
     }
 
+    if (!type) {
+      return res.status(400).json({ message: "type es obligatorio" });
+    }
+
     const conversation = await Conversation.create({
-      userId
+      userId,
+      type
     });
 
     res.status(201).json(conversation);
