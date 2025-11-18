@@ -88,11 +88,13 @@ const Footer = () => {
                 <span className="hidden md:inline"> </span>
                 Condiciones
               </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Política de <br className="block lg:hidden" />
-                <span className="hidden md:inline"> </span>
-                Privacidad
-              </li>
+              <Link to={"/privacy-policy"}>
+                <li className="hover:text-blue-600 transition-colors cursor-pointer">
+                  Política de <br className="block lg:hidden" />
+                  <span className="hidden md:inline"> </span>
+                  Privacidad
+                </li>
+              </Link>
             </ul>
           </div>
         </div>

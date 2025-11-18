@@ -8,6 +8,7 @@ import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
 import PublicRoute from "./routes/PublicRoute";
 import ErrorPage from "./pages/others/ErrorPage";
+import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/error" element={<ErrorPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );
