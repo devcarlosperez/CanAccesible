@@ -4,15 +4,15 @@ module.exports = (app) => {
 
   const router = require("express").Router();
 
-  router.post("/", verifyToken, conversationMessages.create);
+  router.post("/:conversationId", verifyToken, conversationMessages.create);
 
-  router.get("/", verifyToken, conversationMessages.findAll);
+  router.get("/:conversationId", verifyToken, conversationMessages.findAll);
 
-  router.get("/:id", verifyToken, conversationMessages.findOne);
+  router.get("/:conversationId/:id", verifyToken, conversationMessages.findOne);
 
-  router.put("/:id", verifyToken, conversationMessages.update);
+  router.put("/:conversationId/:id", verifyToken, conversationMessages.update);
 
-  router.delete("/:id", verifyToken, conversationMessages.delete);
+  router.delete("/:conversationId/:id", verifyToken, conversationMessages.delete);
 
   app.use("/api/conversationMessages", router);
 };
