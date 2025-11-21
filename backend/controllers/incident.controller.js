@@ -111,7 +111,14 @@ exports.create = async (req, res) => {
 // Retrieves all incidents from the database
 exports.findAll = async (req, res) => {
   try {
-    const data = await incidentObject.findAll();
+    const data = await incidentObject.findAll({
+      include: [{
+        model: db.user,
+        as: 'user',
+        attributes: ['firstName', 'lastName', 'nameFile'],
+      }],
+    });
+
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -120,6 +127,7 @@ exports.findAll = async (req, res) => {
     });
   }
 };
+
 
 // Retrieves a single incident by ID
 exports.findOne = async (req, res) => {
