@@ -8,10 +8,13 @@ import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
 import PublicRoute from "./routes/PublicRoute";
 import ErrorPage from "./pages/others/ErrorPage";
+import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
+import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTopRoutes/>
       <Routes>
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
@@ -36,6 +39,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/error" element={<ErrorPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );
