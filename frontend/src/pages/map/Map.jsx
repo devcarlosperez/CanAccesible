@@ -66,7 +66,7 @@ const Map = () => {
                                             <strong>{incident.name}</strong>
                                             <br/>
                                             <button
-                                                className="mt-1 inline-block underline text-blue-600"
+                                                className="mt-1 inline-block underline text-blue-600 cursor-pointer"
                                                 onClick={() => handleViewDetails(incident.id)}
                                             >
                                                 Ver detalles
