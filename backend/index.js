@@ -1,5 +1,6 @@
 const express = require("express");
 const { sequelize } = require("./models");
+const session = require("express-session");
 
 const app = express();
 
@@ -19,6 +20,23 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const sessionStore = new SequelizeStore({
+  db: sequelize,
+});
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+
 require("./routes/incident.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/notification.routes")(app);
@@ -34,6 +52,9 @@ sequelize
   .authenticate()
   .then(() => console.log(`Successful mysql connection: env=${env}`))
   .catch((err) => console.error("Error", err));
+
+// Sync the session store to create the Sessions table if it doesn't exist
+sessionStore.sync();
 
 // Use environment variable for port or default to 8080
 const port = 85;
