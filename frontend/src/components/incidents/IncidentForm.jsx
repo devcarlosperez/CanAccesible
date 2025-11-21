@@ -27,40 +27,40 @@ const IncidentForm = ({
                     </Grid>
                     {/* Island */}
                     <Grid item>
-                        <TextField
-                            select
-                            fullWidth
-                            label="Isla"
-                            name="island"
-                            value={formData.island}
-                            onChange={e => setFormData(f => ({ ...f, island: e.target.value }))}
-                            required
+                        <TextField 
+                        select 
+                        fullWidth 
+                        label="Isla" 
+                        name="island" 
+                        value={formData.island} 
+                        onChange={e => setFormData(f => ({ ...f, island: e.target.value }))} 
+                        required 
                         >
-                            <MenuItem value={1}>Gran Canaria</MenuItem>
-                            <MenuItem value={2}>Tenerife</MenuItem>
-                            <MenuItem value={3}>La Gomera</MenuItem>
-                            <MenuItem value={4}>Lanzarote</MenuItem>
-                            <MenuItem value={5}>Fuerteventura</MenuItem>
-                            <MenuItem value={6}>El Hierro</MenuItem>
-                            <MenuItem value={7}>La Palma</MenuItem>
+                        <MenuItem value={1}>Gran Canaria</MenuItem>
+                        <MenuItem value={2}>Tenerife</MenuItem>
+                        <MenuItem value={3}>La Gomera</MenuItem>
+                        <MenuItem value={4}>Lanzarote</MenuItem>
+                        <MenuItem value={5}>Fuerteventura</MenuItem>
+                        <MenuItem value={6}>El Hierro</MenuItem>
+                        <MenuItem value={7}>La Palma</MenuItem>
                         </TextField>
                     </Grid>
                     {/* Area */}
                     <Grid item>
-                        <TextField
-                            select
-                            fullWidth
-                            label="Area"
-                            name="area"
-                            value={formData.area}
-                            onChange={e => setFormData(f => ({ ...f, area: e.target.value }))}
-                            required
+                        <TextField 
+                        select 
+                        fullWidth 
+                        label="Area" 
+                        name="area" 
+                        value={formData.area} 
+                        onChange={e => setFormData(f => ({ ...f, area: e.target.value }))} 
+                        required 
                         >
-                            <MenuItem value={1}>movilidad</MenuItem>
-                            <MenuItem value={2}>sensorial</MenuItem>
-                            <MenuItem value={3}>arquitectura</MenuItem>
-                            <MenuItem value={4}>transporte</MenuItem>
-                            <MenuItem value={5}>otro</MenuItem>
+                        <MenuItem value={1}>movilidad</MenuItem>
+                        <MenuItem value={2}>sensorial</MenuItem>
+                        <MenuItem value={3}>arquitectura</MenuItem>
+                        <MenuItem value={4}>transporte</MenuItem>
+                        <MenuItem value={5}>otro</MenuItem>
                         </TextField>
                     </Grid>
                     {/* Status */}

@@ -6,6 +6,7 @@ import { getAllIncidents } from "../../services/incidentService";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const markerIcon = new L.Icon({
     iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -14,7 +15,6 @@ const markerIcon = new L.Icon({
     popupAnchor: [1, -34],
 });
 
-
 const canariasBounds = [
     [27.5, -18.5],
     [29.5, -13.0],
@@ -22,10 +22,15 @@ const canariasBounds = [
 
 const Map = () => {
     const [incidents, setIncidents] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getAllIncidents().then(setIncidents);
     }, []);
+
+    const handleViewDetails = (incidentId) => {
+        navigate(`/incidents?incidentId=${incidentId}`);
+    };
 
     return (
         <>
@@ -60,7 +65,12 @@ const Map = () => {
                                         <div>
                                             <strong>{incident.name}</strong>
                                             <br/>
-                                            <a className="mt-1 inline-block" href={`/incidents/`}> Ver detalles </a>
+                                            <button
+                                                className="mt-1 inline-block underline text-blue-600"
+                                                onClick={() => handleViewDetails(incident.id)}
+                                            >
+                                                Ver detalles
+                                            </button>
                                         </div>
                                     </Popup>
                                 </Marker>

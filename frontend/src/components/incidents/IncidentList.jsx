@@ -3,13 +3,13 @@ import IncidentCard from "./IncidentCard";
 
 const IncidentList = ({
   incidents,
-  expandedId,
-  onExpandClick,
   onEdit,
   onDelete,
   page,
   setPage,
   itemsPerPage,
+  viewMoreIncidentId,
+  handleCloseViewMore,
 }) => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -22,18 +22,17 @@ const IncidentList = ({
     <>
       <Grid container spacing={3} justifyContent="center">
         {paginatedIncidents.map((incident) => {
-          // El usuario ya está dentro de la incidencia
-          const user = incident.user; // Accede directamente al usuario desde la propiedad 'user'
+          const user = incident.user;
 
           return (
             <Grid item xs={12} sm={6} md={4} key={incident.id}>
               <IncidentCard
                 incident={incident}
-                user={user}  // El usuario ahora está directamente accesible
-                expanded={expandedId === incident.id}
-                onExpandClick={onExpandClick}
+                user={user}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                openViewMore={String(incident.id) === String(viewMoreIncidentId)}
+                handleCloseViewMore={handleCloseViewMore}
               />
             </Grid>
           );

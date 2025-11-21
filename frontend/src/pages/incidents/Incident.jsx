@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
 import useAuthStore from "../../services/authService.js";
 import IncidentForm from "../../components/incidents/IncidentForm";
@@ -19,6 +20,12 @@ const Incident = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
 
+  // Nuevo estado para el modal de "ver más"
+  const [viewMoreIncidentId, setViewMoreIncidentId] = useState(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const initialFormData = {
     name: "",
     description: "",
@@ -38,6 +45,15 @@ const Incident = () => {
   useEffect(() => {
     fetchIncidents();
   }, []);
+
+  useEffect(() => {
+    // Detecta el parámetro incidentId en la URL
+    const params = new URLSearchParams(location.search);
+    const incidentId = params.get("incidentId");
+    if (incidentId) {
+      setViewMoreIncidentId(incidentId);
+    }
+  }, [location.search, incidents]);
 
   const fetchIncidents = async () => {
     try {
@@ -100,6 +116,13 @@ const Incident = () => {
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const handleCloseViewMore = () => {
+    setViewMoreIncidentId(null);
+    const params = new URLSearchParams(location.search);
+    params.delete("incidentId");
+    navigate({ search: params.toString() }, { replace: true });
+  };
+
   return (
     <section>
       <Header transparent={false} />
@@ -153,6 +176,8 @@ const Incident = () => {
           page={page}
           setPage={setPage}
           itemsPerPage={itemsPerPage}
+          viewMoreIncidentId={viewMoreIncidentId}
+          handleCloseViewMore={handleCloseViewMore}
         />
       </div>
       <Footer />
