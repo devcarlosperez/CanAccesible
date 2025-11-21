@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/Home";
 import Incident from "./pages/incidents/Incident";
+import Map from "./pages/map/Map";
 import Register from "./pages/users/register/Register";
 import Login from "./pages/users/login/Login";
 import Contact from "./pages/contact/Contact";
@@ -19,7 +20,7 @@ function App() {
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
         <Route path="/incidents" element={<Incident />} />
-        <Route path="/map" element={<Incident />} />
+        <Route path="/map" element={<Map />} />
         <Route
           path="/login"
           element={
