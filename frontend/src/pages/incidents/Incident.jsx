@@ -179,7 +179,7 @@ const Incident = () => {
   return (
     <section>
       <Header transparent={false} />
-      <div className="pt-50 p-8">
+      <div className="pt-40 p-8">
         <Typography variant="h4" align="center" sx={{ fontWeight: "bold", mb: 4 }}>
           Gestión de Incidencias
         </Typography>
