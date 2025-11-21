@@ -63,6 +63,13 @@ exports.create = async (req, res) => {
 
 exports.findAll = async (req, res) => {
   try {
+    // Only admins can access all users
+    if (req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this resource" });
+    }
+
     const users = await User.findAll({
       attributes: [
         "id",
@@ -74,17 +81,24 @@ exports.findAll = async (req, res) => {
         "nameFile",
       ],
     });
+
     res.status(200).json(users);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error al obtener usuarios" });
+    res.status(500).json({ message: err.message || "Error fetching users" });
   }
 };
 
 exports.findOne = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Allow user to fetch only their own data, unless they are admin
+    if (req.user.id !== parseInt(id) && req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this user" });
+    }
+
     const user = await User.findByPk(id, {
       attributes: [
         "id",
@@ -98,14 +112,12 @@ exports.findOne = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json(user);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error al obtener el usuario" });
+    res.status(500).json({ message: err.message || "Error fetching user" });
   }
 };
 
@@ -113,6 +125,13 @@ exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { firstName, lastName, email, password, roleId } = req.body;
+
+    // Check if the authenticated user is trying to edit their own profile
+    if (req.user.id !== parseInt(id)) {
+      return res
+        .status(403)
+        .json({ message: "No tienes permiso para realizar esta acción" });
+    }
 
     const user = await User.findByPk(id);
     if (!user) {
@@ -125,7 +144,11 @@ exports.update = async (req, res) => {
     if (lastName !== undefined) userToUpdate.lastName = lastName;
     if (email !== undefined) userToUpdate.email = email;
     if (password) userToUpdate.password = await bcrypt.hash(password, 10);
-    if (roleId !== undefined) userToUpdate.roleId = roleId;
+
+    // Only an admin can update the roleId field
+    if (roleId !== undefined && req.user.roleId === 2) {
+      userToUpdate.roleId = roleId;
+    }
 
     if (req.file) {
       await deleteImageFromStorage(user.nameFile);
@@ -146,21 +169,29 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id);
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    // Check if the user is either deleting their own account or is an admin
+    if (req.user.id !== parseInt(id) && req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to perform this action" });
     }
 
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Delete profile image from storage
     await deleteImageFromStorage(user.nameFile);
+
+    // Delete the user from the database
     await User.destroy({ where: { id } });
 
     res.status(200).json({
-      message: "Usuario y su imagen asociada han sido eliminados correctamente",
+      message: "User and associated image have been deleted successfully",
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error al eliminar el usuario" });
+    res.status(500).json({ message: err.message || "Error deleting user" });
   }
 };
