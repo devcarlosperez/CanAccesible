@@ -83,18 +83,20 @@ const Footer = () => {
               <li className="hover:text-blue-600 transition-colors cursor-pointer">
                 Soporte
               </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Términos y <br className="block lg:hidden" />
-                <span className="hidden md:inline"> </span>
-                Condiciones
+              <li>
+                <Link to={"/terms-conditions"} className="hover:text-blue-600 transition-colors cursor-pointer inline-block">
+                  Términos y <br className="block lg:hidden" />
+                  <span className="hidden md:inline"> </span>
+                  Condiciones
+                </Link>
               </li>
-              <Link to={"/privacy-policy"}>
-                <li className="hover:text-blue-600 transition-colors cursor-pointer">
+              <li>
+                <Link to={"/privacy-policy"} className="hover:text-blue-600 transition-colors cursor-pointer inline-block">
                   Política de <br className="block lg:hidden" />
                   <span className="hidden md:inline"> </span>
                   Privacidad
-                </li>
-              </Link>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

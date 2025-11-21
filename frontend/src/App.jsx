@@ -10,6 +10,7 @@ import PublicRoute from "./routes/PublicRoute";
 import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
+import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-conditions" element={<TermsConditions />}/>
       </Routes>
     </BrowserRouter>
   );
