@@ -32,6 +32,10 @@ exports.signIn = async (req, res) => {
       { expiresIn: jwtConfig.expiresIn }
     );
 
+    req.session.userId = user.id;
+    req.session.email = user.email;
+    req.session.role = user.role.role;
+
     res.status(200).json({
       message: "Inicio de sesión exitoso",
       user: {
@@ -46,4 +50,14 @@ exports.signIn = async (req, res) => {
     console.error("Error en signIn:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
+};
+
+exports.logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Error al cerrar sesión" });
+    }
+    res.clearCookie("connect.sid");
+    res.status(200).json({ message: "Sesión cerrada exitosamente" });
+  });
 };

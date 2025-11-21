@@ -12,7 +12,9 @@ const useAuthStore = create((set) => ({
   login: async (email, password) => {
     set({ loading: true, error: null });
     try {
-      const res = await api.post("/auth/signin", { email, password });
+      const res = await api.post("/auth/signin", { email, password }, {
+        withCredentials: true,
+      });
       const token = res.data.token;
       const loggedUser = res.data.user;
 
@@ -37,7 +39,17 @@ const useAuthStore = create((set) => ({
     }
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      // ✅ Llama al backend para destruir la sesión
+      await api.post("/auth/logout", {}, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error("Error al desconectar del backend:", err);
+    }
+
+    // Limpia localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
