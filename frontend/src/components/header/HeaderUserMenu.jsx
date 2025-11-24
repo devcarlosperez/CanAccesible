@@ -17,6 +17,9 @@ const UserMenu = ({ user, onLogout }) => {
 
   const avatarSrc = user?.nameFile || null;
   const initial = user?.firstName?.[0]?.toUpperCase() || "U";
+  const userRole = typeof user?.role === "string" ? user.role : user?.role?.role;
+  const isAdmin = userRole === "admin";
+  const dashboardLink = isAdmin ? "/dashboard-admin" : "/dashboard-user";
 
   return (
     <div className="relative" ref={menuRef}>
@@ -49,7 +52,7 @@ const UserMenu = ({ user, onLogout }) => {
             </li>
             <li>
               <Link
-                to="/dashboard"
+                to={dashboardLink}
                 className="block px-4 py-2 hover:bg-gray-100 rounded-lg"
                 onClick={() => setOpen(false)}
               >

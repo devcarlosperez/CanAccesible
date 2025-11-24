@@ -7,6 +7,10 @@ const app = express();
 
 // Set view engine to EJS
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // Add CORS middleware
 app.use((req, res, next) => {
@@ -45,8 +49,8 @@ app.use(
   })
 );
 
-// Dashboard routes (before API routes)
-require("./routes/dashboard.routes")(app);
+// Dashboard admin routes (before API routes)
+require("./routes/dashboardAdmin.views.routes")(app);
 
 // API routes
 require("./routes/incident.routes")(app);

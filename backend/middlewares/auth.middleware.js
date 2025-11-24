@@ -30,4 +30,30 @@ const verifySession = (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken, verifySession };
+const verifyAdmin = (req, res, next) => {
+  // First verify session exists
+  if (!req.session || !req.session.userId) {
+    return res.redirect('/home');
+  }
+
+  // Then verify user is admin
+  if (req.session.role !== 'admin') {
+    return res.status(403).render('error', {
+      message: 'No tienes permisos para acceder a esta página. Solo los administradores pueden acceder.',
+      statusCode: 403
+    });
+  }
+
+  // Set user info in req for use in controllers
+  req.user = {
+    id: req.session.userId,
+    email: req.session.email,
+    role: req.session.role,
+    firstName: req.session.firstName,
+    lastName: req.session.lastName
+  };
+
+  next();
+};
+
+module.exports = { verifyToken, verifySession, verifyAdmin };

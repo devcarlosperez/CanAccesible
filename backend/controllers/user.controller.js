@@ -122,6 +122,7 @@ exports.findOne = async (req, res) => {
         "roleId",
         "nameFile",
       ],
+      include: [{ model: db.role, as: "role", attributes: ["role"] }],
     });
 
     if (!user) {
