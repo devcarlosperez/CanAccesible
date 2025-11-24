@@ -4,8 +4,11 @@ module.exports = (app) => {
 
   const router = require("express").Router();
 
-  // Dashboard admin page - only admins can access
-  router.get("/", verifyAdmin, async (req, res) => {
+  // Apply verifyAdmin middleware to all routes in this router
+  router.use(verifyAdmin);
+
+  // Dashboard admin page
+  router.get("/", async (req, res) => {
     try {
       // Get counts from database
       const articleCount = await db.blogArticle.count();
@@ -83,6 +86,25 @@ module.exports = (app) => {
           municipioCount: 0
         }
       });
+    }
+  });
+
+  // Blog Articles Management Page
+  router.get("/blog-articles", async (req, res) => {
+    try {
+      const articles = await db.blogArticle.findAll({
+        order: [['dateCreation', 'DESC']]
+      });
+
+      res.render("admin/dashboard/blog-articles", {
+        user: req.user,
+        title: "Gestión de Artículos - CanAccesible",
+        frontendUrl: process.env.FRONTEND_URL,
+        articles: articles
+      });
+    } catch (error) {
+      console.error("Error loading blog articles:", error);
+      res.status(500).send("Error al cargar los artículos");
     }
   });
 
