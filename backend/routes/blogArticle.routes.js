@@ -5,13 +5,13 @@ module.exports = (app) => {
 
   const router = require("express").Router();
 
-  router.post("/", blogArticleImageUpload.single("image"), verifySession ,blogArticle.create);
+  router.post("/", verifySession, blogArticleImageUpload.single("image"), blogArticle.create);
 
   router.get("/", blogArticle.findAll);
 
   router.get("/:id", blogArticle.findOne);
 
-  router.put("/:id", blogArticleImageUpload.single("image"), verifySession ,blogArticle.update);
+  router.put("/:id", verifySession, blogArticleImageUpload.single("image"), blogArticle.update);
 
   router.delete("/:id", verifySession ,blogArticle.delete);
 
