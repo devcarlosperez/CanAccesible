@@ -32,7 +32,7 @@ const IncidentCard = ({
 
   return (
     <>
-      <Card sx={{ minWidth: 550, maxWidth: 550, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
+      <Card sx={{ minWidth: 400, maxWidth: 550, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
         <CardHeader
           avatar={
             <Avatar src={user?.nameFile || undefined} alt={`${user?.firstName} ${user?.lastName}`} sx={{ bgcolor: red[500] }}>
