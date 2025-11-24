@@ -1,6 +1,7 @@
 const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const Conversation = db.conversation;
+const { createLog } = require("../services/log.service");
 
 // Create a new conversation
 exports.create = async (req, res) => {
@@ -9,11 +10,11 @@ exports.create = async (req, res) => {
     const { type } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: "userId es obligatorio" });
+      return res.status(400).json({ message: "userId is required" });
     }
 
     if (!type) {
-      return res.status(400).json({ message: "type es obligatorio" });
+      return res.status(400).json({ message: "type is required" });
     }
 
     const conversation = await Conversation.create({
@@ -21,9 +22,12 @@ exports.create = async (req, res) => {
       type
     });
 
+    // Create log
+    await createLog(userId, 'CREATE', 'Conversation', conversation.id);
+
     res.status(201).json(conversation);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al crear la conversación." });
+    res.status(500).json({ message: err.message || "Error creating the conversation." });
   }
 };
 
@@ -41,7 +45,7 @@ exports.findAll = async (req, res) => {
 
     res.status(200).json(conversations);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al obtener conversaciones." });
+    res.status(500).json({ message: err.message || "Error retrieving conversations." });
   }
 };
 
@@ -57,23 +61,23 @@ exports.findOne = async (req, res) => {
     });
 
     if (!conversation) {
-      return res.status(404).json({ message: "Conversación no encontrada." });
+      return res.status(404).json({ message: "Conversation not found." });
     }
 
     // Verify authorization: owner or admin
     if (conversation.userId !== userId && !isAdmin) {
-      return res.status(403).json({ message: "No tienes permiso para acceder a esta conversación." });
+      return res.status(403).json({ message: "You do not have permission to access this conversation." });
     }
 
     res.status(200).json(conversation);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al obtener la conversación." });
+    res.status(500).json({ message: err.message || "Error retrieving the conversation." });
   }
 };
 
 // Update a conversation - conversations cannot be updated
 exports.update = async (req, res) => {
-  return res.status(400).json({ message: "Las conversaciones no pueden ser actualizadas." });
+  return res.status(400).json({ message: "Conversations cannot be updated." });
 };
 
 // Delete a conversation
@@ -87,12 +91,12 @@ exports.delete = async (req, res) => {
     const conversation = await Conversation.findByPk(conversationId);
 
     if (!conversation) {
-      return res.status(404).json({ message: "Conversación no encontrada." });
+      return res.status(404).json({ message: "Conversation not found." });
     }
 
     // Verify authorization: owner or admin
     if (conversation.userId !== userId && !isAdmin) {
-      return res.status(403).json({ message: "No tienes permiso para eliminar esta conversación." });
+      return res.status(403).json({ message: "You do not have permission to delete this conversation." });
     }
 
     // Delete conversation
@@ -100,10 +104,13 @@ exports.delete = async (req, res) => {
       where: { id: conversationId }
     });
 
+    // Create log
+    await createLog(userId, 'DELETE', 'Conversation', conversationId);
+
     res.status(200).json({ 
-      message: "Conversación eliminada correctamente.",
+      message: "Conversation deleted successfully.",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error al eliminar la conversación." });
+    res.status(500).json({ message: err.message || "Error deleting the conversation." });
   }
 };

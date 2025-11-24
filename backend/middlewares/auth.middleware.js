@@ -5,16 +5,29 @@ const verifyToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Bearer token
 
   if (!token) {
-    return res.status(403).json({ message: 'Token no proporcionado.' });
+    return res.status(403).json({ message: 'Token not provided.' });
   }
 
   jwt.verify(token, jwtConfig.secret, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: 'Token inválido.' });
+      return res.status(401).json({ message: 'Invalid token.' });
     }
     req.user = decoded;
     next();
   });
 };
 
-module.exports = { verifyToken };
+const verifySession = (req, res, next) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(403).json({ message: 'Session not provided.' });
+  }
+
+  req.user = {
+    id: req.session.userId,
+    email: req.session.email,
+    role: req.session.role
+  };
+  next();
+};
+
+module.exports = { verifyToken, verifySession };

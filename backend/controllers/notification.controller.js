@@ -8,6 +8,9 @@ exports.create = async (req, res) => {
     const userId = req.user.id;
     const { entity, entityId, message, dateNotification } = req.body;
 
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
     if (!entity) {
       return res.status(400).json({ message: "entity is required" });
     }
@@ -28,9 +31,7 @@ exports.create = async (req, res) => {
 
     res.status(201).json(notification);
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Failed to create notification.",
-    });
+    res.status(500).json({ message: err.message || "Error creating the notification." });
   }
 };
 
@@ -45,9 +46,7 @@ exports.findAll = async (req, res) => {
 
     res.status(200).json(notifications);
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Failed to fetch notifications.",
-    });
+    res.status(500).json({ message: err.message || "Error retrieving notifications." });
   }
 };
 
@@ -62,16 +61,12 @@ exports.findOne = async (req, res) => {
     });
 
     if (!notification) {
-      return res.status(404).json({
-        message: "Notification not found or does not belong to the user.",
-      });
+      return res.status(404).json({ message: "Notification not found." });
     }
 
     res.status(200).json(notification);
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Failed to fetch notification.",
-    });
+    res.status(500).json({ message: err.message || "Error retrieving the notification." });
   }
 };
 
@@ -86,17 +81,13 @@ exports.update = async (req, res) => {
     });
 
     if (!updated) {
-      return res.status(404).json({
-        message: "Notification not found or does not belong to the user.",
-      });
+      return res.status(404).json({ message: "Notification not found." });
     }
 
     const updatedNotification = await Notification.findByPk(id);
     res.status(200).json(updatedNotification);
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Failed to update notification.",
-    });
+    res.status(500).json({ message: err.message || "Error updating the notification." });
   }
 };
 
@@ -111,15 +102,11 @@ exports.delete = async (req, res) => {
     });
 
     if (!deleted) {
-      return res.status(404).json({
-        message: "Notification not found or does not belong to the user.",
-      });
+      return res.status(404).json({ message: "Notification not found." });
     }
 
     res.status(200).json({ message: "Notification deleted successfully." });
   } catch (err) {
-    res.status(500).json({
-      message: err.message || "Failed to delete notification.",
-    });
+    res.status(500).json({ message: err.message || "Error deleting the notification." });
   }
 };

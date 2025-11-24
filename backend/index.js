@@ -34,6 +34,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
+      secure: false,
+      httpOnly: true,
+      sameSite: 'lax'
     },
   })
 );
@@ -45,6 +48,7 @@ require("./routes/auth.routes")(app);
 require("./routes/blogArticle.routes")(app);
 require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
+require("./routes/log.routes")(app);
 
 const env = process.env.NODE_ENV;
 
