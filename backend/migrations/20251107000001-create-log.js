@@ -30,7 +30,7 @@ module.exports = {
           'IncidentComment',
           'IncidentLike',
           'IncidentFollow',
-          'Blog',
+          'BlogArticle',
           'Notification',
           'Conversation',
           'ConversationMessage'
