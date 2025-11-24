@@ -30,7 +30,7 @@ const verifySession = (req, res, next) => {
   next();
 };
 
-const verifyAdmin = (req, res, next) => {
+const verifyAdmin = async (req, res, next) => {
   // First verify session exists
   if (!req.session || !req.session.userId) {
     return res.redirect('/home');
@@ -44,14 +44,34 @@ const verifyAdmin = (req, res, next) => {
     });
   }
 
-  // Set user info in req for use in controllers
-  req.user = {
-    id: req.session.userId,
-    email: req.session.email,
-    role: req.session.role,
-    firstName: req.session.firstName,
-    lastName: req.session.lastName
-  };
+  // Get fresh user data from database to ensure firstName and lastName are up-to-date
+  try {
+    const db = require("../models");
+    const user = await db.user.findByPk(req.session.userId);
+    
+    if (!user) {
+      return res.redirect('/home');
+    }
+
+    // Set user info in req for use in controllers - use fresh data from DB
+    req.user = {
+      id: req.session.userId,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName
+    };
+  } catch (error) {
+    console.error("Error fetching user data in verifyAdmin:", error);
+    // Fallback to session data if database query fails
+    req.user = {
+      id: req.session.userId,
+      email: req.session.email,
+      role: req.session.role,
+      firstName: req.session.firstName,
+      lastName: req.session.lastName
+    };
+  }
 
   next();
 };

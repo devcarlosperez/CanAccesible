@@ -51,13 +51,24 @@ const UserMenu = ({ user, onLogout }) => {
               </Link>
             </li>
             <li>
-              <Link
-                to={dashboardLink}
-                className="block px-4 py-2 hover:bg-gray-100 rounded-lg"
-                onClick={() => setOpen(false)}
-              >
-                Dashboard
-              </Link>
+              {isAdmin ? (
+                <button
+                  onClick={() => {
+                    window.location.href = `${import.meta.env.VITE_API_URL}/dashboard-admin`;
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg bg-none border-none cursor-pointer"
+                >
+                  Dashboard
+                </button>
+              ) : (
+                <Link
+                  to={dashboardLink}
+                  className="block px-4 py-2 hover:bg-gray-100 rounded-lg"
+                  onClick={() => setOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              )}
             </li>
             <li>
               <button
