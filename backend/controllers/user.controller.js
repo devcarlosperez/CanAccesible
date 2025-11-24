@@ -17,7 +17,7 @@ async function deleteImageFromStorage(nameFile) {
       })
     );
   } catch (err) {
-    console.error("Error eliminando imagen del storage:", err.message);
+    console.error("Error deleting image from storage:", err.message);
   }
 }
 
@@ -26,19 +26,19 @@ exports.create = async (req, res) => {
     const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).json({ message: "Faltan datos obligatorios" });
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ message: "El email tiene un formato inválido" });
+        .json({ message: "Email format is invalid" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "El email ya está registrado" });
+      return res.status(400).json({ message: "Email is already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,7 +57,7 @@ exports.create = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: err.message || "Error al crear el usuario" });
+      .json({ message: err.message || "Error creating the user" });
   }
 };
 
@@ -130,12 +130,12 @@ exports.update = async (req, res) => {
     if (req.user.id !== parseInt(id)) {
       return res
         .status(403)
-        .json({ message: "No tienes permiso para realizar esta acción" });
+        .json({ message: "You do not have permission to perform this action" });
     }
 
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const userToUpdate = {};
@@ -162,7 +162,7 @@ exports.update = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: err.message || "Error al actualizar el usuario" });
+      .json({ message: err.message || "Error updating the user" });
   }
 };
 

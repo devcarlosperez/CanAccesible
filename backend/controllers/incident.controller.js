@@ -23,7 +23,7 @@ async function reverseGeocode(latitude, longitude) {
     );
     return responseNominatin.data;
   } catch (err) {
-    console.error("Error en geocodificación:", err.message);
+    console.error("Error in geocoding:", err.message);
     return null;
   }
 }
@@ -39,7 +39,7 @@ async function deleteImageFromStorage(nameFile) {
       Key: key,
     }));
   } catch (err) {
-    console.error("Error eliminando imagen del storage:", err.message);
+    console.error("Error deleting image from storage:", err.message);
   }
 }
 
@@ -48,23 +48,23 @@ exports.create = async (req, res) => {
   try {
     // Validate required fields
     if (!req.body.name)
-      return res.status(400).json({ message: "name es obligatorio" });
+      return res.status(400).json({ message: "name is required" });
     if (!req.body.description)
-      return res.status(400).json({ message: "description es obligatorio" });
+      return res.status(400).json({ message: "description is required" });
     if (!req.body.latitude)
-      return res.status(400).json({ message: "latitude es obligatorio" });
+      return res.status(400).json({ message: "latitude is required" });
     if (!req.body.longitude)
-      return res.status(400).json({ message: "longitude es obligatorio" });
+      return res.status(400).json({ message: "longitude is required" });
     if (!req.body.userId)
-      return res.status(400).json({ message: "userId es obligatorio" });
+      return res.status(400).json({ message: "userId is required" });
     if (!req.body.incidentTypeId)
-      return res.status(400).json({ message: "incidentTypeId es obligatorio" });
+      return res.status(400).json({ message: "incidentTypeId is required" });
     if (!req.body.incidentSeverityId)
-      return res.status(400).json({ message: "incidentSeverityId es obligatorio" });
+      return res.status(400).json({ message: "incidentSeverityId is required" });
     if (!req.body.incidentStatusId)
-      return res.status(400).json({ message: "incidentStatusId es obligatorio" });
+      return res.status(400).json({ message: "incidentStatusId is required" });
     if (!req.file)
-      return res.status(400).json({ message: "Image es obligatorio" });
+      return res.status(400).json({ message: "Image is required" });
 
     const locationData = await reverseGeocode(
       req.body.latitude,
@@ -103,7 +103,7 @@ exports.create = async (req, res) => {
     res.status(201).json(newIncident);
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se creaba la incidencia.",
+      message: err.message || "An error occurred while creating the incident.",
     });
   }
 };
@@ -123,7 +123,7 @@ exports.findAll = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message:
-        err.message || "Algún error ocurrió mientras se leían las incidencias.",
+        err.message || "An error occurred while retrieving incidents.",
     });
   }
 };
@@ -136,14 +136,14 @@ exports.findOne = async (req, res) => {
     const data = await incidentObject.findOne({ where: { id: incidentId } });
 
     if (!data) {
-      return res.status(404).json({ message: "Incidencia no encontrada." });
+      return res.status(404).json({ message: "Incident not found." });
     }
 
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
       message:
-        err.message || "Algún error ocurrió mientras se leía la incidencia.",
+        err.message || "An error occurred while retrieving the incident.",
     });
   }
 };
@@ -199,10 +199,10 @@ exports.update = async (req, res) => {
       return res.status(200).json(updatedIncident);
     }
 
-    res.status(404).json({ message: "Incidencia no encontrada." });
+    res.status(404).json({ message: "Incident not found." });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se actualizaba la incidencia.",
+      message: err.message || "An error occurred while updating the incident.",
     });
   }
 };
@@ -214,19 +214,19 @@ exports.delete = async (req, res) => {
     const incident = await incidentObject.findOne({ where: { id: incidentId } });
 
     if (!incident) {
-      return res.status(404).json({ message: "Incidencia no encontrada." });
+      return res.status(404).json({ message: "Incident not found." });
     }
 
     await deleteImageFromStorage(incident.nameFile);
     await incidentObject.destroy({ where: { id: incidentId } });
 
     res.status(200).json({
-      message: "La incidencia y su imagen asociada han sido eliminadas.",
+      message: "Incident and its associated image have been deleted.",
     });
   } catch (err) {
     res.status(500).json({
       message:
-        err.message || "Algún error ocurrió mientras se eliminaba la incidencia.",
+        err.message || "An error occurred while deleting the incident.",
     });
   }
 };

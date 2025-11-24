@@ -13,12 +13,12 @@ exports.signIn = async (req, res) => {
       include: [{ model: db.role, as: "role" }],
     });
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
+      return res.status(401).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign(
@@ -37,7 +37,7 @@ exports.signIn = async (req, res) => {
     req.session.role = user.role.role;
 
     res.status(200).json({
-      message: "Inicio de sesión exitoso",
+      message: "Successful login",
       user: {
         id: user.id,
         nombre: user.firstName,
@@ -47,17 +47,17 @@ exports.signIn = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error("Error en signIn:", error);
-    res.status(500).json({ message: "Error en el servidor" });
+    console.error("Error in signIn:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ message: "Error al cerrar sesión" });
+      return res.status(500).json({ message: "Error logging out" });
     }
     res.clearCookie("connect.sid");
-    res.status(200).json({ message: "Sesión cerrada exitosamente" });
+    res.status(200).json({ message: "Session closed successfully" });
   });
 };

@@ -8,22 +8,22 @@ exports.create = async (req, res) => {
   try {
     // Verify that user is authenticated
     if (!req.user) {
-      return res.status(403).json({ message: 'No tienes permiso para crear logs.' });
+      return res.status(403).json({ message: "You do not have permission to create logs." });
     }
 
     const { userId, action, entity, entityId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: 'userId es obligatorio' });
+      return res.status(400).json({ message: "userId is required" });
     }
     if (!action) {
-      return res.status(400).json({ message: 'action es obligatorio' });
+      return res.status(400).json({ message: "action is required" });
     }
     if (!entity) {
-      return res.status(400).json({ message: 'entity es obligatorio' });
+      return res.status(400).json({ message: "entity is required" });
     }
     if (!entityId) {
-      return res.status(400).json({ message: 'entityId es obligatorio' });
+      return res.status(400).json({ message: "entityId is required" });
     }
 
     const log = await createLog(userId, action, entity, entityId);
@@ -38,7 +38,7 @@ exports.findAll = async (req, res) => {
   try {
     // Verify that user is admin
     if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'No tienes permiso para acceder a los logs.' });
+      return res.status(403).json({ message: "You do not have permission to access logs." });
     }
 
     const logs = await Log.findAll({
@@ -56,14 +56,14 @@ exports.findOne = async (req, res) => {
   try {
     // Verify that user is admin
     if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'No tienes permiso para acceder a los logs.' });
+      return res.status(403).json({ message: "You do not have permission to access logs." });
     }
 
     const log = await Log.findByPk(req.params.id, {
       include: ['user'],
     });
     if (!log) {
-      return res.status(404).json({ message: 'Log not found' });
+      return res.status(404).json({ message: "Log not found" });
     }
     res.status(200).json(log);
   } catch (error) {
@@ -73,7 +73,7 @@ exports.findOne = async (req, res) => {
 
 // Update a log - Not allowed
 exports.update = async (req, res) => {
-  res.status(403).json({ message: 'Logs cannot be updated' });
+  res.status(403).json({ message: "Logs cannot be updated" });
 };
 
 // Delete a log
@@ -81,15 +81,15 @@ exports.delete = async (req, res) => {
   try {
     // Verify that user is admin
     if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'No tienes permiso para eliminar logs.' });
+      return res.status(403).json({ message: "You do not have permission to delete logs." });
     }
 
     const log = await Log.findByPk(req.params.id);
     if (!log) {
-      return res.status(404).json({ message: 'Log not found' });
+      return res.status(404).json({ message: "Log not found" });
     }
     await log.destroy();
-    res.status(200).json({ message: 'Log deleted successfully' });
+    res.status(200).json({ message: "Log deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
