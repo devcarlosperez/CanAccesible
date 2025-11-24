@@ -4,7 +4,9 @@ const Notification = db.notification;
 // Create a notification
 exports.create = async (req, res) => {
   try {
-    const { userId, entity, entityId, message, dateNotification } = req.body;
+    // User ID comes from JWT
+    const userId = req.user.id;
+    const { entity, entityId, message, dateNotification } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
@@ -33,21 +35,30 @@ exports.create = async (req, res) => {
   }
 };
 
-// Retrieve all notifications
+// Get all notifications for the authenticated user
 exports.findAll = async (req, res) => {
   try {
-    const notifications = await Notification.findAll();
+    const userId = req.user.id;
+
+    const notifications = await Notification.findAll({
+      where: { userId },
+    });
+
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ message: err.message || "Error retrieving notifications." });
   }
 };
 
-// Retrieve one notification by ID
+// Get a single notification (only if it belongs to the user)
 exports.findOne = async (req, res) => {
   try {
     const id = req.params.id;
-    const notification = await Notification.findByPk(id);
+    const userId = req.user.id;
+
+    const notification = await Notification.findOne({
+      where: { id, userId },
+    });
 
     if (!notification) {
       return res.status(404).json({ message: "Notification not found." });
@@ -59,11 +70,15 @@ exports.findOne = async (req, res) => {
   }
 };
 
-// Update a notification
+// Update a notification (only if it belongs to the user)
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
-    const [updated] = await Notification.update(req.body, { where: { id } });
+    const userId = req.user.id;
+
+    const [updated] = await Notification.update(req.body, {
+      where: { id, userId },
+    });
 
     if (!updated) {
       return res.status(404).json({ message: "Notification not found." });
@@ -76,11 +91,15 @@ exports.update = async (req, res) => {
   }
 };
 
-// Delete a notification
+// Delete a notification (only if it belongs to the user)
 exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
-    const deleted = await Notification.destroy({ where: { id } });
+    const userId = req.user.id;
+
+    const deleted = await Notification.destroy({
+      where: { id, userId },
+    });
 
     if (!deleted) {
       return res.status(404).json({ message: "Notification not found." });

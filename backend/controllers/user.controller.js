@@ -3,6 +3,7 @@ const User = db.user;
 const bcrypt = require("bcrypt");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
+const transporter = require("../config/mailer");
 
 // Utility function to delete image from DO Spaces
 async function deleteImageFromStorage(nameFile) {
@@ -51,6 +52,18 @@ exports.create = async (req, res) => {
       password: hashedPassword,
       roleId,
       nameFile,
+    });
+
+    // 📩 Enviar correo de bienvenida
+    await transporter.sendMail({
+      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+      to: newUser.email,
+      subject: "¡Bienvenido/a a CANACCESIBLE! 😎🔥",
+      html: `
+    <h2>Hola ${newUser.firstName}!</h2>
+    <p>Tu cuenta ha sido creada con éxito.</p>
+    <p>Ya puedes iniciar sesión y disfrutar de la plataforma brooo 😎</p>
+  `,
     });
 
     res.status(201).json(newUser);

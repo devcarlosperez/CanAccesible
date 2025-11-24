@@ -2,7 +2,9 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = db.user;
+const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
+const transporter = require("../config/mailer");
 
 exports.signIn = async (req, res) => {
   try {
@@ -35,6 +37,26 @@ exports.signIn = async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
     req.session.role = user.role.role;
+
+    await Notification.create({
+      userId: user.id,
+      entity: "User",
+      entityId: user.id,
+      message: "Inicio de sesión detectado en tu cuenta",
+      dateNotification: new Date(),
+    });
+
+    await transporter.sendMail({
+      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+      to: user.email,
+      subject: "Inicio de sesión detectado",
+      html: `
+        <h2>Hola ${user.firstName}!</h2>
+        <p>Acabas de iniciar sesión en tu cuenta.</p>
+        <p>Si fuiste tú: todo bajo control brooo 😎</p>
+        <p>Si NO fuiste tú: cambia tu contraseña YA 🛑🔥</p>
+      `,
+    });
 
     res.status(200).json({
       message: "Successful login",
