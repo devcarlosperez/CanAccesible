@@ -83,6 +83,119 @@
         </div>
       </div>
     </div>
+
+    <!-- Charts Section -->
+    <div class="mt-16 mb-12">
+      <div class="flex flex-wrap gap-8 justify-center">
+        <!-- Incidents Approval Chart -->
+        <div class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6" style="background-color: #ffffff; border: 2px solid #e5edfa;">
+          <h3 class="text-lg md:text-xl font-bold mb-8" style="color: #0c0c22;">Incidencias aprobadas</h3>
+          <div id="incidentsChart" style="width: 100%; height: 350px;"></div>
+        </div>
+
+        <!-- Users Distribution Chart -->
+        <div class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6" style="background-color: #ffffff; border: 2px solid #e5edfa;">
+          <h3 class="text-lg md:text-xl font-bold mb-8" style="color: #0c0c22;">Distribución de usuarios</h3>
+          <div id="usersChart" style="width: 100%; height: 350px;"></div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- ECharts Library -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script>
+    // Data from server
+    const approvedIncidents = <%= chartData && chartData.approvedIncidents !== undefined ? chartData.approvedIncidents : 5 %>;
+    const notApprovedIncidents = <%= chartData && chartData.notApprovedIncidents !== undefined ? chartData.notApprovedIncidents : 3 %>;
+    const adminCount = <%= chartData && chartData.adminCount !== undefined ? chartData.adminCount : 2 %>;
+    const userNormalCount = <%= chartData && chartData.userNormalCount !== undefined ? chartData.userNormalCount : 8 %>;
+    const municipioCount = <%= chartData && chartData.municipioCount !== undefined ? chartData.municipioCount : 1 %>;
+
+    console.log('Datos completos:', { approvedIncidents, notApprovedIncidents, adminCount, userNormalCount, municipioCount });
+
+    // Initialize ECharts instances
+    const incidentsChartDOM = document.getElementById('incidentsChart');
+    const usersChartDOM = document.getElementById('usersChart');
+    
+    const incidentsChart = echarts.init(incidentsChartDOM);
+    const usersChart = echarts.init(usersChartDOM);
+
+    // Incidents Chart - Pie Chart
+    const incidentsOption = {
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { 
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center'
+      },
+      series: [{
+        name: 'Incidencias',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '40%'],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: false
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: approvedIncidents, name: 'Aprobadas', itemStyle: { color: '#22c55e' } },
+          { value: notApprovedIncidents, name: 'No aprobadas', itemStyle: { color: '#ff312e' } }
+        ]
+      }]
+    };
+
+    // Users Chart - Pie Chart
+    const usersOption = {
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { 
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center'
+      },
+      series: [{
+        name: 'Usuarios',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '40%'],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: false
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: adminCount, name: 'Administradores', itemStyle: { color: '#004aad' } },
+          { value: municipioCount, name: 'Municipios', itemStyle: { color: '#f59e0b' } },
+          { value: userNormalCount, name: 'Usuarios', itemStyle: { color: '#92b2ea' } }
+        ]
+      }]
+    };
+
+    incidentsChart.setOption(incidentsOption);
+    usersChart.setOption(usersOption);
+
+    // Resize charts when window resizes
+    window.addEventListener('resize', function() {
+      incidentsChart.resize();
+      usersChart.resize();
+    });
+  </script>
 </body>
 </html>
