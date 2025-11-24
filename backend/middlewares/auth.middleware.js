@@ -18,11 +18,15 @@ const verifyToken = (req, res, next) => {
 };
 
 const verifySession = (req, res, next) => {
-  if (!req.session || !req.session.user) {
+  if (!req.session || !req.session.userId) {
     return res.status(403).json({ message: 'Sesión no proporcionada.' });
   }
 
-  req.user = req.session.user;
+  req.user = {
+    id: req.session.userId,
+    email: req.session.email,
+    role: req.session.role
+  };
   next();
 };
 
