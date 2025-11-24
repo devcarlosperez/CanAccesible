@@ -1,6 +1,7 @@
 const db = require("../models");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
+const { verifySession } = require("../middlewares/auth.middleware");
 const BlogArticle = db.blogArticle;
 
 // Utility function to delete image from DO Spaces
@@ -21,6 +22,11 @@ async function deleteImageFromStorage(nameFile) {
 // Create a blog article
 exports.create = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "No tienes permiso para crear artículos de blog." });
+    }
+
     const { title, description, content, dateCreation } = req.body;
 
     if (!title)
@@ -82,6 +88,11 @@ exports.findOne = async (req, res) => {
 // Update a blog article
 exports.update = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "No tienes permiso para actualizar artículos de blog." });
+    }
+
     const articleToUpdate = {};
     const articleId = req.params.id;
 
@@ -127,6 +138,11 @@ exports.update = async (req, res) => {
 // Delete a blog article
 exports.delete = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "No tienes permiso para eliminar artículos de blog." });
+    }
+
     const id = req.params.id;
     const article = await BlogArticle.findOne({ where: { id } });
 

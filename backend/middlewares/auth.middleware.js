@@ -17,4 +17,17 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-module.exports = { verifyToken };
+const verifySession = (req, res, next) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(403).json({ message: 'Sesión no proporcionada.' });
+  }
+
+  req.user = {
+    id: req.session.userId,
+    email: req.session.email,
+    role: req.session.role
+  };
+  next();
+};
+
+module.exports = { verifyToken, verifySession };
