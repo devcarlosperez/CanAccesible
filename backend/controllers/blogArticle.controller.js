@@ -2,6 +2,7 @@ const db = require("../models");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
 const { verifySession } = require("../middlewares/auth.middleware");
+const { createLog } = require("../services/log.service");
 const BlogArticle = db.blogArticle;
 
 // Utility function to delete image from DO Spaces
@@ -49,6 +50,9 @@ exports.create = async (req, res) => {
       dateCreation,
       nameFile,
     });
+
+    // Create log
+    await createLog(req.user.id, 'CREATE', 'BlogArticle', newArticle.id);
 
     res.status(201).json(newArticle);
   } catch (err) {
@@ -122,6 +126,8 @@ exports.update = async (req, res) => {
       const updatedArticle = await BlogArticle.findOne({
         where: { id: articleId },
       });
+      // Create log
+      await createLog(req.user.id, 'UPDATE', 'BlogArticle', articleId);
       return res.status(200).json(updatedArticle);
     }
 
@@ -152,6 +158,9 @@ exports.delete = async (req, res) => {
 
     await deleteImageFromStorage(article.nameFile);
     await BlogArticle.destroy({ where: { id } });
+
+    // Create log
+    await createLog(req.user.id, 'DELETE', 'BlogArticle', id);
 
     res.status(200).json({
       message: "Blog article and its associated image have been deleted.",

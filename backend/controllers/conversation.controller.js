@@ -1,6 +1,7 @@
 const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const Conversation = db.conversation;
+const { createLog } = require("../services/log.service");
 
 // Create a new conversation
 exports.create = async (req, res) => {
@@ -20,6 +21,9 @@ exports.create = async (req, res) => {
       userId,
       type
     });
+
+    // Create log
+    await createLog(userId, 'CREATE', 'Conversation', conversation.id);
 
     res.status(201).json(conversation);
   } catch (err) {
@@ -99,6 +103,9 @@ exports.delete = async (req, res) => {
     await Conversation.destroy({
       where: { id: conversationId }
     });
+
+    // Create log
+    await createLog(userId, 'DELETE', 'Conversation', conversationId);
 
     res.status(200).json({ 
       message: "Conversation deleted successfully.",
