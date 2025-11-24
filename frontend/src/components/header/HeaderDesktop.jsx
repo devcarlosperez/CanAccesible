@@ -24,7 +24,7 @@ const HeaderDesktop = ({
           alt="Canarias Accesible"
           className={`w-auto transition-all duration-300 ${
             transparent && !scrolled
-              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-18"
               : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-15"
           }`}
         />

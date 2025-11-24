@@ -8,17 +8,27 @@ const transporter = require("../config/mailer");
 
 exports.signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Basic ")) {
+      return res.status(400).json({ message: "Missing Authorization header" });
+    }
+
+    const base64Credentials = authHeader.split(" ")[1];
+    const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
+    const [email, password] = decoded.split(":");
 
     const user = await User.findOne({
       where: { email },
       include: [{ model: db.role, as: "role" }],
     });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
+
     if (!validPassword) {
       return res.status(401).json({ message: "Invalid password" });
     }

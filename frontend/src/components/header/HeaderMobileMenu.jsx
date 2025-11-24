@@ -1,6 +1,17 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Transition } from "@headlessui/react"; // Para animaciones smooth
 
-const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
+const MobileMenu = ({
+  open,
+  setOpen,
+  menuItems,
+  isAuthenticated,
+  user,
+  onLogout,
+}) => {
+  const [accountOpen, setAccountOpen] = useState(false);
+
   return (
     <>
       {/* Overlay */}
@@ -11,6 +22,7 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
         onClick={() => setOpen(false)}
       ></div>
 
+      {/* Sidebar Menu */}
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-[#1b226b] z-120 transform transition-transform duration-300 shadow-2xl ${
           open ? "translate-x-0" : "translate-x-full"
@@ -47,10 +59,10 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
 
           {isAuthenticated && user && (
             <li>
-              <Link
-                to="/profile"
-                onClick={() => setOpen(false)}
-                className="flex items-center px-4 py-2 rounded-xl font-semibold text-white bg-blue-700 hover:bg-blue-600 transition duration-200"
+              {/* Mi cuenta button */}
+              <button
+                onClick={() => setAccountOpen((prev) => !prev)}
+                className="flex items-center w-full px-4 py-2 rounded-xl font-semibold text-white cursor-pointer bg-blue-700 hover:bg-blue-600 transition duration-200"
               >
                 <span className="w-9 h-9 rounded-full flex items-center justify-center mr-3 overflow-hidden">
                   {user.nameFile ? (
@@ -66,7 +78,55 @@ const MobileMenu = ({ open, setOpen, menuItems, isAuthenticated, user }) => {
                   )}
                 </span>
                 Mi cuenta
-              </Link>
+                <span className="material-symbols-outlined ml-auto">
+                  {accountOpen ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+
+              {/* Submenu animado */}
+              <Transition
+                show={accountOpen}
+                enter="transition duration-300 ease-out"
+                enterFrom="transform scale-95 opacity-0 -translate-y-2"
+                enterTo="transform scale-100 opacity-100 translate-y-0"
+                leave="transition duration-200 ease-in"
+                leaveFrom="transform scale-100 opacity-100 translate-y-0"
+                leaveTo="transform scale-95 opacity-0 -translate-y-2"
+              >
+                <div className="bg-[#1a1f5a] rounded-xl mt-2 py-2 pl-12 pr-4 shadow-md">
+                  <ul className="flex flex-col gap-2">
+                    <li>
+                      <Link
+                        to="/profile"
+                        onClick={() => setOpen(false)}
+                        className="text-white hover:text-[#92B2EA] cursor-pointer"
+                      >
+                        Perfil
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setOpen(false)}
+                        className="text-white hover:text-[#92B2EA] cursor-pointer"
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          onLogout();
+                          setOpen(false);
+                        }}
+                        className="text-white hover:text-[#FF6B6B] cursor-pointer text-left w-full"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </Transition>
             </li>
           )}
         </ul>

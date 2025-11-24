@@ -20,12 +20,12 @@ const HeaderMobile = ({
 
   return (
     <>
-      <div className="flex items-center justify-between w-full px-4">
+      <div className="flex items-center justify-between w-full px-1">
         <Link to="/">
           <img
             src={logo}
             alt="Canarias Accesible"
-            className="w-auto h-12 sm:h-14 md:h-15 transition-all duration-300"
+            className="w-auto h-11 sm:h-14 md:h-15 transition-all duration-300"
           />
         </Link>
 
@@ -46,7 +46,7 @@ const HeaderMobile = ({
 
           <span
             className={`material-symbols-outlined menu-icon text-3xl cursor-pointer z-101 transition-colors duration-300 ${
-              scrolled ? "text-amber-50" : "text-neutral-2"
+              scrolled ? "text-amber-50" : "text-amber-50"
             }`}
             onClick={() => setOpen(true)}
           >
