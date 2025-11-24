@@ -2,7 +2,9 @@ const db = require("../models");
 const axios = require("axios");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/doSpacesClient");
+const transporter = require("../config/mailer");
 const incidentObject = db.incident;
+const Notification = db.notification;
 
 // Using OpenStreetMap's Nominatim reverse geocoding service
 async function reverseGeocode(latitude, longitude) {
@@ -32,12 +34,14 @@ async function reverseGeocode(latitude, longitude) {
 async function deleteImageFromStorage(nameFile) {
   if (!nameFile) return;
   try {
-    const urlParts = nameFile.split('/');
-    const key = urlParts.slice(-2).join('/');
-    await s3.send(new DeleteObjectCommand({
-      Bucket: process.env.DO_SPACE_NAME,
-      Key: key,
-    }));
+    const urlParts = nameFile.split("/");
+    const key = urlParts.slice(-2).join("/");
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.DO_SPACE_NAME,
+        Key: key,
+      })
+    );
   } catch (err) {
     console.error("Error eliminando imagen del storage:", err.message);
   }
@@ -60,9 +64,13 @@ exports.create = async (req, res) => {
     if (!req.body.incidentTypeId)
       return res.status(400).json({ message: "incidentTypeId es obligatorio" });
     if (!req.body.incidentSeverityId)
-      return res.status(400).json({ message: "incidentSeverityId es obligatorio" });
+      return res
+        .status(400)
+        .json({ message: "incidentSeverityId es obligatorio" });
     if (!req.body.incidentStatusId)
-      return res.status(400).json({ message: "incidentStatusId es obligatorio" });
+      return res
+        .status(400)
+        .json({ message: "incidentStatusId es obligatorio" });
     if (!req.file)
       return res.status(400).json({ message: "Image es obligatorio" });
 
@@ -100,10 +108,34 @@ exports.create = async (req, res) => {
     };
 
     const newIncident = await incidentObject.create(incidentToCreate);
-    res.status(201).json(newIncident);
+
+    // Create notification for the user
+    await Notification.create({
+      userId: req.body.userId,
+      entity: "Incident",
+      entityId: newIncident.id,
+      message: `New incident "${newIncident.name}" has been created.`,
+    });
+
+    // Send email to the user
+    const user = await db.user.findByPk(req.body.userId);
+
+    await transporter.sendMail({
+      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+      to: user.email,
+      subject: "Nueva incidencia creada 🚨",
+      html: `
+    <h2>¡Hola ${user.firstName}!</h2>
+    <p>Tu incidencia <strong>${newIncident.name}</strong> ha sido creada con éxito.</p>
+    <p>La revisaremos en breve brooo 😎🔥</p>
+  `,
+    });
+
+    return res.status(201).json(newIncident);
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se creaba la incidencia.",
+      message:
+        err.message || "Algún error ocurrió mientras se creaba la incidencia.",
     });
   }
 };
@@ -112,11 +144,13 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
   try {
     const data = await incidentObject.findAll({
-      include: [{
-        model: db.user,
-        as: 'user',
-        attributes: ['firstName', 'lastName', 'nameFile'],
-      }],
+      include: [
+        {
+          model: db.user,
+          as: "user",
+          attributes: ["firstName", "lastName", "nameFile"],
+        },
+      ],
     });
 
     res.status(200).json(data);
@@ -127,7 +161,6 @@ exports.findAll = async (req, res) => {
     });
   }
 };
-
 
 // Retrieves a single incident by ID
 exports.findOne = async (req, res) => {
@@ -165,17 +198,26 @@ exports.update = async (req, res) => {
     }
 
     if (req.body.name !== undefined) incidentToUpdate.name = req.body.name;
-    if (req.body.description !== undefined) incidentToUpdate.description = req.body.description;
-    if (req.body.incidentStatusId !== undefined) incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
-    if (req.body.incidentTypeId !== undefined) incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
-    if (req.body.isApproved !== undefined) incidentToUpdate.isApproved = req.body.isApproved;
-    if (req.body.userId !== undefined) incidentToUpdate.userId = req.body.userId;
+    if (req.body.description !== undefined)
+      incidentToUpdate.description = req.body.description;
+    if (req.body.incidentStatusId !== undefined)
+      incidentToUpdate.incidentStatusId = req.body.incidentStatusId;
+    if (req.body.incidentTypeId !== undefined)
+      incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
+    if (req.body.isApproved !== undefined)
+      incidentToUpdate.isApproved = req.body.isApproved;
+    if (req.body.userId !== undefined)
+      incidentToUpdate.userId = req.body.userId;
     if (req.body.area !== undefined) incidentToUpdate.area = req.body.area;
-    if (req.body.island !== undefined) incidentToUpdate.island = req.body.island;
-    if (req.body.dateIncident !== undefined) incidentToUpdate.dateIncident = req.body.dateIncident;
+    if (req.body.island !== undefined)
+      incidentToUpdate.island = req.body.island;
+    if (req.body.dateIncident !== undefined)
+      incidentToUpdate.dateIncident = req.body.dateIncident;
 
     if (req.file) {
-      const oldIncident = await incidentObject.findOne({ where: { id: incidentId } });
+      const oldIncident = await incidentObject.findOne({
+        where: { id: incidentId },
+      });
       if (oldIncident) await deleteImageFromStorage(oldIncident.nameFile);
       incidentToUpdate.nameFile = req.file.location;
     }
@@ -202,7 +244,9 @@ exports.update = async (req, res) => {
     res.status(404).json({ message: "Incidencia no encontrada." });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Algún error ocurrió mientras se actualizaba la incidencia.",
+      message:
+        err.message ||
+        "Algún error ocurrió mientras se actualizaba la incidencia.",
     });
   }
 };
@@ -211,7 +255,9 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const incidentId = req.params.id;
-    const incident = await incidentObject.findOne({ where: { id: incidentId } });
+    const incident = await incidentObject.findOne({
+      where: { id: incidentId },
+    });
 
     if (!incident) {
       return res.status(404).json({ message: "Incidencia no encontrada." });
@@ -226,7 +272,8 @@ exports.delete = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message:
-        err.message || "Algún error ocurrió mientras se eliminaba la incidencia.",
+        err.message ||
+        "Algún error ocurrió mientras se eliminaba la incidencia.",
     });
   }
 };

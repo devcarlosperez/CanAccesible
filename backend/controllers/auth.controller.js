@@ -2,6 +2,7 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = db.user;
+const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
 const transporter = require("../config/mailer");
 
@@ -36,6 +37,14 @@ exports.signIn = async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
     req.session.role = user.role.role;
+
+    await Notification.create({
+      userId: user.id,
+      entity: "User",
+      entityId: user.id,
+      message: "Inicio de sesión detectado en tu cuenta",
+      dateNotification: new Date(),
+    });
 
     await transporter.sendMail({
       from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
