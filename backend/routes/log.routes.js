@@ -1,11 +1,10 @@
 module.exports = (app) => {
   const log = require("../controllers/log.controller");
-  const { createLog } = require("../services/log.service");
   const { verifySession } = require("../middlewares/auth.middleware");
 
   const router = require("express").Router();
 
-  router.post("/", verifySession, createLog);
+  router.post("/", verifySession, log.create);
 
   router.get("/", verifySession, log.findAll);
 

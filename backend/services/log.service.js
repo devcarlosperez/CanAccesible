@@ -1,4 +1,5 @@
-const { Log } = require('../models');
+const db = require('../models');
+const Log = db.log;
 
 // Creates a log record in the database
 const createLog = async (userId, action, entity, entityId) => {
@@ -13,6 +14,7 @@ const createLog = async (userId, action, entity, entityId) => {
     return log;
   } catch (error) {
     // If error occurs, return null to avoid blocking the main action
+    console.error('Error creating log:', error.message);
     return null;
   }
 };

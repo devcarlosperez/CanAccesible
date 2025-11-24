@@ -1,6 +1,6 @@
 const db = require('../models');
 const { verifySession } = require("../middlewares/auth.middleware");
-const Log = db.Log;
+const Log = db.log;
 const { createLog } = require('../services/log.service');
 
 // Create a log
@@ -27,6 +27,11 @@ exports.create = async (req, res) => {
     }
 
     const log = await createLog(userId, action, entity, entityId);
+    
+    if (!log) {
+      return res.status(500).json({ message: "Error creating log. Check console for details." });
+    }
+    
     res.status(201).json(log);
   } catch (error) {
     res.status(500).json({ error: error.message });
