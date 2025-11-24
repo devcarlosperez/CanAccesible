@@ -1,8 +1,12 @@
 const express = require("express");
+const path = require("path");
 const { sequelize } = require("./models");
 const session = require("express-session");
 
 const app = express();
+
+// Set view engine to EJS
+app.set("view engine", "ejs");
 
 // Add CORS middleware
 app.use((req, res, next) => {
@@ -41,6 +45,10 @@ app.use(
   })
 );
 
+// Dashboard routes (before API routes)
+require("./routes/dashboard.routes")(app);
+
+// API routes
 require("./routes/incident.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/notification.routes")(app);
