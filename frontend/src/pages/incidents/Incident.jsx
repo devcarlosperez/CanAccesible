@@ -13,39 +13,40 @@ import Footer from "../../components/footer/Footer";
 
 const Incident = () => {
   const [incidents, setIncidents] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [users] = useState([]);
   const [editingIncident, setEditingIncident] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 6;
-
-  // Nuevo estado para el modal de "ver más"
+  
   const [viewMoreIncidentId, setViewMoreIncidentId] = useState(null);
-
+  const { isAuthenticated, user } = useAuthStore();
+  
   const location = useLocation();
   const navigate = useNavigate();
-
+  
+  const itemsPerPage = 6;
+  
   const initialFormData = {
     name: "",
     description: "",
     incidentStatusId: 1,
     incidentTypeId: 1,
     incidentSeverityId: 1,
-    userId: 1,
+    userId: isAuthenticated ? user.id : null,
     island: "",
     area: "",
     latitude: "",
     longitude: "",
     dateIncident: new Date().toISOString().split("T")[0],
   };
-
+  
   const [formData, setFormData] = useState(initialFormData);
-
+  
   useEffect(() => {
     fetchIncidents();
   }, []);
-
+  
   useEffect(() => {
     // Detecta el parámetro incidentId en la URL
     const params = new URLSearchParams(location.search);
@@ -63,8 +64,6 @@ const Incident = () => {
       console.error("Error cargando incidencias:", err);
     }
   };
-
-  const { isAuthenticated } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
