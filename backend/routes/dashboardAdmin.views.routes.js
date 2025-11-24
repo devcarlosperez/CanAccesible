@@ -10,18 +10,18 @@ module.exports = (app) => {
   // Dashboard admin page
   router.get("/", async (req, res) => {
     try {
-      // Get counts from database
+      // Fetch counts from database
       const articleCount = await db.blogArticle.count();
       const incidentCount = await db.incident.count();
       const conversationCount = await db.conversation.count();
       const logCount = await db.log.count();
       const userCount = await db.user.count();
 
-      // Get approved and not approved incidents
+      // Fetch approved and not approved incidents
       const approvedIncidents = await db.incident.count({ where: { isApproved: true } });
       const notApprovedIncidents = await db.incident.count({ where: { isApproved: false } });
 
-      // Get user roles distribution using associations
+      // Fetch user roles distribution using associations
       const adminCount = await db.user.count({
         include: [{
           model: db.role,
@@ -66,7 +66,7 @@ module.exports = (app) => {
         }
       });
     } catch (error) {
-      console.error("Error loading dashboard counts:", error);
+      console.error("Error fetching dashboard data:", error);
       res.render("admin/dashboard/index", {
         user: req.user,
         title: "Dashboard Administrador",
@@ -96,15 +96,15 @@ module.exports = (app) => {
         order: [['dateCreation', 'DESC']]
       });
 
-      res.render("admin/dashboard/blog-articles", {
+      res.render("admin/dashboard/blog-articles/index", {
         user: req.user,
         title: "Gestión de Artículos - CanAccesible",
         frontendUrl: process.env.FRONTEND_URL,
         articles: articles
       });
     } catch (error) {
-      console.error("Error loading blog articles:", error);
-      res.status(500).send("Error al cargar los artículos");
+      console.error("Error fetching blog articles:", error);
+      res.status(500).send("Error fetching blog articles");
     }
   });
 
