@@ -42,8 +42,6 @@ exports.findAll = async (req, res) => {
     }
 
     const logs = await Log.findAll({
-      include: ['user'],
-      order: [['dateLog', 'DESC']],
     });
     res.status(200).json(logs);
   } catch (error) {
@@ -60,7 +58,6 @@ exports.findOne = async (req, res) => {
     }
 
     const log = await Log.findByPk(req.params.id, {
-      include: ['user'],
     });
     if (!log) {
       return res.status(404).json({ message: "Log not found" });
