@@ -1,12 +1,43 @@
 const db = require('../models');
 const { verifySession } = require("../middlewares/auth.middleware");
 const Log = db.Log;
+const { createLog } = require('../services/log.service');
+
+// Create a log
+exports.create = async (req, res) => {
+  try {
+    // Verify that user is authenticated
+    if (!req.user) {
+      return res.status(403).json({ message: 'No tienes permiso para crear logs.' });
+    }
+
+    const { userId, action, entity, entityId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'userId es obligatorio' });
+    }
+    if (!action) {
+      return res.status(400).json({ message: 'action es obligatorio' });
+    }
+    if (!entity) {
+      return res.status(400).json({ message: 'entity es obligatorio' });
+    }
+    if (!entityId) {
+      return res.status(400).json({ message: 'entityId es obligatorio' });
+    }
+
+    const log = await createLog(userId, action, entity, entityId);
+    res.status(201).json(log);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Retrieve all logs
 exports.findAll = async (req, res) => {
   try {
-    // Verify that user is authenticated
-    if (!req.user) {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permiso para acceder a los logs.' });
     }
 
@@ -23,8 +54,8 @@ exports.findAll = async (req, res) => {
 // Retrieve one log by ID
 exports.findOne = async (req, res) => {
   try {
-    // Verify that user is authenticated
-    if (!req.user) {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permiso para acceder a los logs.' });
     }
 
@@ -48,8 +79,8 @@ exports.update = async (req, res) => {
 // Delete a log
 exports.delete = async (req, res) => {
   try {
-    // Verify that user is authenticated
-    if (!req.user) {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permiso para eliminar logs.' });
     }
 
