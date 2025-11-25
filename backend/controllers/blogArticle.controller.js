@@ -1,24 +1,8 @@
 const db = require("../models");
-const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const s3 = require("../config/doSpacesClient");
+const { deleteImageFromStorage } = require("../config/doSpacesClient");
 const { verifySession } = require("../middlewares/auth.middleware");
 const { createLog } = require("../services/log.service");
 const BlogArticle = db.blogArticle;
-
-// Utility function to delete image from DO Spaces
-async function deleteImageFromStorage(nameFile) {
-  if (!nameFile) return;
-  try {
-    const urlParts = nameFile.split('/');
-    const key = urlParts.slice(-2).join('/');
-    await s3.send(new DeleteObjectCommand({
-      Bucket: process.env.DO_SPACE_NAME,
-      Key: key,
-    }));
-  } catch (err) {
-    console.error("Error deleting image from storage:", err.message);
-  }
-}
 
 // Create a blog article
 exports.create = async (req, res) => {
