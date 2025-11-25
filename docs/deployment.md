@@ -71,6 +71,10 @@ DO_REGION=fra1
 DO_ACCESS_KEY=your_spaces_access_key
 DO_SECRET_KEY=your_spaces_secret_key
 
+# Email Configuration (Gmail SMTP)
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_gmail_app_password
+
 # JWT Secret (if using authentication)
 JWT_SECRET=your_jwt_secret_key
 ```

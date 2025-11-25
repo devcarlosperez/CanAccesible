@@ -153,6 +153,10 @@ DO_ACCESS_KEY=your_digitalocean_access_key   # DigitalOcean Spaces API access ke
 DO_SECRET_KEY=your_digitalocean_secret_key   # DigitalOcean Spaces API secret key
 DO_SPACE_NAME=your_space_name                # DigitalOcean Spaces bucket name
 DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
+
+# Email Configuration (Gmail SMTP)
+SMTP_USER=your_email@gmail.com               # Gmail address for sending emails
+SMTP_PASS=your_gmail_app_password            # Gmail App Password
 ```
 
 **Install dependencies:**
