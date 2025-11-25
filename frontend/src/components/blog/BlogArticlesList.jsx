@@ -112,7 +112,10 @@ const BlogArticlesList = ({ onPageChange }) => {
             <Pagination
               count={pageCount}
               page={page}
-              onChange={(e, value) => setPage(value)}
+              onChange={(e, value) => {
+                setPage(value);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               color="primary"
             />
           </div>
