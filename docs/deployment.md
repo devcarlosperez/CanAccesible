@@ -1,4 +1,4 @@
-# Deployment
+# Deployment Guide
 
 CanAccesible is deployed on **DigitalOcean** with both frontend and backend running on a single Droplet (VPS) managed by **PM2**. We use DigitalOcean's managed MySQL database for data storage and Spaces for image storage.
 

@@ -16,6 +16,7 @@ The project aims to promote a **more accessible society** and awareness of the n
 - [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
+- [Security Guide](./docs/security.md) - Overview of authentication, data protection, and security protocols.
 
 ---
 
