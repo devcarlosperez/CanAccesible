@@ -1,6 +1,6 @@
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const s3 = require("../config/doSpacesClient");
+const { s3 } = require("../config/doSpacesClient");
 
 // Middleware to upload incident images to DO Spaces
 const incidentImageUpload = multer({
