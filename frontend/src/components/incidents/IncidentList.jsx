@@ -43,7 +43,12 @@ const IncidentList = ({
           <Pagination
             count={pageCount}
             page={page}
-            onChange={(e, value) => setPage(value)}
+            onChange={(e, value) => {
+              setPage(value);
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 100);
+            }}
             color="primary"
           />
         </Grid>

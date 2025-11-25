@@ -2,8 +2,10 @@ import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import BlogSlider from "../../components/blog/BlogSlider";
 import BlogArticlesList from "../../components/blog/BlogArticlesList";
+import { useState } from "react";
 
 const Blog = () => {
+  const [currentPage, setCurrentPage] = useState(1);
 
   const blogArticles = [
     {
@@ -61,9 +63,11 @@ const Blog = () => {
         </div>
 
         {/* Blog Slider */}
-        <div className="flex justify-center mb-16">
-          <BlogSlider blogArticles={blogArticles} />
-        </div>
+        {currentPage === 1 && (
+          <div className="flex justify-center mb-16">
+            <BlogSlider blogArticles={blogArticles} />
+          </div>
+        )}
 
         {/* Blog Articles List */}
         <div className="mb-12">
@@ -75,7 +79,7 @@ const Blog = () => {
           </h2>
           <div className="px-4 md:px-6 lg:px-0 flex justify-center">
             <div className="w-full max-w-sm md:max-w-4xl lg:max-w-6xl">
-              <BlogArticlesList />
+              <BlogArticlesList onPageChange={setCurrentPage} />
             </div>
           </div>
         </div>

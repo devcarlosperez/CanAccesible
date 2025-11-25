@@ -56,61 +56,15 @@
         </button>
       </div>
     <% } else { %>
-      <div class="w-full flex justify-center">
+      <div class="w-full flex flex-col items-center">
         <div class="w-full max-w-sm md:max-w-4xl lg:max-w-6xl">
-          <div class="flex flex-wrap gap-4 md:gap-6 justify-center">
-            <% articles.forEach(article => { %>
-              <div class="flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                  <!-- Image Container -->
-                  <div class="aspect-video md:aspect-square bg-gray-200 flex items-center justify-center overflow-hidden relative">
-                    <img 
-                      src="<%= article.nameFile %>" 
-                      alt="<%= article.title %>" 
-                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    >
-                  </div>
-                  
-                  <!-- Content Container -->
-                  <div class="p-2 md:p-4 flex flex-col grow">
-                    <h3 class="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 inline-block">
-                      <%= article.title %>
-                    </h3>
-                    
-                    <p class="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
-                      <%= article.description %>
-                    </p>
-                    
-                    <!-- Footer with date and actions -->
-                    <div class="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
-                      <span class="text-xs text-gray-500">
-                        <%= new Date(article.dateCreation).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-                      </span>
-                      
-                      <div class="flex gap-2">
-                        <button 
-                          onclick="openEditModalFromButton(this)"
-                          data-id="<%= article.id %>"
-                          data-title="<%= article.title %>"
-                          data-description="<%= article.description %>"
-                          data-content="<%= article.content %>"
-                          data-image="<%= article.nameFile %>"
-                          class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" 
-                          style="background-color: #f59e0b;" 
-                          title="Editar">
-                          <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button onclick="deleteArticle('<%= article.id %>')" class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" style="background-color: #ff312e;" title="Eliminar">
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% }); %>
+          <div id="articlesContainer" class="flex flex-wrap gap-4 md:gap-6 justify-center">
+            <!-- Articles will be rendered here by JavaScript -->
           </div>
         </div>
+
+        <!-- Pagination Controls -->
+        <div id="paginationContainer" class="mt-8 flex justify-center"></div>
       </div>
     <% } %>
   </div>
@@ -119,25 +73,194 @@
   <%- include('form-modal') %>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Material-UI JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@mui/material@5.14.0/dist/umd/material-ui.production.min.js"></script>
   <script>
-    function openEditModalFromButton(button) {
-      const id = button.getAttribute('data-id');
-      const title = button.getAttribute('data-title');
-      const description = button.getAttribute('data-description');
-      const content = button.getAttribute('data-content');
-      const image = button.getAttribute('data-image');
+    // All articles data from server
+    const allArticles = <%- JSON.stringify(articles) %>;
+    const itemsPerPage = 6;
+    let currentPage = 1;
+
+    // Initialize pagination on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      renderArticles();
+      renderPaginationMUI();
+    });
+
+    function renderArticles() {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedArticles = allArticles.slice(startIndex, endIndex);
+
+      const container = document.getElementById('articlesContainer');
+      container.innerHTML = '';
+
+      paginatedArticles.forEach(article => {
+        const articleHTML = `
+          <div class="flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+              <!-- Image Container -->
+              <div class="aspect-video md:aspect-square bg-gray-200 flex items-center justify-center overflow-hidden relative">
+                <img 
+                  src="${article.nameFile}" 
+                  alt="${article.title}" 
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                >
+              </div>
+              
+              <!-- Content Container -->
+              <div class="p-2 md:p-4 flex flex-col grow">
+                <h3 class="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 inline-block">
+                  ${article.title}
+                </h3>
+                
+                <p class="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
+                  ${article.description}
+                </p>
+                
+                <!-- Footer with date and actions -->
+                <div class="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
+                  <span class="text-xs text-gray-500">
+                    ${new Date(article.dateCreation).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </span>
+                  
+                  <div class="flex gap-2">
+                    <button 
+                      onclick="openEditModalFromData('${article.id}', '${article.title.replace(/'/g, "\\'")}', '${article.description.replace(/'/g, "\\'")}', '${article.content.replace(/'/g, "\\'")}', '${article.nameFile}')"
+                      class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" 
+                      style="background-color: #f59e0b;" 
+                      title="Editar">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button onclick="deleteArticle('${article.id}')" class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" style="background-color: #ff312e;" title="Eliminar">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += articleHTML;
+      });
+    }
+
+    function renderPaginationMUI() {
+      const pageCount = Math.ceil(allArticles.length / itemsPerPage);
+      const container = document.getElementById('paginationContainer');
+      container.innerHTML = '';
+
+      if (pageCount <= 1) return;
+
+      // Crear contenedor con estilos MUI Pagination
+      const paginationDiv = document.createElement('div');
+      paginationDiv.style.cssText = `
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+      `;
+
+      // Previous button
+      const prevBtn = createPaginationButton('<i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>', currentPage === 1);
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderArticles();
+          renderPaginationMUI();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+      paginationDiv.appendChild(prevBtn);
+
+      // Page numbers
+      for (let i = 1; i <= pageCount; i++) {
+        const pageBtn = createPaginationButton(i, false, i === currentPage);
+        pageBtn.onclick = () => {
+          if (i !== currentPage) {
+            currentPage = i;
+            renderArticles();
+            renderPaginationMUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        };
+        paginationDiv.appendChild(pageBtn);
+      }
+
+      // Next button
+      const nextBtn = createPaginationButton('<i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>', currentPage === pageCount);
+      nextBtn.onclick = () => {
+        if (currentPage < pageCount) {
+          currentPage++;
+          renderArticles();
+          renderPaginationMUI();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+      paginationDiv.appendChild(nextBtn);
+
+      container.appendChild(paginationDiv);
+    }
+
+    function createPaginationButton(content, disabled = false, isActive = false) {
+      const btn = document.createElement('button');
+      btn.innerHTML = content;
+      
+      const baseStyles = `
+        min-width: 34px;
+        height: 34px;
+        padding: 0 6px;
+        margin: 0;
+        border: none;
+        background-color: ${isActive ? '#1976d2' : 'transparent'};
+        color: ${isActive ? 'white' : 'rgba(0, 0, 0, 0.87)'};
+        border-radius: 50%;
+        cursor: ${disabled ? 'default' : 'pointer'};
+        font-size: 16px;
+        font-weight: 500;
+        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        opacity: ${disabled ? '0.38' : '1'};
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+      `;
+      
+      btn.style.cssText = baseStyles;
+      
+      // No establecer disabled en el atributo HTML, solo controlar el estilo
+      if (disabled) {
+        btn.setAttribute('data-disabled', 'true');
+      }
+      
+      if (!disabled && !isActive) {
+        btn.onmouseover = function() {
+          this.style.backgroundColor = 'rgba(0, 0, 0, 0.04)';
+        };
+        btn.onmouseout = function() {
+          this.style.backgroundColor = 'transparent';
+        };
+      }
+      
+      return btn;
+    }
+
+    function openEditModalFromData(id, title, description, content, image) {
       openEditModal(id, title, description, content, image);
     }
 
     function deleteArticle(id) {
-      axios.delete(`/api/blogArticles/${id}`)
-        .then(response => {
-          window.location.reload();
-        })
-        .catch(error => {
-          console.error('Error deleting article:', error);
-          alert('Error deleting article');
-        });
+      if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
+        axios.delete(`/api/blogArticles/${id}`)
+          .then(response => {
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error('Error deleting article:', error);
+            alert('Error deleting article');
+          });
+      }
     }
   </script>
 </body>
