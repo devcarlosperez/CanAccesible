@@ -1,7 +1,6 @@
 const db = require("../models");
 const axios = require("axios");
-const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const s3 = require("../config/doSpacesClient");
+const { deleteImageFromStorage } = require("../config/doSpacesClient");
 const transporter = require("../config/mailer");
 const incidentObject = db.incident;
 const Notification = db.notification;
@@ -27,23 +26,6 @@ async function reverseGeocode(latitude, longitude) {
   } catch (err) {
     console.error("Error in geocoding:", err.message);
     return null;
-  }
-}
-
-// Utility function to delete image from DO Spaces
-async function deleteImageFromStorage(nameFile) {
-  if (!nameFile) return;
-  try {
-    const urlParts = nameFile.split("/");
-    const key = urlParts.slice(-2).join("/");
-    await s3.send(
-      new DeleteObjectCommand({
-        Bucket: process.env.DO_SPACE_NAME,
-        Key: key,
-      })
-    );
-  } catch (err) {
-    console.error("Error deleting image from storage:", err.message);
   }
 }
 

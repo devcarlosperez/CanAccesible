@@ -1,6 +1,6 @@
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const s3 = require("../config/doSpacesClient");
+const { s3 } = require("../config/doSpacesClient");
 
 // Middleware to upload user images to DO Spaces
 const userImageUpload = multer({

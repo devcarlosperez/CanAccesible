@@ -1,26 +1,8 @@
 const db = require("../models");
 const User = db.user;
 const bcrypt = require("bcrypt");
-const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const s3 = require("../config/doSpacesClient");
+const { deleteImageFromStorage } = require("../config/doSpacesClient");
 const transporter = require("../config/mailer");
-
-// Utility function to delete image from DO Spaces
-async function deleteImageFromStorage(nameFile) {
-  if (!nameFile) return;
-  try {
-    const urlParts = nameFile.split("/");
-    const key = urlParts.slice(-2).join("/");
-    await s3.send(
-      new DeleteObjectCommand({
-        Bucket: process.env.DO_SPACE_NAME,
-        Key: key,
-      })
-    );
-  } catch (err) {
-    console.error("Error deleting image from storage:", err.message);
-  }
-}
 
 exports.create = async (req, res) => {
   try {
@@ -32,9 +14,7 @@ exports.create = async (req, res) => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .json({ message: "Email format is invalid" });
+      return res.status(400).json({ message: "Email format is invalid" });
     }
 
     const existingUser = await User.findOne({ where: { email } });
@@ -68,9 +48,7 @@ exports.create = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error creating the user" });
+    res.status(500).json({ message: err.message || "Error creating the user" });
   }
 };
 
@@ -113,16 +91,7 @@ exports.findOne = async (req, res) => {
     }
 
     const user = await User.findByPk(id, {
-      attributes: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "dateRegister",
-        "roleId",
-        "nameFile",
-      ],
-      include: [{ model: db.role, as: "role", attributes: ["role"] }],
+      attributes: ["firstName", "lastName", "nameFile"],
     });
 
     if (!user) {
@@ -132,6 +101,110 @@ exports.findOne = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ message: err.message || "Error fetching user" });
+  }
+};
+
+exports.findAllAdmins = async (req, res) => {
+  try {
+    if (req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this resource" });
+    }
+
+    const admins = await User.findAll({
+      where: { roleId: 2 },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
+    });
+
+    res.status(200).json(admins);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: err.message || "Error fetching admin users" });
+  }
+};
+
+exports.findAllUsers = async (req, res) => {
+  try {
+    if (req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this resource" });
+    }
+
+    const normalUsers = await User.findAll({
+      where: { roleId: 1 },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
+    });
+
+    res.status(200).json(normalUsers);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: err.message || "Error fetching normal users" });
+  }
+};
+
+exports.findTopReportingUsers = async (req, res) => {
+  try {
+    if (req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this resource" });
+    }
+
+    const topUsers = await User.findAll({
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+        [
+          db.sequelize.fn("COUNT", db.sequelize.col("incidents.id")),
+          "incidenceCount",
+        ],
+      ],
+      include: [
+        {
+          model: db.incident,
+          as: "incidents",
+          attributes: [],
+          required: false,
+        },
+      ],
+      group: ["User.id"],
+      raw: true,
+      subQuery: false,
+      order: [
+        [db.sequelize.fn("COUNT", db.sequelize.col("incidents.id")), "DESC"],
+      ],
+    });
+
+    res.status(200).json(topUsers);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: err.message || "Error fetching top reporting users" });
   }
 };
 
@@ -174,9 +247,7 @@ exports.update = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message || "Error updating the user" });
+    res.status(500).json({ message: err.message || "Error updating the user" });
   }
 };
 
