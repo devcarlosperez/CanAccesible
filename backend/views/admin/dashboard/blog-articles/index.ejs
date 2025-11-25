@@ -11,19 +11,7 @@
 </head>
 <body class="bg-gray-200 min-h-screen">
   <!-- Header -->
-  <header class="shadow-md" style="background-color: #0c0c22;">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center justify-center md:justify-start gap-4">
-        <img src="/images/canaccesible-logo-2.png" alt="CanAccesible Logo" class="h-12">
-      </div>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
-        <h1 class="text-white text-sm sm:text-base md:text-lg font-semibold text-center">Hola, <%= user.firstName %> <%= user.lastName %></h1>
-        <button onclick="window.location.href='<%= frontendUrl %>/home'" class="text-white px-4 py-2 rounded-lg transition cursor-pointer font-semibold hover:opacity-90 whitespace-nowrap" style="background-color: #ff312e;">
-          Salir
-        </button>
-      </div>
-    </div>
-  </header>
+  <%- include('../../../partials/header') %>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
     <!-- Breadcrumb & Title -->
