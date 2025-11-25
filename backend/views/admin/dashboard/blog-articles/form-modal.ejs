@@ -1,0 +1,134 @@
+<!-- Modal Backdrop -->
+<div id="articleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+  <!-- Modal Content -->
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
+      <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Añadir Artículo</h3>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Scrollable Form Container -->
+    <div class="overflow-y-auto p-6">
+      <form id="articleForm" onsubmit="handleArticleSubmit(event)">
+        <input type="hidden" id="articleId" name="id">
+        
+        <!-- Title Input -->
+        <div class="mb-4">
+          <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+          <input type="text" id="title" name="title" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Escribe el título del artículo">
+        </div>
+
+        <!-- Description Input -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+          <textarea id="description" name="description" required rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none"
+            placeholder="Descripción del artículo..."></textarea>
+        </div>
+
+        <!-- Content Input -->
+        <div class="mb-4">
+          <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Contenido</label>
+          <textarea id="content" name="content" required rows="8"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none"
+            placeholder="Contenido del artículo..."></textarea>
+        </div>
+
+        <!-- Image Input -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Imagen de Portada</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('image').click()">
+            <div class="space-y-1 text-center">
+              <i class="fa-solid fa-cloud-arrow-up text-gray-400 text-3xl mb-2"></i>
+              <div class="flex text-sm text-gray-600 justify-center">
+                <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                  <span>Sube un archivo</span>
+                  <input id="image" name="image" type="file" class="sr-only" accept="image/*">
+                </label>
+                <p class="pl-1">o arrastra y suelta</p>
+              </div>
+              <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          <button type="button" onclick="closeModal()" 
+            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+            Cancelar
+          </button>
+          <button type="submit" 
+            class="px-6 py-2 bg-[#004aad] text-white rounded-lg hover:opacity-90 font-medium transition shadow-md">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const modal = document.getElementById('articleModal');
+  const form = document.getElementById('articleForm');
+  const modalTitle = document.getElementById('modalTitle');
+
+  function openCreateModal() {
+    modalTitle.textContent = 'Añadir Artículo';
+    form.reset();
+    document.getElementById('articleId').value = '';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function openEditModal(id, title, description, content, imageUrl) {
+    modalTitle.textContent = 'Editar Artículo';
+    document.getElementById('articleId').value = id;
+    document.getElementById('title').value = title;
+    document.getElementById('description').value = description;
+    document.getElementById('content').value = content;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  async function handleArticleSubmit(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(form);
+    const id = document.getElementById('articleId').value;
+    const isEdit = !!id;
+    
+    const url = isEdit ? `/api/blogArticles/${id}` : '/api/blogArticles';
+    const method = isEdit ? 'put' : 'post';
+
+    try {
+      const response = isEdit 
+        ? await axios.put(url, formData)
+        : await axios.post(url, formData);
+
+      if (response.status === 200 || response.status === 201) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error saving article:', error);
+      alert('Error: ' + (error.response?.data?.message || 'Could not save article'));
+    }
+  }
+
+  // Close modal on outside click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+</script>

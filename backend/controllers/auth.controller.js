@@ -47,6 +47,8 @@ exports.signIn = async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
     req.session.role = user.role.role;
+    req.session.firstName = user.firstName;
+    req.session.lastName = user.lastName;
 
     await Notification.create({
       userId: user.id,

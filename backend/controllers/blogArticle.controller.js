@@ -65,7 +65,9 @@ exports.create = async (req, res) => {
 // Retrieve all blog articles
 exports.findAll = async (req, res) => {
   try {
-    const articles = await BlogArticle.findAll();
+    const articles = await BlogArticle.findAll({
+      order: [['dateCreation', 'ASC']]
+    });
     res.status(200).json(articles);
   } catch (err) {
     res.status(500).json({
