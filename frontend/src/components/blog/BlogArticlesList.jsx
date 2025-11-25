@@ -114,7 +114,9 @@ const BlogArticlesList = ({ onPageChange }) => {
               page={page}
               onChange={(e, value) => {
                 setPage(value);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
               }}
               color="primary"
             />
