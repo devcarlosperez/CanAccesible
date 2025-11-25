@@ -93,7 +93,7 @@ module.exports = (app) => {
   router.get("/blog-articles", async (req, res) => {
     try {
       const articles = await db.blogArticle.findAll({
-        order: [['dateCreation', 'DESC']]
+        order: [['dateCreation', 'ASC']]
       });
 
       res.render("admin/dashboard/blog-articles/index", {
