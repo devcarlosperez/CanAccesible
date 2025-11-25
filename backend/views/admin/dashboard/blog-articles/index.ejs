@@ -163,7 +163,7 @@
       `;
 
       // Previous button
-      const prevBtn = createPaginationButton('‹', currentPage === 1);
+      const prevBtn = createPaginationButton('<i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>', currentPage === 1);
       prevBtn.onclick = () => {
         if (currentPage > 1) {
           currentPage--;
@@ -189,7 +189,7 @@
       }
 
       // Next button
-      const nextBtn = createPaginationButton('›', currentPage === pageCount);
+      const nextBtn = createPaginationButton('<i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>', currentPage === pageCount);
       nextBtn.onclick = () => {
         if (currentPage < pageCount) {
           currentPage++;
@@ -203,13 +203,13 @@
       container.appendChild(paginationDiv);
     }
 
-    function createPaginationButton(text, disabled = false, isActive = false) {
+    function createPaginationButton(content, disabled = false, isActive = false) {
       const btn = document.createElement('button');
-      btn.textContent = text;
+      btn.innerHTML = content;
       
       const baseStyles = `
-        min-width: 32px;
-        height: 32px;
+        min-width: 34px;
+        height: 34px;
         padding: 0 6px;
         margin: 0;
         border: none;
@@ -217,8 +217,8 @@
         color: ${isActive ? 'white' : 'rgba(0, 0, 0, 0.87)'};
         border-radius: 50%;
         cursor: ${disabled ? 'default' : 'pointer'};
-        font-size: 14px;
-        font-weight: 400;
+        font-size: 16px;
+        font-weight: 500;
         transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         opacity: ${disabled ? '0.38' : '1'};
         display: inline-flex;
