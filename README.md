@@ -1,7 +1,5 @@
 # CANACCESIBLE
 
-## Description
-
 **CanAccesible** is a Canary Islands web platform that enables citizens to:
 
 - **Report accessibility incidents** in public or private spaces.
@@ -16,6 +14,7 @@ The project aims to promote a **more accessible society** and awareness of the n
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3Wnxhsu) - Complete API endpoint documentation
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production
 - [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams
+- [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services
 
 ---
 
@@ -36,7 +35,14 @@ The project aims to promote a **more accessible society** and awareness of the n
 - **BCrypt:** Library for encrypting passwords and securing sensitive user information.
 - **Motion (Framer Motion):** Library for animations and smooth transitions in React components, improving user experience.
 - **Zustand:** Lightweight state management library for React applications, used for managing global application state.
-- **Nominatin API:** External geolocation API used for reverse geocoding to convert coordinates into location names.
+- **Leaflet & React Leaflet:** Libraries for displaying interactive maps and handling geolocation.
+- **Headless UI:** Unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
+- **Embla Carousel:** A lightweight carousel library with fluid motion and great touch precision.
+- **MUI Icons & Font Awesome:** Comprehensive icon libraries for visual elements.
+- **Multer & Multer S3:** Middleware for handling file uploads, integrated with S3 storage.
+- **Nodemailer:** Module for sending emails from the Node.js server.
+- **DigitalOcean (Droplets, Spaces, Managed DB):** Cloud infrastructure for hosting, storage, and database management.
+- **Nominatim API:** External geolocation API used for reverse geocoding to convert coordinates into location names.
 
 ---
 
