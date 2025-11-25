@@ -9,6 +9,12 @@ module.exports = (app) => {
 
   router.get("/", verifyToken, user.findAll);
 
+  router.get("/user", verifyToken, user.findAllUsers);
+
+  router.get("/admin", verifyToken, user.findAllAdmins);
+
+  router.get("/top-reporting", verifyToken, user.findTopReportingUsers);
+
   router.get("/:id", verifyToken, user.findOne);
 
   router.put("/:id", verifyToken, userImageUpload.single("image"), user.update);
