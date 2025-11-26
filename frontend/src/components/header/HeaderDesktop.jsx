@@ -9,7 +9,7 @@ const HeaderDesktop = ({
   notifications,
   showNotifications,
   setShowNotifications,
-  setNotifications,
+  handleDeleteNotification,
   transparent,
   scrolled,
 }) => {
@@ -52,9 +52,7 @@ const HeaderDesktop = ({
             notifications={notifications}
             showNotifications={showNotifications}
             setShowNotifications={setShowNotifications}
-            handleDelete={(id) =>
-              setNotifications((prev) => prev.filter((n) => n.id !== id))
-            }
+            handleDeleteNotification={handleDeleteNotification}
             iconSize="text-xl md:text-2xl lg:text-3xl"
             dropdownWidth="w-80"
           />
