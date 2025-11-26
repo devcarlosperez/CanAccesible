@@ -44,6 +44,12 @@ The application implements a **dual authentication strategy** to handle differen
 
 ## Network Security
 
+### SSL/TLS (HTTPS)
+
+- **Encryption**: All data transmitted between the client and the server is encrypted using **TLS (Transport Layer Security)**.
+- **Implementation**: This is handled by the **Nginx Reverse Proxy**, which terminates the SSL connection using a **Let's Encrypt** certificate.
+- **Configuration**: For technical details on how this is set up, refer to the [Domain & SSL Guide](./domain-dns-setup.md).
+
 ### CORS (Cross-Origin Resource Sharing)
 
 - **Configuration**: The backend is configured to only accept requests from trusted origins (e.g., the frontend application URL). This prevents malicious websites from making unauthorized requests to our API on behalf of a user.

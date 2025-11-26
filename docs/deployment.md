@@ -159,3 +159,11 @@ npm install
 # Restart all PM2 processes
 pm2 restart all
 ```
+
+---
+
+## Next Steps: Public Access & Security
+
+Once the application is running with PM2, it is accessible via the IP address and port. To configure the **domain name**, **remove the port from the URL**, and enable **HTTPS**, please proceed to the:
+
+👉 **[Domain, DNS & SSL Configuration Guide](./domain-dns-setup.md)**
