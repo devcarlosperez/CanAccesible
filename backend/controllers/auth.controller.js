@@ -37,8 +37,11 @@ exports.signIn = async (req, res) => {
       {
         id: user.id,
         email: user.email,
-        role: user.role.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
         roleId: user.roleId,
+        role: user.role.role,
+        nameFile: user.nameFile,
       },
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
