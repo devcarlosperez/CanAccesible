@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import useAuthStore from "../../services/authService.js";
+import { getAllNotifications } from "../../services/notificationService";
 import HeaderDesktop from "./HeaderDesktop";
 import HeaderMobile from "./HeaderMobile";
 
@@ -28,13 +29,9 @@ const Header = ({ transparent = true }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      import("../../services/notificationService").then(
-        ({ getAllNotifications }) => {
-          getAllNotifications()
-            .then((data) => setNotifications(Array.isArray(data) ? data : []))
-            .catch(() => setNotifications([]));
-        }
-      );
+      getAllNotifications()
+        .then((data) => setNotifications(Array.isArray(data) ? data : []))
+        .catch(() => setNotifications([]));
     } else {
       setNotifications([]);
     }

@@ -20,6 +20,8 @@ const getDecodedUser = () => {
     delete api.defaults.headers.common["Authorization"];
     return null;
   }
+
+  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   const user = token ? jwtDecode(token) : null;
   return user;
 };
@@ -61,7 +63,6 @@ const useAuthStore = create((set) => ({
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       const user = jwtDecode(token);
-
       set({
         token,
         user,
