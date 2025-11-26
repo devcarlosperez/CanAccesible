@@ -20,7 +20,9 @@ const getDecodedUser = () => {
     delete api.defaults.headers.common["Authorization"];
     return null;
   }
-  return token ? jwtDecode(token) : null;
+  const user = token ? jwtDecode(token) : null;
+  console.log("User cargado desde JWT al inicializar:", user);
+  return user;
 };
 
 const useAuthStore = create((set) => ({
@@ -60,7 +62,6 @@ const useAuthStore = create((set) => ({
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       const user = jwtDecode(token);
-      console.log("User decodificado del JWT:", user);
 
       set({
         token,
