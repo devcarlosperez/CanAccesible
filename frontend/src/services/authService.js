@@ -21,7 +21,6 @@ const getDecodedUser = () => {
     return null;
   }
   const user = token ? jwtDecode(token) : null;
-  console.log("User cargado desde JWT al inicializar:", user);
   return user;
 };
 
