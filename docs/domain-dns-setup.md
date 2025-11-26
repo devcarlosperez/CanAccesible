@@ -61,7 +61,7 @@ app.use((req, res, next) => {
 
 ---
 
-## 4. Nginx Web Server Setup
+## Nginx Web Server Setup
 
 ### Infrastructure Context
 
@@ -92,7 +92,7 @@ A **Reverse Proxy** is a server that sits in front of web servers and forwards c
 
 ### Initial Configuration (HTTP)
 
-The following configuration was created in `/etc/nginx/sites-available/canaccesible`. This configuration tells Nginx to:
+The following configuration was created in `/etc/nginx/sites-available/canaccesible.es`. This configuration tells Nginx to:
 1.  Forward root traffic (`/`) to the **Vite development server** (port 5173).
 2.  Forward API traffic (`/api`) to the **Backend server** (port 85).
 
@@ -108,10 +108,10 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_set_header Connection "upgrade";
     }
 
-    # Backend (API) - Solves Mixed Content Errors
+    # Backend (API)
     location /api {
         proxy_pass http://127.0.0.1:85;
         proxy_set_header Host $host;
@@ -123,10 +123,16 @@ server {
 
 **Activating the Configuration:**
 
-To enable this site, a symbolic link was created in the `sites-enabled` directory:
+To enable this site, a symbolic link was created in the `sites-enabled` directory, and the default configuration was removed to avoid conflicts:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/canaccesible /etc/nginx/sites-enabled/
+# Enable the new site (specifying destination folder is safer)
+sudo ln -s /etc/nginx/sites-available/canaccesible.es /etc/nginx/sites-enabled/
+
+# Remove the default site (Critical to avoid 404 errors)
+sudo rm /etc/nginx/sites-enabled/default
+
+# Restart Nginx
 sudo systemctl restart nginx
 ```
 
@@ -197,16 +203,28 @@ sudo certbot --nginx -d canaccesible.es -d www.canaccesible.es
 3.  **Installation:** Automatically modified the Nginx configuration to use the certificate.
 4.  **Redirection:** Configured a 301 redirect to force all HTTP traffic to HTTPS.
 
-**Example of the redirection block added by Certbot:**
+**Example of the configuration added by Certbot:**
 
 ```nginx
+    # ... inside the main server block ...
+
+    # Configuración SSL (Certbot)
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/canaccesible.es/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/canaccesible.es/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+# Redirección HTTP -> HTTPS
 server {
+    if ($host = www.canaccesible.es) {
+        return 301 https://$host$request_uri;
+    }
     if ($host = canaccesible.es) {
         return 301 https://$host$request_uri;
     }
-
     listen 80;
-    server_name canaccesible.es;
+    server_name canaccesible.es www.canaccesible.es;
     return 404;
 }
 ```

@@ -75,6 +75,9 @@ DO_SECRET_KEY=your_spaces_secret_key
 SMTP_USER=your_email@gmail.com
 SMTP_PASS=your_gmail_app_password
 
+# Frontend URL
+FRONTEND_URL=your_frontend_url
+
 # JWT Secret (if using authentication)
 JWT_SECRET=your_jwt_secret_key
 ```
