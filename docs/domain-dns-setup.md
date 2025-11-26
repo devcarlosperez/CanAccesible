@@ -48,11 +48,11 @@ export default defineConfig({
 
 ---
 
-## 4. Nginx Configuration (Reverse Proxy)
+## Nginx Configuration (Reverse Proxy)
 
 To improve user experience (removing the need to type port `:5173`) and prepare the server for SSL, **Nginx** is configured as a reverse proxy. This acts as an intermediary that forwards traffic from port 80 (standard HTTP) to the application running on port 5173.
 
-### 4.1. Installation
+### 1. Installation
 
 First, ensure the package lists are updated and install Nginx:
 
@@ -61,9 +61,9 @@ sudo apt update
 sudo apt install nginx
 ```
 
-### 4.2. Handling Conflicts (Apache)
+### 2. Handling Conflicts (Apache)
 
-Some DigitalOcean Droplet images come with Apache pre-installed, which may occupy port 80. If you encounter an error starting Nginx, check for Apache:
+DigitalOcean Droplet come with Apache pre-installed, which may occupy port 80. If you encounter an error starting Nginx, check for Apache:
 
 1.  **Stop Apache:**
     ```bash
@@ -74,7 +74,7 @@ Some DigitalOcean Droplet images come with Apache pre-installed, which may occup
     sudo systemctl disable apache2
     ```
 
-### 4.3. Configuration
+### 3. Configuration
 
 A new configuration file is created for the site in `/etc/nginx/sites-available/`:
 
@@ -107,7 +107,7 @@ server {
 *   `proxy_pass http://localhost:5173;`: Forwards the request to the Vite development server running locally on port 5173.
 *   `proxy_set_header ...;`: Passes necessary headers to the backend, ensuring WebSockets (used by Vite for HMR) and host information work correctly.
 
-### 4.4. Enabling the Site and Verification
+### 4. Enabling the Site and Verification
 
 1.  **Enable the site** by creating a symbolic link to `sites-enabled`:
     ```bash
