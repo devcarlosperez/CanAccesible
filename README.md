@@ -15,7 +15,7 @@ The project aims to promote a **more accessible society** and awareness of the n
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
 - [Project Architecture](./docs/architecture.md) - Detailed overview of the software architecture and design decisions.
-- [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams
+- [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams.
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
 - [Security Guide](./docs/security.md) - Overview of authentication, data protection, and security protocols.

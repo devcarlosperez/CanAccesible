@@ -25,7 +25,43 @@ To link the domain with the server, the DNS records were configured in the provi
 
 ---
 
-## Nginx Web Server Setup
+## Application Configuration
+
+Before setting up the web server, the application code needs to be updated to accept requests from the new domain.
+
+### Frontend (Vite)
+
+To allow the application to accept requests forwarded by Nginx (which originate from the domain), the `vite.config.js` file was updated:
+
+```javascript
+server: {
+    host: true,
+    allowedHosts: ['canaccesible.es', 'www.canaccesible.es', 'localhost']
+}
+```
+
+### Backend (CORS)
+
+To allow the frontend (now running on `https://canaccesible.es`) to communicate with the backend, the **CORS (Cross-Origin Resource Sharing)** configuration in `backend/index.js` must be updated.
+
+**Change:**
+Update the `Access-Control-Allow-Origin` header to allow the production domain.
+
+```javascript
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:5173', 'https://canaccesible.es', 'https://www.canaccesible.es'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  // ... existing headers ...
+  next();
+});
+```
+
+---
+
+## 4. Nginx Web Server Setup
 
 ### Infrastructure Context
 
@@ -56,15 +92,28 @@ A **Reverse Proxy** is a server that sits in front of web servers and forwards c
 
 ### Initial Configuration (HTTP)
 
-The following configuration was created in `/etc/nginx/sites-available/canaccesible`. This configuration tells Nginx to forward traffic to **port 5173**, which is where the **Vite development server** is running.
+The following configuration was created in `/etc/nginx/sites-available/canaccesible`. This configuration tells Nginx to:
+1.  Forward root traffic (`/`) to the **Vite development server** (port 5173).
+2.  Forward API traffic (`/api`) to the **Backend server** (port 85).
 
 ```nginx
 server {
     listen 80;
     server_name canaccesible.es www.canaccesible.es;
 
+    # Frontend (Vite)
     location / {
         proxy_pass http://127.0.0.1:5173;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+    }
+
+    # Backend (API) - Solves Mixed Content Errors
+    location /api {
+        proxy_pass http://127.0.0.1:85;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -78,6 +127,7 @@ To enable this site, a symbolic link was created in the `sites-enabled` director
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/canaccesible /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
 ```
 
 ### Directive Explanation
@@ -168,20 +218,7 @@ server {
 
 ---
 
-## Final Site Configuration
-
-### Frontend Adjustment (Vite)
-
-To allow the application to accept requests forwarded by Nginx (which originate from the domain), the `vite.config.js` file was updated:
-
-```javascript
-server: {
-    host: true,
-    allowedHosts: ['canaccesible.es', 'www.canaccesible.es', 'localhost']
-}
-```
-
-### Verification
+## Final Verification
 
 After all configurations, the service status was verified:
 
