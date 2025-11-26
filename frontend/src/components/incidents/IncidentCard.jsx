@@ -7,20 +7,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 
+import useAuthStore from "../../services/authService.js";
+
 const IncidentCard = ({
   incident,
-  user,
+  incidentUser,
   onEdit,
   onDelete,
   openViewMore,
   handleCloseViewMore,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  
+
   useEffect(() => {
     if (openViewMore) setOpenModal(true);
   }, [openViewMore]);
@@ -30,21 +31,22 @@ const IncidentCard = ({
     if (handleCloseViewMore) handleCloseViewMore();
   };
 
+  const { user } = useAuthStore();
+
   return (
     <>
-      <Card sx={{ minWidth: 400, maxWidth: 550, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
+      <Card sx={{ maxWidth: 500, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
         <CardHeader
           avatar={
-            <Avatar src={user?.nameFile || undefined} alt={`${user?.firstName} ${user?.lastName}`} sx={{ bgcolor: red[500] }}>
-              {user ? user.firstName?.charAt(0)?.toUpperCase() : "U"}
+            <Avatar src={incidentUser?.nameFile || undefined} alt={`${incidentUser?.firstName} ${incidentUser?.lastName}`} sx={{ bgcolor: red[500] }}>
+              {incidentUser ? incidentUser.firstName?.charAt(0)?.toUpperCase() : "U"}
             </Avatar>
           }
-          action={<IconButton><MoreVertIcon /></IconButton>}
           title={
             <>
               {incident.name}
               <Typography variant="body2" color="text.secondary">
-                Reportado por: {user ? `${user.firstName} ${user.lastName || ""}` : "Unknown"}
+                Reportado por: {incidentUser ? `${incidentUser.firstName} ${incidentUser.lastName || ""}` : "Unknown"}
               </Typography>
             </>
           }
@@ -79,12 +81,17 @@ const IncidentCard = ({
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton onClick={() => onEdit(incident)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => onDelete(incident.id)}>
-            <DeleteIcon color="error" />
-          </IconButton>
+          {console.log(user, incident.userId)}
+          {user.id === incident.userId && (
+            <>
+              <IconButton onClick={() => onEdit(incident)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => onDelete(incident.id)}>
+                <DeleteIcon color="error" />
+              </IconButton>
+            </>
+          )}
           <IconButton aria-label="add to favorites">
             <FavoriteIcon />
           </IconButton>

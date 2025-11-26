@@ -167,7 +167,7 @@ const Incident = () => {
 
         <IncidentList
           incidents={incidents}
-          users={users}
+          users={users  }
           expandedId={expandedId}
           onExpandClick={handleExpandClick}
           onEdit={handleEdit}
