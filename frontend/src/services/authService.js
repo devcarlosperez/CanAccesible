@@ -36,7 +36,6 @@ const useAuthStore = create((set) => ({
 
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      // Decodificar el usuario del JWT
       const user = jwtDecode(token);
       console.log("User decodificado del JWT:", user);
 
