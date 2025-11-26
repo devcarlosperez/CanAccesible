@@ -11,7 +11,7 @@ const HeaderMobile = ({
   notifications,
   showNotifications,
   setShowNotifications,
-  setNotifications,
+  handleDeleteNotification,
   menuItems,
   scrolled,
 }) => {
@@ -36,9 +36,7 @@ const HeaderMobile = ({
               notifications={notifications}
               showNotifications={showNotifications}
               setShowNotifications={setShowNotifications}
-              handleDelete={(id) =>
-                setNotifications((prev) => prev.filter((n) => n.id !== id))
-              }
+              handleDeleteNotification={handleDeleteNotification}
               iconSize="text-2xl"
               dropdownWidth="w-72"
             />
