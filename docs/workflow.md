@@ -72,6 +72,17 @@ When a Sprint is completed and `develop` is stable, we merge `develop` into **`m
 
 ---
 
+## Environment Configuration
+
+To ensure consistency between development and production environments, we manage configuration variables using `.env` files in the **backend**.
+
+- **`.env.development`**: Contains configuration for the local development environment (local DB, test credentials). This file is used when running `npm run dev`.
+- **`.env.production`**: Contains configuration for the production environment (DigitalOcean DB, real API keys). This file is used when running the app in production mode.
+
+> **Important:** These files are **not** committed to the repository for security reasons. A `.env.example` file is provided as a template.
+
+---
+
 ## Code Standards
 
 - **Language**: English is preferred for code comments and commit messages.
