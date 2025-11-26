@@ -34,7 +34,6 @@ exports.create = async (req, res) => {
       nameFile,
     });
 
-    // 📩 Enviar correo de bienvenida
     await transporter.sendMail({
       from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
       to: newUser.email,

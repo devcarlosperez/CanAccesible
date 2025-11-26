@@ -1,10 +1,31 @@
 import { create } from "zustand";
 import api from "../services/api";
-import { getUserById } from "../services/userService";
+import { jwtDecode } from "jwt-decode";
+
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    const expirationTime = decoded.exp * 1000;
+    return Date.now() >= expirationTime;
+  } catch (err) {
+    return true;
+  }
+};
+
+const getDecodedUser = () => {
+  const token = localStorage.getItem("token");
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem("token");
+    delete api.defaults.headers.common["Authorization"];
+    return null;
+  }
+  return token ? jwtDecode(token) : null;
+};
 
 const useAuthStore = create((set) => ({
   // Load initial state from localStorage
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: getDecodedUser(),
   token: localStorage.getItem("token") || null,
   isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
@@ -26,18 +47,24 @@ const useAuthStore = create((set) => ({
       });
 
       const token = res.data.token;
-      const loggedUser = res.data.user;
+
+      if (isTokenExpired(token)) {
+        return set({
+          error: "Token already expired",
+          loading: false,
+        });
+      }
 
       localStorage.setItem("token", token);
 
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const fullUser = await getUserById(loggedUser.id);
-      localStorage.setItem("user", JSON.stringify(fullUser));
+      const user = jwtDecode(token);
+      console.log("User decodificado del JWT:", user);
 
       set({
         token,
-        user: fullUser,
+        user,
         isAuthenticated: true,
         loading: false,
       });
@@ -64,7 +91,6 @@ const useAuthStore = create((set) => ({
     }
 
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
 
     // Remove Authorization header
     delete api.defaults.headers.common["Authorization"];
