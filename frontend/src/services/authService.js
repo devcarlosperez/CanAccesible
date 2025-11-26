@@ -48,7 +48,6 @@ const useAuthStore = create((set) => ({
 
       const token = res.data.token;
 
-      // Verificar si el token no está expirado
       if (isTokenExpired(token)) {
         return set({
           error: "Token already expired",
