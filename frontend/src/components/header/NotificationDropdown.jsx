@@ -15,6 +15,8 @@ const NotificationDropdown = ({
         year: "numeric",
         month: "short",
         day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch (err) {
       console.error("Error formatting date:", err);
@@ -61,7 +63,7 @@ const NotificationDropdown = ({
                     <div className="flex-1">
                       <p className="text-black text-sm">{n.message}</p>
                       <p className="text-gray-500 text-xs mt-1">
-                        {formatDate(n.dateNotification)}
+                        {formatDate(n.createdAt)}
                       </p>
                     </div>
                     <button
@@ -69,7 +71,7 @@ const NotificationDropdown = ({
                       onClick={() => handleDeleteNotification(n.id)}
                       title="Borrar notificación"
                     >
-                      <span className="material-symbols-outlined text-lg">
+                      <span className="material-symbols-outlined text-lg cursor-pointer">
                         delete
                       </span>
                     </button>
