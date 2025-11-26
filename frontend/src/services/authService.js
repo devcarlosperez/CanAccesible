@@ -2,8 +2,24 @@ import { create } from "zustand";
 import api from "../services/api";
 import { jwtDecode } from "jwt-decode";
 
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    const expirationTime = decoded.exp * 1000;
+    return Date.now() >= expirationTime;
+  } catch (err) {
+    return true;
+  }
+};
+
 const getDecodedUser = () => {
   const token = localStorage.getItem("token");
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem("token");
+    delete api.defaults.headers.common["Authorization"];
+    return null;
+  }
   return token ? jwtDecode(token) : null;
 };
 
@@ -31,6 +47,14 @@ const useAuthStore = create((set) => ({
       });
 
       const token = res.data.token;
+
+      // Verificar si el token no está expirado
+      if (isTokenExpired(token)) {
+        return set({
+          error: "Token already expired",
+          loading: false,
+        });
+      }
 
       localStorage.setItem("token", token);
 
