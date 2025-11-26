@@ -6,7 +6,7 @@ CanAccesible is deployed on **DigitalOcean** with both frontend and backend runn
 
 ## Deployment Process
 
-### Step 1: Initial Droplet Setup
+### 1. Initial Droplet Setup
 
 Connect via SSH and update the system:
 
@@ -25,21 +25,21 @@ sudo npm install -g pm2
 sudo apt install -y git
 ```
 
-### Step 2: Clone the Repository
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/devcarlosperez/CanAccesible.git
 cd CanAccesible
 ```
 
-### Step 3: Frontend Setup
+### 3. Frontend Setup
 
 ```bash
 cd frontend
 npm install
 ```
 
-### Step 4: Backend Setup
+### 4. Backend Setup
 
 ```bash
 cd ../backend
@@ -79,7 +79,7 @@ SMTP_PASS=your_gmail_app_password
 JWT_SECRET=your_jwt_secret_key
 ```
 
-### Step 5: Database Initialization
+### 5. Database Initialization
 
 ```bash
 # Run migrations
@@ -89,7 +89,7 @@ NODE_ENV=production npx sequelize-cli db:migrate
 NODE_ENV=production npx sequelize-cli db:seed:all
 ```
 
-### Step 6: Start Applications with PM2
+### 6. Start Applications with PM2
 
 **For the frontend:**
 
@@ -113,7 +113,7 @@ pm2 save
 sudo pm2 startup
 ```
 
-### Step 7: Verify Deployment
+### 7. Verify Deployment
 
 Check that both applications are running:
 

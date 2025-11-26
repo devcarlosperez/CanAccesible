@@ -1,88 +1,62 @@
-# Domain & DNS Configuration Guide
+# Domain, DNS & SSL Configuration Guide
 
-This document details the domain acquisition process, DNS record configuration, and the necessary adjustments in the development environment to allow access through the new domain.
+This document details the technical process for domain acquisition, DNS record configuration, Nginx reverse proxy setup, and SSL certificate implementation for the **CanAccesible** project.
 
 ---
 
-## Domain Acquisition
+## Domain Configuration
+
+### Acquisition
 
 The domain **`canaccesible.es`** was acquired through the registrar **Nominalia**.
 
----
+### DNS Configuration
 
-## DNS Configuration
+To link the domain with the server, the DNS records were configured in the provider's control panel.
 
-To link the domain with the server (DigitalOcean Droplet), an A record was configured in the DNS settings.
+*   **A Record:** Points the domain to the server's IP address.
+    *   **Host:** `@` (canaccesible.es)
+    *   **Value:** `[DROPLET_IP]` (DigitalOcean Droplet Public IP)
+*   **NS Records (Name Servers):** The default Name Servers of the provider (Nominalia) are used to manage the DNS zone.
 
-*   **DNS Provider:** Nominalia (Domain Control Panel).
-*   **A Record:** An A record was created/modified to point directly to the public IP address of the DigitalOcean Droplet.
-    *   Host: `@` (or `canaccesible.es`)
-    *   Value/Destination: `[DROPLET_IP]`
+> **Note on Propagation:** DNS changes are not instantaneous. They typically take between **5 minutes and 24 hours** to propagate globally.
 
-This directs requests for `canaccesible.es` to the server hosting the application.
-
-> **`http://canaccesible.es:5173`**
+![Nominalia DNS Control Panel](./images/control-panel-dns-nominalia.png)
 
 ---
 
-## Frontend Server Configuration (Vite)
+## Nginx Web Server Setup
 
-When pointing the domain to the Droplet and accessing the development port (default 5173), Vite blocks requests that do not originate from `localhost` or local IPs for security reasons, displaying the error:
-`Blocked request. This host ("canaccesible.es") is not allowed.`
+### Infrastructure Context
 
-To resolve this and allow traffic from the new domain, the `frontend/vite.config.js` configuration file was modified.
+The application is deployed on a **DigitalOcean Droplet** running **Ubuntu (Linux)**. To serve the application and handle domain requests, **Nginx** is used as the web server.
 
-### Changes made to `vite.config.js`:
+### Installation
 
-The `allowedHosts` property was added to the server configuration:
+**Nginx** is a high-performance web server that can also act as a reverse proxy, load balancer, and HTTP cache.
 
-```javascript
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: {
-    host: true, // Allows listening on all network interfaces (0.0.0.0)
-    allowedHosts: ['canaccesible.es', 'www.canaccesible.es', 'localhost']
-  }
-});
-```
-
----
-
-## Nginx Configuration (Reverse Proxy)
-
-To improve user experience (removing the need to type port `:5173`) and prepare the server for SSL, **Nginx** is configured as a reverse proxy. This acts as an intermediary that forwards traffic from port 80 (standard HTTP) to the application running on port 5173.
-
-### 1. Installation
-
-First, ensure the package lists are updated and install Nginx:
-
+**Installation Commands:**
 ```bash
 sudo apt update
 sudo apt install nginx
 ```
 
-### 2. Handling Conflicts (Apache)
+---
 
-DigitalOcean Droplet come with Apache pre-installed, which may occupy port 80. If you encounter an error starting Nginx, check for Apache:
+## Reverse Proxy Implementation
 
-1.  **Stop Apache:**
-    ```bash
-    sudo systemctl stop apache2
-    ```
-2.  **Disable Apache from starting on boot:**
-    ```bash
-    sudo systemctl disable apache2
-    ```
+### Concept
 
-### 3. Configuration
+A **Reverse Proxy** is a server that sits in front of web servers and forwards client requests to those web servers. In this architecture, Nginx accepts traffic on port 80 (HTTP) and 443 (HTTPS) and forwards it to the Vite development server running internally on port 5173.
 
-A new configuration file is created for the site in `/etc/nginx/sites-available/`:
+**Why is it necessary?**
+*   **Port Hiding (User Experience):** It allows users to access the application via the standard domain (`canaccesible.es`) without needing to append the development port `:5173` to the URL.
+*   **Security:** It hides the internal topology of the network.
+*   **SSL Termination:** Nginx handles HTTPS encryption/decryption, offloading this work from the application.
 
-```bash
-sudo nano /etc/nginx/sites-available/canaccesible
-```
+### Initial Configuration (HTTP)
 
-**Configuration Content:**
+The following configuration was created in `/etc/nginx/sites-available/canaccesible`. This configuration tells Nginx to forward traffic to **port 5173**, which is where the **Vite development server** is running.
 
 ```nginx
 server {
@@ -90,43 +64,133 @@ server {
     server_name canaccesible.es www.canaccesible.es;
 
     location / {
-        proxy_pass http://localhost:5173;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_pass http://127.0.0.1:5173;
         proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 ```
 
-**Explanation of Configuration:**
-*   `listen 80;`: Configures Nginx to listen for incoming HTTP traffic on port 80.
-*   `server_name ...;`: Defines the domains this server block will respond to (`canaccesible.es` and `www...`).
-*   `location / { ... }`: Defines how to handle requests to the root URL.
-*   `proxy_pass http://localhost:5173;`: Forwards the request to the Vite development server running locally on port 5173.
-*   `proxy_set_header ...;`: Passes necessary headers to the backend, ensuring WebSockets (used by Vite for HMR) and host information work correctly.
+**Activating the Configuration:**
 
-### 4. Enabling the Site and Verification
+To enable this site, a symbolic link was created in the `sites-enabled` directory:
 
-1.  **Enable the site** by creating a symbolic link to `sites-enabled`:
-    ```bash
-    sudo ln -s /etc/nginx/sites-available/canaccesible /etc/nginx/sites-enabled/
-    ```
+```bash
+sudo ln -s /etc/nginx/sites-available/canaccesible /etc/nginx/sites-enabled/
+```
 
-2.  **Verify configuration syntax:**
-    ```bash
-    sudo nginx -t
-    ```
-    *Expected output:* `syntax is ok`, `test is successful`.
+### Directive Explanation
 
-3.  **Restart Nginx** to apply changes:
-    ```bash
-    sudo systemctl restart nginx
-    ```
+*   `listen 80;`: Listens for incoming connections on port 80 (standard HTTP).
+*   `server_name ...;`: Specifies the domain names this block responds to.
+*   `proxy_pass http://127.0.0.1:5173;`: Forwards the request to the local Vite server.
+*   `proxy_set_header Host $host;`: Passes the original `Host` header to the backend.
+*   `proxy_set_header X-Real-IP ...;`: Passes the client's real IP address to the backend (useful for logging and security).
 
 ---
 
-## Next Steps
+## Conflict Resolution: Apache vs. Nginx
 
-*   **SSL/TLS:** Implementation of secure certificates via Let's Encrypt (Certbot) to enable HTTPS.
+### Problem Identification
+
+During the initial startup of Nginx, an error occurred because **Port 80 was already in use**.
+*   **Diagnosis:** The command `lsof -i :80` revealed that **Apache2** was running.
+
+### Resolution
+
+To allow Nginx to bind to port 80, Apache had to be stopped and disabled.
+
+**Commands Executed:**
+```bash
+# Stop the Apache service
+sudo systemctl stop apache2
+
+# Disable Apache from starting on boot
+sudo systemctl disable apache2
+
+# Verify port 80 is free
+sudo lsof -i :80
+
+# Start Nginx
+sudo systemctl start nginx
+```
+
+---
+
+## SSL/TLS Security (HTTPS)
+
+To ensure secure communication, an SSL certificate was installed using **Let's Encrypt**.
+
+### Tools
+
+*   **Let's Encrypt:** A non-profit Certificate Authority (CA) that provides free X.509 certificates for TLS encryption.
+*   **Certbot:** An open-source software tool for automatically using Let's Encrypt certificates to enable HTTPS.
+
+### Installation and Configuration
+
+First, install Certbot and the Nginx plugin:
+
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+```
+
+Then, request and install the certificate automatically:
+
+```bash
+sudo certbot --nginx -d canaccesible.es -d www.canaccesible.es
+```
+
+**What Certbot did:**
+1.  **Validation:** Verified control over the domain `canaccesible.es`.
+2.  **Issuance:** Obtained a signed certificate from Let's Encrypt.
+3.  **Installation:** Automatically modified the Nginx configuration to use the certificate.
+4.  **Redirection:** Configured a 301 redirect to force all HTTP traffic to HTTPS.
+
+**Example of the redirection block added by Certbot:**
+
+```nginx
+server {
+    if ($host = canaccesible.es) {
+        return 301 https://$host$request_uri;
+    }
+
+    listen 80;
+    server_name canaccesible.es;
+    return 404;
+}
+```
+
+### Certificate Details
+
+*   **Location:** Certificates are stored in `/etc/letsencrypt/live/canaccesible.es/`.
+*   **Renewal:** Certbot sets up a timer/cron job to automatically renew certificates before they expire (every 90 days).
+
+---
+
+## Final Site Configuration
+
+### Frontend Adjustment (Vite)
+
+To allow the application to accept requests forwarded by Nginx (which originate from the domain), the `vite.config.js` file was updated:
+
+```javascript
+server: {
+    host: true,
+    allowedHosts: ['canaccesible.es', 'www.canaccesible.es', 'localhost']
+}
+```
+
+### Verification
+
+After all configurations, the service status was verified:
+
+```bash
+# Check Nginx syntax
+sudo nginx -t
+
+# Restart Nginx to apply changes
+sudo systemctl restart nginx
+```
+
+The application is now accessible via **`https://canaccesible.es`**.

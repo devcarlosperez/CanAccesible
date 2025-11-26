@@ -64,7 +64,7 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **Material UI (MUI)**: React component library implementing Material Design. Used for complex pre-built components (buttons, inputs, tables).
 - **Emotion**: Library for writing CSS styles with JavaScript, used internally by MUI.
 - **Headless UI**: Unstyled UI components (accessible and functional) that integrate well with Tailwind CSS.
-- **MUI Icons & Font Awesome**: Comprehensive collections of icons, providing a wide range of SVG icons for the interface.
+- **MUI Icons, Font Awesome & Lucide React**: Comprehensive collections of icons, providing a wide range of SVG icons for the interface.
 
 ### Maps & Visualization
 
@@ -84,6 +84,13 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 
 - **DigitalOcean Droplet**: Virtual Private Server (VPS) used to host and deploy the backend application and frontend application.
 - **DigitalOcean Managed Databases**: Managed MySQL database service, ensuring high availability.
+- **Nginx**: High-performance web server used as a reverse proxy to serve the frontend and handle SSL connections.
+- **Nominalia**: Domain registrar provider used for `canaccesible.es`.
+
+### Security & SSL
+
+- **Let's Encrypt**: Certificate Authority that provides free X.509 certificates for TLS encryption.
+- **Certbot**: Tool used to automatically obtain and renew SSL certificates from Let's Encrypt.
 
 ### Cloud Storage
 
@@ -112,3 +119,4 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 
 - **ESLint**: Linting tool to identify and report patterns in JavaScript/React code, ensuring consistency and avoiding errors.
 - **Postman**: For testing REST API endpoints during development.
+- **Cross-env**: Tool to set environment variables across different operating systems (Windows/Linux) consistently.
