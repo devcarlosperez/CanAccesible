@@ -44,7 +44,7 @@ exports.findAll = async (req, res) => {
 
     const notifications = await Notification.findAll({
       where: { userId },
-      order: [["dateNotification", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.status(200).json(notifications);
