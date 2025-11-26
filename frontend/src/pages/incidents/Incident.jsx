@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
+import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+
 import useAuthStore from "../../services/authService.js";
 import IncidentForm from "../../components/incidents/IncidentForm";
 import IncidentList from "../../components/incidents/IncidentList";
@@ -18,15 +20,15 @@ const Incident = () => {
   const [showForm, setShowForm] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [page, setPage] = useState(1);
-  
+
   const [viewMoreIncidentId, setViewMoreIncidentId] = useState(null);
   const { isAuthenticated, user } = useAuthStore();
-  
+
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const itemsPerPage = 6;
-  
+
   const initialFormData = {
     name: "",
     description: "",
@@ -40,13 +42,13 @@ const Incident = () => {
     longitude: "",
     dateIncident: new Date().toISOString().split("T")[0],
   };
-  
+
   const [formData, setFormData] = useState(initialFormData);
-  
+
   useEffect(() => {
     fetchIncidents();
   }, []);
-  
+
   useEffect(() => {
     // Detecta el parámetro incidentId en la URL
     const params = new URLSearchParams(location.search);
@@ -111,6 +113,32 @@ const Incident = () => {
     }
   };
 
+  const handleLike = async (incident) => {
+    try {
+      // Find existing like by this user for the incident
+      const existingLike = await getIncidentLikeByIncidentAndUserId(incident.id, user.id);
+
+      if (!existingLike) {
+        // If no like exists, create a new one
+        await createIncidentLike({
+          incidentId: incident.id,
+          userId: user.id,
+          dateLike: new Date().toISOString(),
+        });
+      } else {
+        // If like exists, delete it
+        await deleteIncidentLike(existingLike.id);
+      }
+
+      fetchIncidents();
+    } catch (err) {
+      console.error("Error al gestionar el like:", err);
+    }
+  };
+
+
+
+
   const handleExpandClick = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -170,6 +198,7 @@ const Incident = () => {
           users={users}
           expandedId={expandedId}
           onExpandClick={handleExpandClick}
+          onLike={handleLike}
           onEdit={handleEdit}
           onDelete={handleDelete}
           page={page}

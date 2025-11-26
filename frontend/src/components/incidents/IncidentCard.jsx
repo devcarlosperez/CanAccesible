@@ -7,20 +7,37 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
+import { getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
+
+import useAuthStore from "../../services/authService.js";
 
 const IncidentCard = ({
   incident,
-  user,
+  incidentUser,
+  onLike,
   onEdit,
   onDelete,
   openViewMore,
   handleCloseViewMore,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  
+  const [liked, setLiked] = useState(false);
+
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
+      setLiked(!!like);
+    });
+  }, [incident.likes, user.id]);
+
+  const handleLikeClick = async () => {
+    await onLike(incident);
+    setLiked(prev => !prev);
+  };
+
   useEffect(() => {
     if (openViewMore) setOpenModal(true);
   }, [openViewMore]);
@@ -32,24 +49,26 @@ const IncidentCard = ({
 
   return (
     <>
-      <Card sx={{ minWidth: 400, maxWidth: 550, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
+      <Card sx={{ maxWidth: 500, width: '100%', display: 'flex', flexDirection: 'column', margin: '0 auto' }}>
+        {/* Incident header (incident creator and title) */}
         <CardHeader
           avatar={
-            <Avatar src={user?.nameFile || undefined} alt={`${user?.firstName} ${user?.lastName}`} sx={{ bgcolor: red[500] }}>
-              {user ? user.firstName?.charAt(0)?.toUpperCase() : "U"}
+            <Avatar src={incidentUser?.nameFile || undefined} alt={`${incidentUser?.firstName} ${incidentUser?.lastName}`} sx={{ bgcolor: red[500] }}>
+              {incidentUser ? incidentUser.firstName?.charAt(0)?.toUpperCase() : "U"}
             </Avatar>
           }
-          action={<IconButton><MoreVertIcon /></IconButton>}
           title={
             <>
               {incident.name}
               <Typography variant="body2" color="text.secondary">
-                Reportado por: {user ? `${user.firstName} ${user.lastName || ""}` : "Unknown"}
+                Reportado por: {incidentUser ? `${incidentUser.firstName} ${incidentUser.lastName || ""}` : "Unknown"}
               </Typography>
             </>
           }
           subheader={new Date(incident.dateIncident).toLocaleDateString()}
         />
+
+        {/* Incident image */}
         <CardMedia
           component="img"
           image={incident.nameFile}
@@ -78,19 +97,31 @@ const IncidentCard = ({
             {incident.description}
           </Typography>
         </CardContent>
+
+        {/* Incident buttons */}
         <CardActions disableSpacing>
-          <IconButton onClick={() => onEdit(incident)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => onDelete(incident.id)}>
-            <DeleteIcon color="error" />
-          </IconButton>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
+
+          {/* Like button: rojo si liked */}
+          <IconButton onClick={handleLikeClick}>
+            <FavoriteIcon sx={{ color: liked ? "red" : "inherit" }} />
           </IconButton>
           <IconButton aria-label="share">
             <ShareIcon />
           </IconButton>
+
+          {/* Edit and delete buttons */}
+          {user.id === incident.userId && (
+            <>
+              <IconButton onClick={() => onEdit(incident)}>
+                <EditIcon color="info"/>
+              </IconButton>
+              <IconButton onClick={() => onDelete(incident.id)}>
+                <DeleteIcon color="error" />
+              </IconButton>
+            </>
+          )}
+
+          {/* More information button */}
           <Button
             variant="outlined"
             sx={{ marginLeft: "auto" }}
@@ -103,12 +134,16 @@ const IncidentCard = ({
 
       {/* Modal */}
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+
+        {/* Incident title */}
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {incident.name}
           <IconButton edge="end" color="inherit" onClick={handleCloseModal}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
+
+        {/* Incident information */}
         <DialogContent sx={{ overflowY: 'auto', maxHeight: '70vh' }}>
           <Typography variant="body2" sx={{ mb: 4, mt: 2, textAlign: 'justify' }}>
             {incident.description}
