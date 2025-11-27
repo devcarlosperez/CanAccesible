@@ -185,8 +185,6 @@
 
         try {
           const response = await axios.get("/api/logs");
-          allLogs = response.data;
-          console.log("Logs data:", allLogs); // Debugging
           filteredLogs = [...allLogs];
           
           renderTable();
