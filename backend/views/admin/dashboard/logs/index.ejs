@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Registro de Actividad (Logs)</title>
+  </head>
+  <body class="bg-gray-200 min-h-screen">
+    <%- include('../../../partials/header') %>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <!-- Breadcrumb & Title -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center mb-6">
+          <a
+            href="/dashboard-admin"
+            class="text-neutral-500 hover:text-neutral-700 transition"
+          >
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Dashboard
+          </a>
+        </div>
+
+        <div class="text-center">
+          <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
+            Registro de Actividad
+          </h2>
+          <p class="text-neutral-500 mt-1">
+            Historial de acciones realizadas en la plataforma
+          </p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-col md:flex-row gap-4 justify-start items-center"
+      >
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+          <button
+            onclick="setFilter('all')"
+            id="btn-all"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white"
+          >
+            Todos
+          </button>
+          <button
+            onclick="setFilter('login')"
+            id="btn-login"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+          >
+            Login
+          </button>
+          <button
+            onclick="setFilter('logout')"
+            id="btn-logout"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+          >
+            Logout
+          </button>
+          <button
+            onclick="setFilter('create')"
+            id="btn-create"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+          >
+            Creación
+          </button>
+          <button
+            onclick="setFilter('update')"
+            id="btn-update"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+          >
+            Edición
+          </button>
+          <button
+            onclick="setFilter('delete')"
+            id="btn-delete"
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+          >
+            Eliminación
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Usuario
+                </th>
+                <th
+                  class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Acción
+                </th>
+                <th
+                  class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Rol
+                </th>
+                <th
+                  class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Fecha
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              id="logsTableBody"
+              class="bg-white divide-y divide-gray-200"
+            >
+              <!-- Rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div id="paginationContainer" class="p-4 flex justify-center"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      let currentFilter = "all";
+      let allLogs = [];
+      let filteredLogs = [];
+      let currentPage = 1;
+      const itemsPerPage = 15;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadLogs();
+      });
+
+      function setFilter(filter) {
+        currentFilter = filter;
+        currentPage = 1;
+
+        // Update buttons
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove("bg-blue-600", "text-white");
+          btn.classList.add("text-gray-600", "hover:bg-gray-100");
+        });
+        const activeBtn = document.getElementById(`btn-${filter}`);
+        activeBtn.classList.remove("text-gray-600", "hover:bg-gray-100");
+        activeBtn.classList.add("bg-blue-600", "text-white");
+
+        applyFilters();
+      }
+
+      function applyFilters() {
+          filteredLogs = allLogs.filter(log => {
+              // Action Filter
+              let actionMatch = true;
+              const actionLower = log.action.toLowerCase();
+              
+              if (currentFilter === 'create') actionMatch = actionLower.includes('create') || actionLower.includes('crear');
+              if (currentFilter === 'update') actionMatch = actionLower.includes('update') || actionLower.includes('editar') || actionLower.includes('actualizar');
+              if (currentFilter === 'delete') actionMatch = actionLower.includes('delete') || actionLower.includes('eliminar');
+              if (currentFilter === 'login') actionMatch = actionLower.includes('login') || actionLower.includes('inicio');
+              if (currentFilter === 'logout') actionMatch = actionLower.includes('logout') || actionLower.includes('cierre');
+              
+              return actionMatch;
+          });
+          
+          renderTable();
+          renderPagination();
+      }
+
+      async function loadLogs() {
+        const container = document.getElementById("logsTableBody");
+        container.innerHTML =
+          '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Cargando logs...</td></tr>';
+
+        try {
+          const response = await axios.get("/api/logs");
+          allLogs = response.data;
+          console.log("Logs data:", allLogs); // Debugging
+          filteredLogs = [...allLogs];
+          
+          renderTable();
+          renderPagination();
+        } catch (error) {
+          console.error("Error loading logs:", error);
+          container.innerHTML =
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error al cargar logs</td></tr>';
+        }
+      }
+
+      function renderTable() {
+        const container = document.getElementById("logsTableBody");
+        container.innerHTML = "";
+
+        if (filteredLogs.length === 0) {
+          container.innerHTML =
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No se encontraron registros</td></tr>';
+          return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+        paginatedLogs.forEach((log) => {
+          const date = new Date(log.dateLog).toLocaleString("es-ES", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+
+          let actionColor = "bg-gray-100 text-gray-800";
+          const actionLower = log.action.toLowerCase();
+          if (actionLower.includes('create') || actionLower.includes('crear')) actionColor = "bg-green-100 text-green-800";
+          if (actionLower.includes('update') || actionLower.includes('editar')) actionColor = "bg-blue-100 text-blue-800";
+          if (actionLower.includes('delete') || actionLower.includes('eliminar')) actionColor = "bg-red-100 text-red-800";
+          if (actionLower.includes('login')) actionColor = "bg-indigo-100 text-indigo-800";
+          if (actionLower.includes('logout')) actionColor = "bg-yellow-100 text-yellow-800";
+
+          const row = `
+                <tr>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-full object-cover" 
+                                     src="${log.user && log.user.nameFile ? log.user.nameFile : 'https://via.placeholder.com/40'}" 
+                                     alt=""
+                                     onerror="this.onerror=null; this.src='https://via.placeholder.com/40';">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${
+                                  log.user ? log.user.firstName + ' ' + log.user.lastName : 'Usuario Eliminado'
+                                }</div>
+                                <div class="text-sm text-gray-500 hidden sm:block">${
+                                  log.user ? log.user.email : 'N/A'
+                                }</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${actionColor}">
+                            ${log.action}
+                        </span>
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${log.user && log.user.role ? log.user.role.role : 'N/A'}
+                    </td>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${date}
+                    </td>
+                </tr>
+            `;
+          container.innerHTML += row;
+        });
+      }
+
+      function renderPagination() {
+        const pageCount = Math.ceil(filteredLogs.length / itemsPerPage);
+        const container = document.getElementById("paginationContainer");
+        container.innerHTML = "";
+
+        if (pageCount <= 1) return;
+
+        // Simple pagination controls
+        let paginationHTML = '<div class="flex gap-2">';
+
+        // Prev
+        paginationHTML += `<button onclick="changePage(${currentPage - 1})" ${
+          currentPage === 1
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-left"></i></button>`;
+
+        // Pages logic (show limited pages)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(pageCount, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          paginationHTML += `<button onclick="changePage(${i})" class="px-3 py-1 rounded border ${
+            i === currentPage
+              ? "bg-blue-600 text-white"
+              : "bg-white hover:bg-gray-50"
+          }">${i}</button>`;
+        }
+
+        // Next
+        paginationHTML += `<button onclick="changePage(${currentPage + 1})" ${
+          currentPage === pageCount
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-right"></i></button>`;
+
+        paginationHTML += "</div>";
+        container.innerHTML = paginationHTML;
+      }
+
+      function changePage(page) {
+        const pageCount = Math.ceil(filteredLogs.length / itemsPerPage);
+        if (page < 1 || page > pageCount) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+      }
+    </script>
+  </body>
+</html>

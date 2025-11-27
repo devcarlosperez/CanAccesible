@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const { verifyAdmin } = require("../middlewares/auth.middleware");
   const db = require("../models");
+  const { Op } = require("sequelize");
 
   const router = require("express").Router();
 
@@ -125,6 +126,15 @@ module.exports = (app) => {
     res.render("admin/dashboard/users/index", {
       user: req.user,
       title: "Gestión de Usuarios - CanAccesible",
+      frontendUrl: process.env.FRONTEND_URL,
+    });
+  });
+
+  // Logs Management Page
+  router.get("/logs", (req, res) => {
+    res.render("admin/dashboard/logs/index", {
+      user: req.user,
+      title: "Registro de Actividad - CanAccesible",
       frontendUrl: process.env.FRONTEND_URL,
     });
   });

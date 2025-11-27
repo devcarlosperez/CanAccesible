@@ -47,6 +47,15 @@ exports.findAll = async (req, res) => {
     }
 
     const logs = await Log.findAll({
+      include: [
+        {
+          model: db.user,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "email", "nameFile"],
+          include: [{ model: db.role, as: "role" }],
+        },
+      ],
+      order: [["dateLog", "DESC"]],
     });
     res.status(200).json(logs);
   } catch (error) {

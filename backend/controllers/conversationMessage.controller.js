@@ -2,7 +2,6 @@ const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
-const { createLog } = require("../services/log.service");
 
 // Create a new conversation message
 exports.create = async (req, res) => {
@@ -33,9 +32,6 @@ exports.create = async (req, res) => {
       message,
       dateMessage,
     });
-
-    // Create log
-    await createLog(senderId, 'CREATE', 'ConversationMessage', conversationMessage.id);
 
     res.status(201).json(conversationMessage);
   } catch (err) {
@@ -140,9 +136,6 @@ exports.update = async (req, res) => {
 
     await messageRecord.update({ message: updatedMessage });
 
-    // Create log
-    await createLog(userId, 'UPDATE', 'ConversationMessage', messageId);
-
     res.status(200).json(messageRecord);
   } catch (err) {
     res.status(500).json({ message: err.message || "Error updating the message." });
@@ -179,9 +172,6 @@ exports.delete = async (req, res) => {
     await ConversationMessage.destroy({
       where: { id: messageId }
     });
-
-    // Create log
-    await createLog(userId, 'DELETE', 'ConversationMessage', messageId);
 
     res.status(200).json({ message: "Message deleted successfully." });
   } catch (err) {
