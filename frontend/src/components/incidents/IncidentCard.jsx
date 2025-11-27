@@ -9,7 +9,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
-import { getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
+import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
 
 import useAuthStore from "../../services/authService.js";
 
@@ -24,28 +24,31 @@ const IncidentCard = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const { user } = useAuthStore();
 
   useEffect(() => {
+    if (openViewMore) setOpenModal(true);
+
     if (user && user.id && incident && incident.id) {
       getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
         setLiked(!!like);
       });
     }
-  }, [incident.likes, user?.id]);
+
+    if (openModal && incident.id) {
+      getAllIncidentLikes().then((likes) => {
+        const incidentLikes = likes.filter(like => like.incidentId === incident.id);
+        setLikeCount(incidentLikes.length);
+      });
+    }
+  }, [openViewMore, openModal, incident.likes, incident.id, user?.id]);
 
   const handleLikeClick = async () => {
     await onLike(incident);
-    if (!user || !user.id) {
-      return;
-    }
-    setLiked(prev => !prev);
+    setLiked(!liked);
   };
-
-  useEffect(() => {
-    if (openViewMore) setOpenModal(true);
-  }, [openViewMore]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -183,13 +186,23 @@ const IncidentCard = ({
                 ? "En progreso"
                 : "Resuelto"}
           </Typography>
+
+          {/* Incident image */}
           {incident.nameFile && (
             <img
-              className="w-full mt-4 border-2 rounded"
+              className="w-full mt-4 mb-3 border-2 rounded"
               src={incident.nameFile}
               alt={incident.name}
             />
           )}
+
+          {/* Incident buttons */}
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            {likeCount}{" "}
+            <FavoriteIcon sx={{ color: "red" }}>
+
+            </FavoriteIcon>
+          </Typography>
         </DialogContent>
       </Dialog>
     </>
