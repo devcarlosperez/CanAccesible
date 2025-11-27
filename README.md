@@ -18,7 +18,7 @@ Our mission is to build a strong community dedicated to transforming the islands
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3Wnxhsu) - Complete API endpoint documentation.
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
-- [NGINX Log Rotation](./docs/nginx-log-rotation.md) - Technical guide on NGINX log management and rotation.
+- [Logging System & Rotation](./docs/logging-system.md) - Guide on server and application log management.
 - [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams.
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.

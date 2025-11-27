@@ -19,7 +19,7 @@ The application implements a **dual authentication strategy** to handle differen
 - **Mechanism**: **Server-Side Sessions** (Express Session).
 - **Usage**: Used for the administrative panel (EJS views) and specific backend operations performed by administrators (e.g., managing blog articles, viewing system logs).
 - **Protection**:
-    - **Session Validation**: The `verifySession` middleware protects specific API endpoints (like `/api/blogArticles` or `/api/logs`) ensuring that the request comes from an authenticated browser session, not an external client.
+    - **Session Validation**: The `verifySession` middleware protects specific API endpoints ensuring that the request comes from an authenticated browser session, not an external client.
     - **Role Verification**: The `verifyAdmin` middleware adds an extra layer of security for critical routes, verifying that the session belongs to a user with the `admin` role before rendering views or processing requests.
 
 ### Password Hashing
