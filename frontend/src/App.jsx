@@ -12,11 +12,14 @@ import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTopRoutes/>
+      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeButton={true} pauseOnFocusLoss draggable pauseOnHover />
       <Routes>
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
