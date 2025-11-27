@@ -12,12 +12,17 @@ The domain **`canaccesible.es`** was acquired through the registrar **Nominalia*
 
 ### DNS Configuration
 
-To link the domain with the server, the DNS records were configured in the provider's control panel.
+To link the domain with the server, the DNS records were configured in the **Nominalia Control Panel**.
 
-*   **A Record:** Points the domain to the server's IP address.
-    *   **Host:** `@` (canaccesible.es)
-    *   **Value:** `[DROPLET_IP]` (DigitalOcean Droplet Public IP)
-*   **NS Records (Name Servers):** The default Name Servers of the provider (Nominalia) are used to manage the DNS zone.
+**Steps taken in Nominalia:**
+1.  Accessed the **Domain Management** section for `canaccesible.es`.
+2.  Navigated to **DNS & Name Servers** > **DNS Zone Management**.
+3.  Added/Modified the **A Record** to point to the DigitalOcean Droplet:
+    *   **Host/Name:** `@` (represents the root domain `canaccesible.es`)
+    *   **Type:** `A`
+    *   **Value/Destination:** `[DROPLET_IP]` (The public IP address of the DigitalOcean Droplet)
+    *   **TTL:** Default (usually 1 hour or 3600 seconds)
+4.  Ensured **NS Records (Name Servers)** are set to Nominalia's default servers to allow management via their panel.
 
 > **Note on Propagation:** DNS changes are not instantaneous. They typically take between **5 minutes and 24 hours** to propagate globally.
 
@@ -203,7 +208,7 @@ sudo certbot --nginx -d canaccesible.es -d www.canaccesible.es
 3.  **Installation:** Automatically modified the Nginx configuration to use the certificate.
 4.  **Redirection:** Configured a 301 redirect to force all HTTP traffic to HTTPS.
 
-**Example of the configuration added by Certbot:**
+**Actual configuration automatically appended by Certbot to the Nginx file:**
 
 ```nginx
     # ... inside the main server block ...
