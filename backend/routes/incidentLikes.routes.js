@@ -1,9 +1,10 @@
 module.exports = (app) => {
   const incidentLikes = require("../controllers/incidentLikes.controller");
+  const { verifyToken } = require("../middlewares/auth.middleware");
 
   const router = require("express").Router();
 
-  router.post("/", incidentLikes.create);
+  router.post("/", verifyToken, incidentLikes.create);
 
   router.get("/", incidentLikes.findAll);
 
@@ -11,9 +12,9 @@ module.exports = (app) => {
 
   router.get("/incident/:incidentId/user/:userId", incidentLikes.findByIncidentAndUser);
 
-  router.put("/:id", incidentLikes.update);
+  router.put("/:id", verifyToken, incidentLikes.update);
 
-  router.delete("/:id", incidentLikes.delete);
+  router.delete("/:id", verifyToken, incidentLikes.delete);
 
   app.use("/api/incidentLikes", router);
 };
