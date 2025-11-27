@@ -11,6 +11,12 @@ module.exports = (app) => {
 
   router.get("/user", verifyTokenOrSession, user.findAllUsers);
 
+  router.get(
+    "/municipalities",
+    verifyTokenOrSession,
+    user.findAllMunicipalities
+  );
+
   router.get("/admin", verifyTokenOrSession, user.findAllAdmins);
 
   router.get(

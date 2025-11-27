@@ -66,6 +66,7 @@ module.exports = (app) => {
           conversations: conversationCount,
           logs: logCount,
           users: userCount,
+          municipios: municipioCount,
         },
         chartData: {
           approvedIncidents,
@@ -87,6 +88,7 @@ module.exports = (app) => {
           conversations: 0,
           logs: 0,
           users: 0,
+          municipios: 0,
         },
         chartData: {
           approvedIncidents: 0,

@@ -65,6 +65,13 @@
           Administradores
         </button>
         <button
+          onclick="setFilter('municipio')"
+          id="btn-municipio"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+        >
+          Municipios
+        </button>
+        <button
           onclick="setFilter('top')"
           id="btn-top"
           class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
@@ -164,6 +171,7 @@
           let url = "/api/users";
           if (currentFilter === "normal") url = "/api/users/user";
           if (currentFilter === "admin") url = "/api/users/admin";
+          if (currentFilter === "municipio") url = "/api/users/municipalities";
           if (currentFilter === "top") url = "/api/users/top-reporting";
 
           const response = await axios.get(url);

@@ -161,6 +161,35 @@ exports.findAllUsers = async (req, res) => {
   }
 };
 
+exports.findAllMunicipalities = async (req, res) => {
+  try {
+    if (req.user.roleId !== 2) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to access this resource" });
+    }
+
+    const municipalities = await User.findAll({
+      where: { roleId: 3 },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateRegister",
+        "roleId",
+        "nameFile",
+      ],
+    });
+
+    res.status(200).json(municipalities);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: err.message || "Error fetching municipalities" });
+  }
+};
+
 exports.findTopReportingUsers = async (req, res) => {
   try {
     if (req.user.roleId !== 2) {
