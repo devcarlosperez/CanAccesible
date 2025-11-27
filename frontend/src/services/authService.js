@@ -101,6 +101,8 @@ const useAuthStore = create((set) => ({
       token: null,
       isAuthenticated: false,
     });
+
+    window.location.reload();
   },
 }));
 

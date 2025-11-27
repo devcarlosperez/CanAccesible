@@ -28,13 +28,18 @@ const IncidentCard = ({
   const { user } = useAuthStore();
 
   useEffect(() => {
-    getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
-      setLiked(!!like);
-    });
-  }, [incident.likes, user.id]);
+    if (user && user.id && incident && incident.id) {
+      getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
+        setLiked(!!like);
+      });
+    }
+  }, [incident.likes, user?.id]);
 
   const handleLikeClick = async () => {
     await onLike(incident);
+    if (!user || !user.id) {
+      return;
+    }
     setLiked(prev => !prev);
   };
 
@@ -110,10 +115,10 @@ const IncidentCard = ({
           </IconButton>
 
           {/* Edit and delete buttons */}
-          {user.id === incident.userId && (
+          {user?.id === incident.userId && (
             <>
               <IconButton onClick={() => onEdit(incident)}>
-                <EditIcon color="info"/>
+                <EditIcon color="info" />
               </IconButton>
               <IconButton onClick={() => onDelete(incident.id)}>
                 <DeleteIcon color="error" />

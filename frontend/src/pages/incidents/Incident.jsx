@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
 import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
 
@@ -13,6 +14,8 @@ import AddIcon from "@mui/icons-material/Add";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 
+import "react-toastify/dist/ReactToastify.css";
+
 const Incident = () => {
   const [incidents, setIncidents] = useState([]);
   const [users] = useState([]);
@@ -22,6 +25,7 @@ const Incident = () => {
   const [page, setPage] = useState(1);
 
   const [viewMoreIncidentId, setViewMoreIncidentId] = useState(null);
+  const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const { isAuthenticated, user } = useAuthStore();
 
   const location = useLocation();
@@ -50,7 +54,6 @@ const Incident = () => {
   }, []);
 
   useEffect(() => {
-    // Detecta el parámetro incidentId en la URL
     const params = new URLSearchParams(location.search);
     const incidentId = params.get("incidentId");
     if (incidentId) {
@@ -113,8 +116,29 @@ const Incident = () => {
     }
   };
 
+  const showErrorToast = (message) => {
+    if (lastErrorToastId) {
+      const isActive = toast.isActive(lastErrorToastId);
+      if (isActive) return;
+    }
+
+    const toastId = toast.error(message, {
+      autoClose: 5000,
+      position: "bottom-right",
+      hideProgressBar: false,
+      closeButton: true,
+    });
+    setLastErrorToastId(toastId);
+  };
+
   const handleLike = async (incident) => {
     try {
+      // If the user is not logged in, show an error and return
+      if (!isAuthenticated) {
+        showErrorToast("Inicia sesión para poder dar like a una incidencia.");
+        return;
+      }
+
       // Find existing like by this user for the incident
       const existingLike = await getIncidentLikeByIncidentAndUserId(incident.id, user.id);
 
@@ -135,9 +159,6 @@ const Incident = () => {
       console.error("Error al gestionar el like:", err);
     }
   };
-
-
-
 
   const handleExpandClick = (id) => {
     setExpandedId(expandedId === id ? null : id);
