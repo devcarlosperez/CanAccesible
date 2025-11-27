@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
-import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
 
 import useAuthStore from "../../services/authService.js";
 import IncidentForm from "../../components/incidents/IncidentForm";
@@ -174,10 +174,10 @@ const Incident = () => {
   return (
     <section>
       <Header transparent={false} />
-      <div className="pt-40 p-8">
-        <Typography variant="h4" align="center" sx={{ fontWeight: "bold", mb: 4 }}>
+      <div className="pt-40 p-8 bg-gray-200">
+        <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center" style={{ color: "var(--color-neutral-2)" }}>
           Gestión de Incidencias
-        </Typography>
+        </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           {isAuthenticated && !showForm && (
             <Button

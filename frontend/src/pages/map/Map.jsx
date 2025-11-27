@@ -5,7 +5,6 @@ import Header from "../../components/header/Header";
 import { getAllIncidents } from "../../services/incidentService";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const markerIcon = new L.Icon({
@@ -36,10 +35,10 @@ const Map = () => {
         <>
             <Header transparent={false} className="fixed z-50" />
 
-            <div className="pt-40 p-8">
-                <Typography variant="h4" align="center" sx={{ fontWeight: "bold", mb: 4 }}>
+            <div className="pt-40 p-8 bg-gray-200">
+                <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center" style={{ color: "var(--color-neutral-2)" }}>
                     En este mapa puedes ver las incidencias
-                </Typography>
+                </h1>
                 <div className="mx-auto w-full max-w-6xl h-140 border-2 border-black rounded-lg overflow-hidden">
 
                     <MapContainer className="h-full w-full z-0"
@@ -64,7 +63,7 @@ const Map = () => {
                                     <Popup>
                                         <div>
                                             <strong>{incident.name}</strong>
-                                            <br/>
+                                            <br />
                                             <button
                                                 className="mt-1 inline-block underline text-blue-600 cursor-pointer"
                                                 onClick={() => handleViewDetails(incident.id)}
