@@ -3,6 +3,7 @@ const User = db.user;
 const bcrypt = require("bcrypt");
 const { deleteImageFromStorage } = require("../config/doSpacesClient");
 const transporter = require("../config/mailer");
+const { createLog } = require("../services/log.service");
 
 exports.create = async (req, res) => {
   try {
@@ -33,6 +34,9 @@ exports.create = async (req, res) => {
       roleId,
       nameFile,
     });
+
+    const actorId = req.user ? req.user.id : newUser.id;
+    await createLog(actorId, "Create User", "User", newUser.id);
 
     await transporter.sendMail({
       from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
@@ -266,12 +270,16 @@ exports.update = async (req, res) => {
     }
 
     if (req.file) {
-      await deleteImageFromStorage(user.nameFile);
+      if (user.nameFile) {
+        await deleteImageFromStorage(user.nameFile);
+      }
       userToUpdate.nameFile = req.file.location;
     }
 
     await User.update(userToUpdate, { where: { id } });
     const updatedUser = await User.findByPk(id);
+
+    await createLog(req.user.id, "Update User", "User", id);
 
     res.status(200).json(updatedUser);
   } catch (err) {
@@ -294,12 +302,10 @@ exports.delete = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Delete profile image from storage
-    await deleteImageFromStorage(user.nameFile);
-
     // Delete the user from the database
     await User.destroy({ where: { id } });
+
+    await createLog(req.user.id, "Delete User", "User", id);
 
     res.status(200).json({
       message: "User and associated image have been deleted successfully",

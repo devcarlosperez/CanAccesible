@@ -63,6 +63,10 @@ require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
 require("./routes/log.routes")(app);
 
+// Initialize scheduled tasks
+const { scheduleLogCleanup } = require("./services/logCleanup.service");
+scheduleLogCleanup();
+
 const env = process.env.NODE_ENV;
 
 // Verify database connection at startup
