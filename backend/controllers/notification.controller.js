@@ -31,7 +31,9 @@ exports.create = async (req, res) => {
 
     res.status(201).json(notification);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error creating the notification." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error creating the notification." });
   }
 };
 
@@ -42,11 +44,14 @@ exports.findAll = async (req, res) => {
 
     const notifications = await Notification.findAll({
       where: { userId },
+      order: [["createdAt", "DESC"]],
     });
 
     res.status(200).json(notifications);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving notifications." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error retrieving notifications." });
   }
 };
 
@@ -66,7 +71,9 @@ exports.findOne = async (req, res) => {
 
     res.status(200).json(notification);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving the notification." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error retrieving the notification." });
   }
 };
 
@@ -87,7 +94,9 @@ exports.update = async (req, res) => {
     const updatedNotification = await Notification.findByPk(id);
     res.status(200).json(updatedNotification);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error updating the notification." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error updating the notification." });
   }
 };
 
@@ -107,6 +116,8 @@ exports.delete = async (req, res) => {
 
     res.status(200).json({ message: "Notification deleted successfully." });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error deleting the notification." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error deleting the notification." });
   }
 };

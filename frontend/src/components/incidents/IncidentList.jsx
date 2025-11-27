@@ -3,6 +3,7 @@ import IncidentCard from "./IncidentCard";
 
 const IncidentList = ({
   incidents,
+  onLike,
   onEdit,
   onDelete,
   page,
@@ -28,7 +29,8 @@ const IncidentList = ({
             <Grid item xs={12} sm={6} md={4} key={incident.id}>
               <IncidentCard
                 incident={incident}
-                user={user}
+                incidentUser={user}
+                onLike={onLike}
                 onEdit={onEdit}
                 onDelete={onDelete}
                 openViewMore={String(incident.id) === String(viewMoreIncidentId)}

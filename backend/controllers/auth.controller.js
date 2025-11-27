@@ -5,6 +5,7 @@ const User = db.user;
 const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
 const transporter = require("../config/mailer");
+const { createLog } = require("../services/log.service");
 
 exports.signIn = async (req, res) => {
   try {
@@ -37,8 +38,11 @@ exports.signIn = async (req, res) => {
       {
         id: user.id,
         email: user.email,
-        role: user.role.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
         roleId: user.roleId,
+        role: user.role.role,
+        nameFile: user.nameFile,
       },
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
@@ -57,6 +61,8 @@ exports.signIn = async (req, res) => {
       message: "Inicio de sesión detectado en tu cuenta",
       dateNotification: new Date(),
     });
+
+    await createLog(user.id, "User Login", "User", user.id);
 
     await transporter.sendMail({
       from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
@@ -86,7 +92,11 @@ exports.signIn = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
+  if (req.session && req.session.userId) {
+    await createLog(req.session.userId, "User Logout", "User", req.session.userId);
+  }
+
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ message: "Error logging out" });

@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import useAuthStore from "../../services/authService.js";
+import {
+  getAllNotifications,
+  deleteNotification,
+} from "../../services/notificationService";
 import HeaderDesktop from "./HeaderDesktop";
 import HeaderMobile from "./HeaderMobile";
 
@@ -28,17 +32,26 @@ const Header = ({ transparent = true }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      import("../../services/notificationService").then(
-        ({ getAllNotifications }) => {
-          getAllNotifications()
-            .then((data) => setNotifications(Array.isArray(data) ? data : []))
-            .catch(() => setNotifications([]));
-        }
-      );
+      getAllNotifications()
+        .then((data) => {
+          const notificationsArray = Array.isArray(data) ? data : [];
+          setNotifications(notificationsArray);
+        })
+        .catch(() => setNotifications([]));
     } else {
       setNotifications([]);
     }
   }, [isAuthenticated]);
+
+  const handleDeleteNotification = async (id) => {
+    try {
+      await deleteNotification(id);
+      const updatedNotifications = notifications.filter((n) => n.id !== id);
+      setNotifications(updatedNotifications);
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+    }
+  };
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
@@ -75,7 +88,9 @@ const Header = ({ transparent = true }) => {
           notifications={notifications}
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
-          setNotifications={setNotifications}
+          handleDeleteNotification={handleDeleteNotification}
+          transparent={transparent}
+          scrolled={scrolled}
         />
       ) : (
         <HeaderMobile
@@ -84,10 +99,9 @@ const Header = ({ transparent = true }) => {
           notifications={notifications}
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
-          setNotifications={setNotifications}
+          handleDeleteNotification={handleDeleteNotification}
           menuItems={filteredMenuItems}
           scrolled={scrolled}
-          isAuthenticated={isAuthenticated}
         />
       )}
     </header>

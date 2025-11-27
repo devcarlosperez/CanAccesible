@@ -11,11 +11,11 @@ const HeaderMobile = ({
   notifications,
   showNotifications,
   setShowNotifications,
-  setNotifications,
+  handleDeleteNotification,
   menuItems,
   scrolled,
 }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
@@ -36,9 +36,7 @@ const HeaderMobile = ({
               notifications={notifications}
               showNotifications={showNotifications}
               setShowNotifications={setShowNotifications}
-              handleDelete={(id) =>
-                setNotifications((prev) => prev.filter((n) => n.id !== id))
-              }
+              handleDeleteNotification={handleDeleteNotification}
               iconSize="text-2xl"
               dropdownWidth="w-72"
             />
@@ -61,6 +59,7 @@ const HeaderMobile = ({
         menuItems={menuItems}
         isAuthenticated={isAuthenticated}
         user={user}
+        onLogout={logout}
       />
     </>
   );

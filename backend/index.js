@@ -58,6 +58,7 @@ require("./routes/dashboardAdmin.views.routes")(app);
 
 // API routes
 require("./routes/incident.routes")(app);
+require("./routes/incidentLikes.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/notification.routes")(app);
 require("./routes/auth.routes")(app);
@@ -65,6 +66,10 @@ require("./routes/blogArticle.routes")(app);
 require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
 require("./routes/log.routes")(app);
+
+// Initialize scheduled tasks
+const { scheduleLogCleanup } = require("./services/logCleanup.service");
+scheduleLogCleanup();
 
 const env = process.env.NODE_ENV;
 

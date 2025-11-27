@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Transition } from "@headlessui/react"; // Para animaciones smooth
+import { Transition } from "@headlessui/react";
 
 const MobileMenu = ({
   open,

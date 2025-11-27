@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Gestión de Usuarios</title>
+  </head>
+  <body class="bg-gray-200 min-h-screen">
+    <%- include('../../../partials/header') %>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <!-- Breadcrumb & Title -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center mb-6">
+          <a
+            href="/dashboard-admin"
+            class="text-neutral-500 hover:text-neutral-700 transition"
+          >
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Dashboard
+          </a>
+        </div>
+
+        <div class="text-center">
+          <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
+            Gestión de Usuarios
+          </h2>
+          <p class="text-neutral-500 mt-1">
+            Visualiza y gestiona los usuarios registrados en la plataforma
+          </p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div
+        class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-wrap gap-2 justify-center md:justify-start"
+      >
+        <button
+          onclick="setFilter('all')"
+          id="btn-all"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white"
+        >
+          Todos
+        </button>
+        <button
+          onclick="setFilter('normal')"
+          id="btn-normal"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+        >
+          Usuarios
+        </button>
+        <button
+          onclick="setFilter('admin')"
+          id="btn-admin"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+        >
+          Administradores
+        </button>
+        <button
+          onclick="setFilter('municipio')"
+          id="btn-municipio"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+        >
+          Municipios
+        </button>
+        <button
+          onclick="setFilter('top')"
+          id="btn-top"
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100"
+        >
+          Top Reportadores
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Usuario
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Email
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Rol
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Fecha Registro
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden"
+                  id="col-incidents"
+                >
+                  Incidencias
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              id="usersTableBody"
+              class="bg-white divide-y divide-gray-200"
+            >
+              <!-- Rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div id="paginationContainer" class="p-4 flex justify-center"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      let currentFilter = "all";
+      let allUsers = [];
+      let currentPage = 1;
+      const itemsPerPage = 10;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUsers();
+      });
+
+      function setFilter(filter) {
+        currentFilter = filter;
+        currentPage = 1;
+
+        // Update buttons
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove("bg-blue-600", "text-white");
+          btn.classList.add("text-gray-600", "hover:bg-gray-100");
+        });
+        const activeBtn = document.getElementById(`btn-${filter}`);
+        activeBtn.classList.remove("text-gray-600", "hover:bg-gray-100");
+        activeBtn.classList.add("bg-blue-600", "text-white");
+
+        // Show/Hide Incidents column
+        const colIncidents = document.getElementById("col-incidents");
+        if (filter === "top") {
+          colIncidents.classList.remove("hidden");
+        } else {
+          colIncidents.classList.add("hidden");
+        }
+
+        loadUsers();
+      }
+
+      async function loadUsers() {
+        const container = document.getElementById("usersTableBody");
+        container.innerHTML =
+          '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Cargando...</td></tr>';
+
+        try {
+          let url = "/api/users";
+          if (currentFilter === "normal") url = "/api/users/user";
+          if (currentFilter === "admin") url = "/api/users/admin";
+          if (currentFilter === "municipio") url = "/api/users/municipalities";
+          if (currentFilter === "top") url = "/api/users/top-reporting";
+
+          const response = await axios.get(url);
+          allUsers = response.data;
+          renderTable();
+          renderPagination();
+        } catch (error) {
+          console.error("Error loading users:", error);
+          container.innerHTML =
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error al cargar usuarios</td></tr>';
+        }
+      }
+
+      function renderTable() {
+        const container = document.getElementById("usersTableBody");
+        container.innerHTML = "";
+
+        if (allUsers.length === 0) {
+          container.innerHTML =
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No se encontraron usuarios</td></tr>';
+          return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedUsers = allUsers.slice(startIndex, endIndex);
+
+        paginatedUsers.forEach((user) => {
+          const roleBadge =
+            user.roleId === 2
+              ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Admin</span>'
+              : user.roleId === 3
+              ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">Municipio</span>'
+              : '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Usuario</span>';
+
+          const date = new Date(
+            user.dateRegister || Date.now()
+          ).toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          const incidentsCell =
+            currentFilter === "top"
+              ? `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center font-bold">${
+                  user.incidenceCount || 0
+                }</td>`
+              : '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden"></td>';
+
+          const row = `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-full object-cover" src="${
+                                  user.nameFile ||
+                                  `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`
+                                }" alt="" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${
+                                  user.firstName
+                                } ${user.lastName}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${user.email}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${roleBadge}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${date}
+                    </td>
+                    ${incidentsCell}
+                </tr>
+            `;
+          container.innerHTML += row;
+        });
+      }
+
+      function renderPagination() {
+        const pageCount = Math.ceil(allUsers.length / itemsPerPage);
+        const container = document.getElementById("paginationContainer");
+        container.innerHTML = "";
+
+        if (pageCount <= 1) return;
+
+        // Simple pagination controls
+        let paginationHTML = '<div class="flex gap-2">';
+
+        // Prev
+        paginationHTML += `<button onclick="changePage(${currentPage - 1})" ${
+          currentPage === 1
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-left"></i></button>`;
+
+        // Pages
+        for (let i = 1; i <= pageCount; i++) {
+          paginationHTML += `<button onclick="changePage(${i})" class="px-3 py-1 rounded border ${
+            i === currentPage
+              ? "bg-blue-600 text-white"
+              : "bg-white hover:bg-gray-50"
+          }">${i}</button>`;
+        }
+
+        // Next
+        paginationHTML += `<button onclick="changePage(${currentPage + 1})" ${
+          currentPage === pageCount
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-right"></i></button>`;
+
+        paginationHTML += "</div>";
+        container.innerHTML = paginationHTML;
+      }
+
+      function changePage(page) {
+        const pageCount = Math.ceil(allUsers.length / itemsPerPage);
+        if (page < 1 || page > pageCount) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+      }
+    </script>
+  </body>
+</html>

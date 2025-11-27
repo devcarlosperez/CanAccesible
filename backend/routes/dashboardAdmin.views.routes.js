@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const { verifyAdmin } = require("../middlewares/auth.middleware");
   const db = require("../models");
+  const { Op } = require("sequelize");
 
   const router = require("express").Router();
 
@@ -18,32 +19,42 @@ module.exports = (app) => {
       const userCount = await db.user.count();
 
       // Fetch approved and not approved incidents
-      const approvedIncidents = await db.incident.count({ where: { isApproved: true } });
-      const notApprovedIncidents = await db.incident.count({ where: { isApproved: false } });
+      const approvedIncidents = await db.incident.count({
+        where: { isApproved: true },
+      });
+      const notApprovedIncidents = await db.incident.count({
+        where: { isApproved: false },
+      });
 
       // Fetch user roles distribution using associations
       const adminCount = await db.user.count({
-        include: [{
-          model: db.role,
-          as: 'role',
-          where: { role: 'admin' }
-        }]
+        include: [
+          {
+            model: db.role,
+            as: "role",
+            where: { role: "admin" },
+          },
+        ],
       });
 
       const userNormalCount = await db.user.count({
-        include: [{
-          model: db.role,
-          as: 'role',
-          where: { role: 'usuario' }
-        }]
+        include: [
+          {
+            model: db.role,
+            as: "role",
+            where: { role: "usuario" },
+          },
+        ],
       });
 
       const municipioCount = await db.user.count({
-        include: [{
-          model: db.role,
-          as: 'role',
-          where: { role: 'municipio' }
-        }]
+        include: [
+          {
+            model: db.role,
+            as: "role",
+            where: { role: "municipio" },
+          },
+        ],
       });
 
       res.render("admin/dashboard/index", {
@@ -55,15 +66,16 @@ module.exports = (app) => {
           incidents: incidentCount,
           conversations: conversationCount,
           logs: logCount,
-          users: userCount
+          users: userCount,
+          municipios: municipioCount,
         },
         chartData: {
           approvedIncidents,
           notApprovedIncidents,
           adminCount,
           userNormalCount,
-          municipioCount
-        }
+          municipioCount,
+        },
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -76,15 +88,16 @@ module.exports = (app) => {
           incidents: 0,
           conversations: 0,
           logs: 0,
-          users: 0
+          users: 0,
+          municipios: 0,
         },
         chartData: {
           approvedIncidents: 0,
           notApprovedIncidents: 0,
           adminCount: 0,
           userNormalCount: 0,
-          municipioCount: 0
-        }
+          municipioCount: 0,
+        },
       });
     }
   });
@@ -93,19 +106,37 @@ module.exports = (app) => {
   router.get("/blog-articles", async (req, res) => {
     try {
       const articles = await db.blogArticle.findAll({
-        order: [['dateCreation', 'ASC']]
+        order: [["dateCreation", "ASC"]],
       });
 
       res.render("admin/dashboard/blog-articles/index", {
         user: req.user,
         title: "Gestión de Artículos - CanAccesible",
         frontendUrl: process.env.FRONTEND_URL,
-        articles: articles
+        articles: articles,
       });
     } catch (error) {
       console.error("Error fetching blog articles:", error);
       res.status(500).send("Error fetching blog articles");
     }
+  });
+
+  // Users Management Page
+  router.get("/users", (req, res) => {
+    res.render("admin/dashboard/users/index", {
+      user: req.user,
+      title: "Gestión de Usuarios - CanAccesible",
+      frontendUrl: process.env.FRONTEND_URL,
+    });
+  });
+
+  // Logs Management Page
+  router.get("/logs", (req, res) => {
+    res.render("admin/dashboard/logs/index", {
+      user: req.user,
+      title: "Registro de Actividad - CanAccesible",
+      frontendUrl: process.env.FRONTEND_URL,
+    });
   });
 
   app.use("/dashboard-admin", router);
