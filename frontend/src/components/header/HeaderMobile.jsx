@@ -15,7 +15,7 @@ const HeaderMobile = ({
   menuItems,
   scrolled,
 }) => {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
@@ -59,6 +59,7 @@ const HeaderMobile = ({
         menuItems={menuItems}
         isAuthenticated={isAuthenticated}
         user={user}
+        isAdmin={isAdmin}
         onLogout={logout}
       />
     </>

@@ -140,7 +140,10 @@ const Incident = () => {
       }
 
       // Find existing like by this user for the incident
-      const existingLike = await getIncidentLikeByIncidentAndUserId(incident.id, user.id);
+      const existingLike = await getIncidentLikeByIncidentAndUserId(
+        incident.id,
+        user.id
+      );
 
       if (!existingLike) {
         // If no like exists, create a new one
@@ -196,7 +199,12 @@ const Incident = () => {
         </div>
 
         {/* Modal Form */}
-        <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="md" fullWidth>
+        <Dialog
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          maxWidth="md"
+          fullWidth
+        >
           <DialogContent>
             <IncidentForm
               formData={formData}

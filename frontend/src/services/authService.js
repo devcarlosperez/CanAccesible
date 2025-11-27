@@ -31,6 +31,7 @@ const useAuthStore = create((set) => ({
   user: getDecodedUser(),
   token: localStorage.getItem("token") || null,
   isAuthenticated: !!localStorage.getItem("token"),
+  isAdmin: getDecodedUser()?.role === "admin",
   loading: false,
   error: null,
 
@@ -67,6 +68,7 @@ const useAuthStore = create((set) => ({
         token,
         user,
         isAuthenticated: true,
+        isAdmin: user.role === "admin",
         loading: false,
       });
     } catch (err) {
@@ -100,6 +102,7 @@ const useAuthStore = create((set) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      isAdmin: false,
     });
 
     window.location.reload();
