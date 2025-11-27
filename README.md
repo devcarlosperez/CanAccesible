@@ -1,11 +1,15 @@
 # CANACCESIBLE
 
-**CanAccesible** is a Canary Islands web platform that enables citizens to:
+**CanAccesible** is a comprehensive web platform designed for the Canary Islands, empowering citizens to actively participate in improving accessibility across the archipelago.
 
-- **Report accessibility incidents** in public or private spaces.
-- **Share accessibility best practices** to inspire and improve inclusion.
+The platform serves as a community-driven hub where users can:
+- **Report Accessibility Incidents:** Document and share both **bad practices** (barriers) and **good practices** (exemplary accessibility) in public and private spaces.
+- **Interactive Map:** Visualize all reported incidents on an interactive map, providing a clear overview of the accessibility landscape.
+- **Community Interaction:** Engage with the community by commenting on and liking reports, fostering a collaborative environment.
+- **User Support:** Access direct support channels, including chat functionality with administrators and contact information for assistance.
+- **Stay Informed:** Read blog articles to stay updated on the latest accessibility trends, news, and improvements within the CanAccesible network.
 
-The project aims to promote a **more accessible society** and awareness of the needs of all people, combining modern and accessible design with easy-to-use tools for the community.
+Our mission is to build a strong community dedicated to transforming the islands into a more accessible place for everyone, combining modern technology with social awareness.
 
 ---
 
@@ -72,11 +76,13 @@ frontend/
 backend/
 ├── config/               # Server and DB configuration
 ├── controllers/          # Route controllers
-├── middleware/           # Express middleware (auth, uploads, etc.)
+├── middlewares/          # Express middlewares (auth, uploads, etc.)
 ├── migrations/           # Database migrations
 ├── models/               # Sequelize models
 ├── routes/               # API route definitions
 ├── seeders/              # Initial database data
+├── services/             # Business logic services
+├── views/                # Server-side rendered views
 ├── db.js                 # Main database connection
 ├── index.js              # Express app entry point
 ├── .env.development      # Development environment variables
@@ -166,13 +172,19 @@ SMTP_PASS=your_gmail_app_password            # Gmail App Password
 
 ```bash
 npm install
-```
-
 **Run database migrations and seeders:**
 
-```bash
-NODE_ENV=development npx sequelize-cli db:migrate
+You can run the commands directly or use the npm scripts defined in `package.json`:
 
+```bash
+# Option 1: Using npm scripts (Recommended)
+npm run db:migrate
+npm run db:seed
+
+# Option 2: Manual execution
+NODE_ENV=development npx sequelize-cli db:migrate
+NODE_ENV=development npx sequelize-cli db:seed:all
+```
 NODE_ENV=development npx sequelize-cli db:seed:all
 ```
 
