@@ -13,7 +13,7 @@ const HeaderDesktop = ({
   transparent,
   scrolled,
 }) => {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
@@ -59,7 +59,7 @@ const HeaderDesktop = ({
         )}
 
         {isAuthenticated ? (
-          <UserMenu user={user} onLogout={logout} />
+          <UserMenu user={user} isAdmin={isAdmin} onLogout={logout} />
         ) : (
           <Link
             to="/login"

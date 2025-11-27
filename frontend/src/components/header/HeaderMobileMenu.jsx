@@ -8,9 +8,11 @@ const MobileMenu = ({
   menuItems,
   isAuthenticated,
   user,
+  isAdmin,
   onLogout,
 }) => {
   const [accountOpen, setAccountOpen] = useState(false);
+  const dashboardLink = isAdmin ? "/dashboard-admin" : "/dashboard-user";
 
   return (
     <>
@@ -64,7 +66,7 @@ const MobileMenu = ({
                 onClick={() => setAccountOpen((prev) => !prev)}
                 className="flex items-center w-full px-4 py-2 rounded-xl font-semibold text-white cursor-pointer bg-blue-700 hover:bg-blue-600 transition duration-200"
               >
-                <span className="w-9 h-9 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center mr-3 overflow-hidden bg-white">
                   {user.nameFile ? (
                     <img
                       src={user.nameFile}
@@ -105,13 +107,26 @@ const MobileMenu = ({
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setOpen(false)}
-                        className="text-white hover:text-[#92B2EA] cursor-pointer"
-                      >
-                        Dashboard
-                      </Link>
+                      {isAdmin ? (
+                        <button
+                          onClick={() => {
+                            window.location.href = `${
+                              import.meta.env.VITE_API_URL
+                            }/dashboard-admin`;
+                          }}
+                          className="text-white hover:text-[#92B2EA] cursor-pointer text-left w-full"
+                        >
+                          Dashboard
+                        </button>
+                      ) : (
+                        <Link
+                          to={dashboardLink}
+                          onClick={() => setOpen(false)}
+                          className="text-white hover:text-[#92B2EA] cursor-pointer"
+                        >
+                          Dashboard
+                        </Link>
+                      )}
                     </li>
                     <li>
                       <button

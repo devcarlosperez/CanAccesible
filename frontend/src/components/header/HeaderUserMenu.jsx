@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const UserMenu = ({ user, onLogout }) => {
+const UserMenu = ({ user, isAdmin, onLogout }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
 
@@ -17,15 +17,13 @@ const UserMenu = ({ user, onLogout }) => {
 
   const avatarSrc = user?.nameFile || null;
   const initial = user?.firstName?.[0]?.toUpperCase() || "U";
-  const userRole = typeof user?.role === "string" ? user.role : user?.role?.role;
-  const isAdmin = userRole === "admin";
   const dashboardLink = isAdmin ? "/dashboard-admin" : "/dashboard-user";
 
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="w-13 h-13 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:brightness-90 transition-colors overflow-hidden"
+        className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:brightness-90 transition-colors overflow-hidden bg-blue-600"
       >
         {avatarSrc ? (
           <img
@@ -34,7 +32,7 @@ const UserMenu = ({ user, onLogout }) => {
             className="w-full h-full object-cover rounded-full"
           />
         ) : (
-          initial
+          <p className="text-xl">{initial}</p>
         )}
       </button>
 
@@ -54,7 +52,9 @@ const UserMenu = ({ user, onLogout }) => {
               {isAdmin ? (
                 <button
                   onClick={() => {
-                    window.location.href = `${import.meta.env.VITE_API_URL}/dashboard-admin`;
+                    window.location.href = `${
+                      import.meta.env.VITE_API_URL
+                    }/dashboard-admin`;
                   }}
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg bg-none border-none cursor-pointer"
                 >
@@ -76,7 +76,7 @@ const UserMenu = ({ user, onLogout }) => {
                   onLogout();
                   setOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg"
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer"
               >
                 Cerrar sesión
               </button>

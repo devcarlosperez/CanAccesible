@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
-import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import {
+  getAllIncidents,
+  createIncident,
+  updateIncident,
+  deleteIncident,
+} from "../../services/incidentService";
+import {
+  getAllIncidentLikes,
+  getIncidentLikeByIncidentAndUserId,
+  createIncidentLike,
+  deleteIncidentLike,
+} from "../../services/incidentLikesService";
 
 import useAuthStore from "../../services/authService.js";
 import IncidentForm from "../../components/incidents/IncidentForm";
@@ -140,7 +150,10 @@ const Incident = () => {
       }
 
       // Find existing like by this user for the incident
-      const existingLike = await getIncidentLikeByIncidentAndUserId(incident.id, user.id);
+      const existingLike = await getIncidentLikeByIncidentAndUserId(
+        incident.id,
+        user.id
+      );
 
       if (!existingLike) {
         // If no like exists, create a new one
@@ -175,7 +188,11 @@ const Incident = () => {
     <section>
       <Header transparent={false} />
       <div className="pt-40 p-8">
-        <Typography variant="h4" align="center" sx={{ fontWeight: "bold", mb: 4 }}>
+        <Typography
+          variant="h4"
+          align="center"
+          sx={{ fontWeight: "bold", mb: 4 }}
+        >
           Gestión de Incidencias
         </Typography>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
@@ -196,7 +213,12 @@ const Incident = () => {
         </div>
 
         {/* Modal Form */}
-        <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="md" fullWidth>
+        <Dialog
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          maxWidth="md"
+          fullWidth
+        >
           <DialogContent>
             <IncidentForm
               formData={formData}
