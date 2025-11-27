@@ -1,189 +1,309 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <title>Dashboard Admin - CanAccesible</title>
-</head>
-<body class="bg-gray-200 min-h-screen">
-  <!-- Header -->
-  <%- include('../../partials/header') %>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Dashboard Admin - CanAccesible</title>
+  </head>
+  <body class="bg-gray-200 min-h-screen">
+    <!-- Header -->
+    <%- include('../../partials/header') %>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-    <!-- Welcome Section -->
-    <div class="mb-8 sm:mb-12 text-center">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-2 mb-2">Dashboard</h2>
-      <p class="text-neutral-3 text-sm sm:text-base md:text-lg">Gestiona el contenido y las publicaciones de CanAccesible desde aquí</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <!-- Welcome Section -->
+      <div class="mb-8 sm:mb-12 text-center">
+        <h2
+          class="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-2 mb-2"
+        >
+          Dashboard
+        </h2>
+        <p class="text-neutral-3 text-sm sm:text-base md:text-lg">
+          Gestiona el contenido y las publicaciones de CanAccesible desde aquí
+        </p>
+      </div>
+
+      <!-- Stats Cards - Flexbox Layout -->
+      <div
+        class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 mb-8 px-2 sm:px-4 lg:px-0"
+      >
+        <!-- Blog Articles Card -->
+        <div
+          class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105"
+          style="background-color: #ffffff; border: 2px solid #e5edfa"
+        >
+          <div class="flex flex-col items-center text-center">
+            <i
+              class="fa-solid fa-newspaper text-4xl sm:text-5xl mb-4"
+              style="color: #004aad"
+            ></i>
+            <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">
+              ARTÍCULOS DE BLOG
+            </p>
+            <h3
+              class="text-3xl sm:text-4xl font-bold mb-4"
+              style="color: #000000"
+            >
+              <%= counts.articles %>
+            </h3>
+            <a
+              href="/dashboard-admin/blog-articles"
+              class="font-semibold text-xs sm:text-sm hover:underline transition"
+              style="color: #000000"
+              >Ver todos →</a
+            >
+          </div>
+        </div>
+
+        <!-- Incidents Card -->
+        <div
+          class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105"
+          style="background-color: #ffffff; border: 2px solid #e5edfa"
+        >
+          <div class="flex flex-col items-center text-center">
+            <i
+              class="fa-solid fa-triangle-exclamation text-4xl sm:text-5xl mb-4"
+              style="color: #004aad"
+            ></i>
+            <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">
+              INCIDENCIAS
+            </p>
+            <h3
+              class="text-3xl sm:text-4xl font-bold mb-4"
+              style="color: #000000"
+            >
+              <%= counts.incidents %>
+            </h3>
+            <a
+              href="#"
+              class="font-semibold text-xs sm:text-sm hover:underline transition"
+              style="color: #000000"
+              >Ver todas →</a
+            >
+          </div>
+        </div>
+
+        <!-- Users Card -->
+        <div
+          class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105"
+          style="background-color: #ffffff; border: 2px solid #e5edfa"
+        >
+          <div class="flex flex-col items-center text-center">
+            <i
+              class="fa-solid fa-users text-4xl sm:text-5xl mb-4"
+              style="color: #004aad"
+            ></i>
+            <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">
+              USUARIOS
+            </p>
+            <h3
+              class="text-3xl sm:text-4xl font-bold mb-4"
+              style="color: #000000"
+            >
+              <%= counts.users %>
+            </h3>
+            <a
+              href="/dashboard-admin/users"
+              class="font-semibold text-xs sm:text-sm hover:underline transition"
+              style="color: #000000"
+              >Ver todos →</a
+            >
+          </div>
+        </div>
+
+        <!-- Conversations Card -->
+        <div
+          class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105"
+          style="background-color: #ffffff; border: 2px solid #e5edfa"
+        >
+          <div class="flex flex-col items-center text-center">
+            <i
+              class="fa-solid fa-comments text-4xl sm:text-5xl mb-4"
+              style="color: #004aad"
+            ></i>
+            <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">
+              CONVERSACIONES
+            </p>
+            <h3
+              class="text-3xl sm:text-4xl font-bold mb-4"
+              style="color: #000000"
+            >
+              <%= counts.conversations %>
+            </h3>
+            <a
+              href="#"
+              class="font-semibold text-xs sm:text-sm hover:underline transition"
+              style="color: #000000"
+              >Ver todas →</a
+            >
+          </div>
+        </div>
+
+        <!-- Logs Card -->
+        <div
+          class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105"
+          style="background-color: #ffffff; border: 2px solid #e5edfa"
+        >
+          <div class="flex flex-col items-center text-center">
+            <i
+              class="fa-solid fa-file-lines text-4xl sm:text-5xl mb-4"
+              style="color: #004aad"
+            ></i>
+            <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">
+              LOGS
+            </p>
+            <h3
+              class="text-3xl sm:text-4xl font-bold mb-4"
+              style="color: #000000"
+            >
+              <%= counts.logs %>
+            </h3>
+            <a
+              href="#"
+              class="font-semibold text-xs sm:text-sm hover:underline transition"
+              style="color: #000000"
+              >Ver todos →</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="mt-16 mb-12">
+        <div class="flex flex-wrap gap-8 justify-center">
+          <!-- Incidents Approval Chart -->
+          <div
+            class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6"
+            style="background-color: #ffffff; border: 2px solid #e5edfa"
+          >
+            <h3
+              class="text-lg md:text-xl font-bold mb-8"
+              style="color: #0c0c22"
+            >
+              Incidencias aprobadas
+            </h3>
+            <div id="incidentsChart" style="width: 100%; height: 350px"></div>
+          </div>
+
+          <!-- Users Distribution Chart -->
+          <div
+            class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6"
+            style="background-color: #ffffff; border: 2px solid #e5edfa"
+          >
+            <h3
+              class="text-lg md:text-xl font-bold mb-8"
+              style="color: #0c0c22"
+            >
+              Distribución de usuarios
+            </h3>
+            <div id="usersChart" style="width: 100%; height: 350px"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Stats Cards - Flexbox Layout -->
-    <div class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 mb-8 px-2 sm:px-4 lg:px-0">
-      <!-- Blog Articles Card -->
-      <div class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-        <div class="flex flex-col items-center text-center">
-          <i class="fa-solid fa-newspaper text-4xl sm:text-5xl mb-4" style="color: #004aad;"></i>
-          <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">ARTÍCULOS DE BLOG</p>
-          <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #000000;"><%= counts.articles %></h3>
-          <a href="/dashboard-admin/blog-articles" class="font-semibold text-xs sm:text-sm hover:underline transition" style="color: #000000;">Ver todos →</a>
-        </div>
-      </div>
+    <!-- ECharts Library -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+      // Data from server
+      const approvedIncidents = <%= chartData && chartData.approvedIncidents !== undefined ? chartData.approvedIncidents : 5 %>;
+      const notApprovedIncidents = <%= chartData && chartData.notApprovedIncidents !== undefined ? chartData.notApprovedIncidents : 3 %>;
+      const adminCount = <%= chartData && chartData.adminCount !== undefined ? chartData.adminCount : 2 %>;
+      const userNormalCount = <%= chartData && chartData.userNormalCount !== undefined ? chartData.userNormalCount : 8 %>;
+      const municipioCount = <%= chartData && chartData.municipioCount !== undefined ? chartData.municipioCount : 1 %>;
 
-      <!-- Incidents Card -->
-      <div class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-        <div class="flex flex-col items-center text-center">
-          <i class="fa-solid fa-triangle-exclamation text-4xl sm:text-5xl mb-4" style="color: #004aad;"></i>
-          <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">INCIDENCIAS</p>
-          <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #000000;"><%= counts.incidents %></h3>
-          <a href="#" class="font-semibold text-xs sm:text-sm hover:underline transition" style="color: #000000;">Ver todas →</a>
-        </div>
-      </div>
+      console.log('Datos completos:', { approvedIncidents, notApprovedIncidents, adminCount, userNormalCount, municipioCount });
 
-      <!-- Users Card -->
-      <div class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-        <div class="flex flex-col items-center text-center">
-          <i class="fa-solid fa-users text-4xl sm:text-5xl mb-4" style="color: #004aad;"></i>
-          <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">USUARIOS</p>
-          <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #000000;"><%= counts.users %></h3>
-          <a href="#" class="font-semibold text-xs sm:text-sm hover:underline transition" style="color: #000000;">Ver todos →</a>
-        </div>
-      </div>
+      // Initialize ECharts instances
+      const incidentsChartDOM = document.getElementById('incidentsChart');
+      const usersChartDOM = document.getElementById('usersChart');
 
-      <!-- Conversations Card -->
-      <div class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-        <div class="flex flex-col items-center text-center">
-          <i class="fa-solid fa-comments text-4xl sm:text-5xl mb-4" style="color: #004aad;"></i>
-          <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">CONVERSACIONES</p>
-          <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #000000;"><%= counts.conversations %></h3>
-          <a href="#" class="font-semibold text-xs sm:text-sm hover:underline transition" style="color: #000000;">Ver todas →</a>
-        </div>
-      </div>
+      const incidentsChart = echarts.init(incidentsChartDOM);
+      const usersChart = echarts.init(usersChartDOM);
 
-      <!-- Logs Card -->
-      <div class="w-full sm:w-5/12 lg:w-1/5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 hover:scale-105" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-        <div class="flex flex-col items-center text-center">
-          <i class="fa-solid fa-file-lines text-4xl sm:text-5xl mb-4" style="color: #004aad;"></i>
-          <p class="text-neutral-3 text-xs sm:text-sm font-semibold mb-2">LOGS</p>
-          <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #000000;"><%= counts.logs %></h3>
-          <a href="#" class="font-semibold text-xs sm:text-sm hover:underline transition" style="color: #000000;">Ver todos →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="mt-16 mb-12">
-      <div class="flex flex-wrap gap-8 justify-center">
-        <!-- Incidents Approval Chart -->
-        <div class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-          <h3 class="text-lg md:text-xl font-bold mb-8" style="color: #0c0c22;">Incidencias aprobadas</h3>
-          <div id="incidentsChart" style="width: 100%; height: 350px;"></div>
-        </div>
-
-        <!-- Users Distribution Chart -->
-        <div class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6" style="background-color: #ffffff; border: 2px solid #e5edfa;">
-          <h3 class="text-lg md:text-xl font-bold mb-8" style="color: #0c0c22;">Distribución de usuarios</h3>
-          <div id="usersChart" style="width: 100%; height: 350px;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ECharts Library -->
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-  <script>
-    // Data from server
-    const approvedIncidents = <%= chartData && chartData.approvedIncidents !== undefined ? chartData.approvedIncidents : 5 %>;
-    const notApprovedIncidents = <%= chartData && chartData.notApprovedIncidents !== undefined ? chartData.notApprovedIncidents : 3 %>;
-    const adminCount = <%= chartData && chartData.adminCount !== undefined ? chartData.adminCount : 2 %>;
-    const userNormalCount = <%= chartData && chartData.userNormalCount !== undefined ? chartData.userNormalCount : 8 %>;
-    const municipioCount = <%= chartData && chartData.municipioCount !== undefined ? chartData.municipioCount : 1 %>;
-
-    console.log('Datos completos:', { approvedIncidents, notApprovedIncidents, adminCount, userNormalCount, municipioCount });
-
-    // Initialize ECharts instances
-    const incidentsChartDOM = document.getElementById('incidentsChart');
-    const usersChartDOM = document.getElementById('usersChart');
-    
-    const incidentsChart = echarts.init(incidentsChartDOM);
-    const usersChart = echarts.init(usersChartDOM);
-
-    // Incidents Chart - Pie Chart
-    const incidentsOption = {
-      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-      legend: { 
-        orient: 'horizontal',
-        bottom: 0,
-        left: 'center'
-      },
-      series: [{
-        name: 'Incidencias',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['50%', '40%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
+      // Incidents Chart - Pie Chart
+      const incidentsOption = {
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: {
+          orient: 'horizontal',
+          bottom: 0,
+          left: 'center'
         },
-        emphasis: {
+        series: [{
+          name: 'Incidencias',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          center: ['50%', '40%'],
+          avoidLabelOverlap: false,
           label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: false
+            }
+          },
+          labelLine: {
             show: false
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-          { value: approvedIncidents, name: 'Aprobadas', itemStyle: { color: '#22c55e' } },
-          { value: notApprovedIncidents, name: 'No aprobadas', itemStyle: { color: '#ff312e' } }
-        ]
-      }]
-    };
+          },
+          data: [
+            { value: approvedIncidents, name: 'Aprobadas', itemStyle: { color: '#22c55e' } },
+            { value: notApprovedIncidents, name: 'No aprobadas', itemStyle: { color: '#ff312e' } }
+          ]
+        }]
+      };
 
-    // Users Chart - Pie Chart
-    const usersOption = {
-      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-      legend: { 
-        orient: 'horizontal',
-        bottom: 0,
-        left: 'center'
-      },
-      series: [{
-        name: 'Distribución',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['50%', '40%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
+      // Users Chart - Pie Chart
+      const usersOption = {
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: {
+          orient: 'horizontal',
+          bottom: 0,
+          left: 'center'
         },
-        emphasis: {
+        series: [{
+          name: 'Distribución',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          center: ['50%', '40%'],
+          avoidLabelOverlap: false,
           label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: false
+            }
+          },
+          labelLine: {
             show: false
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-          { value: adminCount, name: 'Administradores', itemStyle: { color: '#004aad' } },
-          { value: municipioCount, name: 'Municipios', itemStyle: { color: '#f59e0b' } },
-          { value: userNormalCount, name: 'Usuarios', itemStyle: { color: '#92b2ea' } }
-        ]
-      }]
-    };
+          },
+          data: [
+            { value: adminCount, name: 'Administradores', itemStyle: { color: '#004aad' } },
+            { value: municipioCount, name: 'Municipios', itemStyle: { color: '#f59e0b' } },
+            { value: userNormalCount, name: 'Usuarios', itemStyle: { color: '#92b2ea' } }
+          ]
+        }]
+      };
 
-    incidentsChart.setOption(incidentsOption);
-    usersChart.setOption(usersOption);
+      incidentsChart.setOption(incidentsOption);
+      usersChart.setOption(usersOption);
 
-    // Resize charts when window resizes
-    window.addEventListener('resize', function() {
-      incidentsChart.resize();
-      usersChart.resize();
-    });
-  </script>
-</body>
+      // Resize charts when window resizes
+      window.addEventListener('resize', function() {
+        incidentsChart.resize();
+        usersChart.resize();
+      });
+    </script>
+  </body>
 </html>
