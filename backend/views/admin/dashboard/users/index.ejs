@@ -229,8 +229,8 @@
                             <div class="flex-shrink-0 h-10 w-10">
                                 <img class="h-10 w-10 rounded-full object-cover" src="${
                                   user.nameFile ||
-                                  "https://via.placeholder.com/40"
-                                }" alt="">
+                                  `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`
+                                }" alt="" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">${

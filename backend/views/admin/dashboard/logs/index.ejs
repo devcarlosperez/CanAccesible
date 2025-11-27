@@ -234,9 +234,9 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10">
                                 <img class="h-10 w-10 rounded-full object-cover" 
-                                     src="${log.user && log.user.nameFile ? log.user.nameFile : 'https://via.placeholder.com/40'}" 
+                                     src="${log.user && log.user.nameFile ? log.user.nameFile : `https://ui-avatars.com/api/?name=${log.user ? log.user.firstName + '+' + log.user.lastName : 'User'}&background=random`}" 
                                      alt=""
-                                     onerror="this.onerror=null; this.src='https://via.placeholder.com/40';">
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">${
