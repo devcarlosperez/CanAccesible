@@ -114,7 +114,7 @@ const MobileMenu = ({
                               import.meta.env.VITE_API_URL
                             }/dashboard-admin`;
                           }}
-                          className="text-white hover:text-[#92B2EA] cursor-pointer text-left w-full"
+                          className="text-white hover:text-[#92B2EA] cursor-pointer text-left"
                         >
                           Dashboard
                         </button>
@@ -134,7 +134,7 @@ const MobileMenu = ({
                           onLogout();
                           setOpen(false);
                         }}
-                        className="text-white hover:text-[#FF6B6B] cursor-pointer text-left w-full"
+                        className="text-white hover:text-[#FF6B6B] cursor-pointer text-left"
                       >
                         Cerrar sesión
                       </button>
