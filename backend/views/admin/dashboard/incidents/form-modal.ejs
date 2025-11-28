@@ -1,0 +1,129 @@
+<!-- Modal Backdrop -->
+<div id="incidentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+  <!-- Modal Content -->
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[80vh] overflow-hidden">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
+      <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Nueva Incidencia</h3>
+      <button onclick="closeIncidentModal()" class="text-gray-400 hover:text-gray-600 transition">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Scrollable Form Container -->
+    <div class="overflow-y-auto p-6 flex-grow">
+      <form id="incidentForm" enctype="multipart/form-data">
+        <input type="hidden" id="incidentId" name="id">
+
+        <!-- Name Input -->
+        <div class="mb-4">
+          <label for="incidentName" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+          <input type="text" id="incidentName" name="name" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+            placeholder="Nombre de la incidencia">
+        </div>
+
+        <!-- Description Input -->
+        <div class="mb-4">
+          <label for="incidentDescription" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+          <textarea id="incidentDescription" name="description" required rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none"
+            placeholder="Descripción de la incidencia..."></textarea>
+        </div>
+
+        <!-- Status Input -->
+        <div class="mb-4">
+          <label for="incidentStatusId" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+          <select name="incidentStatusId" id="incidentStatusId" class="w-full border rounded px-3 py-2" required>
+            <option value="1">Pendiente</option>
+            <option value="2">En Progreso</option>
+            <option value="3">Resuelta</option>
+          </select>
+        </div>
+
+        <!-- Type Input -->
+        <div class="mb-4">
+          <label for="incidentTypeId" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+          <select name="incidentTypeId" id="incidentTypeId" class="w-full border rounded px-3 py-2" required>
+            <option value="1">Buena Práctica</option>
+            <option value="2">Mala Práctica</option>
+          </select>
+        </div>
+
+        <!-- Severity Input (hidden by default) -->
+        <div class="mb-4" id="severityContainer" style="display:none;">
+          <label for="incidentSeverityId" class="block text-sm font-medium text-gray-700 mb-1">Severidad</label>
+          <select name="incidentSeverityId" id="incidentSeverityId" class="w-full border rounded px-3 py-2">
+            <option value="1">Baja</option>
+            <option value="2">Media</option>
+            <option value="3">Alta</option>
+          </select>
+        </div>
+
+        <!-- Area Input -->
+        <div class="mb-4">
+          <label for="incidentArea" class="block text-sm font-medium text-gray-700 mb-1">Área</label>
+          <input type="text" name="area" id="incidentArea" class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <!-- Latitude Input -->
+        <div class="mb-4">
+          <label for="incidentLatitude" class="block text-sm font-medium text-gray-700 mb-1">Latitud</label>
+          <input type="text" name="latitude" id="incidentLatitude" class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <!-- Longitude Input -->
+        <div class="mb-4">
+          <label for="incidentLongitude" class="block text-sm font-medium text-gray-700 mb-1">Longitud</label>
+          <input type="text" name="longitude" id="incidentLongitude" class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <!-- Date Input -->
+        <div class="mb-4">
+          <label for="incidentDateIncident" class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+          <input type="date" name="dateIncident" id="incidentDateIncident" class="w-full border rounded px-3 py-2" required>
+        </div>
+
+        <!-- Image Input -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Imagen</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('incidentImageFile').click()">
+            <div class="space-y-1 text-center">
+              <i class="fa-solid fa-cloud-arrow-up text-gray-400 text-3xl mb-2"></i>
+              <div class="flex text-sm text-gray-600 justify-center">
+                <label for="incidentImageFile" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                  <span>Sube un archivo</span>
+                  <input id="incidentImageFile" name="imageFile" type="file" class="sr-only" accept="image/*">
+                </label>
+                <p class="pl-1">o arrastra y suelta</p>
+              </div>
+              <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+            </div>
+          </div>
+          <div id="imageFileName" class="mt-2 text-sm text-gray-600 hidden">
+            Archivo seleccionado: <span id="selectedFileName"></span>
+          </div>
+          <img id="incidentImagePreview" src="" alt="Vista previa" class="mt-2 rounded max-h-40 hidden">
+        </div>
+
+        <!-- Mapa Leaflet -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Selecciona la ubicación en el mapa</label>
+          <div id="leafletMap" class="w-full h-64 rounded-lg border"></div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          <button type="button" onclick="closeIncidentModal()" 
+            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+            Cancelar
+          </button>
+          <button type="submit" 
+            class="px-6 py-2 bg-[#004aad] text-white rounded-lg hover:opacity-90 font-medium transition shadow-md">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
