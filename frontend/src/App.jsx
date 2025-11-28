@@ -7,6 +7,7 @@ import Register from "./pages/users/register/Register";
 import Login from "./pages/users/login/Login";
 import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
+import BlogArticleDetail from "./pages/blog/BlogArticleDetail";
 import PublicRoute from "./routes/PublicRoute";
 import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
@@ -54,6 +55,7 @@ function App() {
         />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogArticleDetail />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />

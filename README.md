@@ -198,6 +198,8 @@ DB_PASS=your_mysql_password                   # MySQL password
 DB_NAME=canaccesible_db                       # Database name to create and use
 DB_SSL=false                                  # Enable SSL for database connection
 
+FRONTEND_URL=http://localhost:5173            # Your frontend url
+
 # Authentication
 JWT_SECRET=your_super_secret_jwt_key_here    # Secret key for JWT token generation and validation
 
@@ -246,6 +248,19 @@ Open a new terminal and navigate to the frontend directory:
 
 ```bash
 cd frontend
+```
+
+**Copy the environment file:**
+
+```bash
+cp .env.example .env.development
+```
+
+**Edit `.env.development` with your configuration:**
+
+```env
+# Backend API URL
+VITE_API_URL=http://localhost:85
 ```
 
 **Install dependencies:**
