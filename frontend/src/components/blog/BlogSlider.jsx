@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import EmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -47,9 +48,9 @@ const BlogSlider = ({ blogArticles }) => {
                   />
                 </div>
                 <div className="p-2 md:p-4">
-                  <a href={`/blog/${article.id}`} className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block">
+                  <Link to={`/blog/${article.id}`} className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block">
                     {article.title}
-                  </a>
+                  </Link>
                   <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2">
                     {article.description}
                   </p>

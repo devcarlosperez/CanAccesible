@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import { getAllBlogArticles } from '../../services/blogArticleService';
 
@@ -70,12 +71,12 @@ const BlogArticlesList = ({ onPageChange }) => {
 
                 {/* Content Container */}
                 <div className="p-2 md:p-4 flex flex-col grow">
-                  <a 
-                    href={`/blog/${article.id}`} 
+                  <Link
+                    to={`/blog/${article.id}`}
                     className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block"
                   >
                     {article.title}
-                  </a>
+                  </Link>
                   
                   <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
                     {article.description}
@@ -93,12 +94,12 @@ const BlogArticlesList = ({ onPageChange }) => {
                         : 'Sin fecha'
                       }
                     </span>
-                    <a 
-                      href={`/blog/${article.id}`}
-                      className="text-blue-600 hover:text-blue-800 transition-colors text-xs font-medium"
+                    <Link
+                      to={`/blog/${article.id}`}
+                      className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium"
                     >
                       Leer más →
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
