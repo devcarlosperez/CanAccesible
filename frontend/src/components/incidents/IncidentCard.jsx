@@ -1,15 +1,16 @@
 import {
   Card, CardHeader, CardContent, CardActions, CardMedia,
-  Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent
+  Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
-import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
 
 import useAuthStore from "../../services/authService.js";
 
@@ -109,9 +110,12 @@ const IncidentCard = ({
         {/* Incident buttons */}
         <CardActions disableSpacing>
 
-          {/* Like button: rojo si liked */}
+          {/* Like, follow and share buttons */}
           <IconButton onClick={handleLikeClick}>
             <FavoriteIcon sx={{ color: liked ? "red" : "inherit" }} />
+          </IconButton>
+          <IconButton aria-label="follow">
+            <NotificationsIcon sx={{color: "rgb(255,180,0)"}}/>
           </IconButton>
           <IconButton aria-label="share">
             <ShareIcon />

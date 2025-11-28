@@ -1,0 +1,141 @@
+const db = require("../models");
+const incidentFollowObject = db.incidentFollow;
+
+// Follow an incident
+exports.create = async (req, res) => {
+  try {
+    // Validate required fields
+    if (!req.body.incidentId)
+      return res.status(400).json({ message: "incidentId is required" });
+    if (!req.body.userId)
+      return res.status(400).json({ message: "userId is required" });
+    if (!req.body.dateFollowed)
+      return res.status(400).json({ message: "dateFollowed is required" });
+
+    const newIncidentFollow = await incidentFollowObject.create({
+      incidentId: req.body.incidentId,
+      userId: req.body.userId,
+      dateFollowed: req.body.dateFollowed,
+    });
+
+    return res.status(201).json(newIncidentFollow);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while following the incident.",
+    });
+  }
+};
+
+// Retrieves all incidents from the database
+exports.findAll = async (req, res) => {
+  try {
+    const data = await incidentFollowObject.findAll({});
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message || "An error occurred while retrieving incident follows.",
+    });
+  }
+};
+
+// Retrieves a single incident by ID
+exports.findOne = async (req, res) => {
+  try {
+    const incidentFollowId = req.params.id;
+    const data = await incidentFollowObject.findOne({ where: { id: incidentFollowId } });
+
+    if (!data) {
+      return res.status(404).json({ message: "IncidentFollow not found." });
+    }
+
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message || "An error occurred while retrieving the IncidentFollow.",
+    });
+  }
+};
+
+// Retrieves a single incident follow by incidentId and userId
+exports.findByIncidentAndUser = async (req, res) => {
+  try {
+    const { incidentId, userId } = req.params;
+
+    // Search for the follow by incidentId and userId
+    const follow = await incidentFollowObject.findOne({
+      where: {
+        incidentId: incidentId,
+        userId: userId,
+      },
+    });
+
+    if (follow) {
+      return res.status(200).json(follow);
+    } else {
+      return res.status(404).json({ message: "Follow not found for this user and incident." });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while retrieving the incident follow.",
+    });
+  }
+};
+
+// Updates an existing incident
+exports.update = async (req, res) => {
+  try {
+    const incidentFollowToUpdate = {};
+    const incidentFollowId = req.params.id;
+
+    if (req.body.incidentId !== undefined)
+      incidentFollowToUpdate.description = req.body.description;
+    if (req.body.userId !== undefined)
+      incidentFollowToUpdate.userId = req.body.userId;
+    if (req.body.dateFollowed !== undefined)
+      incidentFollowToUpdate.dateFollowed = req.body.dateFollowed;
+
+    const [updated] = await incidentFollowObject.update(incidentFollowToUpdate, {
+      where: { id: incidentFollowId },
+    });
+
+    if (updated) {
+      const updatedIncident = await incidentFollowObject.findOne({
+        where: { id: incidentFollowId },
+      });
+      return res.status(200).json(updatedIncident);
+    }
+
+    res.status(404).json({ message: "IncidentFollow not found." });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while updating the IncidentFollow.",
+    });
+  }
+};
+
+// Deletes an incidence by ID
+exports.delete = async (req, res) => {
+  try {
+    const incidentFollowId = req.params.id;
+    const incidentFollow = await incidentFollowObject.findOne({
+      where: { id: incidentFollowId },
+    });
+
+    if (!incidentFollow) {
+      return res.status(404).json({ message: "IncidentFollow not found." });
+    }
+
+    await incidentFollowObject.destroy({ where: { id: incidentFollowId } });
+
+    res.status(200).json({
+      message: "IncidentFollow has been deleted.",
+    });
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message || "An error occurred while deleting the IncidentFollow.",
+    });
+  }
+};
