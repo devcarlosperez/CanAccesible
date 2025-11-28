@@ -1,6 +1,4 @@
-# Deployment
-
-## Overview
+# Deployment Guide
 
 CanAccesible is deployed on **DigitalOcean** with both frontend and backend running on a single Droplet (VPS) managed by **PM2**. We use DigitalOcean's managed MySQL database for data storage and Spaces for image storage.
 
@@ -8,7 +6,7 @@ CanAccesible is deployed on **DigitalOcean** with both frontend and backend runn
 
 ## Deployment Process
 
-### Step 1: Initial Droplet Setup
+### 1. Initial Droplet Setup
 
 Connect via SSH and update the system:
 
@@ -27,21 +25,21 @@ sudo npm install -g pm2
 sudo apt install -y git
 ```
 
-### Step 2: Clone the Repository
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/devcarlosperez/CanAccesible.git
 cd CanAccesible
 ```
 
-### Step 3: Frontend Setup
+### 3. Frontend Setup
 
 ```bash
 cd frontend
 npm install
 ```
 
-### Step 4: Backend Setup
+### 4. Backend Setup
 
 ```bash
 cd ../backend
@@ -73,11 +71,18 @@ DO_REGION=fra1
 DO_ACCESS_KEY=your_spaces_access_key
 DO_SECRET_KEY=your_spaces_secret_key
 
+# Email Configuration (Gmail SMTP)
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_gmail_app_password
+
+# Frontend URL
+FRONTEND_URL=your_frontend_url
+
 # JWT Secret (if using authentication)
 JWT_SECRET=your_jwt_secret_key
 ```
 
-### Step 5: Database Initialization
+### 5. Database Initialization
 
 ```bash
 # Run migrations
@@ -87,7 +92,7 @@ NODE_ENV=production npx sequelize-cli db:migrate
 NODE_ENV=production npx sequelize-cli db:seed:all
 ```
 
-### Step 6: Start Applications with PM2
+### 6. Start Applications with PM2
 
 **For the frontend:**
 
@@ -111,7 +116,7 @@ pm2 save
 sudo pm2 startup
 ```
 
-### Step 7: Verify Deployment
+### 7. Verify Deployment
 
 Check that both applications are running:
 
@@ -157,3 +162,11 @@ npm install
 # Restart all PM2 processes
 pm2 restart all
 ```
+
+---
+
+## Next Steps: Public Access & Security
+
+Once the application is running with PM2, it is accessible via the IP address and port. To configure the **domain name**, **remove the port from the URL**, and enable **HTTPS**, please proceed to the:
+
+👉 **[Domain, DNS & SSL Configuration Guide](./domain-dns-setup.md)**
