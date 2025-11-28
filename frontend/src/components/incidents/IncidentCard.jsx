@@ -11,6 +11,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
+import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
 
 import useAuthStore from "../../services/authService.js";
 
@@ -18,6 +19,7 @@ const IncidentCard = ({
   incident,
   incidentUser,
   onLike,
+  onFollow,
   onEdit,
   onDelete,
   openViewMore,
@@ -25,6 +27,7 @@ const IncidentCard = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [followed, setFollowed] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
   const { user } = useAuthStore();
@@ -44,11 +47,22 @@ const IncidentCard = ({
         setLikeCount(incidentLikes.length);
       });
     }
+
+    if (user && user.id && incident && incident.id) {
+      getIncidentFollowByIncidentAndUserId(incident.id, user.id).then((follow) => {
+        setFollowed(!!follow);
+      });
+    }
   }, [openViewMore, openModal, incident.likes, incident.id, user?.id]);
 
   const handleLikeClick = async () => {
     await onLike(incident);
     setLiked(!liked);
+  };
+
+  const handleFollowClick = async () => {
+    await onFollow(incident);
+    setFollowed(!followed);
   };
 
   const handleCloseModal = () => {
@@ -114,8 +128,8 @@ const IncidentCard = ({
           <IconButton onClick={handleLikeClick}>
             <FavoriteIcon sx={{ color: liked ? "red" : "inherit" }} />
           </IconButton>
-          <IconButton aria-label="follow">
-            <NotificationsIcon sx={{color: "rgb(255,180,0)"}}/>
+          <IconButton onClick={handleFollowClick}>
+            <NotificationsIcon sx={{color: followed ? "rgb(255,180,0)" : "inherit"}}/>
           </IconButton>
           <IconButton aria-label="share">
             <ShareIcon />

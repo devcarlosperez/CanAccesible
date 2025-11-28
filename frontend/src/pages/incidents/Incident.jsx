@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
 import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import { getAllIncidentFollows, getIncidentFollowByIncidentAndUserId, createIncidentFollow, deleteIncidentFollow } from "../../services/incidentFollowsService.js";
+import { createNotification } from "../../services/notificationService.js";
 
 import useAuthStore from "../../services/authService.js";
 import IncidentForm from "../../components/incidents/IncidentForm";
 import IncidentList from "../../components/incidents/IncidentList";
 
-import { Button, Typography, Dialog, DialogContent } from "@mui/material";
+import { Button, Dialog, DialogContent } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 import Header from "../../components/header/Header";
@@ -87,15 +89,33 @@ const Incident = () => {
       if (formData.imageFile) {
         data.append("image", formData.imageFile);
       }
+      let updatedIncidentId = null;
       if (editingIncident) {
         await updateIncident(editingIncident.id, data);
+        updatedIncidentId = editingIncident.id;
       } else {
-        await createIncident(data);
+        const created = await createIncident(data);
+        updatedIncidentId = created.id;
       }
       setFormData(initialFormData);
       setEditingIncident(null);
       setShowForm(false);
       fetchIncidents();
+
+      // Notify followers if an incident was updated
+      if (updatedIncidentId) {
+        const follows = await getAllIncidentFollows();
+        const followers = follows.filter(f => f.incidentId === updatedIncidentId);
+        for (const follower of followers) {
+          await createNotification({
+            userId: follower.userId,
+            message: `La incidencia "${formData.name}" ha sido actualizada.`,
+            entity: "IncidentFollow",
+            entityId: updatedIncidentId,
+            dateNotification: new Date().toISOString().split("T")[0],
+          });
+        }
+      }
     } catch (err) {
       console.error("Error guardando incidencia:", err);
     }
@@ -155,6 +175,38 @@ const Incident = () => {
       } else {
         // If like exists, delete it
         await deleteIncidentLike(existingLike.id);
+      }
+
+      fetchIncidents();
+    } catch (err) {
+      console.error("Error al gestionar el like:", err);
+    }
+  };
+
+  const handleFollow = async (incident) => {
+    try {
+      // If the user is not logged in, show an error and return
+      if (!isAuthenticated) {
+        showErrorToast("Inicia sesión para poder seguir una incidencia.");
+        return;
+      }
+
+      // Find existing follow by this user for the incident
+      const existingFollow = await getIncidentFollowByIncidentAndUserId(
+        incident.id,
+        user.id
+      );
+
+      if (!existingFollow) {
+        // If no follow exists, create a new one
+        await createIncidentFollow({
+          incidentId: incident.id,
+          userId: user.id,
+          dateFollowed: new Date().toISOString(),
+        });
+      } else {
+        // If follow exists, delete it
+        await deleteIncidentFollow(existingFollow.id);
       }
 
       fetchIncidents();
@@ -228,6 +280,7 @@ const Incident = () => {
           expandedId={expandedId}
           onExpandClick={handleExpandClick}
           onLike={handleLike}
+          onFollow={handleFollow}
           onEdit={handleEdit}
           onDelete={handleDelete}
           page={page}

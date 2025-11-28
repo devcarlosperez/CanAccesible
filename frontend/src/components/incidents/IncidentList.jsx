@@ -4,6 +4,7 @@ import IncidentCard from "./IncidentCard";
 const IncidentList = ({
   incidents,
   onLike,
+  onFollow,
   onEdit,
   onDelete,
   page,
@@ -31,6 +32,7 @@ const IncidentList = ({
                 incident={incident}
                 incidentUser={user}
                 onLike={onLike}
+                onFollow={onFollow}
                 onEdit={onEdit}
                 onDelete={onDelete}
                 openViewMore={String(incident.id) === String(viewMoreIncidentId)}
