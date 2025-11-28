@@ -32,7 +32,7 @@ const Blog = () => {
         {/* Blog Slider */}
         {currentPage === 1 && (
           <div className="flex justify-center mb-16">
-            <BlogSlider articleIds={[3, 4, 5, 7, 8]}/>
+            <BlogSlider articleIds={[1, 2, 4, 5]}/>
           </div>
         )}
 

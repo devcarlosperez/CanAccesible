@@ -15,6 +15,7 @@ const BlogSlider = ({ articleIds = null, maxArticles = 6 }) => {
     {
       loop: true,
       align: 'start',
+      containScroll: 'trimSnaps',
     },
     [Autoplay({ delay: 5000 })]
   );

@@ -87,6 +87,8 @@ To ensure consistency between development and production environments, we manage
 
 All team members have access to the **Digital Ocean** team account, where the production infrastructure is hosted. This includes the Droplet (server), Space Storage (image CDN), and MySQL database. Team members can access and manage these resources for deployment and monitoring purposes.
 
+---
+
 ## Code Standards
 
 - **Language**: English is preferred for code comments and commit messages.
