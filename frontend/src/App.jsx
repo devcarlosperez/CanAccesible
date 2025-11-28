@@ -12,19 +12,30 @@ import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
+import Profile from "./pages/profile/Profile.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <ScrollToTopRoutes/>
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeButton={true} pauseOnFocusLoss draggable pauseOnHover />
+      <ScrollToTopRoutes />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeButton={true}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Routes>
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
         <Route path="/incidents" element={<Incident />} />
         <Route path="/map" element={<Map />} />
+        <Route path="/profile" element={<Profile />} />
         <Route
           path="/login"
           element={
@@ -45,7 +56,7 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-conditions" element={<TermsConditions />}/>
+        <Route path="/terms-conditions" element={<TermsConditions />} />
       </Routes>
     </BrowserRouter>
   );

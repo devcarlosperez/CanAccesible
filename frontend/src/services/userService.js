@@ -15,4 +15,8 @@ export const createUser = (userData) =>
 export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 export const updateUser = (id, userData) =>
-  api.put(`/users/${id}`, userData).then((res) => res.data);
+  api
+    .put(`/users/${id}`, userData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((res) => res.data);
