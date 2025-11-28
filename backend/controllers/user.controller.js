@@ -259,10 +259,33 @@ exports.update = async (req, res) => {
 
     const userToUpdate = {};
 
-    if (firstName !== undefined) userToUpdate.firstName = firstName;
-    if (lastName !== undefined) userToUpdate.lastName = lastName;
-    if (email !== undefined) userToUpdate.email = email;
-    if (password) userToUpdate.password = await bcrypt.hash(password, 10);
+    if (firstName !== undefined) {
+      if (firstName.trim() === "") {
+        return res.status(400).json({ message: "First name cannot be empty" });
+      }
+      userToUpdate.firstName = firstName;
+    }
+
+    if (lastName !== undefined) {
+      if (lastName.trim() === "") {
+        return res.status(400).json({ message: "Last name cannot be empty" });
+      }
+      userToUpdate.lastName = lastName;
+    }
+
+    if (email !== undefined) {
+      if (email.trim() === "") {
+        return res.status(400).json({ message: "Email cannot be empty" });
+      }
+      userToUpdate.email = email;
+    }
+
+    if (password) {
+      if (password.trim() === "") {
+        return res.status(400).json({ message: "Password cannot be empty" });
+      }
+      userToUpdate.password = await bcrypt.hash(password, 10);
+    }
 
     // Only an admin can update the roleId field
     if (roleId !== undefined && req.user.roleId === 2) {
