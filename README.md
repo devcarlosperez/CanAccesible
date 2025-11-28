@@ -7,8 +7,9 @@
 ## Overview
 
 The platform serves as a community-driven hub where users can:
-- **Report Accessibility Incidents:** Document and share both **bad practices** (barriers) and **good practices** (exemplary accessibility) in public and private spaces.
+- **Report and Interact with Accessibility Incidents:** Document and share both **bad practices** (barriers) and **good practices** (exemplary accessibility) in public and private spaces. Users can also interact with reported incidents by liking, commenting, and following them to stay updated on changes.
 - **Interactive Map:** Visualize all reported incidents on an interactive map, providing a clear overview of the accessibility landscape.
+- **User Dashboard:** View and manage their own reported incidents.
 - **Community Interaction:** Engage with the community by commenting on and liking reports, fostering a collaborative environment.
 - **User Support:** Access direct support channels, including chat functionality with administrators and contact information for assistance.
 - **Stay Informed:** Read blog articles to stay updated on the latest accessibility trends, news, and improvements within the CanAccesible network.
