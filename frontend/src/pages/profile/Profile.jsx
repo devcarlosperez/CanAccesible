@@ -20,6 +20,7 @@ const Profile = () => {
     nameFile: "",
     dateRegister: "",
   });
+  const [originalUserData, setOriginalUserData] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -32,13 +33,15 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const data = await getUserById(authUser.id);
-        setUserData({
+        const initialData = {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email || authUser.email,
           nameFile: data.nameFile,
           dateRegister: authUser.dateRegister || new Date().toISOString(),
-        });
+        };
+        setUserData(initialData);
+        setOriginalUserData(initialData);
       } catch (error) {
         console.error("Error fetching user data:", error);
         toast.error("Error al cargar los datos del perfil");
@@ -65,6 +68,19 @@ const Profile = () => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
+
+  const handleCancel = () => {
+    setUserData(originalUserData);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const isDirty =
+    originalUserData &&
+    (userData.firstName !== originalUserData.firstName ||
+      userData.lastName !== originalUserData.lastName ||
+      userData.email !== originalUserData.email ||
+      imageFile !== null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,7 +136,8 @@ const Profile = () => {
           handleSubmit={handleSubmit}
           handleChange={handleChange}
           updating={updating}
-          onCancel={() => navigate(-1)}
+          onCancel={handleCancel}
+          isDirty={isDirty}
         />
       </main>
 
