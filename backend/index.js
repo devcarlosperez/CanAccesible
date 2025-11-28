@@ -59,6 +59,7 @@ require("./routes/dashboardAdmin.views.routes")(app);
 // API routes
 require("./routes/incident.routes")(app);
 require("./routes/incidentLikes.routes")(app);
+require("./routes/incidentFollows.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/notification.routes")(app);
 require("./routes/auth.routes")(app);
