@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title><%= title %></title>
@@ -93,7 +94,7 @@
 
   <!-- Modal para crear/editar incidencia -->
   <div id="incidentModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-xl shadow-xl p-8 w-full max-w-lg relative">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg relative max-h-[80vh] overflow-y-auto p-8">
       <button onclick="closeIncidentModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -133,15 +134,24 @@
         </div>
         <div class="mb-3">
           <label class="block text-sm font-medium mb-1">Área</label>
-          <input type="text" name="area" id="incidentArea" class="w-full border rounded px-3 py-2" required>
+          <select name="area" id="incidentArea" class="w-full border rounded px-3 py-2" required>
+            <option value="">Selecciona un área</option>
+            <option value="1">movilidad</option>
+            <option value="2">sensorial</option>
+            <option value="3">arquitectura</option>
+            <option value="4">transporte</option>
+            <option value="5">otro</option>
+          </select>
         </div>
         <div class="mb-3">
-          <label class="block text-sm font-medium mb-1">Latitud</label>
-          <input type="text" name="latitude" id="incidentLatitude" class="w-full border rounded px-3 py-2" required>
-        </div>
-        <div class="mb-3">
-          <label class="block text-sm font-medium mb-1">Longitud</label>
-          <input type="text" name="longitude" id="incidentLongitude" class="w-full border rounded px-3 py-2" required>
+          <label class="block text-sm font-medium mb-1">Ubicación</label>
+          <div id="leafletMap" class="w-full h-64 rounded border"></div>
+          <input type="hidden" name="latitude" id="incidentLatitude">
+          <input type="hidden" name="longitude" id="incidentLongitude">
+          <input type="hidden" name="island" id="incidentIsland">
+          <div id="islandError" class="text-red-600 text-sm mt-2 hidden">
+            No se pudo detectar correctamente la isla. Selecciona un punto válido en el mapa.
+          </div>
         </div>
         <div class="mb-3">
           <label class="block text-sm font-medium mb-1">Fecha</label>
@@ -163,9 +173,97 @@
       </form>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    let leafletMap, leafletMarker;
+
+    function initLeafletMap(lat = 28.5, lng = -15.5, showMarker = false) {
+      const canariasBounds = [
+        [27.5, -18.5], // Suroeste
+        [29.5, -13.0]  // Noreste
+      ];
+
+      if (leafletMap) leafletMap.remove();
+      leafletMap = L.map('leafletMap', {
+        center: [lat, lng],
+        zoom: 8,
+        minZoom: 7,
+        maxZoom: 13,
+        maxBounds: canariasBounds,
+        maxBoundsViscosity: 1.0
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(leafletMap);
+
+      if (showMarker) {
+        leafletMarker = L.marker([lat, lng], { draggable: true }).addTo(leafletMap);
+        document.getElementById('incidentLatitude').value = lat;
+        document.getElementById('incidentLongitude').value = lng;
+        updateMarkerPosition({ lat, lng });
+        leafletMarker.on('dragend', async function(e) {
+          const position = leafletMarker.getLatLng();
+          await updateMarkerPosition(position);
+        });
+      } else {
+        leafletMarker = null;
+        document.getElementById('incidentLatitude').value = "";
+        document.getElementById('incidentLongitude').value = "";
+        document.getElementById('incidentIsland').value = "";
+      }
+
+      leafletMap.on('click', async function(e) {
+        if (!leafletMarker) {
+          leafletMarker = L.marker(e.latlng, { draggable: true }).addTo(leafletMap);
+          leafletMarker.on('dragend', async function(ev) {
+            const position = leafletMarker.getLatLng();
+            await updateMarkerPosition(position);
+          });
+        }
+        leafletMarker.setLatLng(e.latlng);
+        await updateMarkerPosition(e.latlng);
+      });
+    }
+
+    async function updateMarkerPosition(position) {
+      document.getElementById('incidentLatitude').value = position.lat;
+      document.getElementById('incidentLongitude').value = position.lng;
+      const geo = await reverseGeocode(position.lat, position.lng);
+      let postalCode = geo?.address?.postcode;
+      let island = postalCode ? getIslandFromPostalCode(postalCode) : "Desconocida";
+      document.getElementById('incidentIsland').value = island;
+      showIslandError(island === "Desconocida");
+    }
+
+    function getIslandFromPostalCode(postalCode) {
+      const code = parseInt(postalCode, 10);
+      if (code >= 35000 && code <= 35999) return "Gran Canaria";
+      if (code >= 35500 && code <= 35599) return "Lanzarote";
+      if (code >= 35600 && code <= 35699) return "Fuerteventura";
+      if (code >= 38000 && code <= 38999) return "Tenerife";
+      if (code >= 38700 && code <= 38799) return "La Palma";
+      if (code >= 38800 && code <= 38899) return "La Gomera";
+      if (code >= 38900 && code <= 38999) return "El Hierro";
+      return "Desconocida";
+    }
+
+    async function reverseGeocode(lat, lng) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`);
+        const data = await response.json();
+        return data;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function showIslandError(show) {
+      document.getElementById('islandError').classList.toggle('hidden', !show);
+    }
+
     // Abrir modal para crear
     function openCreateModal() {
       document.getElementById('incidentModal').classList.remove('hidden');
@@ -175,6 +273,8 @@
       document.getElementById('incidentImagePreview').src = "";
       document.getElementById('incidentImagePreview').classList.add('hidden');
       document.getElementById('severityContainer').style.display = "none";
+      showIslandError(false);
+      setTimeout(() => initLeafletMap(28.5, -15.5, false), 200); // Sin marcador
     }
 
     // Abrir modal para editar
@@ -191,8 +291,6 @@
           document.getElementById('incidentTypeId').value = incident.incidentTypeId || 1;
           document.getElementById('incidentSeverityId').value = incident.incidentSeverityId || 1;
           document.getElementById('incidentArea').value = incident.area || "";
-          document.getElementById('incidentLatitude').value = incident.latitude || "";
-          document.getElementById('incidentLongitude').value = incident.longitude || "";
           document.getElementById('incidentDateIncident').value = incident.dateIncident ? incident.dateIncident.split("T")[0] : "";
           if (incident.incidentTypeId == 2) {
             document.getElementById('severityContainer').style.display = "block";
@@ -206,6 +304,14 @@
             document.getElementById('incidentImagePreview').src = "";
             document.getElementById('incidentImagePreview').classList.add('hidden');
           }
+          showIslandError(false);
+          setTimeout(() => {
+            initLeafletMap(
+              incident.latitude || 28.5,
+              incident.longitude || -15.5,
+              !!incident.latitude && !!incident.longitude // Solo marcador si hay datos
+            );
+          }, 200);
         })
         .catch(error => {
           alert('Error cargando la incidencia');
@@ -271,6 +377,17 @@
           });
       }
     }
+
+    // Validación antes de enviar el formulario
+    document.getElementById('incidentForm').addEventListener('submit', function(e) {
+      const island = document.getElementById('incidentIsland').value;
+      if (!island || island === "Desconocida") {
+        showIslandError(true);
+        e.preventDefault();
+        return false;
+      }
+      showIslandError(false);
+    });
   </script>
 </body>
 </html>
