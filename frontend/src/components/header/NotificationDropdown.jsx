@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 const NotificationDropdown = ({
   notificationsCount,
   notifications,
@@ -7,6 +9,21 @@ const NotificationDropdown = ({
   iconSize = "text-xl md:text-2xl lg:text-3xl",
   dropdownWidth = "w-80",
 }) => {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowNotifications]);
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     try {
@@ -25,7 +42,7 @@ const NotificationDropdown = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         type="button"
         className="relative text-white hover:text-accent-1 transition-colors focus:outline-none cursor-pointer mt-2"
