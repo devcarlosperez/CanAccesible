@@ -38,18 +38,25 @@ exports.create = async (req, res) => {
     const actorId = req.user ? req.user.id : newUser.id;
     await createLog(actorId, "Create User", "User", newUser.id);
 
-    await transporter.sendMail({
-      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-      to: newUser.email,
-      subject: "¡Bienvenido/a a CANACCESIBLE! 😎🔥",
-      html: `
-    <h2>Hola ${newUser.firstName}!</h2>
-    <p>Tu cuenta ha sido creada con éxito.</p>
-    <p>Ya puedes iniciar sesión y disfrutar de la plataforma brooo 😎</p>
-  `,
-    });
-
     res.status(201).json(newUser);
+
+    // Send welcome email asynchronously
+    setImmediate(async () => {
+      try {
+        await transporter.sendMail({
+          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+          to: newUser.email,
+          subject: "¡Bienvenido/a a CANACCESIBLE! 😎🔥",
+          html: `
+        <h2>Hola ${newUser.firstName}!</h2>
+        <p>Tu cuenta ha sido creada con éxito.</p>
+        <p>Ya puedes iniciar sesión y disfrutar de la plataforma brooo 😎</p>
+      `,
+        });
+      } catch (emailError) {
+        console.error("Error sending welcome email:", emailError);
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message || "Error creating the user" });
   }

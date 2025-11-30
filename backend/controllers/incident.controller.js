@@ -95,21 +95,26 @@ exports.create = async (req, res) => {
       message: `New incident "${newIncident.name}" has been created.`,
     });
 
-    // Send email to the user
-    const user = await db.user.findByPk(req.body.userId);
-
-    await transporter.sendMail({
-      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-      to: user.email,
-      subject: "Nueva incidencia creada 🚨",
-      html: `
-    <h2>¡Hola ${user.firstName}!</h2>
-    <p>Tu incidencia <strong>${newIncident.name}</strong> ha sido creada con éxito.</p>
-    <p>La revisaremos en breve brooo 😎🔥</p>
-  `,
-    });
-
     return res.status(201).json(newIncident);
+
+    // Send email asynchronously
+    setImmediate(async () => {
+      try {
+        const user = await db.user.findByPk(req.body.userId);
+        await transporter.sendMail({
+          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+          to: user.email,
+          subject: "Nueva incidencia creada 🚨",
+          html: `
+        <h2>¡Hola ${user.firstName}!</h2>
+        <p>Tu incidencia <strong>${newIncident.name}</strong> ha sido creada con éxito.</p>
+        <p>La revisaremos en breve brooo 😎🔥</p>
+      `,
+        });
+      } catch (emailError) {
+        console.error("Error sending incident creation email:", emailError);
+      }
+    });
   } catch (err) {
     res.status(500).json({
       message: err.message || "An error occurred while creating the incident.",
