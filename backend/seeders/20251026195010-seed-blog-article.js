@@ -9,7 +9,7 @@ module.exports = {
         description: 'Conoce cómo ciudadanos de toda Canarias están utilizando la plataforma para reportar barreras de accesibilidad y promover mejoras en sus comunidades.',
         content: 'Canarias Accesible está transformando la forma en que identificamos y abordamos las barreras de accesibilidad en nuestras islas. Desde ramales de escaleras sin pasamanos hasta ausencia de acceso en transporte público, cada reporte contribuye a un mapa colaborativo que refleja la realidad de nuestras ciudades. Los ciudadanos no solo denuncian problemas, sino que también destacan espacios accesibles como referentes, creando una base de datos viva de buenas prácticas. Estas aportaciones son esenciales para que administraciones públicas y empresas privadas puedan priorizar sus inversiones en accesibilidad. La participación ciudadana es el corazón de esta iniciativa.',
         dateCreation: new Date('2025-11-01'),
-        nameFile: 'https://images-cruds.fra1.digitaloceanspaces.com/blog-image/canarias-barreras.jpg',
+        nameFile: 'https://images-cruds.fra1.digitaloceanspaces.com/blog-image/1764350730441-canarias-barreras-2.png',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
