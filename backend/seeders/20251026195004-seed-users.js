@@ -14,8 +14,7 @@ module.exports = {
           dateRegister: new Date(),
           roleId: 1,
           password: bcrypt.hashSync("carlos2004", 10),
-          nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/young-man-on-blue-background--headshot.jpg",
+          nameFile: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -27,7 +26,7 @@ module.exports = {
           roleId: 2,
           password: bcrypt.hashSync("cji_canaccesible", 10),
           nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/headshot-of-woman-on-a-white-background.jpg",
+            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/Memes_de_admin.webp",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -39,7 +38,7 @@ module.exports = {
           roleId: 2,
           password: bcrypt.hashSync("admin1", 10),
           nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/headshot-of-woman-on-a-white-background.jpg",
+            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/a39be34016f637c8cb1f1ab0acc735f4.jpg",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -51,7 +50,7 @@ module.exports = {
           roleId: 2,
           password: bcrypt.hashSync("admin2", 10),
           nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/headshot-of-woman-on-a-white-background.jpg",
+            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/57087.jpg",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -63,7 +62,7 @@ module.exports = {
           roleId: 2,
           password: bcrypt.hashSync("admin3", 10),
           nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/headshot-of-woman-on-a-white-background.jpg",
+            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/raf,360x360,075,t,fafafa_ca443f4786.jpg",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -87,7 +86,7 @@ module.exports = {
           roleId: 3,
           password: bcrypt.hashSync("municipio_2025", 10),
           nameFile:
-            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/Ayuntamiento,_Santa_Cruz_de_Tenerife,_Espa%C3%B1a,_2012-12-15,_DD_01.jpg",
+            "https://images-cruds.fra1.digitaloceanspaces.com/user-image/municipio_tenerife.png",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
