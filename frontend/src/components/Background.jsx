@@ -6,9 +6,9 @@ const Background = () => {
       <img
         src={image1}
         alt="Fondo Canarias Accesible"
-        className="w-full h-full object-cover"
+        className="w-full h-screen object-cover"
       />
-      <div className="absolute inset-0 bg-[#004AAD]/30 mix-blend-multiply"></div>
+      <div className="absolute inset-0 h-screen bg-[#004AAD]/30 mix-blend-multiply"></div>
     </div>
   );
 };

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import logo from "../../assets/canaccesible-logo-2.png";
 import useAuthStore from "../../services/authService.js";
+import {
+  getAllNotifications,
+  deleteNotification,
+} from "../../services/notificationService";
 import HeaderDesktop from "./HeaderDesktop";
 import HeaderMobile from "./HeaderMobile";
 
@@ -30,17 +32,26 @@ const Header = ({ transparent = true }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      import("../../services/notificationService").then(
-        ({ getAllNotifications }) => {
-          getAllNotifications()
-            .then((data) => setNotifications(Array.isArray(data) ? data : []))
-            .catch(() => setNotifications([]));
-        }
-      );
+      getAllNotifications()
+        .then((data) => {
+          const notificationsArray = Array.isArray(data) ? data : [];
+          setNotifications(notificationsArray);
+        })
+        .catch(() => setNotifications([]));
     } else {
       setNotifications([]);
     }
   }, [isAuthenticated]);
+
+  const handleDeleteNotification = async (id) => {
+    try {
+      await deleteNotification(id);
+      const updatedNotifications = notifications.filter((n) => n.id !== id);
+      setNotifications(updatedNotifications);
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+    }
+  };
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
@@ -49,14 +60,13 @@ const Header = ({ transparent = true }) => {
   const menuItems = [
     { text: "Inicio", to: "/home", icon: "home" },
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
-    { text: "Islas", to: "/islands", icon: "public" },
+    { text: "Mapa", to: "/map", icon: "map" },
     { text: "Blog", to: "/blog", icon: "article" },
     { text: "Contacto", to: "/contact", icon: "contact_mail" },
     { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
   ];
 
   const filteredMenuItems = menuItems.filter((item) => {
-    // si es login y ya está autenticado, lo quitamos
     if (item.login && isAuthenticated) return false;
     return true;
   });
@@ -78,7 +88,9 @@ const Header = ({ transparent = true }) => {
           notifications={notifications}
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
-          setNotifications={setNotifications}
+          handleDeleteNotification={handleDeleteNotification}
+          transparent={transparent}
+          scrolled={scrolled}
         />
       ) : (
         <HeaderMobile
@@ -87,10 +99,9 @@ const Header = ({ transparent = true }) => {
           notifications={notifications}
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
-          setNotifications={setNotifications}
+          handleDeleteNotification={handleDeleteNotification}
           menuItems={filteredMenuItems}
           scrolled={scrolled}
-          isAuthenticated={isAuthenticated}
         />
       )}
     </header>

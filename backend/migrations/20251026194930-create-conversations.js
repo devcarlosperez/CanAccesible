@@ -19,6 +19,10 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      type: {
+        type: Sequelize.ENUM('soporte de cuenta', 'reportar una incidencia', 'recursos de accesibilidad', 'consulta general'),
+        allowNull: false,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

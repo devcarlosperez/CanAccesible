@@ -9,11 +9,11 @@ const HeaderDesktop = ({
   notifications,
   showNotifications,
   setShowNotifications,
-  setNotifications,
+  handleDeleteNotification,
   transparent,
   scrolled,
 }) => {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
   const notificationsCount = notifications.length;
 
   return (
@@ -24,7 +24,7 @@ const HeaderDesktop = ({
           alt="Canarias Accesible"
           className={`w-auto transition-all duration-300 ${
             transparent && !scrolled
-              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-19"
+              ? "h-12 sm:h-14 md:h-15 lg:h-17 xl:h-18"
               : "h-10 sm:h-12 md:h-14 lg:h-16 xl:h-15"
           }`}
         />
@@ -52,16 +52,14 @@ const HeaderDesktop = ({
             notifications={notifications}
             showNotifications={showNotifications}
             setShowNotifications={setShowNotifications}
-            handleDelete={(id) =>
-              setNotifications((prev) => prev.filter((n) => n.id !== id))
-            }
+            handleDeleteNotification={handleDeleteNotification}
             iconSize="text-xl md:text-2xl lg:text-3xl"
             dropdownWidth="w-80"
           />
         )}
 
         {isAuthenticated ? (
-          <UserMenu user={user} onLogout={logout} />
+          <UserMenu user={user} isAdmin={isAdmin} onLogout={logout} />
         ) : (
           <Link
             to="/login"

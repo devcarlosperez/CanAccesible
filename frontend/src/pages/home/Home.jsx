@@ -14,30 +14,23 @@ const Home = () => {
         <Hero heroData={heroData} />
       </section>
 
-      {/* 🔽 Resto del contenido */}
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <section className="bg-white text-black p-12">
-        <h2>Contenido adicional</h2>
-        <p>Aquí el fondo ya no aparece, bro 😎</p>
+        <h2>Work in progress 🛠️🛠️🛠️</h2>
       </section>
       <Footer />
     </>

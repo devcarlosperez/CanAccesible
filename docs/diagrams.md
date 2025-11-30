@@ -8,9 +8,13 @@ This document contains all the architectural and design diagrams for the CanAcce
 
 ![Use Case Diagram](./images/use-case-diagram.jpg)
 
+---
+
 ## Class Diagram
 
 ![Class Diagram](./images/class-diagram.jpg)
+
+---
 
 ## Database Schema (ER Diagram)
 

@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
+    type: {
+      type: DataTypes.ENUM('soporte de cuenta', 'reportar una incidencia', 'recursos de accesibilidad', 'consulta general'),
+      allowNull: false,
+    },
   }, {
     tableName: 'Conversations',
     timestamps: true,

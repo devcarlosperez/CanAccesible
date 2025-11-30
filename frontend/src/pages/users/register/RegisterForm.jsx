@@ -1,159 +1,181 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { createUser, updateUser } from "../../../services/userService";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../../services/authService.js";
+import logo from "../../../assets/canaccesible-logo-2.png";
+import { createUser } from "../../../services/userService.js";
 
-const RegisterForm = ({ onUserCreated, userToEdit, onCancelEdit }) => {
+const RegisterForm = () => {
+  const { login, loading, error: authError, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     rol: "",
+    avatar: null,
   });
 
-  const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
 
-  // Cargar los datos del usuario a editar si existe
   useEffect(() => {
-    if (userToEdit) {
-      setNewUser({
-        firstName: userToEdit.firstName,
-        lastName: userToEdit.lastName,
-        email: userToEdit.email,
-        password: "", // vacía por seguridad
-        rol: userToEdit.rol,
-      });
-    } else {
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        rol: "",
-      });
+    if (isAuthenticated) {
+      navigate("/home");
     }
-  }, [userToEdit]);
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setNewUser({ ...newUser, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setNewUser({ ...newUser, avatar: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
 
     try {
-      if (userToEdit) {
-        await updateUser(userToEdit.id, newUser);
-        setSuccess("Usuario actualizado con éxito ✅");
-        onCancelEdit(); // cerrar modo edición
-      } else {
-        await createUser(newUser);
-        setSuccess("Usuario creado con éxito ✅");
+      const formData = new FormData();
+      formData.append("firstName", newUser.firstName);
+      formData.append("lastName", newUser.lastName);
+      formData.append("email", newUser.email);
+      formData.append("password", newUser.password);
+      formData.append("roleId", newUser.rol);
+
+      if (newUser.avatar) {
+        formData.append("image", newUser.avatar);
       }
 
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        rol: "",
-      });
-
-      onUserCreated(); // recargar lista
+      await createUser(formData);
+      await login(newUser.email, newUser.password);
+      navigate("/home");
     } catch (err) {
-      console.error("Error:", err);
-      setError(userToEdit ? "No se pudo actualizar ❌" : "No se pudo crear ❌");
+      console.error("Error en registro o login:", err);
+      setError("No se pudo registrar el usuario");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-gray-800 p-6 rounded-lg shadow-md mb-8"
-    >
-      <h3 className="text-xl font-semibold mb-4">
-        {userToEdit ? "Editar usuario" : "Registrar nuevo usuario"}
-      </h3>
+    <div className="bg-white w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-10 h-screen lg:h-auto">
+      <Link to="/">
+        <img
+          src={logo}
+          alt="canaccesible-logo"
+          className="h-20 sm:h-22 w-auto"
+        />
+      </Link>
 
-      <div className="grid grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="firstName"
-          placeholder="Nombre"
-          value={newUser.firstName}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-700 text-white"
-          required
-        />
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Apellido"
-          value={newUser.lastName}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-700 text-white"
-          required
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md font-roboto mt-10"
+        encType="multipart/form-data"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="Nombre"
+            value={newUser.firstName}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Apellidos"
+            value={newUser.lastName}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+            required
+          />
+        </div>
+
         <input
           type="email"
           name="email"
           placeholder="Correo electrónico"
           value={newUser.email}
           onChange={handleChange}
-          className="p-2 rounded bg-gray-700 text-white col-span-2"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
           required
         />
+
         <input
           type="password"
           name="password"
           placeholder="Contraseña"
           value={newUser.password}
           onChange={handleChange}
-          className="p-2 rounded bg-gray-700 text-white col-span-2"
-          required={!userToEdit} // obligatorio solo al crear
-        />
-        <select
-          name="rol"
-          value={newUser.rol}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-700 text-white col-span-2"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
           required
-        >
-          <option value="">Selecciona un rol</option>
-          <option value="usuario">Usuario</option>
-          <option value="admin">Administrador</option>
-          <option value="municipio">Municipio</option>
-        </select>
-      </div>
+        />
 
-      <div className="mt-4 flex gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label className="block mb-1 font-medium text-gray-700 text-sm">
+              Foto de perfil
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full p-2 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+            />
+            {newUser.avatar && (
+              <img
+                src={URL.createObjectURL(newUser.avatar)}
+                alt="preview"
+                className="mt-2 w-24 h-24 object-cover rounded-full border border-gray-500"
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-gray-700 text-sm">
+              Tipo de cuenta
+            </label>
+            <select
+              value={newUser.rol}
+              onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+              required
+            >
+              <option value="">Seleccionar tipo</option>
+              <option value="1">Usuario</option>
+              <option value="3">Municipio</option>
+            </select>
+          </div>
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center mt-3">{error}</p>
+        )}
+
         <button
           type="submit"
-          className={`px-4 py-2 rounded font-semibold transition-colors ${
-            userToEdit
-              ? "bg-yellow-600 hover:bg-yellow-500"
-              : "bg-blue-600 hover:bg-blue-500"
-          }`}
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 hover:bg-blue-700 transition font-semibold"
         >
-          {userToEdit ? "Actualizar usuario" : "Crear usuario"}
+          {loading ? "Cargando..." : "Registrarse"}
         </button>
 
-        {userToEdit && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500 text-white font-semibold transition-colors"
+        <p className="text-center text-sm text-gray-600 mt-6">
+          ¿Ya tienes una cuenta?{" "}
+          <a
+            href="/login"
+            className="text-primary-2 font-medium hover:underline"
           >
-            Cancelar
-          </button>
-        )}
-      </div>
-
-      {success && <p className="text-green-400 mt-4">{success}</p>}
-      {error && <p className="text-red-400 mt-4">{error}</p>}
-    </form>
+            Iniciar sesión aquí
+          </a>
+        </p>
+      </form>
+    </div>
   );
 };
 

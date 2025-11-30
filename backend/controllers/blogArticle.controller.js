@@ -1,38 +1,28 @@
 const db = require("../models");
-const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const s3 = require("../config/doSpacesClient");
+const { deleteImageFromStorage } = require("../config/doSpacesClient");
+const { verifySession } = require("../middlewares/auth.middleware");
 const BlogArticle = db.blogArticle;
-
-// Utility function to delete image from DO Spaces
-async function deleteImageFromStorage(nameFile) {
-  if (!nameFile) return;
-  try {
-    const urlParts = nameFile.split('/');
-    const key = urlParts.slice(-2).join('/');
-    await s3.send(new DeleteObjectCommand({
-      Bucket: process.env.DO_SPACE_NAME,
-      Key: key,
-    }));
-  } catch (err) {
-    console.error("Error eliminando imagen del storage:", err.message);
-  }
-}
 
 // Create a blog article
 exports.create = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "You do not have permission to create blog articles." });
+    }
+
     const { title, description, content, dateCreation } = req.body;
 
     if (!title)
-      return res.status(400).json({ message: "title es obligatorio" });
+      return res.status(400).json({ message: "title is required" });
     if (!description)
-      return res.status(400).json({ message: "description es obligatorio" });
+      return res.status(400).json({ message: "description is required" });
     if (!content)
-      return res.status(400).json({ message: "content es obligatorio" });
+      return res.status(400).json({ message: "content is required" });
     if (!dateCreation)
-      return res.status(400).json({ message: "dateCreation es obligatorio" });
+      return res.status(400).json({ message: "dateCreation is required" });
     if (!req.file)
-      return res.status(400).json({ message: "Image es obligatorio" });
+      return res.status(400).json({ message: "Image is required" });
 
     const nameFile = req.file.location;
 
@@ -47,7 +37,7 @@ exports.create = async (req, res) => {
     res.status(201).json(newArticle);
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Error creando el artículo del blog",
+      message: err.message || "Error creating the blog article",
     });
   }
 };
@@ -55,11 +45,13 @@ exports.create = async (req, res) => {
 // Retrieve all blog articles
 exports.findAll = async (req, res) => {
   try {
-    const articles = await BlogArticle.findAll();
+    const articles = await BlogArticle.findAll({
+      order: [['dateCreation', 'ASC']]
+    });
     res.status(200).json(articles);
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Error leyendo los artículos del blog.",
+      message: err.message || "Error retrieving blog articles.",
     });
   }
 };
@@ -69,12 +61,12 @@ exports.findOne = async (req, res) => {
   try {
     const article = await BlogArticle.findOne({ where: { id: req.params.id } });
     if (!article)
-      return res.status(404).json({ message: "Artículo de blog no encontrado." });
+      return res.status(404).json({ message: "Blog article not found." });
 
     res.status(200).json(article);
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Error encontrando el artículo del blog.",
+      message: err.message || "Error finding the blog article.",
     });
   }
 };
@@ -82,6 +74,11 @@ exports.findOne = async (req, res) => {
 // Update a blog article
 exports.update = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "You do not have permission to update blog articles." });
+    }
+
     const articleToUpdate = {};
     const articleId = req.params.id;
 
@@ -92,7 +89,7 @@ exports.update = async (req, res) => {
     if (req.body.dateCreation !== undefined && req.body.dateCreation !== null && req.body.dateCreation !== '') {
       const dateValue = new Date(req.body.dateCreation);
       if (isNaN(dateValue.getTime())) {
-        return res.status(400).json({ message: "dateCreation debe ser una fecha válida" });
+        return res.status(400).json({ message: "dateCreation must be a valid date" });
       }
       articleToUpdate.dateCreation = req.body.dateCreation;
     }
@@ -114,12 +111,12 @@ exports.update = async (req, res) => {
       return res.status(200).json(updatedArticle);
     }
 
-    res.status(404).json({ message: "Artículo del blog no encontrado." });
+    res.status(404).json({ message: "Blog article not found." });
   } catch (err) {
     res.status(500).json({
       message:
         err.message ||
-        "Algún error ocurrió mientras se actualizaba el artículo.",
+        "An error occurred while updating the blog article.",
     });
   }
 };
@@ -127,22 +124,27 @@ exports.update = async (req, res) => {
 // Delete a blog article
 exports.delete = async (req, res) => {
   try {
+    // Verify that user is admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: "You do not have permission to delete blog articles." });
+    }
+
     const id = req.params.id;
     const article = await BlogArticle.findOne({ where: { id } });
 
     if (!article) {
-      return res.status(404).json({ message: "Artículo del blog no encontrado." });
+      return res.status(404).json({ message: "Blog article not found." });
     }
 
     await deleteImageFromStorage(article.nameFile);
     await BlogArticle.destroy({ where: { id } });
 
     res.status(200).json({
-      message: "El artículo del blog y su imagen asociada han sido eliminados.",
+      message: "Blog article and its associated image have been deleted.",
     });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "Error borrando el artículo del blog.",
+      message: err.message || "Error deleting the blog article.",
     });
   }
 };
