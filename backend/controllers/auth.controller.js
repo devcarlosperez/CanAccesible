@@ -64,18 +64,6 @@ exports.signIn = async (req, res) => {
 
     await createLog(user.id, "User Login", "User", user.id);
 
-    await transporter.sendMail({
-      from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-      to: user.email,
-      subject: "Inicio de sesión detectado",
-      html: `
-        <h2>Hola ${user.firstName}!</h2>
-        <p>Acabas de iniciar sesión en tu cuenta.</p>
-        <p>Si fuiste tú: todo bajo control brooo 😎</p>
-        <p>Si NO fuiste tú: cambia tu contraseña YA 🛑🔥</p>
-      `,
-    });
-
     res.status(200).json({
       message: "Successful login",
       user: {
@@ -85,6 +73,26 @@ exports.signIn = async (req, res) => {
         role: user.role.role,
       },
       token,
+    });
+
+    // Send email asynchronously (don't block the response)
+    setImmediate(async () => {
+      try {
+        await transporter.sendMail({
+          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
+          to: user.email,
+          subject: "Inicio de sesión detectado",
+          html: `
+            <h2>Hola ${user.firstName}!</h2>
+            <p>Acabas de iniciar sesión en tu cuenta.</p>
+            <p>Si fuiste tú: todo bajo control brooo 😎</p>
+            <p>Si NO fuiste tú: cambia tu contraseña YA 🛑🔥</p>
+          `,
+        });
+      } catch (emailError) {
+        console.error("Error sending login notification email:", emailError);
+        // Don't fail the login if email fails
+      }
     });
   } catch (error) {
     console.error("Error in signIn:", error);
