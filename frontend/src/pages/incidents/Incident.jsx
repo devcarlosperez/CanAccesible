@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
-import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
-import { getAllIncidentFollows, getIncidentFollowByIncidentAndUserId, createIncidentFollow, deleteIncidentFollow } from "../../services/incidentFollowsService.js";
+import {
+  getAllIncidents,
+  createIncident,
+  updateIncident,
+  deleteIncident,
+} from "../../services/incidentService";
+import {
+  getIncidentLikeByIncidentAndUserId,
+  createIncidentLike,
+  deleteIncidentLike,
+} from "../../services/incidentLikesService";
+import {
+  getAllIncidentFollows,
+  getIncidentFollowsByIncidentId,
+  getIncidentFollowByIncidentAndUserId,
+  createIncidentFollow,
+  deleteIncidentFollow,
+} from "../../services/incidentFollowsService.js";
 import { createNotification } from "../../services/notificationService.js";
 
 import useAuthStore from "../../services/authService.js";
@@ -104,8 +119,9 @@ const Incident = () => {
 
       // Notify followers if an incident was updated
       if (updatedIncidentId) {
-        const follows = await getAllIncidentFollows();
-        const followers = follows.filter(f => f.incidentId === updatedIncidentId);
+        const followers = await getIncidentFollowsByIncidentId(
+          updatedIncidentId
+        );
         for (const follower of followers) {
           await createNotification({
             userId: follower.userId,
@@ -230,7 +246,10 @@ const Incident = () => {
     <section>
       <Header transparent={false} />
       <div className="pt-40 p-8 bg-gray-200">
-        <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center" style={{ color: "var(--color-neutral-2)" }}>
+        <h1
+          className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
+          style={{ color: "var(--color-neutral-2)" }}
+        >
           Gestión de Incidencias
         </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
