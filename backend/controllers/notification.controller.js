@@ -4,9 +4,15 @@ const Notification = db.notification;
 // Create a notification
 exports.create = async (req, res) => {
   try {
-    // User ID comes from JWT
-    const userId = req.user.id;
-    const { entity, entityId, message, dateNotification } = req.body;
+    // User ID comes from JWT or body
+    const {
+      userId: bodyUserId,
+      entity,
+      entityId,
+      message,
+      dateNotification,
+    } = req.body;
+    const userId = bodyUserId || req.user.id;
 
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
