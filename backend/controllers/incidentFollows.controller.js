@@ -43,7 +43,9 @@ exports.findAll = async (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const incidentFollowId = req.params.id;
-    const data = await incidentFollowObject.findOne({ where: { id: incidentFollowId } });
+    const data = await incidentFollowObject.findOne({
+      where: { id: incidentFollowId },
+    });
 
     if (!data) {
       return res.status(404).json({ message: "IncidentFollow not found." });
@@ -74,11 +76,15 @@ exports.findByIncidentAndUser = async (req, res) => {
     if (follow) {
       return res.status(200).json(follow);
     } else {
-      return res.status(404).json({ message: "Follow not found for this user and incident." });
+      return res
+        .status(404)
+        .json({ message: "Follow not found for this user and incident." });
     }
   } catch (err) {
     res.status(500).json({
-      message: err.message || "An error occurred while retrieving the incident follow.",
+      message:
+        err.message ||
+        "An error occurred while retrieving the incident follow.",
     });
   }
 };
@@ -96,9 +102,12 @@ exports.update = async (req, res) => {
     if (req.body.dateFollowed !== undefined)
       incidentFollowToUpdate.dateFollowed = req.body.dateFollowed;
 
-    const [updated] = await incidentFollowObject.update(incidentFollowToUpdate, {
-      where: { id: incidentFollowId },
-    });
+    const [updated] = await incidentFollowObject.update(
+      incidentFollowToUpdate,
+      {
+        where: { id: incidentFollowId },
+      }
+    );
 
     if (updated) {
       const updatedIncident = await incidentFollowObject.findOne({
@@ -110,7 +119,8 @@ exports.update = async (req, res) => {
     res.status(404).json({ message: "IncidentFollow not found." });
   } catch (err) {
     res.status(500).json({
-      message: err.message || "An error occurred while updating the IncidentFollow.",
+      message:
+        err.message || "An error occurred while updating the IncidentFollow.",
     });
   }
 };
@@ -136,6 +146,22 @@ exports.delete = async (req, res) => {
     res.status(500).json({
       message:
         err.message || "An error occurred while deleting the IncidentFollow.",
+    });
+  }
+};
+
+// Retrieve all follows for a specific incident
+exports.findByIncident = async (req, res) => {
+  try {
+    const { incidentId } = req.params;
+    const data = await incidentFollowObject.findAll({
+      where: { incidentId: incidentId },
+    });
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message || "An error occurred while retrieving incident follows.",
     });
   }
 };

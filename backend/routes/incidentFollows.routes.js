@@ -10,7 +10,12 @@ module.exports = (app) => {
 
   router.get("/:id", incidentFollows.findOne);
 
-  router.get("/incident/:incidentId/user/:userId", incidentFollows.findByIncidentAndUser);
+  router.get("/incident/:incidentId", incidentFollows.findByIncident);
+
+  router.get(
+    "/incident/:incidentId/user/:userId",
+    incidentFollows.findByIncidentAndUser
+  );
 
   router.put("/:id", verifyToken, incidentFollows.update);
 
