@@ -97,9 +97,12 @@ A **Reverse Proxy** is a server that sits in front of web servers and forwards c
 
 ### Initial Configuration (HTTP)
 
-The following configuration was created in `/etc/nginx/sites-available/canaccesible.es`. This configuration tells Nginx to:
-1.  Forward root traffic (`/`) to the **Vite development server** (port 5173).
-2.  Forward API traffic (`/api`) to the **Backend server** (port 85).
+The following configuration was created in `/etc/nginx/sites-available/canaccesible.es`. This configuration tells Nginx to forward traffic as follows:
+
+- Root traffic (`/`) to the **Vite development server** (port 5173).
+- API traffic (`/api`) to the **Backend server** (port 85).
+- Dashboard admin traffic (`/dashboard-admin`) to the **Backend server** (port 85).
+- Images traffic (`/images`) to the **Backend server** (port 85).
 
 ```nginx
 server {
@@ -118,6 +121,22 @@ server {
 
     # Backend (API)
     location /api {
+        proxy_pass http://127.0.0.1:85;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Backend (Dashboard Admin)
+    location /dashboard-admin {
+        proxy_pass http://127.0.0.1:85;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Images Backend
+    location /images {
         proxy_pass http://127.0.0.1:85;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -143,11 +162,17 @@ sudo systemctl restart nginx
 
 ### Directive Explanation
 
-*   `listen 80;`: Listens for incoming connections on port 80 (standard HTTP).
-*   `server_name ...;`: Specifies the domain names this block responds to.
-*   `proxy_pass http://127.0.0.1:5173;`: Forwards the request to the local Vite server.
-*   `proxy_set_header Host $host;`: Passes the original `Host` header to the backend.
-*   `proxy_set_header X-Real-IP ...;`: Passes the client's real IP address to the backend (useful for logging and security).
+The following summarizes the role of each section in the Nginx configuration file `/etc/nginx/sites-available/canaccesible.es`. This setup acts as a reverse proxy, directing traffic to internal servers while handling headers for client information preservation.
+
+*   `server { ... }`: Defines the server block for handling HTTP traffic (port 80) on `canaccesible.es` and `www.canaccesible.es`.
+*   `listen 80;`: Binds to port 80 for incoming HTTP requests.
+*   `server_name canaccesible.es www.canaccesible.es;`: Specifies the domains this block serves.
+*   `location / { ... }`: Routes root traffic (`/`) to the Vite frontend server on port 5173. Includes headers for WebSocket support and client IP forwarding.
+*   `location /api { ... }`: Routes API requests (`/api`) to the backend server on port 85, forwarding client headers.
+*   `location /dashboard-admin { ... }`: Routes admin dashboard requests (`/dashboard-admin`) to the backend on port 85, preserving client information.
+*   `location /images { ... }`: Routes image requests (`/images`) to the backend on port 85 for static asset serving.
+
+Each `location` block uses `proxy_pass` to redirect traffic, and `proxy_set_header` directives to pass essential client data (Host, real IP, forwarded IPs) to the backend, ensuring proper routing and logging.
 
 ---
 
