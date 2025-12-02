@@ -58,7 +58,7 @@ app.use(
 );
 
 // Dashboard admin routes (before API routes)
-require("./routes/dashboardAdmin.views.routes")(app);
+require("./routes/dashboard-admin/main.routes")(app);
 
 // API routes
 require("./routes/incident.routes")(app);
