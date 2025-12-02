@@ -11,6 +11,7 @@ module.exports = (app) => {
   require("./incidents.routes")(router);
   require("./users.routes")(router);
   require("./logs.routes")(router);
+  require("./conversations.routes")(router);
 
   app.use("/dashboard-admin", router);
 };
