@@ -12,8 +12,13 @@ const transporter = nodemailer.createTransport({
   family: 4, // Force IPv4 to avoid timeouts on DigitalOcean
 });
 
-transporter.verify().then(() => {
-  console.log("Ready for send emails");
-});
+transporter
+  .verify()
+  .then(() => {
+    console.log("Ready for send emails");
+  })
+  .catch((error) => {
+    console.error("Error verifying mailer configuration:", error);
+  });
 
 module.exports = transporter;
