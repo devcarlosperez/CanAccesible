@@ -2,8 +2,12 @@ const express = require("express");
 const path = require("path");
 const { sequelize } = require("./models");
 const session = require("express-session");
+const http = require("http");
+const { init: initSocket } = require("./services/conversationSocket.service");
 
 const app = express();
+const server = http.createServer(app);
+const io = initSocket(server);
 
 // Set view engine to EJS
 app.set("view engine", "ejs");
@@ -85,6 +89,6 @@ sessionStore.sync();
 
 // Use environment variable for port or default to 8080
 const port = 85;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
 });
