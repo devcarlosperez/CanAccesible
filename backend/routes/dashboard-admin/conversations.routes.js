@@ -14,7 +14,7 @@ module.exports = (router) => {
           role: req.session.role,
         },
         jwtConfig.secret,
-        { expiresIn: "1h" } // Token expires in 1 hour
+        { expiresIn: "24h" } // Token expires in 24 hour
       );
 
       // Fetch all conversations with user details
