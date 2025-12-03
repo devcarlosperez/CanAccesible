@@ -3,15 +3,8 @@ import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaf
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-
-const markerIcon = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
 
 const canariasBounds = [
     [27.5, -18.5],
@@ -50,14 +43,17 @@ async function reverseGeocode(latitude, longitude) {
     }
 }
 
-function ClickMarker({ setFormData }) {
-    const [position, setPosition] = useState(null);
+function ClickMarker({ setFormData, initialPosition }) {
+    const [position, setPosition] = useState(
+        Array.isArray(initialPosition) && initialPosition.length === 2
+            ? initialPosition
+            : null
+    );
 
     useMapEvents({
         async click(e) {
             const { lat, lng } = e.latlng;
             setPosition([lat, lng]);
-
             try {
                 const result = await reverseGeocode(lat, lng);
                 const postalCode = result.address.postcode;
@@ -70,7 +66,6 @@ function ClickMarker({ setFormData }) {
                     island: island,
                 }));
             } catch (error) {
-                console.error("Error in reverse geocoding:", error);
                 setFormData(f => ({
                     ...f,
                     latitude: lat,
@@ -81,15 +76,25 @@ function ClickMarker({ setFormData }) {
         }
     });
 
-    return position ? (
+    useEffect(() => {
+        if (Array.isArray(initialPosition) && initialPosition.length === 2) {
+            setPosition(initialPosition);
+        } else {
+            setPosition(null);
+        }
+    }, [initialPosition]);
+
+    if (!Array.isArray(position) || position.length !== 2) return null;
+
+    return (
         <Marker position={position}>
             <Popup>
                 Marcador añadido<br />
-                Lat: {position[0].toFixed(5)} <br />
-                Lng: {position[1].toFixed(5)}
+                Lat: {typeof position[0] === "number" ? position[0].toFixed(5) : ""} <br />
+                Lng: {typeof position[1] === "number" ? position[1].toFixed(5) : ""}
             </Popup>
         </Marker>
-    ) : null;
+    );
 }
 
 const IncidentForm = ({
@@ -115,7 +120,7 @@ const IncidentForm = ({
         let newErrors = { image: "", island: "" };
         let hasError = false;
 
-        if (!formData.imageFile && !formData.previewUrl) {
+        if (!formData.previewUrl && !formData.nameFile) {
             newErrors.image = "Debes subir una imagen antes de continuar.";
             hasError = true;
         }
@@ -133,6 +138,11 @@ const IncidentForm = ({
         onSubmit(e);
     };
 
+    const initialMarkerPosition =
+        formData.latitude && formData.longitude
+            ? [formData.latitude, formData.longitude]
+            : null;
+
     return (
         <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
             <DialogContent>
@@ -143,7 +153,7 @@ const IncidentForm = ({
                     <Grid container spacing={3} direction="column">
                         {/* Name */}
                         <Grid item>
-                            <TextField fullWidth label="Nombre" name="title" value={formData.title} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
+                            <TextField fullWidth label="Nombre" name="name" value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
                         </Grid>
                         {/* Description */}
                         <Grid item>
@@ -156,15 +166,16 @@ const IncidentForm = ({
                                 fullWidth
                                 label="Area"
                                 name="area"
-                                value={formData.area}
-                                onChange={e => setFormData(f => ({ ...f, area: e.target.value }))}
+                                value={formData.area || ''}
+                                onChange={e => setFormData(f => ({ ...f, area: e.target.value }))
+                                }
                                 required
                             >
-                                <MenuItem value={1}>movilidad</MenuItem>
-                                <MenuItem value={2}>sensorial</MenuItem>
-                                <MenuItem value={3}>arquitectura</MenuItem>
-                                <MenuItem value={4}>transporte</MenuItem>
-                                <MenuItem value={5}>otro</MenuItem>
+                                <MenuItem value="movilidad">movilidad</MenuItem>
+                                <MenuItem value="sensorial">sensorial</MenuItem>
+                                <MenuItem value="arquitectura">arquitectura</MenuItem>
+                                <MenuItem value="transporte">transporte</MenuItem>
+                                <MenuItem value="otro">otro</MenuItem>
                             </TextField>
                         </Grid>
                         {/* Status */}
@@ -191,7 +202,15 @@ const IncidentForm = ({
                                 label="Tipo"
                                 name="incidentTypeId"
                                 value={formData.incidentTypeId}
-                                onChange={e => setFormData(f => ({ ...f, incidentTypeId: Number(e.target.value) }))}
+                                onChange={e => {
+                                    const newVal = Number(e.target.value);
+                                    setFormData(f => ({ 
+                                        ...f, 
+                                        incidentTypeId: newVal,
+                                        // Si es Buena Practica (1), limpiamos la severidad
+                                        incidentSeverityId: newVal === 1 ? null : f.incidentSeverityId 
+                                    }));
+                                }}
                                 required
                             >
                                 <MenuItem value={1}>Buena Practica</MenuItem>
@@ -206,8 +225,9 @@ const IncidentForm = ({
                                     fullWidth
                                     label="Severidad"
                                     name="incidentSeverityId"
-                                    value={formData.incidentSeverityId}
-                                    onChange={e => setFormData(f => ({ ...f, incidentSeverityId: Number(e.target.value) }))}
+                                    value={formData.incidentSeverityId ? Number(formData.incidentSeverityId) : ''}
+                                    onChange={e => setFormData(f => ({ ...f, incidentSeverityId: Number(e.target.value) }))
+                                    }
                                     required
                                 >
                                     <MenuItem value={1}>Baja</MenuItem>
@@ -246,7 +266,7 @@ const IncidentForm = ({
                                         attribution='&copy; OpenStreetMap contributors'
                                     />
 
-                                    <ClickMarker setFormData={setFormData} />
+                                    <ClickMarker setFormData={setFormData} initialPosition={initialMarkerPosition} />
                                 </MapContainer>
                             </div>
 
@@ -259,11 +279,23 @@ const IncidentForm = ({
                         {/* Image */}
                         <Grid item>
                             <Button variant="outlined" component="label" startIcon={<PhotoCamera />} fullWidth>
-                                {formData.previewUrl ? "Cambiar Imagen" : "Subir Imagen"}
-                                <input type="file" accept="image/*" name="imageFile" hidden onChange={e => {
-                                    const file = e.target.files[0];
-                                    if (file) setFormData(f => ({ ...f, imageFile: file, previewUrl: URL.createObjectURL(file) }));
-                                }} />
+                                {formData.previewUrl || formData.nameFile ? "Cambiar Imagen" : "Subir Imagen"}
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    name="image" 
+                                    hidden 
+                                    onChange={e => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            setFormData(f => ({ 
+                                                ...f, 
+                                                image: file,
+                                                previewUrl: URL.createObjectURL(file) 
+                                            }));
+                                        }
+                                    }} 
+                                />
                             </Button>
                         </Grid>
 
@@ -274,9 +306,25 @@ const IncidentForm = ({
                         )}
 
                         {/* Image preview */}
-                        {formData.previewUrl && (
+                        {(formData.previewUrl || formData.nameFile) && (
                             <Grid item textAlign="center">
-                                <img src={formData.previewUrl} alt="Preview" style={{ width: "100%", maxWidth: 400, borderRadius: "8px", marginTop: "10px" }} />
+                                <img 
+                                    src={
+                                        formData.previewUrl || 
+                                        (typeof formData.nameFile === 'string' ? formData.nameFile : '') || 
+                                        ''
+                                    } 
+                                    alt="Preview" 
+                                    style={{ 
+                                        width: "100%", 
+                                        maxWidth: "400px", 
+                                        maxHeight: "250px", 
+                                        objectFit: "contain", 
+                                        borderRadius: "8px", 
+                                        margin: "10px auto",
+                                        display: "block"
+                                    }} 
+                                />
                             </Grid>
                         )}
                         {/* Buttons */}

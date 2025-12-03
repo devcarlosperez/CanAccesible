@@ -13,7 +13,6 @@ import {
   deleteIncidentLike,
 } from "../../services/incidentLikesService";
 import {
-  getAllIncidentFollows,
   getIncidentFollowsByIncidentId,
   getIncidentFollowByIncidentAndUserId,
   createIncidentFollow,
