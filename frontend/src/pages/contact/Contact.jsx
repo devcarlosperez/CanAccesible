@@ -49,15 +49,30 @@ const Contact = () => {
     const type = typeMap[title];
 
     try {
-      const response = await axios.post('/api/conversations', { type }, {
+      // First, check if a conversation of this type already exists for the user
+      const conversationsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/conversations`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
-      navigate(`/conversations/${response.data.id}`);
+      const existingConversation = conversationsResponse.data.find(conv => conv.type === type);
+
+      if (existingConversation) {
+        // If exists, redirect to it
+        navigate(`/conversations/${existingConversation.id}`);
+      } else {
+        // If not, create new one
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/conversations`, { type }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        navigate(`/conversations/${response.data.id}`);
+      }
     } catch (error) {
-      console.error('Error creating conversation:', error);
+      console.error('Error handling conversation:', error);
     }
   };
 
