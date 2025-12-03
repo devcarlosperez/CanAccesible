@@ -175,8 +175,8 @@ const ChatWindow = ({ conversation }) => {
   };
 
   return (
-    <div className="bg-white md:rounded-lg md:shadow-md p-6 md:p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">
+    <div className="bg-white md:rounded-lg md:shadow-md p-4 md:p-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">
         {conversation.type ? `Chat: ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}` : 'Chat'}
       </h2>
 
@@ -253,11 +253,11 @@ const ChatWindow = ({ conversation }) => {
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Escribe tu mensaje..."
-          className="flex-1 border border-gray-300 rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-0 border border-gray-300 rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition flex items-center justify-center"
+          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition flex items-center justify-center flex-shrink-0"
         >
           <i className="fas fa-paper-plane"></i>
         </button>
