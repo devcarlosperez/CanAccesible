@@ -64,7 +64,6 @@ const ChatWindow = ({ conversation }) => {
           },
         });
         setMessages(response.data);
-        setAuthError(''); // Clear any previous error
       } catch (error) {
         if (error.response && error.response.status === 401) {
           showErrorToast('Debes iniciar sesión para acceder a esta conversación.');
@@ -181,15 +180,9 @@ const ChatWindow = ({ conversation }) => {
         {conversation.type ? `Chat: ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}` : 'Chat'}
       </h2>
 
-      {authError && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {authError}
-        </div>
-      )}
-
       <div className="md:h-96 h-[calc(100vh-200px)] overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
         {messages.length === 0 ? (
-          <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
+          <p className="text-gray-500 text-center">No hay mensajes aún. ¡Inicia la conversación!</p>
         ) : (
           messages.map((msg) => {
             const isOwnMessage = msg.senderId === currentUserId;

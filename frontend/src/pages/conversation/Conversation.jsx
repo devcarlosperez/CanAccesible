@@ -41,12 +41,14 @@ const Conversation = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-8 md:py-8">
       <div className="w-full mx-auto md:max-w-4xl md:mx-auto px-4">
-        <button 
-          onClick={() => navigate(-1)} 
-          className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        >
-          ← Volver
-        </button>
+        <div className="text-center mb-4">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            ← Volver
+          </button>
+        </div>
         <ChatWindow conversation={conversation} />
       </div>
     </div>

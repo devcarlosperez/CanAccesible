@@ -175,7 +175,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder dar like a una incidencia.");
+        showErrorToast("Debes iniciar sesión para poder dar like a una incidencia.");
         return;
       }
 
@@ -207,7 +207,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder seguir una incidencia.");
+        showErrorToast("Debes iniciar sesión para poder seguir una incidencia.");
         return;
       }
 
