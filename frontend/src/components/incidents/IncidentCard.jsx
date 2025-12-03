@@ -205,9 +205,6 @@ const IncidentCard = ({
             Area: {incident.area}
           </Typography>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Coordenadas: {incident.latitude}, {incident.longitude}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
             Tipo: {incident.incidentTypeId === 1 ? "Buena Practica" : "Mala Practica"}
           </Typography>
           {incident.incidentTypeId === 2 && (

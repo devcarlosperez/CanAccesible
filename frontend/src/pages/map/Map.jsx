@@ -24,7 +24,10 @@ const Map = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllIncidents().then(setIncidents);
+        getAllIncidents().then((data) => {
+            const approved = data.filter((incident) => incident.isApproved);
+            setIncidents(approved);
+        });
     }, []);
 
     const handleViewDetails = (incidentId) => {
