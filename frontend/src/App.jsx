@@ -16,6 +16,7 @@ import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Conversation from "./pages/conversation/Conversation.jsx";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogArticleDetail />} />
         <Route path="/error" element={<ErrorPage />} />
+        <Route path="/conversations/:conversationId" element={<Conversation/>}/>
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
       </Routes>

@@ -2,8 +2,11 @@ import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Contact = () => {
+  const navigate = useNavigate();
   const positionIesElRincon = [28.127549871601353, -15.446679030776401];
 
   const contactLiveChats = [
@@ -34,6 +37,29 @@ const Contact = () => {
       iconType: "fa-solid",
     },
   ];
+
+  const handleStartChat = async (title) => {
+    // Map title to type
+    const typeMap = {
+      "Soporte de cuenta": "soporte de cuenta",
+      "Reportar una incidencia": "reportar una incidencia",
+      "Recursos de accesibilidad": "recursos de accesibilidad",
+      "Consulta general": "consulta general",
+    };
+    const type = typeMap[title];
+
+    try {
+      const response = await axios.post('/api/conversations', { type }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      });
+
+      navigate(`/conversations/${response.data.id}`);
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+    }
+  };
 
   return (
     <>
@@ -95,6 +121,7 @@ const Contact = () => {
 
                 {/* Button */}
                 <button
+                  onClick={() => handleStartChat(option.title)}
                   className="bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer mt-4"
                 >
                   Iniciar Chat
