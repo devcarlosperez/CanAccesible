@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify"; // Importar toast
 
 const canariasBounds = [
     [27.5, -18.5],
@@ -178,22 +179,6 @@ const IncidentForm = ({
                                 <MenuItem value="otro">otro</MenuItem>
                             </TextField>
                         </Grid>
-                        {/* Status */}
-                        <Grid item>
-                            <TextField
-                                select
-                                fullWidth
-                                label="Estado"
-                                name="incidentStatusId"
-                                value={formData.incidentStatusId}
-                                onChange={e => setFormData(f => ({ ...f, incidentStatusId: Number(e.target.value) }))}
-                                required
-                            >
-                                <MenuItem value={1}>Pendiente</MenuItem>
-                                <MenuItem value={2}>En progreso</MenuItem>
-                                <MenuItem value={3}>Resuelto</MenuItem>
-                            </TextField>
-                        </Grid>
                         {/* Type */}
                         <Grid item>
                             <TextField
@@ -207,8 +192,8 @@ const IncidentForm = ({
                                     setFormData(f => ({ 
                                         ...f, 
                                         incidentTypeId: newVal,
-                                        // Si es Buena Practica (1), limpiamos la severidad
-                                        incidentSeverityId: newVal === 1 ? null : f.incidentSeverityId 
+                                        incidentSeverityId: newVal === 1 ? null : f.incidentSeverityId,
+                                        incidentStatusId: newVal === 1 ? 3 : 1
                                     }));
                                 }}
                                 required

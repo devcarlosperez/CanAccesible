@@ -52,14 +52,15 @@ const Incident = () => {
   const initialFormData = {
     name: "",
     description: "",
-    incidentStatusId: 1,
-    incidentTypeId: 1,
+    incidentStatusId: 3, // Default to 3 (Resuelto) because default Type is 1 (Buena Práctica)
+    incidentTypeId: 1,   // 1 = Buena Práctica
     incidentSeverityId: 1,
     userId: isAuthenticated ? user.id : null,
     island: "",
     area: "",
     latitude: "",
     longitude: "",
+    isApproved: false,
     dateIncident: new Date().toISOString().split("T")[0],
   };
 
@@ -130,6 +131,10 @@ const Incident = () => {
             dateNotification: new Date().toISOString().split("T")[0],
           });
         }
+      }
+
+      if (!editingIncident) {
+        toast.success("La incidencia ha sido enviada para ser revisada.");
       }
     } catch (err) {
       console.error("Error guardando incidencia:", err);
