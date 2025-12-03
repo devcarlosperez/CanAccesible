@@ -1,4 +1,4 @@
-import BlurText from "./react-bits/BlurText";
+import BlurText from "../react-bits/BlurText";
 
 const Hero = ({ heroData }) => {
   const handleAnimationComplete = () => {

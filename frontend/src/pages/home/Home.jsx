@@ -1,7 +1,7 @@
-import Background from "../../components/Background";
+import Background from "../../components/utils/Background";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
-import Hero from "../../components/Hero";
+import Hero from "../../components/utils/Hero";
 
 const Home = () => {
   let heroData = { text1: "Por unas islas", text2: "accesibles para todos" };
