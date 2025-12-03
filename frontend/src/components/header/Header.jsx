@@ -59,6 +59,13 @@ const Header = ({ transparent = true }) => {
 
   const menuItems = [
     { text: "Inicio", to: "/home", icon: "home" },
+    {
+      text: "Dashboard",
+      to: "/dashboard",
+      icon: "dashboard",
+      login: false,
+      authRequired: true,
+    },
     { text: "Incidencias", to: "/incidents", icon: "assignment" },
     { text: "Mapa", to: "/map", icon: "map" },
     { text: "Blog", to: "/blog", icon: "article" },
@@ -68,6 +75,7 @@ const Header = ({ transparent = true }) => {
 
   const filteredMenuItems = menuItems.filter((item) => {
     if (item.login && isAuthenticated) return false;
+    if (item.authRequired && !isAuthenticated) return false;
     return true;
   });
 

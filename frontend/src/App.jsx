@@ -14,6 +14,7 @@ import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import DashboardUser from "./pages/dashboard/DashboardUser.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/incidents" element={<Incident />} />
         <Route path="/map" element={<Map />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/dashboard-user" element={<DashboardUser />} />
         <Route
           path="/login"
           element={
