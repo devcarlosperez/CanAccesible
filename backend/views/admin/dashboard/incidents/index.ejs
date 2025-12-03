@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- eslint-disable -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +10,6 @@
   <title><%= title %></title>
 </head>
 <body class="bg-gray-200 min-h-screen">
-  <!-- Header -->
   <%- include('../../../partials/header') %>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -30,6 +28,18 @@
       </div>
     </div>
 
+    <div class="flex justify-center gap-2 mb-8">
+      <button onclick="filterIncidents('all')" id="btn-all" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-[#004aad] text-white shadow-md transition">
+        Todos
+      </button>
+      <button onclick="filterIncidents('approved')" id="btn-approved" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-gray-100 shadow-sm transition">
+        Aprobadas
+      </button>
+      <button onclick="filterIncidents('pending')" id="btn-pending" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-gray-100 shadow-sm transition">
+        No Aprobadas
+      </button>
+    </div>
+
     <% if (incidents.length === 0) { %>
       <div class="bg-white rounded-xl shadow-md p-12 text-center">
         <div class="text-6xl text-gray-300 mb-4">
@@ -46,9 +56,25 @@
         <div class="w-full max-w-sm md:max-w-4xl lg:max-w-6xl">
           <div id="incidentsContainer" class="flex flex-wrap gap-4 md:gap-6 justify-center">
             <% incidents.forEach(function(incident) { %>
-              <div class="flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                  <!-- Imagen -->
+              <div class="incident-item flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0" data-approved="<%= incident.isApproved %>">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col relative">
+                  
+                  <div class="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+                    <% if (incident.isApproved) { %>
+                      <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow">Aprobada</span>
+                    <% } else { %>
+                      <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded shadow">Pendiente Aprobación</span>
+                    <% } %>
+
+                    <% if (incident.incidentStatusId == 1) { %>
+                      <span class="bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded shadow">Pendiente</span>
+                    <% } else if (incident.incidentStatusId == 2) { %>
+                      <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded shadow">En Progreso</span>
+                    <% } else if (incident.incidentStatusId == 3) { %>
+                      <span class="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded shadow">Resuelta</span>
+                    <% } %>
+                  </div>
+
                   <div class="aspect-video md:aspect-square bg-gray-200 flex items-center justify-center overflow-hidden relative">
                     <img 
                       src="<%= incident.nameFile %>" 
@@ -56,7 +82,6 @@
                       class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     >
                   </div>
-                  <!-- Contenido -->
                   <div class="p-2 md:p-4 flex flex-col grow">
                     <h3 class="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 inline-block">
                       <%= incident.name %>
@@ -69,6 +94,13 @@
                         <%= new Date(incident.dateIncident).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                       </span>
                       <div class="flex gap-2">
+                        <button 
+                          onclick="toggleIncidentApproval('<%= incident.id %>', <%= incident.isApproved %>)"
+                          class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" 
+                          style="background-color: <%= incident.isApproved ? '#ef4444' : '#22c55e' %>;" 
+                          title="<%= incident.isApproved ? 'Desaprobar' : 'Aprobar' %>">
+                          <i class="fa-solid <%= incident.isApproved ? 'fa-ban' : 'fa-check' %>"></i>
+                        </button>
                         <button 
                           onclick="openEditModalFromData('<%= incident.id %>')"
                           class="text-xs font-medium px-2 py-1 rounded text-white transition hover:opacity-80" 
@@ -86,13 +118,12 @@
               </div>
             <% }); %>
           </div>
+          <div id="paginationControls" class="flex justify-center gap-2 mt-8 flex-wrap"></div>
         </div>
-        <!-- Paginación si la necesitas -->
       </div>
     <% } %>
   </div>
 
-  <!-- Modal para crear/editar incidencia -->
   <div id="incidentModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-lg relative max-h-[80vh] overflow-y-auto p-8">
       <button onclick="closeIncidentModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">
@@ -136,11 +167,11 @@
           <label class="block text-sm font-medium mb-1">Área</label>
           <select name="area" id="incidentArea" class="w-full border rounded px-3 py-2" required>
             <option value="">Selecciona un área</option>
-            <option value="1">movilidad</option>
-            <option value="2">sensorial</option>
-            <option value="3">arquitectura</option>
-            <option value="4">transporte</option>
-            <option value="5">otro</option>
+            <option value="movilidad">movilidad</option>
+            <option value="sensorial">sensorial</option>
+            <option value="arquitectura">arquitectura</option>
+            <option value="transporte">transporte</option>
+            <option value="otro">otro</option>
           </select>
         </div>
         <div class="mb-3">
@@ -159,7 +190,7 @@
         </div>
         <div class="mb-3">
           <label class="block text-sm font-medium mb-1">Imagen</label>
-          <input type="file" name="imageFile" id="incidentImageFile" class="w-full border rounded px-3 py-2">
+          <input type="file" name="image" id="incidentImageFile" class="w-full border rounded px-3 py-2">
           <img id="incidentImagePreview" src="" alt="Vista previa" class="mt-2 rounded max-h-40 hidden">
         </div>
         <div class="mt-6 flex gap-2">
@@ -173,16 +204,109 @@
       </form>
     </div>
   </div>
-  <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    let currentFilter = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 6;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderIncidents();
+    });
+
+    function filterIncidents(filter) {
+      currentFilter = filter;
+      currentPage = 1;
+      
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        if(btn.id === `btn-${filter}`) {
+          btn.classList.remove('bg-white', 'text-gray-600');
+          btn.classList.add('bg-[#004aad]', 'text-white');
+        } else {
+          btn.classList.add('bg-white', 'text-gray-600');
+          btn.classList.remove('bg-[#004aad]', 'text-white');
+        }
+      });
+
+      renderIncidents();
+    }
+
+    function renderIncidents() {
+      const items = Array.from(document.querySelectorAll('.incident-item'));
+      
+      // Filter
+      const visibleItems = items.filter(item => {
+        const isApproved = item.getAttribute('data-approved') === 'true';
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'approved') return isApproved;
+        if (currentFilter === 'pending') return !isApproved;
+        return true;
+      });
+
+      // Hide all
+      items.forEach(item => item.style.display = 'none');
+
+      // Pagination
+      const totalPages = Math.ceil(visibleItems.length / itemsPerPage);
+      
+      if (currentPage > totalPages) currentPage = totalPages || 1;
+      if (currentPage < 1) currentPage = 1;
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      
+      visibleItems.slice(start, end).forEach(item => item.style.display = 'block');
+
+      renderPaginationControls(totalPages);
+    }
+
+    function renderPaginationControls(totalPages) {
+      const container = document.getElementById('paginationControls');
+      if (!container) return;
+      
+      container.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      // Prev
+      const prevBtn = document.createElement('button');
+      prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+      prevBtn.className = `px-3 py-1 rounded shadow-sm transition ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-600 hover:bg-gray-100'}`;
+      prevBtn.onclick = () => { if (currentPage > 1) changePage(currentPage - 1); };
+      container.appendChild(prevBtn);
+
+      // Pages
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.innerText = i;
+        btn.className = `px-3 py-1 rounded shadow-sm transition ${i === currentPage ? 'bg-[#004aad] text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`;
+        btn.onclick = () => changePage(i);
+        container.appendChild(btn);
+      }
+
+      // Next
+      const nextBtn = document.createElement('button');
+      nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+      nextBtn.className = `px-3 py-1 rounded shadow-sm transition ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-600 hover:bg-gray-100'}`;
+      nextBtn.onclick = () => { if (currentPage < totalPages) changePage(currentPage + 1); };
+      container.appendChild(nextBtn);
+    }
+
+    function changePage(page) {
+      currentPage = page;
+      renderIncidents();
+      // Optional: scroll to top of list
+      // document.getElementById('incidentsContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
     let leafletMap, leafletMarker;
 
     function initLeafletMap(lat = 28.5, lng = -15.5, showMarker = false) {
       const canariasBounds = [
-        [27.5, -18.5], // Suroeste
-        [29.5, -13.0]  // Noreste
+        [27.5, -18.5],
+        [29.5, -13.0]
       ];
 
       if (leafletMap) leafletMap.remove();
@@ -264,7 +388,6 @@
       document.getElementById('islandError').classList.toggle('hidden', !show);
     }
 
-    // Abrir modal para crear
     function openCreateModal() {
       document.getElementById('incidentModal').classList.remove('hidden');
       document.getElementById('modalTitle').innerText = "Nueva Incidencia";
@@ -274,10 +397,9 @@
       document.getElementById('incidentImagePreview').classList.add('hidden');
       document.getElementById('severityContainer').style.display = "none";
       showIslandError(false);
-      setTimeout(() => initLeafletMap(28.5, -15.5, false), 200); // Sin marcador
+      setTimeout(() => initLeafletMap(28.5, -15.5, false), 200);
     }
 
-    // Abrir modal para editar
     function openEditModalFromData(id) {
       axios.get(`/api/incidents/${id}`)
         .then(response => {
@@ -309,7 +431,7 @@
             initLeafletMap(
               incident.latitude || 28.5,
               incident.longitude || -15.5,
-              !!incident.latitude && !!incident.longitude // Solo marcador si hay datos
+              !!incident.latitude && !!incident.longitude
             );
           }, 200);
         })
@@ -318,12 +440,10 @@
         });
     }
 
-    // Cerrar modal
     function closeIncidentModal() {
       document.getElementById('incidentModal').classList.add('hidden');
     }
 
-    // Mostrar/ocultar severidad según tipo
     document.getElementById('incidentTypeId').addEventListener('change', function() {
       if (this.value == "2") {
         document.getElementById('severityContainer').style.display = "block";
@@ -332,7 +452,6 @@
       }
     });
 
-    // Vista previa de imagen
     document.getElementById('incidentImageFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
@@ -348,24 +467,47 @@
       }
     });
 
-    // Guardar incidencia (crear o editar)
     document.getElementById('incidentForm').addEventListener('submit', function(e) {
       e.preventDefault();
+
+      const island = document.getElementById('incidentIsland').value;
+      if (!island || island === "Desconocida") {
+        showIslandError(true);
+        return;
+      }
+      showIslandError(false);
+
       const id = document.getElementById('incidentId').value;
       const formData = new FormData(this);
+
+      const typeId = document.getElementById('incidentTypeId').value;
+      if (typeId == "1") {
+        formData.delete('incidentSeverityId');
+      }
+
+      const imageInput = document.getElementById('incidentImageFile');
+      if (!imageInput.files.length) {
+        formData.delete('image');
+      }
+
       const url = id ? `/api/incidents/${id}` : '/api/incidents';
       const method = id ? 'put' : 'post';
-      axios[method](url, formData)
+      
+      axios[method](url, formData, { withCredentials: true })
         .then(response => {
           closeIncidentModal();
           window.location.reload();
         })
         .catch(error => {
-          alert('Error guardando la incidencia');
+          console.error(error);
+          if (error.response && error.response.status === 403) {
+            alert('No tienes permisos para realizar esta acción o tu sesión ha expirado.');
+          } else {
+            alert('Error guardando la incidencia: ' + (error.response?.data?.message || error.message));
+          }
         });
     });
 
-    // Eliminar incidencia
     function deleteIncident(id) {
       if (confirm('¿Estás seguro de que deseas eliminar esta incidencia?')) {
         axios.delete(`/api/incidents/${id}`)
@@ -378,16 +520,19 @@
       }
     }
 
-    // Validación antes de enviar el formulario
-    document.getElementById('incidentForm').addEventListener('submit', function(e) {
-      const island = document.getElementById('incidentIsland').value;
-      if (!island || island === "Desconocida") {
-        showIslandError(true);
-        e.preventDefault();
-        return false;
-      }
-      showIslandError(false);
-    });
+    function toggleIncidentApproval(id, currentStatus) {
+      const newStatus = !currentStatus;
+      const action = newStatus ? 'aprobar' : 'desaprobar';
+      
+      axios.put(`/api/incidents/${id}`, { isApproved: newStatus })
+        .then(response => {
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error(error);
+          alert(`Error al ${action} la incidencia: ` + (error.response?.data?.message || error.message));
+        });
+    }
   </script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 module.exports = (app) => {
   const incidents = require("../controllers/incident.controller");
   const incidentImageUpload = require("../middlewares/incidentImageUpload");
-  const { verifyToken } = require("../middlewares/auth.middleware");
+  const { verifyToken, verifyTokenOrSession } = require("../middlewares/auth.middleware");
 
   const router = require("express").Router();
 
   router.post(
     "/",
-    verifyToken,
+    verifyTokenOrSession,
     incidentImageUpload.single("image"),
     incidents.create
   );
@@ -20,12 +20,12 @@ module.exports = (app) => {
 
   router.put(
     "/:id",
-    verifyToken,
+    verifyTokenOrSession,
     incidentImageUpload.single("image"),
     incidents.update
   );
 
-  router.delete("/:id", verifyToken, incidents.delete);
+  router.delete("/:id", verifyTokenOrSession, incidents.delete);
 
   app.use("/api/incidents", router);
 };
