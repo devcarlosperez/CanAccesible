@@ -158,11 +158,15 @@ const Incident = () => {
       if (isActive) return;
     }
 
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
     const toastId = toast.error(message, {
       autoClose: 5000,
-      position: "bottom-right",
+      position: position,
       hideProgressBar: false,
       closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
     });
     setLastErrorToastId(toastId);
   };

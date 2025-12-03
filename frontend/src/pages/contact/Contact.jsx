@@ -3,16 +3,38 @@ import Header from "../../components/header/Header";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 const Contact = () => {
   const navigate = useNavigate();
+  const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const positionIesElRincon = [28.127549871601353, -15.446679030776401];
+
+  const showErrorToast = (message) => {
+    if (lastErrorToastId) {
+      const isActive = toast.isActive(lastErrorToastId);
+      if (isActive) return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
+    const toastId = toast.error(message, {
+      autoClose: 5000,
+      position: position,
+      hideProgressBar: false,
+      closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
+    });
+    setLastErrorToastId(toastId);
+  };
 
   const contactLiveChats = [
     {
       title: "Soporte de cuenta",
-      description: "¿Tiene problemas con su cuenta, contribuciones o necesita asistencia con su perfil?",
+      description: "¿Tiene problemas con su cuenta o necesita asistencia con su perfil?",
       icon: "fa-user",
       iconType: "fa-solid",
     },
@@ -39,6 +61,11 @@ const Contact = () => {
   ];
 
   const handleStartChat = async (title) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showErrorToast('Debes iniciar sesión para iniciar una conversación.');
+      return;
+    }
     // Map title to type
     const typeMap = {
       "Soporte de cuenta": "soporte de cuenta",
@@ -72,7 +99,11 @@ const Contact = () => {
         navigate(`/conversations/${response.data.id}`);
       }
     } catch (error) {
-      console.error('Error handling conversation:', error);
+      if (error.response && error.response.status === 401) {
+        showErrorToast('Debes iniciar sesión para iniciar una conversación.');
+      } else {
+        console.error('Error handling conversation:', error);
+      }
     }
   };
 

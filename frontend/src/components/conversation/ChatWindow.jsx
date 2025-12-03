@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 const ChatWindow = ({ conversation }) => {
   const [messages, setMessages] = useState([]);
@@ -9,6 +10,7 @@ const ChatWindow = ({ conversation }) => {
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editedText, setEditedText] = useState('');
+  const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const menuRef = useRef(null);
 
   // Get current user ID (decode JWT or from localStorage)
@@ -27,7 +29,32 @@ const ChatWindow = ({ conversation }) => {
 
   const currentUserId = getCurrentUserId();
 
+  const showErrorToast = (message) => {
+    if (lastErrorToastId) {
+      const isActive = toast.isActive(lastErrorToastId);
+      if (isActive) return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
+    const toastId = toast.error(message, {
+      autoClose: 5000,
+      position: position,
+      hideProgressBar: false,
+      closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
+    });
+    setLastErrorToastId(toastId);
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showErrorToast('Debes iniciar sesión para acceder a esta conversación.');
+      return;
+    }
+
     // Load message history
     const fetchMessages = async () => {
       try {
@@ -37,8 +64,13 @@ const ChatWindow = ({ conversation }) => {
           },
         });
         setMessages(response.data);
+        setAuthError(''); // Clear any previous error
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        if (error.response && error.response.status === 401) {
+          showErrorToast('Debes iniciar sesión para acceder a esta conversación.');
+        } else {
+          console.error('Error fetching messages:', error);
+        }
       }
     };
 
@@ -95,7 +127,11 @@ const ChatWindow = ({ conversation }) => {
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
       setActiveMenuId(null);
     } catch (error) {
-      console.error('Error deleting message:', error);
+      if (error.response && error.response.status === 401) {
+        showErrorToast('Debes iniciar sesión para realizar esta acción.');
+      } else {
+        console.error('Error deleting message:', error);
+      }
     }
   };
 
@@ -120,7 +156,11 @@ const ChatWindow = ({ conversation }) => {
       setEditingMessageId(null);
       setEditedText('');
     } catch (error) {
-      console.error('Error updating message:', error);
+      if (error.response && error.response.status === 401) {
+        showErrorToast('Debes iniciar sesión para realizar esta acción.');
+      } else {
+        console.error('Error updating message:', error);
+      }
     }
   };
 
@@ -136,12 +176,18 @@ const ChatWindow = ({ conversation }) => {
   };
 
   return (
-    <div className="bg-white md:rounded-lg md:shadow-md p-6 md:p-6 p-2">
+    <div className="bg-white md:rounded-lg md:shadow-md p-6 md:p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">
         {conversation.type ? `Chat: ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}` : 'Chat'}
       </h2>
 
-      <div className="h-96 md:h-96 h-[calc(100vh-200px)] overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
+      {authError && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {authError}
+        </div>
+      )}
+
+      <div className="md:h-96 h-[calc(100vh-200px)] overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
         {messages.length === 0 ? (
           <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
         ) : (
