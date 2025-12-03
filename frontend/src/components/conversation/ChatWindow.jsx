@@ -136,12 +136,12 @@ const ChatWindow = ({ conversation }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white md:rounded-lg md:shadow-md p-6 md:p-6 p-2">
       <h2 className="text-2xl font-bold mb-4 text-center">
-        {conversation.type ? `Chat: ${conversation.type}` : 'Chat'}
+        {conversation.type ? `Chat: ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}` : 'Chat'}
       </h2>
 
-      <div className="h-96 overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
+      <div className="h-96 md:h-96 h-[calc(100vh-200px)] overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
         {messages.length === 0 ? (
           <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
         ) : (
@@ -162,7 +162,7 @@ const ChatWindow = ({ conversation }) => {
                     />
                     <div className="flex justify-end gap-2">
                       <button onClick={cancelEditing} className="text-xs underline">Cancelar</button>
-                      <button onClick={() => saveEdit(msg.id)} className="text-xs font-bold">Guardar</button>
+                      <button onClick={() => saveEdit(msg.id)} className="text-xs underline">Guardar</button>
                     </div>
                   </div>
                 ) : (
