@@ -2,7 +2,7 @@ const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
-const { getIo } = require("../services/conversationSocket.service");
+const { getIo } = require("../services/conversationMessagesSocket.service");
 
 // Create a new conversation message
 exports.create = async (req, res) => {

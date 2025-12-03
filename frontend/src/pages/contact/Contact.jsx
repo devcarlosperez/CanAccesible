@@ -2,14 +2,39 @@ import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
+import { toast } from "react-toastify";
 
 const Contact = () => {
+  const navigate = useNavigate();
+  const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const positionIesElRincon = [28.127549871601353, -15.446679030776401];
+
+  const showErrorToast = (message) => {
+    if (lastErrorToastId) {
+      const isActive = toast.isActive(lastErrorToastId);
+      if (isActive) return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
+    const toastId = toast.error(message, {
+      autoClose: 5000,
+      position: position,
+      hideProgressBar: false,
+      closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
+    });
+    setLastErrorToastId(toastId);
+  };
 
   const contactLiveChats = [
     {
       title: "Soporte de cuenta",
-      description: "¿Tiene problemas con su cuenta o contribuciones?",
+      description: "¿Tiene problemas con su cuenta o necesita asistencia con su perfil?",
       icon: "fa-user",
       iconType: "fa-solid",
     },
@@ -29,11 +54,58 @@ const Contact = () => {
     },
     {
       title: "Consulta general",
-      description: "¿Alguna otra pregunta o sugerencia?",
+      description: "¿Alguna otra pregunta, sugerencia o tiene ideas para mejorar la plataforma?",
       icon: "fa-lightbulb",
       iconType: "fa-solid",
     },
   ];
+
+  const handleStartChat = async (title) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showErrorToast('Debes iniciar sesión para iniciar una conversación.');
+      return;
+    }
+    // Map title to type
+    const typeMap = {
+      "Soporte de cuenta": "soporte de cuenta",
+      "Reportar una incidencia": "reportar una incidencia",
+      "Recursos de accesibilidad": "recursos de accesibilidad",
+      "Consulta general": "consulta general",
+    };
+    const type = typeMap[title];
+
+    try {
+      // First, check if a conversation of this type already exists for the user
+      const conversationsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/conversations`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const existingConversation = conversationsResponse.data.find(conv => conv.type === type);
+
+      if (existingConversation) {
+        // If exists, redirect to it
+        navigate(`/conversations/${existingConversation.id}`);
+      } else {
+        // If not, create new one
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/conversations`, { type }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        navigate(`/conversations/${response.data.id}`);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        showErrorToast('Debes iniciar sesión para iniciar una conversación.');
+      } else {
+        console.error('Error handling conversation:', error);
+      }
+    }
+  };
 
   return (
     <>
@@ -63,7 +135,7 @@ const Contact = () => {
             {contactLiveChats.map((option, index) => (
               <div
                 key={index}
-                className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 p-6 md:p-8 flex flex-col items-center text-center cursor-pointer border w-full max-w-xs sm:max-w-sm md:w-[calc(50%-12px)] lg:w-[calc(50%-16px)]"
+                className="rounded-xl shadow-md transition-all duration-300 p-6 md:p-8 flex flex-col items-center text-center border w-full max-w-xs sm:max-w-sm md:w-[calc(50%-12px)] lg:w-[calc(50%-16px)]"
                 style={{
                   backgroundColor: "#ffffff",
                   borderColor: "var(--color-accent-1)",
@@ -92,6 +164,14 @@ const Contact = () => {
                 >
                   {option.description}
                 </p>
+
+                {/* Button */}
+                <button
+                  onClick={() => handleStartChat(option.title)}
+                  className="bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer mt-4"
+                >
+                  Iniciar Chat
+                </button>
               </div>
             ))}
           </div>

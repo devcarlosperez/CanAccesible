@@ -157,11 +157,15 @@ const Incident = () => {
       if (isActive) return;
     }
 
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
     const toastId = toast.error(message, {
       autoClose: 5000,
-      position: "bottom-right",
+      position: position,
       hideProgressBar: false,
       closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
     });
     setLastErrorToastId(toastId);
   };
@@ -170,7 +174,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder dar like a una incidencia.");
+        showErrorToast("Debes iniciar sesión para poder dar like a una incidencia.");
         return;
       }
 
@@ -202,7 +206,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder seguir una incidencia.");
+        showErrorToast("Debes iniciar sesión para poder seguir una incidencia.");
         return;
       }
 
