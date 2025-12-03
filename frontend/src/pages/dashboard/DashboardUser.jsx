@@ -194,10 +194,7 @@ const NotificationItem = ({ notification }) => {
         >
           {isRead ? "Readed" : "Unread"}
         </span>
-        <span
-          className="font-semibold text-gray-800 truncate max-w-[200px] md:max-w-[400px]"
-          title={notification.message}
-        >
+        <span className="font-semibold text-gray-800 truncate max-w-[200px] md:max-w-[300px]">
           {notification.message}
         </span>
       </div>
