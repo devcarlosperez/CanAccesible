@@ -65,6 +65,9 @@ const DashboardUser = () => {
     .sort((a, b) => b.likesCount - a.likesCount)
     .slice(0, 5);
 
+  const maxLikes =
+    topLikedIncidents.length > 0 ? topLikedIncidents[0].likesCount : 1;
+
   // Filter notifications for last 7 days
   const recentNotifications = notifications.filter((n) => {
     const date = new Date(n.createdAt);
@@ -74,10 +77,10 @@ const DashboardUser = () => {
   });
 
   return (
-    <section className="bg-gray-100 min-h-screen flex flex-col">
+    <>
       <Header transparent={false} />
 
-      <div className="flex-grow pt-32 px-4 md:px-8 lg:px-16 pb-8">
+      <div className="bg-gray-200 min-h-screen pt-32 px-4 md:px-8 lg:px-16 pb-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-2 text-gray-800">
             Hola {user?.firstName},{" "}
@@ -116,15 +119,8 @@ const DashboardUser = () => {
               <h2 className="text-xl font-bold mb-6 text-gray-800">
                 Notificaciones
               </h2>
-              <div className="flex justify-between text-sm text-gray-500 mb-4 px-2">
-                <span>Últimos 7 días</span>
-                <div className="flex gap-12">
-                  <span>Asunto</span>
-                  <span className="mr-8">Fecha</span>
-                </div>
-              </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {recentNotifications.length > 0 ? (
                   recentNotifications.map((notif) => (
                     <NotificationItem key={notif.id} notification={notif} />
@@ -143,13 +139,16 @@ const DashboardUser = () => {
                 <h2 className="text-xl font-bold text-gray-800">
                   Incidencias más apoyadas
                 </h2>
-                <span className="text-sm text-gray-500">Últimos 7 días</span>
               </div>
 
               <div className="space-y-6">
                 {topLikedIncidents.length > 0 ? (
                   topLikedIncidents.map((inc) => (
-                    <LikabilityBar key={inc.id} incident={inc} />
+                    <LikabilityBar
+                      key={inc.id}
+                      incident={inc}
+                      maxLikes={maxLikes}
+                    />
                   ))
                 ) : (
                   <p className="text-gray-500 text-center py-4">
@@ -163,7 +162,7 @@ const DashboardUser = () => {
       </div>
 
       <Footer />
-    </section>
+    </>
   );
 };
 
@@ -195,8 +194,11 @@ const NotificationItem = ({ notification }) => {
         >
           {isRead ? "Readed" : "Unread"}
         </span>
-        <span className="font-semibold text-gray-800 truncate max-w-[200px]">
-          {notification.entity}
+        <span
+          className="font-semibold text-gray-800 truncate max-w-[200px] md:max-w-[400px]"
+          title={notification.message}
+        >
+          {notification.message}
         </span>
       </div>
       <div className="flex items-center gap-8">
@@ -207,12 +209,20 @@ const NotificationItem = ({ notification }) => {
   );
 };
 
-const LikabilityBar = ({ incident }) => {
-  // Calculate width percentage based on max likes (assuming 100 for now or relative to max)
-  const width = Math.min((incident.likesCount / 10) * 100, 100); // Scale for demo
+const LikabilityBar = ({ incident, maxLikes }) => {
+  const navigate = useNavigate();
+  // Calculate width percentage relative to the max likes in the list
+  const width = maxLikes > 0 ? (incident.likesCount / maxLikes) * 100 : 0;
+
+  const handleClick = () => {
+    navigate(`/incidents?incidentId=${incident.id}`);
+  };
 
   return (
-    <div>
+    <div
+      onClick={handleClick}
+      className="cursor-pointer hover:opacity-80 transition-opacity"
+    >
       <div className="flex justify-between mb-2">
         <span className="font-medium text-gray-700">{incident.name}</span>
         <div className="flex items-center gap-1">
