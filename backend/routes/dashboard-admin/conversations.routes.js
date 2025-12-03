@@ -69,4 +69,54 @@ module.exports = (router) => {
       res.status(500).send("Error fetching conversations");
     }
   });
+
+  // Chat Window Page
+  router.get("/conversations/:id/chat", async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+
+      // Generate temporary JWT token based on admin session
+      const jwtToken = jwt.sign(
+        {
+          id: req.session.userId,
+          email: req.session.email,
+          role: req.session.role,
+        },
+        jwtConfig.secret,
+        { expiresIn: "24h" }
+      );
+
+      const conversation = await db.conversation.findByPk(conversationId, {
+        include: [
+          {
+            model: db.user,
+            as: "user",
+            attributes: ["id", "firstName", "lastName", "email", "nameFile"],
+          },
+        ],
+      });
+
+      if (!conversation) {
+        return res.status(404).send("Conversación no encontrada");
+      }
+
+      const conversationData = {
+          ...conversation.toJSON(),
+          typeColor: getTypeColor(conversation.type),
+          typeColorLight: getTypeColor(conversation.type) + '20'
+      };
+
+      res.render("admin/dashboard/conversations/chatWindow", {
+        user: req.user, // Admin user
+        title: `Chat - ${conversation.type} - CanAccesible`,
+        frontendUrl: process.env.FRONTEND_URL,
+        conversation: conversationData,
+        jwtToken: jwtToken,
+        currentUserId: req.session.userId // Pass admin ID to identify own messages
+      });
+    } catch (error) {
+      console.error("Error fetching conversation:", error);
+      res.status(500).send("Error fetching conversation");
+    }
+  });
 };

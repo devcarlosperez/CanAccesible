@@ -189,7 +189,7 @@ const ChatWindow = ({ conversation }) => {
             const isEditing = editingMessageId === msg.id;
 
             return (
-              <div key={msg.id} className={`mb-2 p-2 rounded max-w-[70%] relative group ${isOwnMessage ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}`}>
+              <div key={msg.id} className={`mb-2 p-2 rounded max-w-[70%] relative group ${isOwnMessage ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}`}>
                 
                 {isEditing ? (
                   <div className="flex flex-col">
