@@ -2,6 +2,7 @@ const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
+const { getIo } = require("../services/conversationSocket.service");
 
 // Create a new conversation message
 exports.create = async (req, res) => {
@@ -32,6 +33,10 @@ exports.create = async (req, res) => {
       message,
       dateMessage,
     });
+
+    // Emit new message to conversation room
+    const io = getIo();
+    io.to(conversationId).emit('newMessage', conversationMessage);
 
     res.status(201).json(conversationMessage);
   } catch (err) {
