@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
@@ -6,6 +6,10 @@ const ChatWindow = ({ conversation }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
+  const [activeMenuId, setActiveMenuId] = useState(null);
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editedText, setEditedText] = useState('');
+  const menuRef = useRef(null);
 
   // Get current user ID (decode JWT or from localStorage)
   const getCurrentUserId = () => {
@@ -58,6 +62,17 @@ const ChatWindow = ({ conversation }) => {
     };
   }, [conversation.id]);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActiveMenuId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const sendMessage = () => {
     if (!newMessage.trim() || !socket) return;
 
@@ -70,10 +85,54 @@ const ChatWindow = ({ conversation }) => {
     setNewMessage('');
   };
 
+  const deleteMessage = async (messageId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/conversationMessages/${conversation.id}/${messageId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessages(prev => prev.filter(msg => msg.id !== messageId));
+      setActiveMenuId(null);
+    } catch (error) {
+      console.error('Error deleting message:', error);
+    }
+  };
+
+  const startEditing = (msg) => {
+    setEditingMessageId(msg.id);
+    setEditedText(msg.message);
+    setActiveMenuId(null);
+  };
+
+  const cancelEditing = () => {
+    setEditingMessageId(null);
+    setEditedText('');
+  };
+
+  const saveEdit = async (messageId) => {
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/conversationMessages/${conversation.id}/${messageId}`, 
+        { message: editedText },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, message: editedText } : msg));
+      setEditingMessageId(null);
+      setEditedText('');
+    } catch (error) {
+      console.error('Error updating message:', error);
+    }
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const toggleMenu = (e, msgId) => {
+    e.stopPropagation();
+    setActiveMenuId(activeMenuId === msgId ? null : msgId);
   };
 
   return (
@@ -88,12 +147,60 @@ const ChatWindow = ({ conversation }) => {
         ) : (
           messages.map((msg) => {
             const isOwnMessage = msg.senderId === currentUserId;
+            const isEditing = editingMessageId === msg.id;
+
             return (
-              <div key={msg.id} className={`mb-2 p-2 rounded max-w-xs ${isOwnMessage ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}`}>
-                <p className="text-sm">{msg.message}</p>
-                <small className={`text-xs ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}`}>
-                  {new Date(msg.createdAt).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                </small>
+              <div key={msg.id} className={`mb-2 p-2 rounded max-w-[70%] relative group ${isOwnMessage ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}`}>
+                
+                {isEditing ? (
+                  <div className="flex flex-col">
+                    <input 
+                      type="text" 
+                      value={editedText} 
+                      onChange={(e) => setEditedText(e.target.value)}
+                      className="text-black p-1 rounded mb-1 bg-white"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button onClick={cancelEditing} className="text-xs underline">Cancelar</button>
+                      <button onClick={() => saveEdit(msg.id)} className="text-xs font-bold">Guardar</button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm pr-6">{msg.message}</p>
+                    <small className={`text-xs ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}`}>
+                      {new Date(msg.createdAt).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                    </small>
+                    
+                    {isOwnMessage && (
+                      <>
+                        <button 
+                          onClick={(e) => toggleMenu(e, msg.id)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                        >
+                          <i className="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        {activeMenuId === msg.id && (
+                          <div ref={menuRef} className="absolute top-5 right-0 bg-white text-black shadow-lg rounded z-10 w-32 py-1">
+                            <button 
+                              onClick={() => startEditing(msg)}
+                              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                            >
+                              Editar
+                            </button>
+                            <button 
+                              onClick={() => deleteMessage(msg.id)}
+                              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             );
           })
@@ -106,7 +213,7 @@ const ChatWindow = ({ conversation }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
+          placeholder="Escribe tu mensaje..."
           className="flex-1 border border-gray-300 rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
