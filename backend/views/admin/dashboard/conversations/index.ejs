@@ -64,37 +64,42 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Tipo</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Fecha</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
               </tr>
             </thead>
             <tbody id="conversationsTableBody" class="bg-white divide-y divide-gray-200">
               <% conversations.forEach(function(conversation) { %>
                 <tr class="conversation-row" data-type="<%= conversation.type %>">
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                       <div class="flex-shrink-0 h-10 w-10">
                         <img class="h-10 w-10 rounded-full object-cover" src="<%= conversation.user.nameFile || `https://ui-avatars.com/api/?name=${conversation.user.firstName}+${conversation.user.lastName}&background=random` %>" alt="" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                       </div>
                       <div class="ml-4">
                         <div class="text-sm font-medium text-gray-900"><%= conversation.user.firstName %> <%= conversation.user.lastName %></div>
-                        <div class="text-sm text-gray-500"><%= conversation.user.email %></div>
+                        <div class="text-sm text-gray-500 block sm:hidden">
+                           <span class="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full mt-1" style="background-color: <%= conversation.typeColorLight %>; color: <%= conversation.typeColor %>;">
+                              <%= conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1) %>
+                           </span>
+                        </div>
+                        <div class="text-sm text-gray-500 hidden sm:block"><%= conversation.user.email %></div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" style="background-color: <%= conversation.typeColorLight %>; color: <%= conversation.typeColor %>;">
                       <%= conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1) %>
                     </span>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
                     <%= new Date(conversation.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <a href="/dashboard-admin/conversations/<%= conversation.id %>/chat" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition">
-                      Abrir Chat
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <a href="/dashboard-admin/conversations/<%= conversation.id %>/chat" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-md transition flex items-center justify-center sm:inline-flex sm:w-auto relative z-10 cursor-pointer">
+                      <i class="fa-solid fa-comments sm:mr-1"></i> <span class="hidden sm:inline">Abrir Chat</span>
                     </a>
                   </td>
                 </tr>
