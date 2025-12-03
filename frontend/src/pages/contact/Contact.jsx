@@ -9,7 +9,7 @@ const Contact = () => {
   const contactLiveChats = [
     {
       title: "Soporte de cuenta",
-      description: "¿Tiene problemas con su cuenta o contribuciones?",
+      description: "¿Tiene problemas con su cuenta, contribuciones o necesita asistencia con su perfil?",
       icon: "fa-user",
       iconType: "fa-solid",
     },
@@ -29,7 +29,7 @@ const Contact = () => {
     },
     {
       title: "Consulta general",
-      description: "¿Alguna otra pregunta o sugerencia?",
+      description: "¿Alguna otra pregunta, sugerencia o tiene ideas para mejorar la plataforma?",
       icon: "fa-lightbulb",
       iconType: "fa-solid",
     },
@@ -63,7 +63,7 @@ const Contact = () => {
             {contactLiveChats.map((option, index) => (
               <div
                 key={index}
-                className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 p-6 md:p-8 flex flex-col items-center text-center cursor-pointer border w-full max-w-xs sm:max-w-sm md:w-[calc(50%-12px)] lg:w-[calc(50%-16px)]"
+                className="rounded-xl shadow-md transition-all duration-300 p-6 md:p-8 flex flex-col items-center text-center border w-full max-w-xs sm:max-w-sm md:w-[calc(50%-12px)] lg:w-[calc(50%-16px)]"
                 style={{
                   backgroundColor: "#ffffff",
                   borderColor: "var(--color-accent-1)",
@@ -92,6 +92,13 @@ const Contact = () => {
                 >
                   {option.description}
                 </p>
+
+                {/* Button */}
+                <button
+                  className="bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer mt-4"
+                >
+                  Iniciar Chat
+                </button>
               </div>
             ))}
           </div>
