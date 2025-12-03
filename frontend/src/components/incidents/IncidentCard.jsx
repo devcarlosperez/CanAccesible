@@ -1,6 +1,7 @@
 import {
   Card, CardHeader, CardContent, CardActions, CardMedia,
   Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent,
+  TextField, InputAdornment // Agregado
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,6 +10,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy"; // Agregado
 import { useState, useEffect } from "react";
 import { getAllIncidentLikes, getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
 import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
@@ -29,8 +31,20 @@ const IncidentCard = ({
   const [liked, setLiked] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  
+  // Estados para compartir
+  const [openShare, setOpenShare] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const { user } = useAuthStore();
+  
+  const shareUrl = `${window.location.origin}/incidents?incidentId=${incident?.id}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (openViewMore) setOpenModal(true);
@@ -57,12 +71,20 @@ const IncidentCard = ({
 
   const handleLikeClick = async () => {
     await onLike(incident);
-    setLiked(!liked);
+    if (user && user.id && incident && incident.id) {
+      getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
+        setLiked(!!like);
+      });
+    }
   };
 
   const handleFollowClick = async () => {
     await onFollow(incident);
-    setFollowed(!followed);
+    if (user && user.id && incident && incident.id) {
+      getIncidentFollowByIncidentAndUserId(incident.id, user.id).then((follow) => {
+        setFollowed(!!follow);
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -131,7 +153,9 @@ const IncidentCard = ({
           <IconButton onClick={handleFollowClick}>
             <NotificationsIcon sx={{color: followed ? "rgb(255,180,0)" : "inherit"}}/>
           </IconButton>
-          <IconButton aria-label="share">
+          
+          {/* Botón compartir modificado */}
+          <IconButton aria-label="share" onClick={() => setOpenShare(true)}>
             <ShareIcon />
           </IconButton>
 
@@ -221,6 +245,51 @@ const IncidentCard = ({
 
             </FavoriteIcon>
           </Typography>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Modal */}
+      <Dialog open={openShare} onClose={() => setOpenShare(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ m: 0, p: 2 }}>
+          <Typography variant="h6" align="center" sx={{ fontWeight: "bold" }}>
+            Compartir Incidencia
+          </Typography>
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpenShare(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            value={shareUrl}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleCopy} edge="end">
+                    <ContentCopyIcon color={copied ? "success" : "inherit"} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mt: 1 }}
+          />
+          {copied && (
+            <Typography variant="caption" color="success.main" display="block" textAlign="center" sx={{ mt: 1 }}>
+              Enlace copiado al portapapeles!
+            </Typography>
+          )}
         </DialogContent>
       </Dialog>
     </>
