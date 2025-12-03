@@ -46,7 +46,9 @@ exports.create = async (req, res) => {
     if (!req.body.incidentTypeId)
       return res.status(400).json({ message: "incidentTypeId is required" });
     if (!req.body.incidentSeverityId)
-      return res.status(400).json({ message: "incidentSeverityId is required" });
+      return res
+        .status(400)
+        .json({ message: "incidentSeverityId is required" });
     if (!req.body.incidentStatusId)
       return res.status(400).json({ message: "incidentStatusId is required" });
     if (!req.file)
@@ -96,25 +98,6 @@ exports.create = async (req, res) => {
     });
 
     return res.status(201).json(newIncident);
-
-    // Send email asynchronously
-    setImmediate(async () => {
-      try {
-        const user = await db.user.findByPk(req.body.userId);
-        await transporter.sendMail({
-          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-          to: user.email,
-          subject: "Nueva incidencia creada 🚨",
-          html: `
-        <h2>¡Hola ${user.firstName}!</h2>
-        <p>Tu incidencia <strong>${newIncident.name}</strong> ha sido creada con éxito.</p>
-        <p>La revisaremos en breve brooo 😎🔥</p>
-      `,
-        });
-      } catch (emailError) {
-        console.error("Error sending incident creation email:", emailError);
-      }
-    });
   } catch (err) {
     res.status(500).json({
       message: err.message || "An error occurred while creating the incident.",
@@ -138,8 +121,7 @@ exports.findAll = async (req, res) => {
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
-      message:
-        err.message || "An error occurred while retrieving incidents.",
+      message: err.message || "An error occurred while retrieving incidents.",
     });
   }
 };
@@ -251,8 +233,44 @@ exports.delete = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
+      message: err.message || "An error occurred while deleting the incident.",
+    });
+  }
+};
+
+// Retrieves all incidents created by the authenticated user with like count
+exports.findMyIncidents = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const data = await incidentObject.findAll({
+      where: { userId: userId },
+      include: [
+        {
+          model: db.incidentLike,
+          as: "likes",
+          attributes: ["id"],
+        },
+        {
+          model: db.incidentStatus,
+          as: "status",
+          attributes: ["status"],
+        },
+      ],
+    });
+
+    // Transform data to include like count
+    const incidentsWithLikes = data.map((incident) => {
+      const incidentJson = incident.toJSON();
+      incidentJson.likesCount = incidentJson.likes.length;
+      delete incidentJson.likes; // Remove the array to keep it clean
+      return incidentJson;
+    });
+
+    res.status(200).json(incidentsWithLikes);
+  } catch (err) {
+    res.status(500).json({
       message:
-        err.message || "An error occurred while deleting the incident.",
+        err.message || "An error occurred while retrieving user incidents.",
     });
   }
 };

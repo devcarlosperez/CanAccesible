@@ -5,13 +5,25 @@ module.exports = (app) => {
 
   const router = require("express").Router();
 
-  router.post("/", verifyToken, incidentImageUpload.single("image"), incidents.create);
+  router.post(
+    "/",
+    verifyToken,
+    incidentImageUpload.single("image"),
+    incidents.create
+  );
 
   router.get("/", incidents.findAll);
 
+  router.get("/my-incidents", verifyToken, incidents.findMyIncidents);
+
   router.get("/:id", incidents.findOne);
 
-  router.put("/:id", verifyToken, incidentImageUpload.single("image"), incidents.update);
+  router.put(
+    "/:id",
+    verifyToken,
+    incidentImageUpload.single("image"),
+    incidents.update
+  );
 
   router.delete("/:id", verifyToken, incidents.delete);
 

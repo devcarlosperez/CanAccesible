@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../services/authService.js";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import UserMenu from "./HeaderUserMenu.jsx";
@@ -14,7 +14,13 @@ const HeaderDesktop = ({
   scrolled,
 }) => {
   const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
+  const navigate = useNavigate();
   const notificationsCount = notifications.length;
+
+  const handleLogout = () => {
+    navigate("/home");
+    logout();
+  };
 
   return (
     <div className="flex items-center w-full">
@@ -59,7 +65,7 @@ const HeaderDesktop = ({
         )}
 
         {isAuthenticated ? (
-          <UserMenu user={user} isAdmin={isAdmin} onLogout={logout} />
+          <UserMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} />
         ) : (
           <Link
             to="/login"
