@@ -6,8 +6,8 @@ const Incident = db.incident;
 // Create a new comment
 exports.create = async (req, res) => {
   try {
-    if (!req.body.userId) {
-      return res.status(400).json({ message: "userId is required" });
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
     }
     if (!req.body.incidentId) {
       return res.status(400).json({ message: "incidentId is required" });
@@ -15,19 +15,19 @@ exports.create = async (req, res) => {
     if (!req.body.comment) {
       return res.status(400).json({ message: "comment is required" });
     }
+    if (req.body.comment.length > 500) {
+      return res.status(400).json({
+        message: "Comment cannot exceed 500 characters",
+      });
+    }
 
     const incident = await Incident.findByPk(req.body.incidentId);
     if (!incident) {
       return res.status(404).json({ message: "Incident not found" });
     }
 
-    const user = await User.findByPk(req.body.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
     const commentToCreate = {
-      userId: req.body.userId,
+      userId: req.user.id,
       incidentId: req.body.incidentId,
       comment: req.body.comment,
       dateComment: req.body.dateComment || new Date(),
@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["id", "firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email"],
         },
       ],
     });
@@ -70,7 +70,7 @@ exports.findByIncident = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["id", "firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -95,7 +95,7 @@ exports.findOne = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["id", "firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email"],
         },
         {
           model: Incident,
@@ -123,15 +123,25 @@ exports.update = async (req, res) => {
   try {
     const id = req.params.id;
 
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
     const comment = await IncidentComment.findByPk(id);
 
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.body.userId) {
+    if (comment.userId !== req.user.id) {
       return res.status(403).json({
         message: "You are not authorized to update this comment",
+      });
+    }
+
+    if (req.body.comment && req.body.comment.length > 500) {
+      return res.status(400).json({
+        message: "Comment cannot exceed 500 characters",
       });
     }
 
@@ -146,7 +156,7 @@ exports.update = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["id", "firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email"],
         },
       ],
     });
@@ -165,13 +175,17 @@ exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
 
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
     const comment = await IncidentComment.findByPk(id);
 
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.body.userId) {
+    if (comment.userId !== req.user.id) {
       return res.status(403).json({
         message: "You are not authorized to delete this comment",
       });
