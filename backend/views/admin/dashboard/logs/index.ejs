@@ -2,6 +2,11 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/images/canaccesible_fav_icon.png"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -118,10 +123,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody
-              id="logsTableBody"
-              class="bg-white divide-y divide-gray-200"
-            >
+            <tbody id="logsTableBody" class="bg-white divide-y divide-gray-200">
               <!-- Rows -->
             </tbody>
           </table>
@@ -160,22 +162,35 @@
       }
 
       function applyFilters() {
-          filteredLogs = allLogs.filter(log => {
-              // Action Filter
-              let actionMatch = true;
-              const actionLower = log.action.toLowerCase();
-              
-              if (currentFilter === 'create') actionMatch = actionLower.includes('create') || actionLower.includes('crear');
-              if (currentFilter === 'update') actionMatch = actionLower.includes('update') || actionLower.includes('editar') || actionLower.includes('actualizar');
-              if (currentFilter === 'delete') actionMatch = actionLower.includes('delete') || actionLower.includes('eliminar');
-              if (currentFilter === 'login') actionMatch = actionLower.includes('login') || actionLower.includes('inicio');
-              if (currentFilter === 'logout') actionMatch = actionLower.includes('logout') || actionLower.includes('cierre');
-              
-              return actionMatch;
-          });
-          
-          renderTable();
-          renderPagination();
+        filteredLogs = allLogs.filter((log) => {
+          // Action Filter
+          let actionMatch = true;
+          const actionLower = log.action.toLowerCase();
+
+          if (currentFilter === "create")
+            actionMatch =
+              actionLower.includes("create") || actionLower.includes("crear");
+          if (currentFilter === "update")
+            actionMatch =
+              actionLower.includes("update") ||
+              actionLower.includes("editar") ||
+              actionLower.includes("actualizar");
+          if (currentFilter === "delete")
+            actionMatch =
+              actionLower.includes("delete") ||
+              actionLower.includes("eliminar");
+          if (currentFilter === "login")
+            actionMatch =
+              actionLower.includes("login") || actionLower.includes("inicio");
+          if (currentFilter === "logout")
+            actionMatch =
+              actionLower.includes("logout") || actionLower.includes("cierre");
+
+          return actionMatch;
+        });
+
+        renderTable();
+        renderPagination();
       }
 
       async function loadLogs() {
@@ -187,7 +202,7 @@
           const response = await axios.get("/api/logs");
           allLogs = response.data;
           filteredLogs = [...allLogs];
-          
+
           renderTable();
           renderPagination();
         } catch (error) {
@@ -217,24 +232,32 @@
             month: "long",
             day: "numeric",
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
           });
 
           let actionColor = "bg-gray-100 text-gray-800";
           const actionLower = log.action.toLowerCase();
-          if (actionLower.includes('create') || actionLower.includes('crear')) actionColor = "bg-green-100 text-green-800";
-          if (actionLower.includes('update') || actionLower.includes('editar')) actionColor = "bg-blue-100 text-blue-800";
-          if (actionLower.includes('delete') || actionLower.includes('eliminar')) actionColor = "bg-red-100 text-red-800";
-          if (actionLower.includes('login')) actionColor = "bg-indigo-100 text-indigo-800";
-          if (actionLower.includes('logout')) actionColor = "bg-yellow-100 text-yellow-800";
+          if (actionLower.includes("create") || actionLower.includes("crear"))
+            actionColor = "bg-green-100 text-green-800";
+          if (actionLower.includes("update") || actionLower.includes("editar"))
+            actionColor = "bg-blue-100 text-blue-800";
+          if (
+            actionLower.includes("delete") ||
+            actionLower.includes("eliminar")
+          )
+            actionColor = "bg-red-100 text-red-800";
+          if (actionLower.includes("login"))
+            actionColor = "bg-indigo-100 text-indigo-800";
+          if (actionLower.includes("logout"))
+            actionColor = "bg-yellow-100 text-yellow-800";
 
           // Normalize action text for display
           let displayAction = log.action;
-          if (actionLower === 'create user') displayAction = 'CREATE';
-          else if (actionLower === 'update user') displayAction = 'UPDATE';
-          else if (actionLower === 'delete user') displayAction = 'DELETE';
-          else if (actionLower === 'user login') displayAction = 'LOGIN';
-          else if (actionLower === 'user logout') displayAction = 'LOGOUT';
+          if (actionLower === "create user") displayAction = "CREATE";
+          else if (actionLower === "update user") displayAction = "UPDATE";
+          else if (actionLower === "delete user") displayAction = "DELETE";
+          else if (actionLower === "user login") displayAction = "LOGIN";
+          else if (actionLower === "user logout") displayAction = "LOGOUT";
 
           const row = `
                 <tr>
@@ -242,16 +265,30 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10">
                                 <img class="h-10 w-10 rounded-full object-cover" 
-                                     src="${log.user && log.user.nameFile ? log.user.nameFile : `https://ui-avatars.com/api/?name=${log.user ? log.user.firstName + '+' + log.user.lastName : 'User'}&background=random`}" 
+                                     src="${
+                                       log.user && log.user.nameFile
+                                         ? log.user.nameFile
+                                         : `https://ui-avatars.com/api/?name=${
+                                             log.user
+                                               ? log.user.firstName +
+                                                 "+" +
+                                                 log.user.lastName
+                                               : "User"
+                                           }&background=random`
+                                     }" 
                                      alt=""
                                      onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">${
-                                  log.user ? log.user.firstName + ' ' + log.user.lastName : 'Usuario Eliminado'
+                                  log.user
+                                    ? log.user.firstName +
+                                      " " +
+                                      log.user.lastName
+                                    : "Usuario Eliminado"
                                 }</div>
                                 <div class="text-sm text-gray-500 hidden sm:block">${
-                                  log.user ? log.user.email : 'N/A'
+                                  log.user ? log.user.email : "N/A"
                                 }</div>
                             </div>
                         </div>
@@ -262,7 +299,9 @@
                         </span>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${log.user && log.user.role ? log.user.role.role : 'N/A'}
+                        ${
+                          log.user && log.user.role ? log.user.role.role : "N/A"
+                        }
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         ${date}
@@ -294,7 +333,7 @@
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(pageCount, startPage + 4);
         if (endPage - startPage < 4) {
-            startPage = Math.max(1, endPage - 4);
+          startPage = Math.max(1, endPage - 4);
         }
 
         for (let i = startPage; i <= endPage; i++) {
