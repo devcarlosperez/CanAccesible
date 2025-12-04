@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -19,10 +19,16 @@ import useAuthStore from "../../services/authService";
 
 const IncidentCommentSection = ({ incidentId }) => {
   const [comments, setComments] = useState([]);
+  const [displayedComments, setDisplayedComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { isAuthenticated } = useAuthStore();
+
+  const observerRef = useRef();
+  const commentsPerLoad = 10;
 
   const MAX_COMMENT_LENGTH = 500;
 
@@ -32,17 +38,58 @@ const IncidentCommentSection = ({ incidentId }) => {
     }
   }, [incidentId]);
 
+  useEffect(() => {
+    if (comments.length > 0) {
+      loadMoreComments();
+    }
+  }, [comments]);
+
   const fetchComments = async () => {
     try {
       setLoading(true);
       const data = await getCommentsByIncident(incidentId);
       setComments(data);
+      setDisplayedComments([]);
+      setHasMore(data.length > commentsPerLoad);
     } catch (error) {
       console.error("Error fetching comments:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  const loadMoreComments = useCallback(() => {
+    if (loadingMore) return;
+
+    setLoadingMore(true);
+    const currentLength = displayedComments.length;
+    const nextComments = comments.slice(
+      currentLength,
+      currentLength + commentsPerLoad
+    );
+
+    setTimeout(() => {
+      setDisplayedComments((prev) => [...prev, ...nextComments]);
+      setHasMore(currentLength + nextComments.length < comments.length);
+      setLoadingMore(false);
+    }, 300);
+  }, [comments, displayedComments, loadingMore]);
+
+  const lastCommentRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMoreComments();
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, loadingMore, hasMore, loadMoreComments]
+  );
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -142,9 +189,38 @@ const IncidentCommentSection = ({ incidentId }) => {
           No hay comentarios aún. ¡Sé el primero en comentar!
         </Typography>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {comments.map((comment) => (
-            <Paper key={comment.id} sx={{ p: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            maxHeight: "400px",
+            overflowY: "auto",
+            pr: 1,
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "grey.200",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "grey.400",
+              borderRadius: "4px",
+              "&:hover": {
+                backgroundColor: "grey.500",
+              },
+            },
+          }}
+        >
+          {displayedComments.map((comment, index) => (
+            <Paper
+              key={comment.id}
+              sx={{ p: 2 }}
+              ref={
+                index === displayedComments.length - 1 ? lastCommentRef : null
+              }
+            >
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Avatar
                   src={comment.user?.nameFile || undefined}
@@ -184,6 +260,23 @@ const IncidentCommentSection = ({ incidentId }) => {
               </Box>
             </Paper>
           ))}
+
+          {loadingMore && (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+              <CircularProgress size={24} />
+            </Box>
+          )}
+
+          {!hasMore && displayedComments.length > 0 && (
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              align="center"
+              sx={{ py: 2 }}
+            >
+              No hay más comentarios
+            </Typography>
+          )}
         </Box>
       )}
     </Box>
