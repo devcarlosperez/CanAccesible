@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- eslint-disable -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title><%= title %></title>
+</head>
+<body class="bg-gray-200 min-h-screen">
+  <!-- Header -->
+  <%- include('../../../partials/header') %>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <!-- Breadcrumb & Title -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-6">
+        <a href="/dashboard-admin" class="text-neutral-500 hover:text-neutral-700 transition">
+          <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Dashboard
+        </a>
+      </div>
+
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">Gestión de Conversaciones</h2>
+        <p class="text-neutral-500 mt-1">Visualiza y gestiona todas las conversaciones de la plataforma</p>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-wrap gap-2 justify-center md:justify-start">
+      <button onclick="setFilter('all')" id="btn-all" class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white">
+        Todos
+      </button>
+      <button onclick="setFilter('soporte de cuenta')" id="btn-soporte-de-cuenta" class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100">
+        Soporte de Cuenta
+      </button>
+      <button onclick="setFilter('reportar una incidencia')" id="btn-reportar-una-incidencia" class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100">
+        Reportar Incidencia
+      </button>
+      <button onclick="setFilter('recursos de accesibilidad')" id="btn-recursos-de-accesibilidad" class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100">
+        Recursos de Accesibilidad
+      </button>
+      <button onclick="setFilter('consulta general')" id="btn-consulta-general" class="filter-btn px-4 py-2 rounded-lg font-medium transition text-gray-600 hover:bg-gray-100">
+        Consulta General
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <% if (conversations.length === 0) { %>
+      <div class="bg-white rounded-xl shadow-md p-12 text-center">
+        <div class="text-6xl text-gray-300 mb-4">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay conversaciones registradas</h3>
+        <p class="text-gray-500 mb-6">Las conversaciones aparecerán aquí cuando los usuarios las inicien.</p>
+      </div>
+    <% } else { %>
+      <!-- Conversations Table -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Tipo</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Fecha</th>
+                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="conversationsTableBody" class="bg-white divide-y divide-gray-200">
+              <!-- Rows will be rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div id="paginationContainer" class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6"></div>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Modal para ver detalles de la conversación -->
+  <div id="conversationDetailModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl relative max-h-[80vh] overflow-y-auto p-8">
+      <button onclick="closeConversationDetail()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">Detalles de la Conversación</h3>
+
+      <!-- User Info -->
+      <div class="bg-gray-50 rounded-lg p-4 mb-6">
+        <h4 class="font-semibold text-gray-800 mb-3">Información del Usuario</h4>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs text-gray-500 uppercase">Nombre</p>
+            <p id="modal-user-name" class="text-sm font-medium text-gray-800"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase">Email</p>
+            <p id="modal-user-email" class="text-sm font-medium text-gray-800"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase">Tipo de Conversación</p>
+            <p id="modal-conversation-type" class="text-sm font-medium text-gray-800"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase">Fecha de Creación</p>
+            <p id="modal-creation-date" class="text-sm font-medium text-gray-800"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="mb-6">
+        <h4 class="font-semibold text-gray-800 mb-3">Mensajes (<span id="message-count">0</span>)</h4>
+        <div id="messagesContainer" class="bg-gray-50 rounded-lg p-4 max-h-80 overflow-y-auto">
+          <p class="text-gray-500 text-center">Cargando mensajes...</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-2">
+        <button onclick="closeConversationDetail()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">
+          Cerrar
+        </button>
+        <button onclick="deleteConversation(currentConversationId)" class="px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition">
+          <i class="fa-solid fa-trash mr-2"></i>Eliminar Conversación
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const jwtToken = '<%= jwtToken %>';
+    const frontendUrl = '<%= frontendUrl %>';
+    let conversations = <%- JSON.stringify(conversations) %>;
+    let filteredConversations = [...conversations];
+    let currentFilter = 'all';
+    let currentConversationId = null;
+    
+    // Pagination variables
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        updateFilterButtons();
+        renderTable();
+        renderPagination();
+    });
+
+    // Filter functions
+    function setFilter(type) {
+      currentFilter = type;
+      updateFilterButtons();
+      filterConversations();
+    }
+
+    function updateFilterButtons() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+      });
+      
+      const activeBtnId = 'btn-' + currentFilter.replace(/ /g, '-');
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+        activeBtn.classList.add('bg-blue-600', 'text-white');
+      }
+    }
+
+    function filterConversations() {
+      if (currentFilter === 'all') {
+        filteredConversations = [...conversations];
+      } else {
+        filteredConversations = conversations.filter(c => c.type === currentFilter);
+      }
+      currentPage = 1;
+      renderTable();
+      renderPagination();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('conversationsTableBody');
+        tbody.innerHTML = '';
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredConversations.slice(start, end);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No se encontraron conversaciones</td></tr>';
+            return;
+        }
+
+        pageItems.forEach(conversation => {
+            const date = new Date(conversation.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const userImage = conversation.user.nameFile || `https://ui-avatars.com/api/?name=${conversation.user.firstName}+${conversation.user.lastName}&background=random`;
+            
+            const row = `
+                <tr class="conversation-row hover:bg-gray-50 transition">
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-10 w-10">
+                        <img class="h-10 w-10 rounded-full object-cover" src="${userImage}" alt="" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';">
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">${conversation.user.firstName} ${conversation.user.lastName}</div>
+                        <div class="text-sm text-gray-500 block sm:hidden">
+                           <span class="inline-flex px-2 py-0.5 text-xs font-semibold rounded-full mt-1" style="background-color: ${conversation.typeColorLight}; color: ${conversation.typeColor};">
+                              ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}
+                           </span>
+                        </div>
+                        <div class="text-sm text-gray-500 hidden sm:block">${conversation.user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" style="background-color: ${conversation.typeColorLight}; color: ${conversation.typeColor};">
+                      ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}
+                    </span>
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                    ${date}
+                  </td>
+                  <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <a href="/dashboard-admin/conversations/${conversation.id}/chat" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-md transition flex items-center justify-center sm:inline-flex sm:w-auto relative z-10 cursor-pointer">
+                      <i class="fa-solid fa-comments sm:mr-1"></i> <span class="hidden sm:inline">Abrir Chat</span>
+                    </a>
+                  </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function renderPagination() {
+        const pageCount = Math.ceil(filteredConversations.length / itemsPerPage);
+        const container = document.getElementById("paginationContainer");
+        container.innerHTML = "";
+
+        if (pageCount <= 1) return;
+
+        // Simple pagination controls
+        let paginationHTML = '<div class="flex gap-2 justify-center">';
+
+        // Prev
+        paginationHTML += `<button onclick="changePage(${currentPage - 1})" ${
+          currentPage === 1
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-left"></i></button>`;
+
+        // Pages logic (show limited pages)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(pageCount, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          paginationHTML += `<button onclick="changePage(${i})" class="px-3 py-1 rounded border ${
+            i === currentPage
+              ? "bg-blue-600 text-white"
+              : "bg-white hover:bg-gray-50"
+          }">${i}</button>`;
+        }
+
+        // Next
+        paginationHTML += `<button onclick="changePage(${currentPage + 1})" ${
+          currentPage === pageCount
+            ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1 rounded bg-white border"'
+            : 'class="px-3 py-1 rounded bg-white border hover:bg-gray-50"'
+        }><i class="fa-solid fa-chevron-right"></i></button>`;
+
+        paginationHTML += "</div>";
+        container.innerHTML = paginationHTML;
+    }
+
+    function changePage(page) {
+        const pageCount = Math.ceil(filteredConversations.length / itemsPerPage);
+        if (page < 1 || page > pageCount) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    // Modal functions
+    async function openConversationDetail(conversationId) {
+      currentConversationId = conversationId;
+      const conversation = conversations.find(c => c.id === parseInt(conversationId));
+      
+      if (!conversation) return;
+
+      document.getElementById('modal-user-name').textContent = `${conversation.user.firstName} ${conversation.user.lastName}`;
+      document.getElementById('modal-user-email').textContent = conversation.user.email;
+      document.getElementById('modal-conversation-type').textContent = conversation.type;
+      document.getElementById('modal-creation-date').textContent = new Date(conversation.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // Load messages
+      await loadConversationMessages(conversationId);
+
+      document.getElementById('conversationDetailModal').classList.remove('hidden');
+    }
+
+    async function loadConversationMessages(conversationId) {
+      const messagesContainer = document.getElementById('messagesContainer');
+      try {
+        const response = await axios.get(`${frontendUrl}/api/conversationMessages/${conversationId}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        });
+
+        const messages = response.data;
+        document.getElementById('message-count').textContent = messages.length;
+
+        if (messages.length === 0) {
+          messagesContainer.innerHTML = '<p class="text-gray-500 text-center">No hay mensajes en esta conversación.</p>';
+          return;
+        }
+
+        messagesContainer.innerHTML = messages.map(msg => `
+          <div class="mb-3 p-3 bg-white rounded border border-gray-200">
+            <p class="text-sm text-gray-800">${escapeHtml(msg.message)}</p>
+            <small class="text-gray-500">${new Date(msg.createdAt).toLocaleString('es-ES')}</small>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading messages:', error);
+        messagesContainer.innerHTML = '<p class="text-red-500 text-center">Error al cargar los mensajes.</p>';
+      }
+    }
+
+    function closeConversationDetail() {
+      document.getElementById('conversationDetailModal').classList.add('hidden');
+      currentConversationId = null;
+    }
+
+    async function deleteConversation(conversationId) {
+      if (!confirm('¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer.')) {
+        return;
+      }
+
+      try {
+        await axios.delete(`${frontendUrl}/api/conversations/${conversationId}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        });
+
+        alert('Conversación eliminada correctamente.');
+        location.reload();
+      } catch (error) {
+        console.error('Error deleting conversation:', error);
+        alert('Error al eliminar la conversación. Por favor, intenta de nuevo.');
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Color mapping for types
+    function getTypeColor(type) {
+      const colors = {
+        'soporte de cuenta': '#004aad',
+        'reportar una incidencia': '#dc2626',
+        'recursos de accesibilidad': '#16a34a',
+        'consulta general': '#f59e0b'
+      };
+      return colors[type] || '#004aad';
+    }
+
+    // Initialize
+    updateFilterButtons();
+  </script>
+</body>
+</html>

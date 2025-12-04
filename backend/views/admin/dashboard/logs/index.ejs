@@ -228,6 +228,14 @@
           if (actionLower.includes('login')) actionColor = "bg-indigo-100 text-indigo-800";
           if (actionLower.includes('logout')) actionColor = "bg-yellow-100 text-yellow-800";
 
+          // Normalize action text for display
+          let displayAction = log.action;
+          if (actionLower === 'create user') displayAction = 'CREATE';
+          else if (actionLower === 'update user') displayAction = 'UPDATE';
+          else if (actionLower === 'delete user') displayAction = 'DELETE';
+          else if (actionLower === 'user login') displayAction = 'LOGIN';
+          else if (actionLower === 'user logout') displayAction = 'LOGOUT';
+
           const row = `
                 <tr>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
@@ -250,7 +258,7 @@
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${actionColor}">
-                            ${log.action}
+                            ${displayAction}
                         </span>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">

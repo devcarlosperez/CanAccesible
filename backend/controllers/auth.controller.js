@@ -62,7 +62,7 @@ exports.signIn = async (req, res) => {
       dateNotification: new Date(),
     });
 
-    await createLog(user.id, "User Login", "User", user.id);
+    await createLog(user.id, "LOGIN", "User", user.id);
 
     res.status(200).json({
       message: "Successful login",
@@ -102,7 +102,7 @@ exports.signIn = async (req, res) => {
 
 exports.logout = async (req, res) => {
   if (req.session && req.session.userId) {
-    await createLog(req.session.userId, "User Logout", "User", req.session.userId);
+    await createLog(req.session.userId, "LOGOUT", "User", req.session.userId);
   }
 
   req.session.destroy((err) => {

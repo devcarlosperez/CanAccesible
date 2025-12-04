@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
     });
 
     const actorId = req.user ? req.user.id : newUser.id;
-    await createLog(actorId, "Create User", "User", newUser.id);
+    await createLog(actorId, "CREATE", "User", newUser.id);
 
     res.status(201).json(newUser);
 
@@ -309,7 +309,7 @@ exports.update = async (req, res) => {
     await User.update(userToUpdate, { where: { id } });
     const updatedUser = await User.findByPk(id);
 
-    await createLog(req.user.id, "Update User", "User", id);
+    await createLog(req.user.id, "UPDATE", "User", id);
 
     res.status(200).json(updatedUser);
   } catch (err) {
@@ -335,7 +335,7 @@ exports.delete = async (req, res) => {
     // Delete the user from the database
     await User.destroy({ where: { id } });
 
-    await createLog(req.user.id, "Delete User", "User", id);
+    await createLog(req.user.id, "DELETE", "User", id);
 
     res.status(200).json({
       message: "User and associated image have been deleted successfully",
