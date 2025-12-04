@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
     });
@@ -70,7 +70,7 @@ exports.findByIncident = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -95,7 +95,7 @@ exports.findOne = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
         {
           model: Incident,
@@ -156,7 +156,7 @@ exports.update = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
     });

@@ -146,7 +146,10 @@ const IncidentCommentSection = ({ incidentId }) => {
           {comments.map((comment) => (
             <Paper key={comment.id} sx={{ p: 2 }}>
               <Box sx={{ display: "flex", gap: 2 }}>
-                <Avatar sx={{ bgcolor: "primary.main", width: 40, height: 40 }}>
+                <Avatar
+                  src={comment.user?.nameFile || undefined}
+                  sx={{ bgcolor: "primary.main", width: 40, height: 40 }}
+                >
                   {comment.user?.firstName?.charAt(0)?.toUpperCase() || "U"}
                 </Avatar>
                 <Box sx={{ flex: 1 }}>
