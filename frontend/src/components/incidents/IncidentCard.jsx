@@ -1,19 +1,7 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Avatar,
-  IconButton,
-  Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  InputAdornment, // Agregado
-} from "@mui/material";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Card, CardHeader, CardContent, CardActions, CardMedia, Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, InputAdornment } from "@mui/material";
 import { red } from "@mui/material/colors";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,16 +9,12 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy"; // Agregado
-import { useState, useEffect } from "react";
-import {
-  getAllIncidentLikes,
-  getIncidentLikeByIncidentAndUserId,
-} from "../../services/incidentLikesService";
-import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
-import IncidentCommentSection from "./IncidentCommentSection";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
+import { getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
+import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
 import useAuthStore from "../../services/authService.js";
+
 
 const IncidentCard = ({
   incident,
@@ -39,21 +23,18 @@ const IncidentCard = ({
   onFollow,
   onEdit,
   onDelete,
-  openViewMore,
-  handleCloseViewMore,
 }) => {
-  const [openModal, setOpenModal] = useState(false);
   const [liked, setLiked] = useState(false);
   const [followed, setFollowed] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
 
   // Estados para compartir
   const [openShare, setOpenShare] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
-  const shareUrl = `${window.location.origin}/incidents?incidentId=${incident?.id}`;
+  const shareUrl = `${window.location.origin}/incidents/${incident?.id}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -62,20 +43,9 @@ const IncidentCard = ({
   };
 
   useEffect(() => {
-    if (openViewMore) setOpenModal(true);
-
     if (user && user.id && incident && incident.id) {
       getIncidentLikeByIncidentAndUserId(incident.id, user.id).then((like) => {
         setLiked(!!like);
-      });
-    }
-
-    if (openModal && incident.id) {
-      getAllIncidentLikes().then((likes) => {
-        const incidentLikes = likes.filter(
-          (like) => like.incidentId === incident.id
-        );
-        setLikeCount(incidentLikes.length);
       });
     }
 
@@ -86,7 +56,7 @@ const IncidentCard = ({
         }
       );
     }
-  }, [openViewMore, openModal, incident.likes, incident.id, user?.id]);
+  }, [incident.likes, incident.id, user?.id]);
 
   const handleLikeClick = async () => {
     await onLike(incident);
@@ -108,9 +78,8 @@ const IncidentCard = ({
     }
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    if (handleCloseViewMore) handleCloseViewMore();
+  const handleViewMore = () => {
+    navigate(`/incidents/${incident.id}`);
   };
 
   return (
@@ -162,7 +131,9 @@ const IncidentCard = ({
             objectFit: "cover",
             objectPosition: "center",
             transition: "max-height 0.3s ease",
+            cursor: "pointer"
           }}
+          onClick={handleViewMore}
         />
         <CardContent>
           <Typography
@@ -214,89 +185,12 @@ const IncidentCard = ({
           <Button
             variant="outlined"
             sx={{ marginLeft: "auto" }}
-            onClick={() => setOpenModal(true)}
+            onClick={handleViewMore}
           >
             Ver más
           </Button>
         </CardActions>
       </Card>
-
-      {/* Modal */}
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        maxWidth="sm"
-        fullWidth
-      >
-        {/* Incident title */}
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          {incident.name}
-          <IconButton edge="end" color="inherit" onClick={handleCloseModal}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
-        {/* Incident information */}
-        <DialogContent sx={{ overflowY: "auto", maxHeight: "70vh" }}>
-          <Typography
-            variant="body2"
-            sx={{ mb: 4, mt: 2, textAlign: "justify" }}
-          >
-            {incident.description}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Isla: {incident.island || "Not specified"}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Area: {incident.area}
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Tipo:{" "}
-            {incident.incidentTypeId === 1 ? "Buena Practica" : "Mala Practica"}
-          </Typography>
-          {incident.incidentTypeId === 2 && (
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Severidad:{" "}
-              {incident.incidentSeverityId === 1
-                ? "Baja"
-                : incident.incidentSeverityId === 2
-                ? "Media"
-                : "Alta"}
-            </Typography>
-          )}
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Estado:{" "}
-            {incident.incidentStatusId === 1
-              ? "Pendiente"
-              : incident.incidentStatusId === 2
-              ? "En progreso"
-              : "Resuelto"}
-          </Typography>
-
-          {/* Incident image */}
-          {incident.nameFile && (
-            <img
-              className="w-full mt-4 mb-3 border-2 rounded"
-              src={incident.nameFile}
-              alt={incident.name}
-            />
-          )}
-
-          {/* Incident buttons */}
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            {likeCount} <FavoriteIcon sx={{ color: "red" }}></FavoriteIcon>
-          </Typography>
-
-          {/* Comments Section */}
-          <IncidentCommentSection incidentId={incident.id} />
-        </DialogContent>
-      </Dialog>
 
       {/* Share Modal */}
       <Dialog

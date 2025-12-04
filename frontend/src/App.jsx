@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/Home";
 import Incident from "./pages/incidents/Incident";
+import IncidentDetail from "./pages/incidents/IncidentDetail";
 import Map from "./pages/map/Map";
 import Register from "./pages/users/register/Register";
 import Login from "./pages/users/login/Login";
@@ -37,6 +38,7 @@ function App() {
         <Route path="/" element={<Navigate to={"/home"} />} />
         <Route path="/home" element={<Home />} />
         <Route path="/incidents" element={<Incident />} />
+        <Route path="/incidents/:id" element={<IncidentDetail />} />
         <Route path="/map" element={<Map />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/dashboard-user" element={<DashboardUser />} />

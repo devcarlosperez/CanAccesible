@@ -31,7 +31,7 @@ const Map = () => {
     }, []);
 
     const handleViewDetails = (incidentId) => {
-        navigate(`/incidents?incidentId=${incidentId}`);
+        navigate(`/incidents/${incidentId}`);
     };
 
     return (

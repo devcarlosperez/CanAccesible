@@ -1,23 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  getAllIncidents,
-  createIncident,
-  updateIncident,
-  deleteIncident,
-} from "../../services/incidentService";
-import {
-  getIncidentLikeByIncidentAndUserId,
-  createIncidentLike,
-  deleteIncidentLike,
-} from "../../services/incidentLikesService";
-import {
-  getIncidentFollowsByIncidentId,
-  getIncidentFollowByIncidentAndUserId,
-  createIncidentFollow,
-  deleteIncidentFollow,
-} from "../../services/incidentFollowsService.js";
+import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
+import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import { getIncidentFollowsByIncidentId, getIncidentFollowByIncidentAndUserId, createIncidentFollow, deleteIncidentFollow } from "../../services/incidentFollowsService.js";
 import { createNotification } from "../../services/notificationService.js";
 
 import useAuthStore from "../../services/authService.js";
@@ -52,8 +38,8 @@ const Incident = () => {
   const initialFormData = {
     name: "",
     description: "",
-    incidentStatusId: 3, // Default to 3 (Resuelto) because default Type is 1 (Buena Práctica)
-    incidentTypeId: 1,   // 1 = Buena Práctica
+    incidentStatusId: 3,
+    incidentTypeId: 1,
     incidentSeverityId: 1,
     userId: isAuthenticated ? user.id : null,
     island: "",
