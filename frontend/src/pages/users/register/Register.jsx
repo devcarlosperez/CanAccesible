@@ -1,6 +1,6 @@
 import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import RegisterForm from "./RegisterForm";
-import bgHero from "../../../assets/background-hero.jpg";
+import bgHero from "../../../assets/background-hero.webp";
 
 const imagenes = [
   {

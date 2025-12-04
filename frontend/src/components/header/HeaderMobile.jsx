@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import MobileMenu from "./HeaderMobileMenu.jsx";
 import useAuthStore from "../../services/authService.js";
-import logo from "../../assets/canaccesible-logo-2.png";
+import logo from "../../assets/canaccesible-logo-2.webp";
 import "./Header.css";
 
 const HeaderMobile = ({
