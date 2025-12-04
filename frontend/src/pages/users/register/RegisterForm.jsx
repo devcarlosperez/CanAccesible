@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../services/authService.js";
-import logo from "../../../assets/canaccesible-logo-2.png";
+import logo from "../../../assets/canaccesible-logo-2.webp";
 import { createUser } from "../../../services/userService.js";
 
 const RegisterForm = () => {
