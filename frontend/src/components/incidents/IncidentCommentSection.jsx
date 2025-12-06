@@ -8,12 +8,22 @@ import {
   Paper,
   Divider,
   CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { toast } from "react-toastify";
 import {
   getCommentsByIncident,
   createIncidentComment,
+  updateIncidentComment,
+  deleteIncidentComment,
 } from "../../services/incidentCommentService";
 import useAuthStore from "../../services/authService";
 
@@ -25,7 +35,17 @@ const IncidentCommentSection = ({ incidentId }) => {
   const [submitting, setSubmitting] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedComment, setSelectedComment] = useState(null);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [commentToEdit, setCommentToEdit] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editedComment, setEditedComment] = useState("");
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const observerRef = useRef();
   const commentsPerLoad = 10;
@@ -125,6 +145,77 @@ const IncidentCommentSection = ({ incidentId }) => {
       toast.error("Error al publicar el comentario");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleMenuOpen = (event, comment) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedComment(comment);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedComment(null);
+  };
+
+  const handleEditClick = () => {
+    setCommentToEdit(selectedComment);
+    setEditedComment(selectedComment.comment);
+    setEditDialogOpen(true);
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    setCommentToDelete(selectedComment);
+    setDeleteDialogOpen(true);
+    handleMenuClose();
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editedComment.trim()) {
+      toast.error("El comentario no puede estar vacío");
+      return;
+    }
+
+    if (editedComment.length > MAX_COMMENT_LENGTH) {
+      toast.error(
+        `El comentario no puede exceder ${MAX_COMMENT_LENGTH} caracteres`
+      );
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      await updateIncidentComment(commentToEdit.id, {
+        comment: editedComment.trim(),
+      });
+      setEditDialogOpen(false);
+      setCommentToEdit(null);
+      fetchComments();
+      toast.success("Comentario actualizado exitosamente");
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      toast.error("Error al actualizar el comentario");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!commentToDelete) return;
+
+    try {
+      setDeleting(true);
+      await deleteIncidentComment(commentToDelete.id);
+      setDeleteDialogOpen(false);
+      setCommentToDelete(null);
+      fetchComments();
+      toast.success("Comentario eliminado exitosamente");
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("Error al eliminar el comentario");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -257,6 +348,14 @@ const IncidentCommentSection = ({ incidentId }) => {
                     {comment.comment}
                   </Typography>
                 </Box>
+                {user && user.id === comment.userId && (
+                  <IconButton
+                    size="small"
+                    onClick={(e) => handleMenuOpen(e, comment)}
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                )}
               </Box>
             </Paper>
           ))}
@@ -279,6 +378,83 @@ const IncidentCommentSection = ({ incidentId }) => {
           )}
         </Box>
       )}
+
+      {/* Menu de opciones */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleEditClick}>Editar</MenuItem>
+        <MenuItem onClick={handleDeleteClick} sx={{ color: "error.main" }}>
+          Eliminar
+        </MenuItem>
+      </Menu>
+
+      {/* Dialog para editar */}
+      <Dialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Editar comentario</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            value={editedComment}
+            onChange={(e) => setEditedComment(e.target.value)}
+            variant="outlined"
+            disabled={updating}
+            helperText={`${editedComment.length}/${MAX_COMMENT_LENGTH} caracteres`}
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditDialogOpen(false)} disabled={updating}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleEditSubmit}
+            variant="contained"
+            disabled={updating || !editedComment.trim()}
+          >
+            {updating ? "Guardando..." : "Guardar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog para confirmar eliminación */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>¿Eliminar comentario?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Esta acción no se puede deshacer. ¿Estás seguro de que deseas
+            eliminar este comentario?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={deleting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+          >
+            {deleting ? "Eliminando..." : "Eliminar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

@@ -133,7 +133,11 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.user.id) {
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
       return res.status(403).json({
         message: "You are not authorized to update this comment",
       });
@@ -185,7 +189,11 @@ exports.delete = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.user.id) {
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
       return res.status(403).json({
         message: "You are not authorized to delete this comment",
       });
