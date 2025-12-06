@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Header from '../../components/header/Header';
-import Footer from '../../components/footer/Footer';
-import IncidentCommentSection from '../../components/incidents/IncidentCommentSection';
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import Header from "../../components/header/Header";
+import Footer from "../../components/footer/Footer";
+import IncidentCommentSection from "../../components/incidents/IncidentCommentSection";
 
-import { getIncidentById } from '../../services/incidentService';
+import { getIncidentById } from "../../services/incidentService";
 import { getAllIncidentLikes } from "../../services/incidentLikesService";
 import useAuthStore from "../../services/authService.js";
 
-import { Chip } from '@mui/material';
+import { Chip } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const IncidentDetail = () => {
@@ -24,19 +24,22 @@ const IncidentDetail = () => {
         const data = await getIncidentById(id);
 
         if (!data.isApproved) {
-          setError('Esta incidencia no está disponible o está pendiente de aprobación.');
+          setError(
+            "Esta incidencia no está disponible o está pendiente de aprobación."
+          );
           return;
         }
 
         setIncident(data);
-        
-        const likes = await getAllIncidentLikes();
-        const incidentLikes = likes.filter(like => like.incidentId === parseInt(id));
-        setLikeCount(incidentLikes.length);
 
+        const likes = await getAllIncidentLikes();
+        const incidentLikes = likes.filter(
+          (like) => like.incidentId === parseInt(id)
+        );
+        setLikeCount(incidentLikes.length);
       } catch (err) {
-        console.error('Error al cargar la incidencia:', err);
-        setError('No se pudo cargar la incidencia.');
+        console.error("Error al cargar la incidencia:", err);
+        setError("No se pudo cargar la incidencia.");
       }
     };
 
@@ -49,7 +52,7 @@ const IncidentDetail = () => {
         <Header transparent={false} />
         <main className="min-h-screen bg-gray-200 pt-40 pb-12 px-4">
           <div className="max-w-4xl mx-auto text-center">
-             <Link
+            <Link
               to="/incidents"
               className="inline-flex items-center gap-2 transition-colors mb-8 font-roboto font-medium text-blue-600 hover:text-blue-800"
             >
@@ -57,7 +60,7 @@ const IncidentDetail = () => {
               Volver a Incidencias
             </Link>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">
-              {error || 'Cargando incidencia...'}
+              {error || "Cargando incidencia..."}
             </h1>
           </div>
         </main>
@@ -68,19 +71,27 @@ const IncidentDetail = () => {
 
   const getStatusLabel = (statusId) => {
     switch (statusId) {
-      case 1: return "Pendiente";
-      case 2: return "En progreso";
-      case 3: return "Resuelto";
-      default: return "Desconocido";
+      case 1:
+        return "Pendiente";
+      case 2:
+        return "En progreso";
+      case 3:
+        return "Resuelto";
+      default:
+        return "Desconocido";
     }
   };
 
   const getStatusColor = (statusId) => {
     switch (statusId) {
-      case 1: return "warning";
-      case 2: return "info";
-      case 3: return "success";
-      default: return "default";
+      case 1:
+        return "warning";
+      case 2:
+        return "info";
+      case 3:
+        return "success";
+      default:
+        return "default";
     }
   };
 
@@ -104,13 +115,13 @@ const IncidentDetail = () => {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
                   {incident.name}
                 </h1>
-                <Chip 
-                  label={getStatusLabel(incident.incidentStatusId)} 
+                <Chip
+                  label={getStatusLabel(incident.incidentStatusId)}
                   color={getStatusColor(incident.incidentStatusId)}
                   variant="filled"
                 />
               </div>
-              
+
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
                   <i className="fas fa-calendar-alt"></i>
@@ -141,7 +152,9 @@ const IncidentDetail = () => {
             {/* Content */}
             <div className="p-6 md:p-8">
               <div className="mb-8">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Descripción</h2>
+                <h2 className="text-lg font-semibold text-gray-800 mb-3">
+                  Descripción
+                </h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {incident.description}
                 </p>
@@ -149,18 +162,27 @@ const IncidentDetail = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <span className="block text-sm font-medium text-gray-500 mb-1">Tipo de Incidencia</span>
+                  <span className="block text-sm font-medium text-gray-500 mb-1">
+                    Tipo de Incidencia
+                  </span>
                   <span className="text-gray-800 font-medium">
-                    {incident.incidentTypeId === 1 ? "Buena Práctica" : "Mala Práctica"}
+                    {incident.incidentTypeId === 1
+                      ? "Buena Práctica"
+                      : "Mala Práctica"}
                   </span>
                 </div>
-                
+
                 {incident.incidentTypeId === 2 && (
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <span className="block text-sm font-medium text-gray-500 mb-1">Severidad</span>
+                    <span className="block text-sm font-medium text-gray-500 mb-1">
+                      Severidad
+                    </span>
                     <span className="text-gray-800 font-medium">
-                      {incident.incidentSeverityId === 1 ? "Baja" : 
-                       incident.incidentSeverityId === 2 ? "Media" : "Alta"}
+                      {incident.incidentSeverityId === 1
+                        ? "Baja"
+                        : incident.incidentSeverityId === 2
+                        ? "Media"
+                        : "Alta"}
                     </span>
                   </div>
                 )}
@@ -172,7 +194,6 @@ const IncidentDetail = () => {
               </div>
 
               <div className="border-t border-gray-200 pt-8">
-                <h2 className="text-xl font-bold text-gray-800 mb-6">Comentarios</h2>
                 <IncidentCommentSection incidentId={incident.id} />
               </div>
             </div>

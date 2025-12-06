@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
     });
@@ -70,7 +70,7 @@ exports.findByIncident = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -95,7 +95,7 @@ exports.findOne = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
         {
           model: Incident,
@@ -133,7 +133,11 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.user.id) {
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
       return res.status(403).json({
         message: "You are not authorized to update this comment",
       });
@@ -156,7 +160,7 @@ exports.update = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["firstName", "lastName", "email"],
+          attributes: ["firstName", "lastName", "email", "nameFile"],
         },
       ],
     });
@@ -185,7 +189,11 @@ exports.delete = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.userId !== req.user.id) {
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
       return res.status(403).json({
         message: "You are not authorized to delete this comment",
       });
