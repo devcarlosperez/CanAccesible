@@ -1,6 +1,6 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const userService = require("../services/user.service");
 const User = db.user;
 const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
@@ -28,9 +28,9 @@ exports.signIn = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const ldapResult = await userService.authenticate(email, password);
 
-    if (!validPassword) {
+    if (!ldapResult) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
@@ -58,7 +58,7 @@ exports.signIn = async (req, res) => {
       userId: user.id,
       entity: "User",
       entityId: user.id,
-      message: "Inicio de sesión detectado en tu cuenta",
+      message: "Login detected on your account",
       dateNotification: new Date(),
     });
 
@@ -75,7 +75,6 @@ exports.signIn = async (req, res) => {
       token,
     });
 
-    // Send email asynchronously (don't block the response)
     setImmediate(async () => {
       try {
         await transporter.sendMail({
@@ -90,12 +89,11 @@ exports.signIn = async (req, res) => {
           `,
         });
       } catch (emailError) {
-        console.error("Error sending login notification email:", emailError);
-        // Don't fail the login if email fails
+        console.error("[MAIL] Send error:", emailError);
       }
     });
   } catch (error) {
-    console.error("Error in signIn:", error);
+    console.error("[AUTH] SignIn error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

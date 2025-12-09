@@ -1,6 +1,6 @@
 const db = require("../models");
 const User = db.user;
-const bcrypt = require("bcrypt");
+const userService = require("../services/user.service");
 const { deleteImageFromStorage } = require("../config/doSpacesClient");
 const transporter = require("../config/mailer");
 const { createLog } = require("../services/log.service");
@@ -10,7 +10,7 @@ exports.create = async (req, res) => {
     const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Missing required fields: firstName, lastName, email, password, roleId" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,37 +18,31 @@ exports.create = async (req, res) => {
       return res.status(400).json({ message: "Email format is invalid" });
     }
 
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email is already registered" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
     const nameFile = req.file ? req.file.location : null;
 
-    const newUser = await User.create({
+    const result = await userService.registerUser({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password,
       roleId,
       nameFile,
     });
 
-    const actorId = req.user ? req.user.id : newUser.id;
-    await createLog(actorId, "CREATE", "User", newUser.id);
+    const actorId = req.user ? req.user.id : result.id;
+    await createLog(actorId, "CREATE", "User", result.id);
 
-    res.status(201).json(newUser);
+    res.status(201).json(result);
 
     // Send welcome email asynchronously
     setImmediate(async () => {
       try {
         await transporter.sendMail({
           from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-          to: newUser.email,
+          to: email,
           subject: "¡Bienvenido/a a CANACCESIBLE! 😎🔥",
           html: `
-        <h2>Hola ${newUser.firstName}!</h2>
+        <h2>Hola ${firstName}!</h2>
         <p>Tu cuenta ha sido creada con éxito.</p>
         <p>Ya puedes iniciar sesión y disfrutar de la plataforma brooo 😎</p>
       `,
