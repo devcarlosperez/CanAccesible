@@ -13,28 +13,28 @@ class LDAPService {
     }
 
     // Organizational Units mapped by role
-    this.ouMap = {
+    this.organizationalUnitMap = {
       usuario: `ou=users,${this.baseDN}`,
       admin: `ou=admins,${this.baseDN}`,
       municipio: `ou=towns,${this.baseDN}`,
     };
-    this.groupOu = `ou=groups,${this.baseDN}`;
+    this.groupsOrganizationalUnit = `ou=groups,${this.baseDN}`;
     // Group DNs mapped by role
-    this.groupMap = {
-      usuario: `cn=usuario,${this.groupOu}`,
-      admin: `cn=admin,${this.groupOu}`,
-      municipio: `cn=municipio,${this.groupOu}`,
+    this.groupDNMap = {
+      usuario: `cn=usuario,${this.groupsOrganizationalUnit}`,
+      admin: `cn=admin,${this.groupsOrganizationalUnit}`,
+      municipio: `cn=municipio,${this.groupsOrganizationalUnit}`,
     };
   }
 
   // Get OU based on role
-  getOUByRole(role = 'usuario') {
-    return this.ouMap[role] || this.ouMap['usuario'];
+  getOrganizationalUnitByRole(role = 'usuario') {
+    return this.organizationalUnitMap[role] || this.organizationalUnitMap['usuario'];
   }
 
   // Get Group DN based on role
   getGroupDNByRole(role = 'usuario') {
-    return this.groupMap[role] || this.groupMap['usuario'];
+    return this.groupDNMap[role] || this.groupDNMap['usuario'];
   }
 
   async createConnection() {
@@ -210,7 +210,7 @@ class LDAPService {
 
       const { uid, firstName, lastName, email, password, telephone, role } = userData;
       // Get OU based on user role
-      const userOu = this.getOUByRole(role);
+      const userOu = this.getOrganizationalUnitByRole(role);
       const userDN = `uid=${uid},${userOu}`;
       const sshaPassword = this.encryptSSHA(password);
       const displayName = `${firstName} ${lastName}`;
@@ -263,9 +263,9 @@ class LDAPService {
       console.log(`[LDAP] Forward lookup for: ${searchValue}`);
       
       // Search in all role-based OUs and user OU
-      for (const role of Object.keys(this.ouMap)) {
-        const userOu = this.getOUByRole(role);
-        const entries = await this.search(client, userOu, {
+      for (const role of Object.keys(this.organizationalUnitMap)) {
+        const userOrganizationalUnit = this.getOrganizationalUnitByRole(role);
+        const entries = await this.search(client, userOrganizationalUnit, {
           filter,
           scope: 'sub',
           attributes: ['uid', 'cn', 'mail', 'givenName', 'sn', 'telephoneNumber', 'displayName'],
@@ -338,6 +338,63 @@ class LDAPService {
       return {
         success: false,
         message: 'Authentication error: ' + error.message,
+      };
+    }
+  }
+
+  async reverseLookup(userIdentifier) {
+    try {
+      const client = await this.createConnection();
+      await this.bind(client, this.adminDN, this.adminPassword);
+
+      // Extract uid from DN if full DN provided, else assume it's uid
+      let uid;
+      if (userIdentifier.includes('=')) {
+        // It's a DN, extract uid
+        const dnParts = userIdentifier.split(',');
+        const uidPart = dnParts.find(part => part.startsWith('uid='));
+        if (!uidPart) {
+          await this.close(client);
+          return {
+            success: false,
+            message: 'Invalid DN format',
+          };
+        }
+        uid = uidPart.split('=')[1];
+      } else {
+        uid = userIdentifier;
+      }
+
+      // Search all groups in ou=groups
+      const searchOptions = {
+        scope: 'one',
+        filter: '(objectClass=groupOfNames)',
+        attributes: ['cn', 'memberUid'],
+      };
+
+      const groups = await this.search(client, this.groupsOrganizationalUnit, searchOptions);
+      const userGroups = [];
+
+      for (const group of groups) {
+        if (group.memberUid && Array.isArray(group.memberUid)) {
+          if (group.memberUid.includes(uid)) {
+            userGroups.push(group.cn);
+          }
+        } else if (group.memberUid === uid) {
+          userGroups.push(group.cn);
+        }
+      }
+
+      await this.close(client);
+      return {
+        success: true,
+        groups: userGroups,
+      };
+    } catch (error) {
+      console.error('[LDAP] Reverse lookup error:', error.message);
+      return {
+        success: false,
+        message: 'Reverse lookup error: ' + error.message,
       };
     }
   }
