@@ -42,7 +42,7 @@ Our mission is to build a strong community dedicated to transforming the islands
 - **Version Control:** ![Git](https://img.shields.io/badge/Git-2.41-red?logo=git&logoColor=white)
 - **API Endpoint Management:** ![Postman](https://img.shields.io/badge/Postman-orange?logo=postman&logoColor=white)
 - **HTTP Client:** ![Axios](https://img.shields.io/badge/Axios-1.6-blue?logo=axios&logoColor=white)
-- **Password Encryption:** ![BCrypt](https://img.shields.io/badge/BCrypt-5.1-blue?logo=lock&logoColor=white)
+- **Password Encryption:** ![LDAP SSHA](https://img.shields.io/badge/LDAP-SSHA-blue?logo=lock&logoColor=white)
 - **State Management:** ![Zustand](https://img.shields.io/badge/Zustand-4.5-blue?logo=zustand&logoColor=white)
 - **Maps:** ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-blue?logo=leaflet&logoColor=white)
 - **File Uploads:** ![Multer](https://img.shields.io/badge/Multer-1.4-blue?logo=multer&logoColor=white)
@@ -57,6 +57,9 @@ Our mission is to build a strong community dedicated to transforming the islands
 - **MUI Icons & Font Awesome:** Comprehensive icon libraries for visual elements.
 - **DigitalOcean (Droplets, Spaces, Managed DB):** Cloud infrastructure for hosting, storage, and database management.
 - **Nominatim API:** External geolocation API used for reverse geocoding to convert coordinates into location names.
+- **OpenLDAP:** Directory service for centralized user authentication and management.
+- **LDAP JS:** Node.js library for interacting with LDAP servers.
+- **Docker & Docker Compose:** Containerization tools used to run the OpenLDAP server in development.
 
 ---
 
@@ -111,6 +114,7 @@ Before you begin, make sure you have the following installed on your machine:
 - **Node.js** (version 18 or higher)
 - **NPM** (comes with Node.js)
 - **MySQL** (version 8 or higher)
+- **Docker** (for running the OpenLDAP server)
 - **Git**
 
 #### Installing Prerequisites on Windows
@@ -127,6 +131,12 @@ winget install OpenJS.NodeJS
 
 ```bash
 winget install Oracle.MySQL
+```
+
+**Install Docker:**
+
+```bash
+winget install Docker.DockerDesktop
 ```
 
 **Install Git:**
@@ -166,7 +176,7 @@ First, you need to create the MySQL database manually:
 **Open MySQL and execute:**
 
 ```sql
-CREATE DATABASE db_canaccesible;
+CREATE DATABASE canaccesible_db;
 ```
 
 Make sure you have a MySQL user with appropriate permissions. You can use the default `root` user or create a new one.
@@ -194,9 +204,9 @@ NODE_ENV=development                          # Environment mode (development or
 # Database Configuration
 DB_HOST=localhost                             # MySQL server host
 DB_PORT=3306                                  # MySQL server port
-DB_USER=your_mysql_username                   # MySQL username
-DB_PASS=your_mysql_password                   # MySQL password
-DB_NAME=canaccesible_db                       # Database name to create and use
+DB_USER=root                                  # MySQL username
+DB_PASS=cji_canaccesible                      # MySQL password
+DB_NAME=db_canaccesible                       # Database name
 DB_SSL=false                                  # Enable SSL for database connection
 
 FRONTEND_URL=http://localhost:5173            # Your frontend url
@@ -213,12 +223,35 @@ DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
 # Email Configuration (Gmail SMTP)
 SMTP_USER=your_email@gmail.com               # Gmail address for sending emails
 SMTP_PASS=your_gmail_app_password            # Gmail App Password
+
+# LDAP Configuration
+LDAP_URL=ldap://localhost:389                # LDAP server URL
+LDAP_BASE_DN=dc=canaccesible,dc=es           # Base DN for the LDAP directory
+LDAP_ADMIN_DN=cn=admin,dc=canaccesible,dc=es # DN of the LDAP admin user
+LDAP_ADMIN_PASSWORD=admin                    # Password for the LDAP admin user
 ```
 
 **Install dependencies:**
 
 ```bash
 npm install
+```
+
+**Start the OpenLDAP server:**
+
+Before running migrations and seeders, you need to start the OpenLDAP container for user authentication:
+
+```bash
+# From the project root directory
+docker-compose up -d openldap
+```
+
+Verify it's running:
+
+```bash
+docker ps | grep openldap
+```
+
 **Run database migrations and seeders:**
 
 You can run the commands directly or use the npm scripts defined in `package.json`:

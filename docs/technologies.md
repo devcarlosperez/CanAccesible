@@ -22,7 +22,8 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 ### Authentication & Security
 
 - **JSON Web Token (JWT)**: Used for secure user authentication. Tokens are generated upon login and validated on each protected request.
-- **Bcrypt**: Library for password hashing before storage in the database, ensuring credential security.
+- **LDAP JS**: Client library for interacting with LDAP servers, used for user authentication and directory operations.
+- **SSHA Password Hashing**: Secure password hashing implemented in LDAP using the SSHA (Salted SHA) algorithm for credential security.
 - **Express Session**: Middleware to handle user sessions.
 
 ### File Handling & Storage
@@ -120,3 +121,4 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **ESLint**: Linting tool to identify and report patterns in JavaScript/React code, ensuring consistency and avoiding errors.
 - **Postman**: For testing REST API endpoints during development.
 - **Cross-env**: Tool to set environment variables across different operating systems (Windows/Linux) consistently.
+- **Docker & Docker Compose**: Containerization platform used to run the OpenLDAP server in an isolated environment, ensuring consistent deployment and easy setup for development.
