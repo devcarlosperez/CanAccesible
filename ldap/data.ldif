@@ -1,0 +1,32 @@
+# Organizational Units
+dn: ou=users,dc=canaccesible,dc=es
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=admins,dc=canaccesible,dc=es
+objectClass: organizationalUnit
+ou: admins
+
+dn: ou=towns,dc=canaccesible,dc=es
+objectClass: organizationalUnit
+ou: towns
+
+dn: ou=groups,dc=canaccesible,dc=es
+objectClass: organizationalUnit
+ou: groups
+
+# Groups
+dn: cn=usuario,ou=groups,dc=canaccesible,dc=es
+objectClass: posixGroup
+cn: usuario
+gidNumber: 1001
+
+dn: cn=admin,ou=groups,dc=canaccesible,dc=es
+objectClass: posixGroup
+cn: admin
+gidNumber: 1002
+
+dn: cn=municipio,ou=groups,dc=canaccesible,dc=es
+objectClass: posixGroup
+cn: municipio
+gidNumber: 1003
