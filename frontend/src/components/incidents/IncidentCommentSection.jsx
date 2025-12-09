@@ -181,7 +181,7 @@ const IncidentCommentSection = ({ incidentId }) => {
         comment: newComment.trim(),
       });
       setNewComment("");
-      fetchComments();
+      // fetchComments(); // Removed to prevent list reset, handled by socket
       toast.success("Comentario publicado exitosamente");
     } catch (error) {
       console.error("Error creating comment:", error);
@@ -234,7 +234,7 @@ const IncidentCommentSection = ({ incidentId }) => {
       });
       setEditDialogOpen(false);
       setCommentToEdit(null);
-      fetchComments();
+      // fetchComments(); // Removed to prevent list reset, handled by socket
       toast.success("Comentario actualizado exitosamente");
     } catch (error) {
       console.error("Error updating comment:", error);
@@ -252,7 +252,7 @@ const IncidentCommentSection = ({ incidentId }) => {
       await deleteIncidentComment(commentToDelete.id);
       setDeleteDialogOpen(false);
       setCommentToDelete(null);
-      fetchComments();
+      // fetchComments(); // Removed to prevent list reset, handled by socket
       toast.success("Comentario eliminado exitosamente");
     } catch (error) {
       console.error("Error deleting comment:", error);
