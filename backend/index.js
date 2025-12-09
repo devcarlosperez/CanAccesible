@@ -79,6 +79,9 @@ require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
 require("./routes/log.routes")(app);
 
+// LDAP routes
+app.use("/api/ldap", require("./routes/ldap.routes"));
+
 // Initialize scheduled tasks
 const { scheduleLogCleanup } = require("./services/logCleanup.service");
 scheduleLogCleanup();
