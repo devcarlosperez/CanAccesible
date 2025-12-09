@@ -264,46 +264,6 @@ class LDAPService {
     }
   }
 
-  async reverseLookup(userDN) {
-    let client;
-    try {
-      client = await this.createConnection();
-      await this.bind(client, this.adminDN, this.adminPassword);
-
-      const uidMatch = userDN.match(/uid=([^,]+)/);
-      if (!uidMatch) throw new Error('Invalid DN');
-      
-      const uid = uidMatch[1];
-      console.log(`[LDAP] Reverse lookup for: ${userDN}`);
-      
-      const entries = await this.search(client, this.groupOu, {
-        filter: `(memberUid=${uid})`,
-        scope: 'sub',
-        attributes: ['cn', 'gidNumber', 'memberUid', 'description'],
-      });
-
-      if (entries.length === 0) {
-        console.log('[LDAP] No groups found');
-        return [];
-      }
-
-      console.log(`[LDAP] User belongs to ${entries.length} group(s)`);
-      
-      return entries.map((group) => ({
-        dn: group.dn,
-        cn: group.cn,
-        gidNumber: group.gidNumber,
-        memberUid: group.memberUid || [],
-        description: group.description,
-      }));
-    } catch (error) {
-      console.error('[LDAP] Reverse lookup error:', error.message);
-      throw error;
-    } finally {
-      if (client) await this.close(client);
-    }
-  }
-
   async authenticate(userDN, password) {
     let client;
     try {
@@ -345,76 +305,6 @@ class LDAPService {
     }
   }
 
-  async updateUserPassword(userDN, newPassword) {
-    let client;
-    try {
-      client = await this.createConnection();
-      await this.bind(client, this.adminDN, this.adminPassword);
-
-      const sshaPassword = this.encryptSSHA(newPassword);
-      const changes = [
-        new ldap.Change({
-          operation: 'replace',
-          modification: { userPassword: sshaPassword },
-        }),
-      ];
-
-      await this.modify(client, userDN, changes);
-      return { success: true, message: 'Password updated' };
-    } catch (error) {
-      console.error('[LDAP] Update password error:', error.message);
-      throw error;
-    } finally {
-      if (client) await this.close(client);
-    }
-  }
-
-  async getUserByDN(userDN) {
-    let client;
-    try {
-      client = await this.createConnection();
-      await this.bind(client, this.adminDN, this.adminPassword);
-
-      const entries = await this.search(client, userDN, {
-        scope: 'base',
-        attributes: ['*'],
-      });
-
-      return entries.length > 0 ? entries[0] : null;
-    } catch (error) {
-      console.error('[LDAP] Get user by DN error:', error.message);
-      throw error;
-    } finally {
-      if (client) await this.close(client);
-    }
-  }
-
-  async listAllUsers() {
-    let client;
-    try {
-      client = await this.createConnection();
-      await this.bind(client, this.adminDN, this.adminPassword);
-
-      let allUsers = [];
-      // Search in all role-based OUs
-      for (const role of Object.keys(this.ouMap)) {
-        const userOu = this.getOUByRole(role);
-        const users = await this.search(client, userOu, {
-          filter: '(uid=*)',
-          scope: 'sub',
-          attributes: ['uid', 'cn', 'mail', 'displayName'],
-        });
-        allUsers = allUsers.concat(users);
-      }
-
-      return allUsers;
-    } catch (error) {
-      console.error('[LDAP] List users error:', error.message);
-      throw error;
-    } finally {
-      if (client) await this.close(client);
-    }
-  }
 }
 
 module.exports = new LDAPService();
