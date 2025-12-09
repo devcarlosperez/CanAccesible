@@ -3,10 +3,15 @@ const crypto = require('crypto');
 
 class LDAPService {
   constructor() {
-    this.baseDN = process.env.LDAP_BASE_DN || 'dc=canaccesible,dc=es';
-    this.adminDN = process.env.LDAP_ADMIN_DN || 'cn=admin,dc=canaccesible,dc=es';
-    this.adminPassword = process.env.LDAP_ADMIN_PASSWORD || 'admin';
-    this.ldapUrl = process.env.LDAP_URL || 'ldap://localhost:389';
+    this.baseDN = process.env.LDAP_BASE_DN;
+    this.adminDN = process.env.LDAP_ADMIN_DN;
+    this.adminPassword = process.env.LDAP_ADMIN_PASSWORD;
+    this.ldapUrl = process.env.LDAP_URL;
+    
+    if (!this.baseDN || !this.adminDN || !this.adminPassword || !this.ldapUrl) {
+      console.warn('[LDAP] Warning: LDAP environment variables are not fully defined.');
+    }
+
     // Organizational Units mapped by role
     this.ouMap = {
       usuario: `ou=users,${this.baseDN}`,
