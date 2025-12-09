@@ -3,9 +3,7 @@ const path = require("path");
 const { sequelize } = require("./models");
 const session = require("express-session");
 const http = require("http");
-const {
-  init: initSocket,
-} = require("./services/conversationMessagesSocket.service");
+const { init: initSocket } = require("./services/socket.service");
 
 const app = express();
 const server = http.createServer(app);

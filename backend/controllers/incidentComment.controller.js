@@ -2,6 +2,7 @@ const db = require("../models");
 const IncidentComment = db.incidentComment;
 const User = db.user;
 const Incident = db.incident;
+const { getIo } = require("../services/socket.service");
 
 // Create a new comment
 exports.create = async (req, res) => {
@@ -45,6 +46,14 @@ exports.create = async (req, res) => {
         },
       ],
     });
+
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${req.body.incidentId}`).emit(
+        "comment_created",
+        commentWithUser
+      );
+    }
 
     return res.status(201).json(commentWithUser);
   } catch (error) {
@@ -165,6 +174,14 @@ exports.update = async (req, res) => {
       ],
     });
 
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${comment.incidentId}`).emit(
+        "comment_updated",
+        updatedComment
+      );
+    }
+
     return res.status(200).json(updatedComment);
   } catch (error) {
     console.error("Error updating comment:", error);
@@ -200,6 +217,11 @@ exports.delete = async (req, res) => {
     }
 
     await comment.destroy();
+
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${comment.incidentId}`).emit("comment_deleted", id);
+    }
 
     return res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {

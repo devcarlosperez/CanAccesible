@@ -26,6 +26,7 @@ import {
   deleteIncidentComment,
 } from "../../services/incidentCommentService";
 import useAuthStore from "../../services/authService";
+import { initSocket } from "../../services/socketService";
 
 const IncidentCommentSection = ({ incidentId }) => {
   const [comments, setComments] = useState([]);
@@ -55,6 +56,48 @@ const IncidentCommentSection = ({ incidentId }) => {
   useEffect(() => {
     if (incidentId) {
       fetchComments();
+
+      const token = localStorage.getItem("token");
+      const socket = initSocket(token);
+      socket.emit("joinIncident", incidentId);
+
+      const handleCommentCreated = (newComment) => {
+        setComments((prev) => {
+          if (prev.some((c) => c.id === newComment.id)) return prev;
+          return [newComment, ...prev];
+        });
+        setDisplayedComments((prev) => {
+          if (prev.some((c) => c.id === newComment.id)) return prev;
+          return [newComment, ...prev];
+        });
+      };
+
+      const handleCommentUpdated = (updatedComment) => {
+        setComments((prev) =>
+          prev.map((c) => (c.id === updatedComment.id ? updatedComment : c))
+        );
+        setDisplayedComments((prev) =>
+          prev.map((c) => (c.id === updatedComment.id ? updatedComment : c))
+        );
+      };
+
+      const handleCommentDeleted = (commentId) => {
+        setComments((prev) => prev.filter((c) => c.id !== parseInt(commentId)));
+        setDisplayedComments((prev) =>
+          prev.filter((c) => c.id !== parseInt(commentId))
+        );
+      };
+
+      socket.on("comment_created", handleCommentCreated);
+      socket.on("comment_updated", handleCommentUpdated);
+      socket.on("comment_deleted", handleCommentDeleted);
+
+      return () => {
+        socket.emit("leaveIncident", incidentId);
+        socket.off("comment_created", handleCommentCreated);
+        socket.off("comment_updated", handleCommentUpdated);
+        socket.off("comment_deleted", handleCommentDeleted);
+      };
     }
   }, [incidentId]);
 
