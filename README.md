@@ -243,13 +243,13 @@ Before running migrations and seeders, you need to start the OpenLDAP container 
 
 ```bash
 # From the project root directory
-docker-compose up -d openldap
+docker-compose up -d
 ```
 
 Verify it's running:
 
 ```bash
-docker ps | grep openldap
+docker ps
 ```
 
 **Run database migrations and seeders:**

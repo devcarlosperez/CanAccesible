@@ -28,6 +28,10 @@ Filters are expressions used to search for entries in the directory. They use a 
 
 In CanAccesible, filters are used in search operations to locate users by email or UID.
 
+### LDIF (LDAP Data Interchange Format)
+
+LDIF is a standard text format for representing LDAP directory entries and changes. It is used to import and export data from LDAP directories. In CanAccesible, we use LDIF files to bootstrap initial data into the LDAP directory.
+
 ### Forward vs Reverse Lookup
 
 *   **Forward Lookup**: This is the standard process where we search for an entry (like a user) based on their known attributes. For example, searching for the entry where `uid=carlos` to obtain their DN or email. In CanAccesible, this is used during login to find user details by email or username.
@@ -132,6 +136,8 @@ if (!ldapResult) {
 // Proceed with successful authentication
 ```
 
+---
+
 ## Docker Concepts
 
 ### Docker and Containers
@@ -165,37 +171,66 @@ To deploy OpenLDAP using Docker, follow these steps:
 2. **Navigate to the project root directory** where the `docker-compose.yml` file is located.
 
 3. **Review the `docker-compose.yml` file** to understand the configuration:
-   - The service uses the `osixia/openldap:latest` image.
-   - Environment variables set the organization, domain, and admin password.
-   - Ports 389 (LDAP) and 636 (LDAPS) are exposed.
-   - Volumes mount the initial data file and persist data.
-   - The container is configured to restart unless stopped.
+
+   ```yaml
+   services:
+     openldap:
+       image: osixia/openldap:latest
+       container_name: openldap
+       restart: unless-stopped
+       environment:
+         LDAP_ORGANISATION: "CanAccesible"
+         LDAP_DOMAIN: "canaccesible.es"
+         LDAP_ADMIN_PASSWORD: "admin"
+       ports:
+         - "389:389"
+         - "636:636"
+       volumes:
+         - ./ldap/data.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/data.ldif
+         - ldap_data:/var/lib/ldap
+         - ldap_config:/etc/ldap/slapd.d
+       command: --copy-service
+       networks:
+         - canaccesible-network
+   ```
+
+   **Explanation of the configuration:**
+   - **Image**: Uses `osixia/openldap:latest`, a robust and popular LDAP server image.
+   - **Environment**: Sets the organization (`CanAccesible`), domain (`canaccesible.es`), and admin password (`admin`).
+   - **Ports**: Exposes LDAP on port 389 and LDAPS on port 636.
+   - **Volumes**: 
+     - `./ldap/data.ldif`: Mounts the initial directory data for bootstrap.
+     - `ldap_data` and `ldap_config`: Named volumes for persistent storage of database and config.
+   - **Command**: `--copy-service` ensures the bootstrap data is loaded.
+   - **Networks**: Uses `canaccesible-network` for isolation.
 
 4. **Start the OpenLDAP container** in detached mode:
    ```bash
-   docker-compose up -d openldap
+   docker-compose up -d
    ```
    This command pulls the image if needed, creates the container, and starts it in the background.
 
 5. **Verify the container is running**:
    ```bash
-   docker ps | grep openldap
+   docker ps
    ```
-   You should see the `openldap` container listed as "Up".
+   You should see output similar to this:
+
+   ![Docker PS Output](/docs/images/docker-ps.png)
 
 6. **Check the logs** if needed:
    ```bash
    docker-compose logs openldap
    ```
    This helps troubleshoot any startup issues.
-
-The OpenLDAP server is now running and ready to accept connections on localhost:389.
+   
+   The OpenLDAP server is now running.
 
 ---
 
-## 2. Data Structure (LDAP)
+## Data Structure (LDAP)
 
-The directory structure is defined in the `ldap/data.ldif` file. This file uses the **LDIF** (LDAP Data Interchange Format) to describe directory entries.
+The directory structure is defined in the `/ldap/data.ldif` file. This file uses the **LDIF** (LDAP Data Interchange Format) to describe directory entries.
 
 ### Organizational Units (OUs)
 
@@ -227,7 +262,7 @@ ou: groups
 
 ### Groups and Roles
 
-We define POSIX groups to manage permissions and roles within the application:
+We define POSIX groups and roles in the application:
 
 ```ldif
 dn: cn=usuario,ou=groups,dc=canaccesible,dc=es
@@ -246,53 +281,9 @@ cn: municipio
 gidNumber: 1003
 ```
 
-### User Creation
-
-Users are created by assigning them an appropriate `objectClass` (such as `inetOrgPerson` and `posixAccount`) and placing them in the corresponding OU.
-
-**Code example to create a standard user:**
-
-```ldif
-dn: uid=carlos,ou=users,dc=canaccesible,dc=es
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-uid: carlos
-sn: Perez
-givenName: Carlos
-cn: Carlos Perez
-displayName: Carlos Perez
-uidNumber: 10001
-gidNumber: 1001
-userPassword: password123
-gecos: Carlos Perez
-loginShell: /bin/bash
-homeDirectory: /home/carlos
-```
-
-**Code example to create an administrator:**
-
-```ldif
-dn: uid=adminUser,ou=admins,dc=canaccesible,dc=es
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-uid: adminUser
-sn: Admin
-givenName: Super
-cn: Super Admin
-displayName: Super Admin
-uidNumber: 10002
-gidNumber: 1002
-userPassword: adminPassword
-gecos: Super Admin
-loginShell: /bin/bash
-homeDirectory: /home/adminUser
-```
-
 ---
 
-## 3. Verification Commands
+## Verification Commands
 
 To test the connection and search for users from the terminal (requires `ldap-utils` installed on the client or running it inside the container):
 
