@@ -10,7 +10,7 @@ exports.create = async (req, res) => {
     const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Missing required fields: firstName, lastName, email, password, roleId" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

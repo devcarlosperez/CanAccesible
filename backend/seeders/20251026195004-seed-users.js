@@ -41,7 +41,7 @@ module.exports = {
       },
       {
         firstName: "Admin",
-        lastName: "",
+        lastName: "Sistema",
         email: "admin@gmail.com",
         dateRegister: new Date(),
         roleId: 2,

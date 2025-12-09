@@ -82,7 +82,27 @@ class LDAPService {
         }
 
         res.on('searchEntry', (entry) => {
-          entries.push(entry.pojo);
+          // entry.object can be null/undefined in some ldapjs versions or configurations
+          // entry.pojo is usually reliable for raw data
+          const user = entry.pojo || {};
+          // Ensure we have a valid object to attach properties to
+          const resultUser = { ...user };
+          
+          // entry.objectName is the DN string
+          if (entry.objectName) {
+            resultUser.dn = entry.objectName.toString();
+          } else if (entry.dn) {
+             resultUser.dn = entry.dn.toString();
+          }
+          
+          // Map attributes if they are inside an 'attributes' array (common in pojo)
+          if (user.attributes) {
+             user.attributes.forEach(attr => {
+                 resultUser[attr.type] = attr.values && attr.values.length === 1 ? attr.values[0] : attr.values;
+             });
+          }
+
+          entries.push(resultUser);
         });
 
         res.on('searchReference', (referral) => {
@@ -158,9 +178,10 @@ class LDAPService {
       
       const change = new ldap.Change({
         operation: 'add',
-        modification: {
-          memberUid: userUid
-        }
+        modification: new ldap.Attribute({
+          type: 'memberUid',
+          values: [userUid]
+        })
       });
 
       client.modify(groupDN, change, (err) => {
@@ -206,7 +227,15 @@ class LDAPService {
         ...(telephone && { telephoneNumber: telephone }),
       };
 
-      await this.add(client, userDN, attributes);
+      try {
+        await this.add(client, userDN, attributes);
+      } catch (err) {
+        if (err.code === 68) {
+          console.log(`[LDAP] User already exists, proceeding to group assignment: ${userDN}`);
+        } else {
+          throw err;
+        }
+      }
       
       // Add user to corresponding group
       await this.addUserToGroup(client, uid, role);
@@ -263,7 +292,7 @@ class LDAPService {
       return null;
     } catch (error) {
       console.error('[LDAP] Forward lookup error:', error.message);
-      throw error;
+      return null;
     } finally {
       if (client) await this.close(client);
     }
@@ -306,7 +335,10 @@ class LDAPService {
       return await this.authenticate(user.dn, password);
     } catch (error) {
       console.error('[LDAP] Auth by email error:', error.message);
-      throw error;
+      return {
+        success: false,
+        message: 'Authentication error: ' + error.message,
+      };
     }
   }
 
