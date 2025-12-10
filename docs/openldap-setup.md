@@ -34,70 +34,9 @@ LDIF is a standard text format for representing LDAP directory entries and chang
 
 ### Forward vs Reverse Lookup
 
-*   **Forward Lookup**: This is the standard process where we search for an entry (like a user) based on their known attributes. For example, searching for the entry where `uid=carlos` to obtain their DN or email. In CanAccesible, this is used during login to find user details by email or username.
+**Forward Lookup**: This is the standard process where we search for an entry (like a user) based on their known attributes. For example, searching for the entry where `uid=carlos` to obtain their DN or email. In CanAccesible, this is used during login to find user details by email or username.
 
-    ```javascript
-    async forwardLookup(searchValue) {
-      // ... connection setup ...
-      const filter = `(|(uid=${searchValue})(mail=${searchValue}))`;
-      
-      // Search in user OUs
-      for (const role of Object.keys(this.organizationalUnitMap)) {
-        const userOrganizationalUnit = this.getOrganizationalUnitByRole(role);
-        const entries = await this.search(client, userOrganizationalUnit, {
-          filter,
-          scope: 'sub',
-          attributes: ['uid', 'cn', 'mail', 'givenName', 'sn', 'telephoneNumber', 'displayName'],
-        });
-
-        if (entries.length > 0) {
-          return {
-            dn: entries[0].dn,
-            uid: entries[0].uid,
-            cn: entries[0].cn,
-            // ... other attributes
-          };
-        }
-      }
-      return null;
-    }
-    ```
-
-*   **Reverse Lookup**: Involves searching for the name or identifier of an entry based on a unique associated value, such as an IP address in DNS. In the context of identities, it can refer to finding the username associated with a specific numeric UID (`uidNumber`). In CanAccesible, this method is defined but currently not used in the authentication flow; user roles are retrieved from the MySQL database instead.
-
-    ```javascript
-    async reverseLookup(userIdentifier) {
-      // ... connection setup ...
-      let uid;
-      if (userIdentifier.includes('=')) {
-        // Extract uid from DN
-        const dnParts = userIdentifier.split(',');
-        const uidPart = dnParts.find(part => part.startsWith('uid='));
-        uid = uidPart.split('=')[1];
-      } else {
-        uid = userIdentifier;
-      }
-
-      // Search groups where user is member
-      const groups = await this.search(client, this.groupsOrganizationalUnit, {
-        scope: 'one',
-        filter: '(objectClass=groupOfNames)',
-        attributes: ['cn', 'memberUid'],
-      });
-
-      const userGroups = [];
-      for (const group of groups) {
-        if (group.memberUid && group.memberUid.includes(uid)) {
-          userGroups.push(group.cn);
-        }
-      }
-
-      return {
-        success: true,
-        groups: userGroups,
-      };
-    }
-    ```
+**Reverse Lookup**: Involves searching for context (e.g., groups) based on user identity, such as finding the groups a user belongs to by their UID. In CanAccesible, this method is defined but currently not used in the authentication flow; user roles are retrieved from the MySQL database instead.
 
 ### Authentication (Bind)
 
@@ -293,16 +232,25 @@ Users are created through the web interface. The backend API stores user data in
 
 ![User Registration Form](/docs/images/user-registration-ldap.png)
 
-**Verify in LDAP:**
+**Verify User Entry (Forward Lookup):**
 
 ```bash
 docker exec openldap ldapsearch -x -H ldap://localhost -b "dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(uid=ldap@gmail.com)"
 ```
 
-This command returns the user's LDAP entry in LDIF format, showing attributes like `dn`, `objectClass`, `uid`, `cn`, `mail`, and `userPassword` (hashed). A successful response indicates the user was created in LDAP.
+This command performs a **Forward Lookup** by searching for the user entry based on the known UID attribute. It returns the user's LDAP entry in LDIF format, showing attributes like `dn`, `objectClass`, `uid`, `cn`, `mail`, and `userPassword` (hashed). A successful response indicates the user was created in LDAP.
 
 ![User LDAP Entry](/docs/images/user-screenshot-ldap.png)
 
+**Verify Group Membership (Reverse Lookup Logic):**
+
+```bash
+docker exec openldap ldapsearch -x -H ldap://localhost -b "ou=groups,dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(memberUid=ldap@gmail.com)"
+```
+
+To confirm the user was assigned the correct role (group), we search for groups containing the user's UID. This aligns with the **Reverse Lookup** concept (finding roles based on user identity).
+
+![User Group Membership](/docs/images/group-screenshot-ldap.png)
 
 ### User Login and LDAP Authentication
 
