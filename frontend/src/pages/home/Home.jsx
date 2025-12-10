@@ -15,7 +15,6 @@ const Home = () => {
         <Header />
         <Hero heroData={heroData} />
 
-        {/* Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -32,7 +31,6 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* Mission Section */}
       <section className="bg-white py-20 px-6 md:px-12 lg:px-24">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2
@@ -60,11 +58,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {/* Feature 1 */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -212,6 +208,101 @@ const Home = () => {
                 Tu reporte notifica a la comunidad y autoridades, impulsando
                 acciones para eliminar la barrera.
               </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Section */}
+      <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-16">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="md:w-1/2"
+            >
+              <div className="inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
+                Sobre Nosotros
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-6">
+                Más que un proyecto, <br />
+                <span className="text-blue-600">una iniciativa.</span>
+              </h2>
+              <p className="text-gray-600 text-lg text-justify leading-relaxed mb-6">
+                CANACCESIBLE nació en las aulas del IES El Rincón como un
+                proyecto final de ciclo, pero con el corazón puesto en las
+                calles de Canarias. Somos un equipo de tres estudiantes
+                apasionados por la tecnología y el impacto social.
+              </p>
+              <p className="text-gray-600 text-lg text-justify leading-relaxed mb-8">
+                Creemos que la programación es una herramienta poderosa para
+                derribar barreras. Lo que comenzó como una simple idea entre
+                compañeros, hoy busca ser la voz de una comunidad que exige y
+                merece accesibilidad real.
+              </p>
+
+              <div className="flex items-center gap-4">
+                <p className="text-sm text-gray-500 font-medium">
+                  Creado con ❤️ por estudiantes de 2º DAW del IES El Rincón
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="md:w-1/2 grid grid-cols-2 gap-6"
+            >
+              <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
+                <div className="w-12 h-12 bg-red-100 text-red-500 rounded-xl flex items-center justify-center text-2xl mb-4">
+                  <i className="fa-solid fa-heart"></i>
+                </div>
+                <h4 className="font-bold text-gray-800 text-lg mb-2">Pasión</h4>
+                <p className="text-sm text-gray-500">
+                  Desarrollamos software pensando en las personas.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
+                <div className="w-12 h-12 bg-blue-100 text-blue-500 rounded-xl flex items-center justify-center text-2xl mb-4">
+                  <i className="fa-solid fa-code"></i>
+                </div>
+                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                  Innovación
+                </h4>
+                <p className="text-sm text-gray-500">
+                  Usamos las últimas tecnologías para crear una experiencia
+                  fluida.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
+                <div className="w-12 h-12 bg-green-100 text-green-500 rounded-xl flex items-center justify-center text-2xl mb-4">
+                  <i className="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                  Aprendizaje
+                </h4>
+                <p className="text-sm text-gray-500">
+                  Un proyecto que busca tener un impacto real en el mundo.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
+                <div className="w-12 h-12 bg-purple-100 text-purple-500 rounded-xl flex items-center justify-center text-2xl mb-4">
+                  <i className="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                  Compromiso
+                </h4>
+                <p className="text-sm text-gray-500">
+                  Dedicados a mejorar la calidad de vida a través de la
+                  accesibilidad.
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
