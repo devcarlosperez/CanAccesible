@@ -306,3 +306,26 @@ docker exec openldap ldapwhoami -x -H ldap://localhost -D "uid=ldap@gmail.com,ou
 A successful response will return the authenticated DN (e.g., `dn:uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es`).
 
 ![LDAP Bind Screenshot](/docs/images/lbind-screenshot.png)
+
+---
+
+## Troubleshooting
+
+### Problem: Docker container fails to start
+**Description**: `docker-compose up` fails or the container exits immediately.
+**Cause**: Port conflicts, volume issues, or invalid environment variables.
+**Solution**:
+- Check logs: `docker-compose logs openldap`.
+- Ensure ports 389/636 are free: `netstat -an | find "389"` (on Windows).
+- Verify volumes: Ensure `./ldap/data.ldif` exists and is valid.
+- Restart: `docker-compose down && docker-compose up -d`.
+
+### Problem: Group membership not found
+**Description**: User is created but not assigned to groups, or reverse lookup fails.
+**Cause**: LDIF not loaded correctly, or `memberUid` not set.
+**Solution**:
+- Reload data: Restart the container to apply LDIF changes.
+- Verify LDIF: Check `/ldap/data.ldif` for correct `memberUid` entries.
+- Test query: `docker exec openldap ldapsearch -x -H ldap://localhost -b "ou=groups,dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(memberUid=user_uid)"`.
+
+If issues persist, ensure Docker and Node.js versions are compatible, and consult OpenLDAP documentation for advanced configurations.
