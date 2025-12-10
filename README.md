@@ -212,7 +212,8 @@ DB_SSL=false                                  # Enable SSL for database connecti
 FRONTEND_URL=http://localhost:5173            # Your frontend url
 
 # Authentication
-JWT_SECRET=your_super_secret_jwt_key_here    # Secret key for JWT token generation and validation
+JWT_SECRET=your_super_secret_jwt_key_here     # Secret key for JWT token generation and validation
+SESSION_SECRET=your_super_secret_session_key_here  # Secret key for session generation and validation
 
 # DigitalOcean Spaces (Image Storage) - Optional for local development
 DO_ACCESS_KEY=your_digitalocean_access_key   # DigitalOcean Spaces API access key
