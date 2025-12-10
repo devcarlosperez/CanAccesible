@@ -63,14 +63,16 @@ exports.getConversations = async (req, res) => {
         [db.sequelize.col('conversation.type'), 'type'],
         [db.sequelize.fn('COUNT', db.sequelize.col('ConversationMessage.id')), 'count']
       ],
-      include: [{
-        model: db.conversation,
-        as: 'conversation',
-        attributes: [],
-        required: true,
-        include: [{
+      include: [
+        {
+          model: db.conversation,
+          as: 'conversation',
+          attributes: [],
+          required: true
+        },
+        {
           model: db.user,
-          as: 'user',
+          as: 'sender',
           attributes: [],
           required: true,
           include: [{ 
@@ -78,8 +80,8 @@ exports.getConversations = async (req, res) => {
               as: 'role',
               where: { role: roleFilter } 
           }]
-        }]
-      }],
+        }
+      ],
       group: ['conversation.type'],
       raw: true
     });
@@ -135,8 +137,9 @@ exports.getConversationChat = async (req, res) => {
       return res.status(404).send("Conversación no encontrada");
     }
 
-    res.render("admin/dashboard/conversations/chat", {
+    res.render("admin/dashboard/conversations/chat-window", {
       user: req.user,
+      currentUserId: req.user.id,
       title: `Chat con ${conversation.user.firstName} - CanAccesible`,
       frontendUrl: process.env.FRONTEND_URL,
       conversation: conversation,
