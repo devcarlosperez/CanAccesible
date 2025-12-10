@@ -1,10 +1,7 @@
 module.exports = (router) => {
+  const usersController = require("../../controllers/dashboard-admin/users.controller");
+
   // Users Management Page
-  router.get("/users", (req, res) => {
-    res.render("admin/dashboard/users/index", {
-      user: req.user,
-      title: "Gestión de Usuarios - CanAccesible",
-      frontendUrl: process.env.FRONTEND_URL,
-    });
-  });
+  router.get("/users", usersController.getUsers);
 };
+
