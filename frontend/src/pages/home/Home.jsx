@@ -14,21 +14,6 @@ const Home = () => {
         <Background />
         <Header />
         <Hero heroData={heroData} />
-
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 1.5,
-            duration: 1,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-center"
-        >
-          <p className="text-sm mb-2">Descubre más</p>
-          <i className="fa-solid fa-chevron-down text-2xl"></i>
-        </motion.div>
       </section>
 
       <section className="bg-white py-20 px-6 md:px-12 lg:px-24">
