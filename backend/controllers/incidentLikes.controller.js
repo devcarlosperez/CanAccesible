@@ -1,5 +1,6 @@
 const db = require("../models");
 const incidentLikeObject = db.incidentLike;
+const { getIo } = require("../services/socket.service");
 
 // Like an incident
 exports.create = async (req, res) => {
@@ -17,6 +18,20 @@ exports.create = async (req, res) => {
       userId: req.body.userId,
       dateLike: req.body.dateLike,
     });
+
+    // Count total likes for this incident
+    const count = await incidentLikeObject.count({
+      where: { incidentId: req.body.incidentId },
+    });
+
+    // Emit update to room
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${req.body.incidentId}`).emit("incident:likes_update", {
+        incidentId: req.body.incidentId,
+        count: count,
+      });
+    }
 
     return res.status(201).json(newIncidentLike);
   } catch (err) {
@@ -128,6 +143,20 @@ exports.delete = async (req, res) => {
     }
 
     await incidentLikeObject.destroy({ where: { id: incidentLikeId } });
+
+    // Count total likes for this incident
+    const count = await incidentLikeObject.count({
+      where: { incidentId: incidentLike.incidentId },
+    });
+
+    // Emit update to room
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${incidentLike.incidentId}`).emit("incident:likes_update", {
+        incidentId: incidentLike.incidentId,
+        count: count,
+      });
+    }
 
     res.status(200).json({
       message: "IncidentLike has been deleted.",

@@ -7,6 +7,7 @@ import IncidentCommentSection from "../../components/incidents/IncidentCommentSe
 import { getIncidentById } from "../../services/incidentService";
 import { getAllIncidentLikes } from "../../services/incidentLikesService";
 import useAuthStore from "../../services/authService.js";
+import { initSocket } from "../../services/socketService";
 
 import { Chip } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -16,7 +17,28 @@ const IncidentDetail = () => {
   const [incident, setIncident] = useState(null);
   const [error, setError] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
+
+  useEffect(() => {
+    const socket = initSocket(token);
+
+    if (socket && id) {
+      socket.emit("joinIncident", id);
+
+      const handleLikesUpdate = (data) => {
+        if (parseInt(data.incidentId) === parseInt(id)) {
+          setLikeCount(data.count);
+        }
+      };
+
+      socket.on("incident:likes_update", handleLikesUpdate);
+
+      return () => {
+        socket.emit("leaveIncident", id);
+        socket.off("incident:likes_update", handleLikesUpdate);
+      };
+    }
+  }, [id, token]);
 
   useEffect(() => {
     const fetchIncident = async () => {

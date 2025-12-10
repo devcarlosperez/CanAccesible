@@ -239,7 +239,7 @@ const Incident = () => {
   return (
     <section>
       <Header transparent={false} />
-      <div className="pt-40 p-8 bg-gray-200">
+      <div className="pt-40 p-8 pb-20 bg-gray-200">
         <h1
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
@@ -247,18 +247,24 @@ const Incident = () => {
           Gestión de Incidencias
         </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          {isAuthenticated && !showForm && (
+          {!showForm && (
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              startIcon={isAuthenticated ? <AddIcon /> : null}
               onClick={() => {
-                setShowForm(true);
-                setFormData(initialFormData);
-                setEditingIncident(null);
+                if (isAuthenticated) {
+                  setShowForm(true);
+                  setFormData(initialFormData);
+                  setEditingIncident(null);
+                } else {
+                  navigate("/register");
+                }
               }}
             >
-              Nueva Incidencia
+              {isAuthenticated
+                ? "Nueva Incidencia"
+                : "Inicia sesión para crear una incidencia"}
             </Button>
           )}
         </div>

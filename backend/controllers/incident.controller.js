@@ -94,7 +94,7 @@ exports.create = async (req, res) => {
       userId: req.body.userId,
       entity: "Incident",
       entityId: newIncident.id,
-      message: `La incidencia "${newIncident.name}" ha sido creada.`,
+      message: `La incidencia "${newIncident.name}" ha sido enviada para su revisión.`,
     });
 
     return res.status(201).json(newIncident);

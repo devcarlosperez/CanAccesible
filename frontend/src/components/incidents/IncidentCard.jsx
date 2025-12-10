@@ -87,7 +87,7 @@ const IncidentCard = ({
       <Card
         sx={{
           maxWidth: 500,
-          width: "100%",
+          width: 500,
           display: "flex",
           flexDirection: "column",
           margin: "0 auto",
@@ -127,7 +127,7 @@ const IncidentCard = ({
           alt={incident.name}
           sx={{
             width: "100%",
-            maxHeight: 300,
+            height: 300,
             objectFit: "cover",
             objectPosition: "center",
             transition: "max-height 0.3s ease",

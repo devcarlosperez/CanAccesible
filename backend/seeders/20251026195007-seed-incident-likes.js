@@ -12,7 +12,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        incidentId: 1,
+        incidentId: 2,
         userId: 2,
         dateLike: new Date('2025-10-16'),
         createdAt: new Date(),
@@ -33,7 +33,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        incidentId: 2,
+        incidentId: 3,
         userId: 1,
         dateLike: new Date('2025-10-25'),
         createdAt: new Date(),
