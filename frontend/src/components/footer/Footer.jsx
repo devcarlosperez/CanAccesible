@@ -54,14 +54,29 @@ const Footer = () => {
               Compañía
             </h3>
             <ul className="space-y-8.5 lg:space-y-5 text-base font-roboto font-semibold">
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Sobre Nosotros
+              <li>
+                <Link
+                  to="/home#mission"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  Nuestra misión
+                </Link>
               </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Trabajos
+              <li>
+                <Link
+                  to="/home#services"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  Servicios
+                </Link>
               </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Servicios
+              <li>
+                <Link
+                  to="/home#about-us"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  Sobre nosotros
+                </Link>
               </li>
             </ul>
           </div>

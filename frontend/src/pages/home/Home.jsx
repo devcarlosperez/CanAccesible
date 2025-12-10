@@ -16,7 +16,11 @@ const Home = () => {
         <Hero heroData={heroData} />
       </section>
 
-      <section className="bg-white py-20 px-6 md:px-12 lg:px-24">
+      {/* Mission Section */}
+      <section
+        id="mission"
+        className="bg-white py-20 px-6 md:px-12 lg:px-24 scroll-mt-28"
+      >
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -43,8 +47,23 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24">
+      {/* Features Section */}
+      <section
+        id="services"
+        className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 scroll-mt-28"
+      >
         <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
+              Servicios
+            </h2>
+          </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -199,7 +218,10 @@ const Home = () => {
       </section>
 
       {/* About Us Section */}
-      <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 overflow-hidden">
+      <section
+        id="about-us"
+        className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 overflow-hidden scroll-mt-28"
+      >
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-16">
             <motion.div
