@@ -1,0 +1,1807 @@
+{
+	"info": {
+		"_postman_id": "166bf4b5-edfa-4117-b931-6d73e4a6f0cf",
+		"name": "CanAccesible APIs",
+		"description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48689306",
+		"_collection_link": "https://carlosperezsantana04-7850126.postman.co/workspace/0b5e8e5b-5d4b-4149-9378-b040a32e3145/collection/48689306-166bf4b5-edfa-4117-b931-6d73e4a6f0cf?action=share&source=collection_link&creator=48689306"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "signin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic <base64(email:password)>",
+								"description": "Basic Auth header with base64 encoded email:password",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/auth/signin",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						},
+						"description": "Logs in a user using email/password (Basic Auth). Validates against LDAP, generates JWT, creates a session, and logs the action."
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/auth/logout",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logs out the user, destroys the session cookie, and logs the action."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for user authentication and session management. Includes login and logout."
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/users",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Creates a new user with an optional profile image."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Retrieves all users."
+					},
+					"response": []
+				},
+				{
+					"name": "findAllUsers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/user",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"user"
+							]
+						},
+						"description": "Retrieves a list of users."
+					},
+					"response": []
+				},
+				{
+					"name": "municipalities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/municipalities",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"municipalities"
+							]
+						},
+						"description": "Retrieves all municipalities."
+					},
+					"response": []
+				},
+				{
+					"name": "admins",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/admin",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"admin"
+							]
+						},
+						"description": "Retrieves all admin users."
+					},
+					"response": []
+				},
+				{
+					"name": "top-reporting",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/top-reporting",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"top-reporting"
+							]
+						},
+						"description": "Retrieves users with the most reports."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific user by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/users/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates an existing user with an optional profile image."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/users/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a user by ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing users. Includes creating, retrieving, updating, and deleting users."
+		},
+		{
+			"name": "Incidents",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/incidents",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents"
+							]
+						},
+						"description": "Creates a new incident with an image. Automatically geocodes and assigns severity."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidents",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents"
+							]
+						},
+						"description": "Retrieves all incidents."
+					},
+					"response": []
+				},
+				{
+					"name": "my-incidents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/incidents/my-incidents",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents",
+								"my-incidents"
+							]
+						},
+						"description": "Retrieves incidents reported by the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidents/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific incident by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/incidents/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates an existing incident with an optional image."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/incidents/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidents",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes an incident by ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing incidents. Includes creating, retrieving, updating, and deleting incidents."
+		},
+		{
+			"name": "IncidentLikes",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incidentLikes",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes"
+							]
+						},
+						"description": "Creates a like for an incident."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentLikes",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes"
+							]
+						},
+						"description": "Retrieves all incident likes."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentLikes/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific like by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "findByIncidentAndUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentLikes/incident/:incidentId/user/:userId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes",
+								"incident",
+								":incidentId",
+								"user",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "incidentId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a like by incident ID and user ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incidentLikes/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a like."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/incidentLikes/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentLikes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a like."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing likes on incidents."
+		},
+		{
+			"name": "IncidentFollows",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incidentFollows",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows"
+							]
+						},
+						"description": "Creates a follow for an incident."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentFollows",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows"
+							]
+						},
+						"description": "Retrieves all incident follows."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentFollows/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific follow by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "findByIncident",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentFollows/incident/:incidentId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows",
+								"incident",
+								":incidentId"
+							],
+							"variable": [
+								{
+									"key": "incidentId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves follows for a specific incident."
+					},
+					"response": []
+				},
+				{
+					"name": "findByIncidentAndUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incidentFollows/incident/:incidentId/user/:userId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows",
+								"incident",
+								":incidentId",
+								"user",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "incidentId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a follow by incident ID and user ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incidentFollows/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a follow."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/incidentFollows/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incidentFollows",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a follow."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing follows on incidents."
+		},
+		{
+			"name": "IncidentComments",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incident-comments",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incident-comments"
+							]
+						},
+						"description": "Creates a new comment on an incident. Validates incident existence and comment length."
+					},
+					"response": []
+				},
+				{
+					"name": "findByIncident",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incident-comments/incident/:incidentId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incident-comments",
+								"incident",
+								":incidentId"
+							],
+							"variable": [
+								{
+									"key": "incidentId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves all comments for a specific incident."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/incident-comments/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incident-comments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific comment by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/incident-comments/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incident-comments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates an existing comment. Only the author can update it."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/incident-comments/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"incident-comments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a comment. Only the author can delete it."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing incident comments. Includes creating, retrieving, updating, and deleting comments on incidents."
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/notifications",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"notifications"
+							]
+						},
+						"description": "Creates a new notification."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/notifications",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"notifications"
+							]
+						},
+						"description": "Retrieves all notifications."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/notifications/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"notifications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific notification by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/notifications/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"notifications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a notification."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/notifications/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"notifications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a notification."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing user notifications."
+		},
+		{
+			"name": "BlogArticles",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/blogArticles",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"blogArticles"
+							]
+						},
+						"description": "Creates a new blog article with an image."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/blogArticles",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"blogArticles"
+							]
+						},
+						"description": "Retrieves all blog articles."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/blogArticles/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"blogArticles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific blog article by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{api}}/blogArticles/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"blogArticles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a blog article with an optional image."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/blogArticles/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"blogArticles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a blog article."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing blog articles."
+		},
+		{
+			"name": "Conversations",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/conversations",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversations"
+							]
+						},
+						"description": "Creates a new conversation."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversations",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversations"
+							]
+						},
+						"description": "Retrieves all conversations."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversations/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific conversation by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/conversations/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a conversation."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversations/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a conversation."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing chat conversations."
+		},
+		{
+			"name": "ConversationMessages",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/conversationMessages/:conversationId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversationMessages",
+								":conversationId"
+							],
+							"variable": [
+								{
+									"key": "conversationId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Creates a new message in a conversation."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversationMessages/:conversationId",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversationMessages",
+								":conversationId"
+							],
+							"variable": [
+								{
+									"key": "conversationId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves all messages in a conversation."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversationMessages/:conversationId/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversationMessages",
+								":conversationId",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "conversationId",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific message by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/conversationMessages/:conversationId/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversationMessages",
+								":conversationId",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "conversationId",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Updates a message."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/conversationMessages/:conversationId/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"conversationMessages",
+								":conversationId",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "conversationId",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a message."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing messages within conversations."
+		},
+		{
+			"name": "Logs",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{api}}/logs",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"logs"
+							]
+						},
+						"description": "Creates a new log entry."
+					},
+					"response": []
+				},
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/logs",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"logs"
+							]
+						},
+						"description": "Retrieves all logs (Admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "findOne",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/logs/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"logs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Retrieves a specific log by ID (Admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/logs/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"logs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Not allowed (logs are immutable)."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api}}/logs/:id",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"logs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Deletes a log (Admin only)."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for system logs. Restricted to administrators."
+		}
+	],
+	"variable": [
+		{
+			"key": "api",
+			"value": "https://canaccesible.es/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -20,7 +20,7 @@ Our mission is to build a strong community dedicated to transforming the islands
 
 ## Documentation
 
-- [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3Wnxhsu) - Complete API endpoint documentation.
+- [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3dSP8Yt) - Complete API endpoint documentation.
 - [OpenLDAP Setup](./docs/openldap-setup.md) - Technical documentation for the OpenLDAP server setup and configuration.
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
