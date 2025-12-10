@@ -239,7 +239,7 @@ const Incident = () => {
   return (
     <section>
       <Header transparent={false} />
-      <div className="pt-40 p-8 bg-gray-200">
+      <div className="pt-40 p-8 pb-20 bg-gray-200">
         <h1
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
