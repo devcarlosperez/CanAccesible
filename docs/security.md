@@ -24,7 +24,7 @@ The application implements a **dual authentication strategy** to handle differen
 
 ### Password Hashing
 
-- **Bcrypt**: User passwords are **never stored in plain text**. We use `bcrypt` to hash passwords with a salt before saving them to the database. During login, the provided password is hashed and compared against the stored hash.
+- **LDAP SSHA**: User passwords are **never stored in plain text**. We use LDAP's built-in SSHA (Salted SHA) hashing algorithm to securely hash passwords during user creation.
 
 ---
 
