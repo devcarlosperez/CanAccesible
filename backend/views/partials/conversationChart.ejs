@@ -1,0 +1,105 @@
+<div class="bg-white rounded-xl shadow-md p-6 mb-8 border-2 border-[#e5edfa]">
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+    <h3 class="text-xl font-bold text-neutral-2 mb-4 sm:mb-0">
+      Mensajes por Tipo de Conversación
+    </h3>
+    
+    <!-- Role Filter Form -->
+    <form action="/dashboard-admin/conversations" method="GET" class="flex gap-2 items-center">
+      <label for="roleFilter" class="text-sm text-gray-600 font-semibold">Filtrar por:</label>
+      <select 
+        name="roleFilter" 
+        id="roleFilter" 
+        onchange="this.form.submit()"
+        class="px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-sm bg-white"
+      >
+        <option value="usuario" <%= (typeof roleFilter !== 'undefined' && roleFilter === 'usuario') ? 'selected' : '' %>>Usuarios</option>
+        <option value="municipio" <%= (typeof roleFilter !== 'undefined' && roleFilter === 'municipio') ? 'selected' : '' %>>Municipios</option>
+      </select>
+    </form>
+  </div>
+
+  <div class="relative w-full h-[350px]">
+    <div id="conversationChart" class="w-full h-full"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Conversation Chart...');
+    const chartDom = document.getElementById('conversationChart');
+    
+    if (typeof echarts === 'undefined') {
+      console.error('ECharts library not loaded!');
+      chartDom.innerHTML = '<p class="text-red-500 text-center p-4">Error: Librería de gráficas no cargada.</p>';
+      return;
+    }
+
+    const myChart = echarts.init(chartDom);
+    
+    // Data from server
+    const rawData = <%- (typeof conversationChartData !== 'undefined') ? JSON.stringify(conversationChartData) : '[]' %>;
+    console.log('Chart Raw Data:', rawData);
+    
+    if (!rawData || rawData.length === 0) {
+      console.warn('No data for chart');
+    }
+
+    // Process data
+    const labels = rawData.map(item => item.type);
+    const data = rawData.map(item => parseInt(item.count, 10)); // Ensure number
+    
+    const option = {
+      tooltip: {
+        trigger: 'item'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: labels,
+          axisTick: {
+            alignWithLabel: true
+          },
+          axisLabel: {
+            interval: 0,
+            rotate: 30 // Rotate labels if they are long
+          }
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value'
+        }
+      ],
+      series: [
+        {
+          name: 'Mensajes',
+          type: 'bar',
+          barWidth: '60%',
+          data: data,
+          itemStyle: {
+            color: '#004aad'
+          },
+          emphasis: {
+            itemStyle: {
+              color: '#003380'
+            }
+          }
+        }
+      ]
+    };
+
+    myChart.setOption(option);
+    
+    window.addEventListener('resize', function() {
+      myChart.resize();
+    });
+  });
+</script>
