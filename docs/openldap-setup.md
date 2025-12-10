@@ -296,3 +296,13 @@ Executing (default): SELECT `User`.`id`, ... FROM `Users` AS `User` LEFT OUTER J
 ```
 
 This shows the complete flow: DB query, LDAP lookup, and successful authentication.
+
+Alternatively, to verify authentication directly from the command line without the backend, use:
+
+```bash
+docker exec openldap ldapwhoami -x -H ldap://localhost -D "uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es" -w "password_del_usuario"
+```
+
+A successful response will return the authenticated DN (e.g., `dn:uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es`).
+
+![LDAP Bind Screenshot](/docs/images/lbind-screenshot.png)
