@@ -283,24 +283,68 @@ gidNumber: 1003
 
 ---
 
-## Verification Commands
+## User Creation and Authentication Flow
 
-To test the connection and search for users from the terminal (requires `ldap-utils` installed on the client or running it inside the container):
+This section demonstrates the complete user lifecycle: creation from the frontend (storing in database and LDAP with appropriate group), verification, login, and LDAP authentication.
 
-**Search for all users:**
+### Creating a User
+
+Users are created through the web interface. The backend API stores user data in MySQL and creates the LDAP entry with the corresponding group.
+
+![User Registration Form](/docs/images/user-registration-ldap.png)
+
+**Verify in LDAP:**
 
 ```bash
-ldapsearch -x -H ldap://localhost -b "dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(objectClass=inetOrgPerson)"
+docker exec openldap ldapsearch -x -H ldap://localhost -b "dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(uid=ldap@gmail.com)"
 ```
 
-**Search for a specific user by UID:**
+This command returns the user's LDAP entry in LDIF format, showing attributes like `dn`, `objectClass`, `uid`, `cn`, `mail`, and `userPassword` (hashed). A successful response indicates the user was created in LDAP.
 
-```bash
-ldapsearch -x -H ldap://localhost -b "dc=canaccesible,dc=es" -D "cn=admin,dc=canaccesible,dc=es" -w admin "(uid=carlos)"
+![User LDAP Entry](/docs/images/user-screenshot-ldap.png)
+
+
+### User Login and LDAP Authentication
+
+When logging in, the frontend sends credentials to the backend, which first queries the database for user details, then performs LDAP forward lookup and bind for authentication.
+
+![User Login Form](/docs/images/login-ldap.png)
+
+**LDAP Authentication Process (Backend Code):**
+
+```javascript
+// In auth.controller.js - First query DB for user and role
+const user = await User.findOne({
+  where: { email },
+  include: [{ model: db.role, as: "role" }],
+});
+
+// Then authenticate via LDAP
+const ldapResult = await userService.authenticate(email, password);
+
+// In user.service.js - authenticate method
+async authenticate(email, password) {
+  const ldapUser = await this.forwardLookup(email);
+  if (!ldapUser) return null;
+  return await this.authenticate(ldapUser.dn, password);
+}
 ```
 
-*   `-x`: Simple authentication.
-*   `-H`: Server URI.
-*   `-b`: Search base.
-*   `-D`: User DN to bind (admin).
-*   `-w`: Password.
+**Verify Successful Authentication:**
+
+Check the backend console logs (where `npm run dev` is running) for a sequence like:
+```
+Executing (default): SELECT `User`.`id`, ... FROM `Users` AS `User` LEFT OUTER JOIN `Roles` AS `role` ON `User`.`roleId` = `role`.`id` WHERE `User`.`email` = 'ldap@gmail.com';
+[LDAP] Connected to server
+[LDAP] Bind successful: cn=admin,dc=canaccesible,dc=es
+[LDAP] Forward lookup for: ldap@gmail.com
+[LDAP] User found: uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es
+[LDAP] Connection closed
+[LDAP] Authenticating: uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es
+[LDAP] Connected to server
+[LDAP] Bind successful: uid=ldap@gmail.com,ou=users,dc=canaccesible,dc=es
+[LDAP] Authentication successful
+[LDAP] Connection closed
+```
+
+This shows the complete flow: DB query, LDAP lookup, and successful authentication.
