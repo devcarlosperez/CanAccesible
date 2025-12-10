@@ -215,144 +215,151 @@
       class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden"
     >
       <div
-        class="bg-white rounded-xl shadow-xl w-full max-w-lg relative max-h-[80vh] overflow-y-auto p-8"
+        class="bg-white rounded-xl shadow-xl w-full max-w-lg relative max-h-[90vh] flex flex-col"
       >
-        <button
-          onclick="closeIncidentModal()"
-          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
-        >
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-        <form id="incidentForm" enctype="multipart/form-data">
-          <h3 class="text-lg font-bold mb-4" id="modalTitle">
+        <div class="px-6 py-4 border-b flex justify-between items-center shrink-0">
+          <h3 class="text-lg font-bold" id="modalTitle">
             Nueva Incidencia
           </h3>
-          <input type="hidden" name="id" id="incidentId" />
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Nombre</label>
-            <input
-              type="text"
-              name="name"
-              id="incidentName"
-              class="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Descripción</label>
-            <textarea
-              name="description"
-              id="incidentDescription"
-              class="w-full border rounded px-3 py-2"
-              rows="3"
-              required
-            ></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Estado</label>
-            <select
-              name="incidentStatusId"
-              id="incidentStatusId"
-              class="w-full border rounded px-3 py-2"
-              required
-            >
-              <option value="1">Pendiente</option>
-              <option value="2">En Progreso</option>
-              <option value="3">Resuelta</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Tipo</label>
-            <select
-              name="incidentTypeId"
-              id="incidentTypeId"
-              class="w-full border rounded px-3 py-2"
-              required
-            >
-              <option value="1">Buena Práctica</option>
-              <option value="2">Mala Práctica</option>
-            </select>
-          </div>
-          <div class="mb-3" id="severityContainer" style="display: none">
-            <label class="block text-sm font-medium mb-1">Severidad</label>
-            <select
-              name="incidentSeverityId"
-              id="incidentSeverityId"
-              class="w-full border rounded px-3 py-2"
-            >
-              <option value="1">Baja</option>
-              <option value="2">Media</option>
-              <option value="3">Alta</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Área</label>
-            <select
-              name="area"
-              id="incidentArea"
-              class="w-full border rounded px-3 py-2"
-              required
-            >
-              <option value="">Selecciona un área</option>
-              <option value="movilidad">movilidad</option>
-              <option value="sensorial">sensorial</option>
-              <option value="arquitectura">arquitectura</option>
-              <option value="transporte">transporte</option>
-              <option value="otro">otro</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Ubicación</label>
-            <div id="leafletMap" class="w-full h-64 rounded border"></div>
-            <input type="hidden" name="latitude" id="incidentLatitude" />
-            <input type="hidden" name="longitude" id="incidentLongitude" />
-            <input type="hidden" name="island" id="incidentIsland" />
-            <div id="islandError" class="text-red-600 text-sm mt-2 hidden">
-              No se pudo detectar correctamente la isla. Selecciona un punto
-              válido en el mapa.
+          <button
+            onclick="closeIncidentModal()"
+            class="text-gray-500 hover:text-gray-800 text-xl"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="overflow-y-auto p-6 grow">
+          <form id="incidentForm" enctype="multipart/form-data">
+            <input type="hidden" name="id" id="incidentId" />
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Nombre</label>
+              <input
+                type="text"
+                name="name"
+                id="incidentName"
+                class="w-full border rounded px-3 py-2"
+                required
+              />
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Fecha</label>
-            <input
-              type="date"
-              name="dateIncident"
-              id="incidentDateIncident"
-              class="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label class="block text-sm font-medium mb-1">Imagen</label>
-            <input
-              type="file"
-              name="image"
-              id="incidentImageFile"
-              class="w-full border rounded px-3 py-2"
-            />
-            <img
-              id="incidentImagePreview"
-              src=""
-              alt="Vista previa"
-              class="mt-2 rounded max-h-40 hidden"
-            />
-          </div>
-          <div class="mt-6 flex gap-2 justify-end">
-            <button
-              type="button"
-              onclick="closeIncidentModal()"
-              class="bg-gray-100 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-200 transition"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              class="bg-primary-2 text-white px-6 py-2 rounded font-semibold hover:opacity-90 transition"
-            >
-              Guardar
-            </button>
-          </div>
-        </form>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Descripción</label>
+              <textarea
+                name="description"
+                id="incidentDescription"
+                class="w-full border rounded px-3 py-2"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Estado</label>
+              <select
+                name="incidentStatusId"
+                id="incidentStatusId"
+                class="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="1">Pendiente</option>
+                <option value="2">En Progreso</option>
+                <option value="3">Resuelta</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Tipo</label>
+              <select
+                name="incidentTypeId"
+                id="incidentTypeId"
+                class="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="1">Buena Práctica</option>
+                <option value="2">Mala Práctica</option>
+              </select>
+            </div>
+            <div class="mb-3" id="severityContainer" style="display: none">
+              <label class="block text-sm font-medium mb-1">Severidad</label>
+              <select
+                name="incidentSeverityId"
+                id="incidentSeverityId"
+                class="w-full border rounded px-3 py-2"
+              >
+                <option value="1">Baja</option>
+                <option value="2">Media</option>
+                <option value="3">Alta</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Área</label>
+              <select
+                name="area"
+                id="incidentArea"
+                class="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="">Selecciona un área</option>
+                <option value="movilidad">movilidad</option>
+                <option value="sensorial">sensorial</option>
+                <option value="arquitectura">arquitectura</option>
+                <option value="transporte">transporte</option>
+                <option value="otro">otro</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Ubicación</label>
+              <div id="leafletMap" class="w-full h-64 rounded border"></div>
+              <input type="hidden" name="latitude" id="incidentLatitude" />
+              <input type="hidden" name="longitude" id="incidentLongitude" />
+              <input type="hidden" name="island" id="incidentIsland" />
+              <div id="islandError" class="text-red-600 text-sm mt-2 hidden">
+                No se pudo detectar correctamente la isla. Selecciona un punto
+                válido en el mapa.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Fecha</label>
+              <input
+                type="date"
+                name="dateIncident"
+                id="incidentDateIncident"
+                class="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium mb-1">Imagen</label>
+              <input
+                type="file"
+                name="image"
+                id="incidentImageFile"
+                class="w-full border rounded px-3 py-2"
+              />
+              <img
+                id="incidentImagePreview"
+                src=""
+                alt="Vista previa"
+                class="mt-2 rounded max-h-40 hidden"
+              />
+            </div>
+          </form>
+        </div>
+
+        <div class="px-6 py-4 border-t bg-gray-50 rounded-b-xl flex justify-end gap-2 shrink-0">
+          <button
+            type="button"
+            onclick="closeIncidentModal()"
+            class="bg-gray-100 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-200 transition"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form="incidentForm"
+            class="bg-blue-500 text-white px-6 py-2 rounded font-semibold hover:opacity-90 transition"
+          >
+            Guardar
+          </button>
+        </div>
       </div>
     </div>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
