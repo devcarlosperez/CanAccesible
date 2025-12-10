@@ -77,7 +77,7 @@ const Home = () => {
               transition={{ delay: 0.2 }}
               className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 text-center"
             >
-              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+              <div className="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
                 <i className="fa-solid fa-map-location-dot"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
@@ -89,7 +89,7 @@ const Home = () => {
               </p>
               <Link
                 to="/map"
-                className="text-green-600 font-semibold hover:text-green-800 transition-colors"
+                className="text-green-700 font-semibold hover:text-green-800 transition-colors"
               >
                 Explorar Mapa <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
@@ -245,7 +245,7 @@ const Home = () => {
                 <div className="w-12 h-12 bg-red-100 text-red-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-heart"></i>
                 </div>
-                <h4 className="font-bold text-gray-800 text-lg mb-2">Pasión</h4>
+                <h3 className="font-bold text-gray-800 text-lg mb-2">Pasión</h3>
                 <p className="text-sm text-gray-500">
                   Desarrollamos software pensando en las personas.
                 </p>
@@ -255,9 +255,9 @@ const Home = () => {
                 <div className="w-12 h-12 bg-blue-100 text-blue-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-code"></i>
                 </div>
-                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                <h3 className="font-bold text-gray-800 text-lg mb-2">
                   Innovación
-                </h4>
+                </h3>
                 <p className="text-sm text-gray-500">
                   Usamos las últimas tecnologías para crear una experiencia
                   fluida.
@@ -268,9 +268,9 @@ const Home = () => {
                 <div className="w-12 h-12 bg-green-100 text-green-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                <h3 className="font-bold text-gray-800 text-lg mb-2">
                   Aprendizaje
-                </h4>
+                </h3>
                 <p className="text-sm text-gray-500">
                   Un proyecto que busca tener un impacto real en el mundo.
                 </p>
@@ -280,9 +280,9 @@ const Home = () => {
                 <div className="w-12 h-12 bg-purple-100 text-purple-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-hand-holding-heart"></i>
                 </div>
-                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                <h3 className="font-bold text-gray-800 text-lg mb-2">
                   Compromiso
-                </h4>
+                </h3>
                 <p className="text-sm text-gray-500">
                   Dedicados a mejorar la calidad de vida a través de la
                   accesibilidad.
