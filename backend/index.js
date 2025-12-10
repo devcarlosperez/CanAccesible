@@ -61,6 +61,10 @@ app.use(
   })
 );
 
+// Swagger Documentation
+// Swagger Configuration
+require('./config/swagger')(app);
+
 // Dashboard admin routes (before API routes)
 require("./routes/dashboard-admin/main.routes")(app);
 

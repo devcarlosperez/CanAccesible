@@ -29,10 +29,12 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.10",
     "sequelize": "^6.37.7",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
+    "postman-to-openapi": "^1.7.3",
     "sequelize-cli": "^6.6.3"
   }
 }

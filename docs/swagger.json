@@ -1,0 +1,1000 @@
+openapi: 3.0.0
+info:
+  title: CanAccesible APIs
+  description: >-
+    API collection for the Canaccesible platform. A system for reporting and
+    managing accessibility issues in the Canary Islands.
+
+
+    This project uses two different environments:
+
+    - Development - Base URL: http://localhost:85/api
+
+    - Production - Base URL: https://canaccesible.es/api
+  version: 1.0.0
+servers:
+  - url: undefined://{{api}}
+tags:
+  - name: Auth
+    description: >-
+      Endpoints for user authentication and session management. Includes login
+      and logout.
+  - name: Users
+    description: >-
+      Endpoints for managing users. Includes creating, retrieving, updating, and
+      deleting users.
+  - name: Incidents
+    description: >-
+      Endpoints for managing incidents. Includes creating, retrieving, updating,
+      and deleting incidents.
+  - name: IncidentLikes
+    description: Endpoints for managing likes on incidents.
+  - name: IncidentFollows
+    description: Endpoints for managing follows on incidents.
+  - name: IncidentComments
+    description: >-
+      Endpoints for managing incident comments. Includes creating, retrieving,
+      updating, and deleting comments on incidents.
+  - name: Notifications
+    description: Endpoints for managing user notifications.
+  - name: BlogArticles
+    description: Endpoints for managing blog articles.
+  - name: Conversations
+    description: Endpoints for managing chat conversations.
+  - name: ConversationMessages
+    description: Endpoints for managing messages within conversations.
+  - name: Logs
+    description: Endpoints for system logs. Restricted to administrators.
+paths:
+  /auth/signin:
+    post:
+      tags:
+        - Auth
+      summary: signin
+      description: >-
+        Logs in a user using email/password (Basic Auth). Validates against
+        LDAP, generates JWT, creates a session, and logs the action.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          description: Basic Auth header with base64 encoded email:password
+          example: Basic <base64(email:password)>
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: logout
+      description: Logs out the user, destroys the session cookie, and logs the action.
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users:
+    post:
+      tags:
+        - Users
+      summary: create
+      description: Creates a new user with an optional profile image.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Users
+      summary: findAll
+      description: Retrieves all users.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users/user:
+    get:
+      tags:
+        - Users
+      summary: findAllUsers
+      description: Retrieves a list of users.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users/municipalities:
+    get:
+      tags:
+        - Users
+      summary: municipalities
+      description: Retrieves all municipalities.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users/admin:
+    get:
+      tags:
+        - Users
+      summary: admins
+      description: Retrieves all admin users.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users/top-reporting:
+    get:
+      tags:
+        - Users
+      summary: top-reporting
+      description: Retrieves users with the most reports.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /users/:id:
+    get:
+      tags:
+        - Users
+      summary: findOne
+      description: Retrieves a specific user by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users
+      summary: update
+      description: Updates an existing user with an optional profile image.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users
+      summary: delete
+      description: Deletes a user by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidents:
+    post:
+      tags:
+        - Incidents
+      summary: create
+      description: >-
+        Creates a new incident with an image. Automatically geocodes and assigns
+        severity.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Incidents
+      summary: findAll
+      description: Retrieves all incidents.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidents/my-incidents:
+    get:
+      tags:
+        - Incidents
+      summary: my-incidents
+      description: Retrieves incidents reported by the authenticated user.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidents/:id:
+    get:
+      tags:
+        - Incidents
+      summary: findOne
+      description: Retrieves a specific incident by ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Incidents
+      summary: update
+      description: Updates an existing incident with an optional image.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Incidents
+      summary: delete
+      description: Deletes an incident by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentLikes:
+    post:
+      tags:
+        - IncidentLikes
+      summary: create
+      description: Creates a like for an incident.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - IncidentLikes
+      summary: findAll
+      description: Retrieves all incident likes.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentLikes/:id:
+    get:
+      tags:
+        - IncidentLikes
+      summary: findOne
+      description: Retrieves a specific like by ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - IncidentLikes
+      summary: update
+      description: Updates a like.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - IncidentLikes
+      summary: delete
+      description: Deletes a like.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentLikes/incident/:incidentId/user/:userId:
+    get:
+      tags:
+        - IncidentLikes
+      summary: findByIncidentAndUser
+      description: Retrieves a like by incident ID and user ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentFollows:
+    post:
+      tags:
+        - IncidentFollows
+      summary: create
+      description: Creates a follow for an incident.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - IncidentFollows
+      summary: findAll
+      description: Retrieves all incident follows.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentFollows/:id:
+    get:
+      tags:
+        - IncidentFollows
+      summary: findOne
+      description: Retrieves a specific follow by ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - IncidentFollows
+      summary: update
+      description: Updates a follow.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - IncidentFollows
+      summary: delete
+      description: Deletes a follow.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentFollows/incident/:incidentId:
+    get:
+      tags:
+        - IncidentFollows
+      summary: findByIncident
+      description: Retrieves follows for a specific incident.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incidentFollows/incident/:incidentId/user/:userId:
+    get:
+      tags:
+        - IncidentFollows
+      summary: findByIncidentAndUser
+      description: Retrieves a follow by incident ID and user ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incident-comments:
+    post:
+      tags:
+        - IncidentComments
+      summary: create
+      description: >-
+        Creates a new comment on an incident. Validates incident existence and
+        comment length.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incident-comments/incident/:incidentId:
+    get:
+      tags:
+        - IncidentComments
+      summary: findByIncident
+      description: Retrieves all comments for a specific incident.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /incident-comments/:id:
+    get:
+      tags:
+        - IncidentComments
+      summary: findOne
+      description: Retrieves a specific comment by ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - IncidentComments
+      summary: update
+      description: Updates an existing comment. Only the author can update it.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - IncidentComments
+      summary: delete
+      description: Deletes a comment. Only the author can delete it.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications:
+    post:
+      tags:
+        - Notifications
+      summary: create
+      description: Creates a new notification.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Notifications
+      summary: findAll
+      description: Retrieves all notifications.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /notifications/:id:
+    get:
+      tags:
+        - Notifications
+      summary: findOne
+      description: Retrieves a specific notification by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Notifications
+      summary: update
+      description: Updates a notification.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Notifications
+      summary: delete
+      description: Deletes a notification.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blogArticles:
+    post:
+      tags:
+        - BlogArticles
+      summary: create
+      description: Creates a new blog article with an image.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - BlogArticles
+      summary: findAll
+      description: Retrieves all blog articles.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blogArticles/:id:
+    get:
+      tags:
+        - BlogArticles
+      summary: findOne
+      description: Retrieves a specific blog article by ID.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - BlogArticles
+      summary: update
+      description: Updates a blog article with an optional image.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - BlogArticles
+      summary: delete
+      description: Deletes a blog article.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /conversations:
+    post:
+      tags:
+        - Conversations
+      summary: create
+      description: Creates a new conversation.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Conversations
+      summary: findAll
+      description: Retrieves all conversations.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /conversations/:id:
+    get:
+      tags:
+        - Conversations
+      summary: findOne
+      description: Retrieves a specific conversation by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Conversations
+      summary: update
+      description: Updates a conversation.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Conversations
+      summary: delete
+      description: Deletes a conversation.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /conversationMessages/:conversationId:
+    post:
+      tags:
+        - ConversationMessages
+      summary: create
+      description: Creates a new message in a conversation.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - ConversationMessages
+      summary: findAll
+      description: Retrieves all messages in a conversation.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /conversationMessages/:conversationId/:id:
+    get:
+      tags:
+        - ConversationMessages
+      summary: findOne
+      description: Retrieves a specific message by ID.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - ConversationMessages
+      summary: update
+      description: Updates a message.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - ConversationMessages
+      summary: delete
+      description: Deletes a message.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /logs:
+    post:
+      tags:
+        - Logs
+      summary: create
+      description: Creates a new log entry.
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Logs
+      summary: findAll
+      description: Retrieves all logs (Admin only).
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /logs/:id:
+    get:
+      tags:
+        - Logs
+      summary: findOne
+      description: Retrieves a specific log by ID (Admin only).
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Logs
+      summary: update
+      description: Not allowed (logs are immutable).
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Logs
+      summary: delete
+      description: Deletes a log (Admin only).
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
