@@ -155,10 +155,10 @@ const IncidentCard = ({
         {/* Incident buttons */}
         <CardActions disableSpacing>
           {/* Like, follow and share buttons */}
-          <IconButton onClick={handleLikeClick}>
+          <IconButton onClick={handleLikeClick} aria-label="dar me gusta">
             <FavoriteIcon sx={{ color: liked ? "red" : "inherit" }} />
           </IconButton>
-          <IconButton onClick={handleFollowClick}>
+          <IconButton onClick={handleFollowClick} aria-label="seguir">
             <NotificationsIcon
               sx={{ color: followed ? "rgb(255,180,0)" : "inherit" }}
             />
@@ -172,10 +172,10 @@ const IncidentCard = ({
           {/* Edit and delete buttons */}
           {user?.id === incident.userId && (
             <>
-              <IconButton onClick={() => onEdit(incident)}>
+              <IconButton onClick={() => onEdit(incident)} aria-label="editar">
                 <EditIcon color="info" />
               </IconButton>
-              <IconButton onClick={() => onDelete(incident.id)}>
+              <IconButton onClick={() => onDelete(incident.id)} aria-label="eliminar">
                 <DeleteIcon color="error" />
               </IconButton>
             </>
@@ -226,7 +226,7 @@ const IncidentCard = ({
               readOnly: true,
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={handleCopy} edge="end">
+                  <IconButton onClick={handleCopy} edge="end" aria-label="copiar enlace">
                     <ContentCopyIcon color={copied ? "success" : "inherit"} />
                   </IconButton>
                 </InputAdornment>

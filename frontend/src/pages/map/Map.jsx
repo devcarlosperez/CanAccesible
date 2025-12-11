@@ -49,7 +49,7 @@ const Map = () => {
         <>
             <Header transparent={false} className="fixed z-50" />
 
-            <div className="pt-40 p-8 bg-gray-200">
+            <main className="pt-40 p-8 bg-gray-200">
                 <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center" style={{ color: "var(--color-neutral-2)" }}>
                     En este mapa puedes ver las incidencias
                 </h1>
@@ -73,6 +73,7 @@ const Map = () => {
                                     key={incident.id}
                                     position={[incident.latitude, incident.longitude]}
                                     icon={incident.incidentTypeId === 1 ? greenIcon : redIcon}
+                                    alt={incident.name}
                                 >
                                     <Popup>
                                         <div>
@@ -91,7 +92,7 @@ const Map = () => {
                         )}
                     </MapContainer>
                 </div>
-            </div>
+            </main>
 
             <Footer />
         </>
