@@ -30,11 +30,19 @@ async function convert() {
         // Convert YAML to JSON object
         let doc = yaml.load(result);
 
-        // Remove global security to get rid of lock icons everywhere
+        // Remove global security
         delete doc.security;
-        if (doc.components) {
-            delete doc.components.securitySchemes;
-        }
+        
+        // Setup apiKey security scheme for JWT
+        doc.components = doc.components || {};
+        doc.components.securitySchemes = {
+            ApiKeyAuth: {
+                type: 'apiKey',
+                in: 'header',
+                name: 'Authorization',
+                description: 'JWT Token. Just paste your token here (without Bearer prefix).'
+            }
+        };
 
         // 2. Fix Paths and Parameters
         const newPaths = {};
@@ -114,22 +122,14 @@ async function convert() {
                         needsAuth = false;
                     }
 
-                    // Add Authorization header if needed
+                    // Add security requirement if needed (uses apiKey scheme)
                     if (needsAuth) {
                         operation.parameters = operation.parameters || [];
                         // Remove any existing Authorization parameter to avoid duplicates/conflicts
                         operation.parameters = operation.parameters.filter(p => p.name !== 'Authorization');
 
-                        operation.parameters.push({
-                            name: 'Authorization',
-                            in: 'header',
-                            description: 'JWT Token. Paste your token here.',
-                            required: true,
-                            schema: {
-                                type: 'string',
-                                example: ''
-                            }
-                        });
+                        // Use security scheme instead of manual parameter
+                        operation.security = [{ ApiKeyAuth: [] }];
                     }
                 }
 

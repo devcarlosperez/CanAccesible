@@ -7,15 +7,16 @@ exports.create = async (req, res) => {
     // Validate required fields
     if (!req.body.incidentId)
       return res.status(400).json({ message: "incidentId is required" });
-    if (!req.body.userId)
-      return res.status(400).json({ message: "userId is required" });
-    if (!req.body.dateFollowed)
-      return res.status(400).json({ message: "dateFollowed is required" });
+
+    // Get userId from the token (req.user is set by verifyToken middleware)
+    const userId = req.user.id;
+    // Use current date if not provided
+    const dateFollowed = req.body.dateFollowed || new Date();
 
     const newIncidentFollow = await incidentFollowObject.create({
       incidentId: req.body.incidentId,
-      userId: req.body.userId,
-      dateFollowed: req.body.dateFollowed,
+      userId: userId,
+      dateFollowed: dateFollowed,
     });
 
     return res.status(201).json(newIncidentFollow);

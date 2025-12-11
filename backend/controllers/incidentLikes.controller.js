@@ -8,15 +8,16 @@ exports.create = async (req, res) => {
     // Validate required fields
     if (!req.body.incidentId)
       return res.status(400).json({ message: "incidentId is required" });
-    if (!req.body.userId)
-      return res.status(400).json({ message: "userId is required" });
-    if (!req.body.dateLike)
-      return res.status(400).json({ message: "dateLike is required" });
+
+    // Get userId from the token (req.user is set by verifyToken middleware)
+    const userId = req.user.id;
+    // Use current date if not provided
+    const dateLike = req.body.dateLike || new Date();
 
     const newIncidentLike = await incidentLikeObject.create({
       incidentId: req.body.incidentId,
-      userId: req.body.userId,
-      dateLike: req.body.dateLike,
+      userId: userId,
+      dateLike: dateLike,
     });
 
     // Count total likes for this incident

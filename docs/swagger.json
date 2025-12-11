@@ -157,18 +157,7 @@
         ],
         "summary": "findAll",
         "description": "Retrieves all users.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -176,7 +165,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/users/user": {
@@ -186,18 +180,7 @@
         ],
         "summary": "findAllUsers",
         "description": "Retrieves a list of users.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -205,7 +188,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/users/municipalities": {
@@ -215,18 +203,7 @@
         ],
         "summary": "municipalities",
         "description": "Retrieves all municipalities.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -234,7 +211,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/users/admin": {
@@ -244,18 +226,7 @@
         ],
         "summary": "admins",
         "description": "Retrieves all admin users.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -263,7 +234,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/users/top-reporting": {
@@ -273,18 +249,7 @@
         ],
         "summary": "top-reporting",
         "description": "Retrieves users with the most reports.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -292,7 +257,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/users/{id}": {
@@ -303,16 +273,6 @@
         "summary": "findOne",
         "description": "Retrieves a specific user by ID.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -330,7 +290,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -367,16 +332,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -393,7 +348,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -406,16 +366,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -432,7 +382,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incidents": {
@@ -480,18 +435,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -499,7 +443,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -524,18 +473,7 @@
         ],
         "summary": "my-incidents",
         "description": "Retrieves incidents reported by the authenticated user.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -543,7 +481,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incidents/{id}": {
@@ -605,16 +548,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -631,7 +564,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -644,16 +582,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -670,7 +598,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incidentLikes": {
@@ -697,18 +630,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -716,7 +638,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -772,16 +699,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -798,7 +715,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -811,16 +733,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -837,7 +749,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incidentLikes/incident/{incidentId}/user/{userId}": {
@@ -901,18 +818,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -920,7 +826,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -976,16 +887,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1002,7 +903,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1015,16 +921,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1041,7 +937,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incidentFollows/incident/{incidentId}": {
@@ -1137,18 +1038,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1156,7 +1046,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/incident-comments/incident/{incidentId}": {
@@ -1225,16 +1120,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1251,7 +1136,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1264,16 +1154,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1290,7 +1170,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/notifications": {
@@ -1303,18 +1188,7 @@
         "requestBody": {
           "content": {}
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1322,7 +1196,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -1330,18 +1209,7 @@
         ],
         "summary": "findAll",
         "description": "Retrieves all notifications.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1349,7 +1217,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/notifications/{id}": {
@@ -1360,16 +1233,6 @@
         "summary": "findOne",
         "description": "Retrieves a specific notification by ID.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1387,7 +1250,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -1400,16 +1268,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1426,7 +1284,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1439,16 +1302,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1465,7 +1318,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/blogArticles": {
@@ -1615,18 +1473,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1634,7 +1481,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -1642,18 +1494,7 @@
         ],
         "summary": "findAll",
         "description": "Retrieves all conversations.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1661,7 +1502,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/conversations/{id}": {
@@ -1672,16 +1518,6 @@
         "summary": "findOne",
         "description": "Retrieves a specific conversation by ID.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1699,7 +1535,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -1712,16 +1553,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1738,7 +1569,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1751,16 +1587,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1777,7 +1603,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/conversationMessages/{conversationId}": {
@@ -1811,16 +1642,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "conversationId",
             "in": "path",
             "required": true,
@@ -1837,7 +1658,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "get": {
         "tags": [
@@ -1847,16 +1673,6 @@
         "description": "Retrieves all messages in a conversation.",
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "conversationId",
             "in": "path",
             "required": true,
@@ -1873,7 +1689,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/conversationMessages/{conversationId}/{id}": {
@@ -1884,16 +1705,6 @@
         "summary": "findOne",
         "description": "Retrieves a specific message by ID.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
           {
             "name": "conversationId",
             "in": "path",
@@ -1920,7 +1731,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -1933,16 +1749,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "conversationId",
             "in": "path",
             "required": true,
@@ -1968,7 +1774,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1981,16 +1792,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT Token. Paste your token here.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
             "name": "conversationId",
             "in": "path",
             "required": true,
@@ -2016,7 +1817,12 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/logs": {
@@ -2166,6 +1972,16 @@
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "JWT Token. Just paste your token here (without Bearer prefix)."
       }
     }
   }
