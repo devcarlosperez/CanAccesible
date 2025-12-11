@@ -117,14 +117,17 @@ async function convert() {
                     // Add Authorization header if needed
                     if (needsAuth) {
                         operation.parameters = operation.parameters || [];
+                        // Remove any existing Authorization parameter to avoid duplicates/conflicts
+                        operation.parameters = operation.parameters.filter(p => p.name !== 'Authorization');
+
                         operation.parameters.push({
                             name: 'Authorization',
                             in: 'header',
-                            description: 'Bearer Token. Format: "Bearer <token>"',
+                            description: 'JWT Token. Paste your token here.',
                             required: true,
                             schema: {
                                 type: 'string',
-                                default: 'Bearer '
+                                example: ''
                             }
                         });
                     }
@@ -243,6 +246,24 @@ async function convert() {
                             }
                         };
                     }
+                    if (newPathKey === '/logs' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/json': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            userId: { type: 'integer' },
+                                            action: { type: 'string' },
+                                            entity: { type: 'string' },
+                                            entityId: { type: 'integer' }
+                                        },
+                                        required: ['userId', 'action', 'entity', 'entityId']
+                                    }
+                                }
+                            }
+                        };
+                    }
                     if (newPathKey === '/incident-comments' && method === 'post') {
                         operation.requestBody = {
                             content: {
@@ -254,6 +275,37 @@ async function convert() {
                                             comment: { type: 'string' }
                                         },
                                         required: ['incidentId', 'comment']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/conversations' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/json': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            type: { type: 'string', example: 'individual' }
+                                        },
+                                        required: ['type']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey.startsWith('/conversationMessages') && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/json': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            message: { type: 'string' },
+                                            dateMessage: { type: 'string', format: 'date-time' }
+                                        },
+                                        required: ['message', 'dateMessage']
                                     }
                                 }
                             }
@@ -274,7 +326,7 @@ async function convert() {
                             }
                         };
                     }
-                     if (newPathKey === '/incidentFollows' && method === 'post') {
+                    if (newPathKey === '/incidentFollows' && method === 'post') {
                         operation.requestBody = {
                             content: {
                                 'application/x-www-form-urlencoded': {
