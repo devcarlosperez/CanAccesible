@@ -26,10 +26,279 @@ async function convert() {
         console.log(`Converting ${inputPath} to ${outputPath}...`);
         // Get YAML string first
         const result = await p2o(inputPath, null, options);
-        // Convert YAML to JSON
-        const json = JSON.stringify(yaml.load(result), null, 2);
+        
+        // Convert YAML to JSON object
+        let doc = yaml.load(result);
+
+        // Remove global security to get rid of lock icons everywhere
+        delete doc.security;
+        if (doc.components) {
+            delete doc.components.securitySchemes;
+        }
+
+        // 2. Fix Paths and Parameters
+        const newPaths = {};
+        for (const [pathKey, pathItem] of Object.entries(doc.paths)) {
+            // Replace :param with {param}
+            let newPathKey = pathKey.replace(/:([a-zA-Z0-9_]+)/g, '{$1}');
+            
+            // Process each method (get, post, put, delete, etc.)
+            for (const [method, operation] of Object.entries(pathItem)) {
+                // Fix Authentication
+                if (operation.parameters) {
+                    // Remove manual Authorization header
+                    operation.parameters = operation.parameters.filter(p => p.name !== 'Authorization');
+                }
+
+                // Add Security Requirement
+                if (pathKey.includes('/auth/signin')) {
+                    // Remove basicAuth security scheme
+                    delete operation.security;
+                    
+                    // Remove any manual Authorization parameter if it exists
+                    operation.parameters = operation.parameters || [];
+                    operation.parameters = operation.parameters.filter(p => p.name !== 'Authorization');
+
+                    // Add Request Body for Email/Password
+                    operation.requestBody = {
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        email: { type: 'string', example: 'usuario@ejemplo.com' },
+                                        password: { type: 'string', example: 'password123' }
+                                    },
+                                    required: ['email', 'password']
+                                }
+                            },
+                            'application/x-www-form-urlencoded': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        email: { type: 'string', example: 'usuario@ejemplo.com' },
+                                        password: { type: 'string', example: 'password123' }
+                                    },
+                                    required: ['email', 'password']
+                                }
+                            }
+                        }
+                    };
+                } else {
+                    // Remove global security requirement
+                    delete operation.security;
+
+                    // Define public endpoints (no auth needed)
+                    const publicEndpoints = [
+                        '/auth/signup',
+                        '/auth/forgot-password',
+                        '/incidents' + (method === 'get' ? '' : 'PROTECTED'), // GET /incidents is public
+                        '/incidents/{id}' + (method === 'get' ? '' : 'PROTECTED'), // GET /incidents/:id is public
+                        '/blogArticles' + (method === 'get' ? '' : 'PROTECTED'), // GET /blogArticles is public
+                        '/blogArticles/{id}' + (method === 'get' ? '' : 'PROTECTED'), // GET /blogArticles/:id is public
+                        '/users' + (method === 'post' ? '' : 'PROTECTED') // POST /users is public (register)
+                    ];
+
+                    // Define session-only endpoints (cookies, no token needed)
+                    const sessionEndpoints = [
+                        '/blogArticles' + (method === 'post' ? '' : 'OTHER'),
+                        '/blogArticles/{id}' + (method === 'put' ? '' : 'OTHER'),
+                        '/blogArticles/{id}' + (method === 'delete' ? '' : 'OTHER')
+                    ];
+
+                    const isPublic = publicEndpoints.some(ep => {
+                        if (ep.endsWith('PROTECTED')) return false;
+                        return ep === newPathKey;
+                    });
+
+                    const isSessionOnly = sessionEndpoints.some(ep => {
+                        if (ep.endsWith('OTHER')) return false;
+                        return ep === newPathKey;
+                    });
+
+                    // Only add Authorization header if it's NOT public and NOT session-only
+                    if (!isPublic && !isSessionOnly) {
+                        operation.parameters = operation.parameters || [];
+                        operation.parameters.push({
+                            name: 'Authorization',
+                            in: 'header',
+                            description: 'Bearer Token. Format: "Bearer <token>"',
+                            required: true,
+                            schema: {
+                                type: 'string',
+                                default: 'Bearer '
+                            }
+                        });
+                    }
+                }
+
+                // Add Path Parameters if missing
+                const pathParams = newPathKey.match(/\{([a-zA-Z0-9_]+)\}/g);
+                if (pathParams) {
+                    operation.parameters = operation.parameters || [];
+                    pathParams.forEach(param => {
+                        const paramName = param.replace(/[{}]/g, '');
+                        // Check if param already exists
+                        const exists = operation.parameters.find(p => p.name === paramName && p.in === 'path');
+                        if (!exists) {
+                            operation.parameters.push({
+                                name: paramName,
+                                in: 'path',
+                                required: true,
+                                schema: { type: 'string' },
+                                description: `The ${paramName}`
+                            });
+                        }
+                    });
+                }
+
+                // 3. Inject Missing Request Bodies (Manual Fixes)
+                if (method === 'post' || method === 'put') {
+                    if (!operation.requestBody) {
+                        // Default generic body if none exists
+                        operation.requestBody = {
+                            content: {
+                                'application/json': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {},
+                                        description: 'Request body'
+                                    }
+                                }
+                            }
+                        };
+                    }
+
+                    // Specific bodies for known endpoints
+                    if (newPathKey === '/users' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'multipart/form-data': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            firstName: { type: 'string' },
+                                            lastName: { type: 'string' },
+                                            email: { type: 'string' },
+                                            password: { type: 'string', format: 'password' },
+                                            roleId: { type: 'integer' },
+                                            image: { type: 'string', format: 'binary' }
+                                        },
+                                        required: ['firstName', 'lastName', 'email', 'password', 'roleId']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/users/{id}' && method === 'put') {
+                        operation.requestBody = {
+                            content: {
+                                'multipart/form-data': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            firstName: { type: 'string' },
+                                            lastName: { type: 'string' },
+                                            email: { type: 'string' },
+                                            roleId: { type: 'integer' },
+                                            image: { type: 'string', format: 'binary' }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/incidents' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'multipart/form-data': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            title: { type: 'string' },
+                                            description: { type: 'string' },
+                                            latitude: { type: 'number' },
+                                            longitude: { type: 'number' },
+                                            typeId: { type: 'integer' },
+                                            image: { type: 'string', format: 'binary' }
+                                        },
+                                        required: ['title', 'description', 'latitude', 'longitude', 'typeId', 'image']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/incidents/{id}' && method === 'put') {
+                        operation.requestBody = {
+                            content: {
+                                'multipart/form-data': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            title: { type: 'string' },
+                                            description: { type: 'string' },
+                                            statusId: { type: 'integer' },
+                                            image: { type: 'string', format: 'binary' }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/incident-comments' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/x-www-form-urlencoded': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            incidentId: { type: 'integer' },
+                                            comment: { type: 'string' }
+                                        },
+                                        required: ['incidentId', 'comment']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    if (newPathKey === '/incidentLikes' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/x-www-form-urlencoded': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            incidentId: { type: 'integer' }
+                                        },
+                                        required: ['incidentId']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                     if (newPathKey === '/incidentFollows' && method === 'post') {
+                        operation.requestBody = {
+                            content: {
+                                'application/x-www-form-urlencoded': {
+                                    schema: {
+                                        type: 'object',
+                                        properties: {
+                                            incidentId: { type: 'integer' }
+                                        },
+                                        required: ['incidentId']
+                                    }
+                                }
+                            }
+                        };
+                    }
+                }
+            }
+            newPaths[newPathKey] = pathItem;
+        }
+        doc.paths = newPaths;
+
         // Write JSON file
-        fs.writeFileSync(outputPath, json);
+        fs.writeFileSync(outputPath, JSON.stringify(doc, null, 2));
         console.log('Conversion completed successfully!');
     } catch (err) {
         console.error('Error during conversion:', err);

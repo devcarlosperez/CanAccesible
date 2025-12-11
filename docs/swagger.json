@@ -24,19 +24,48 @@
         "summary": "signin",
         "description": "Logs in a user using email/password (Basic Auth). Validates against LDAP, generates JWT, creates a session, and logs the action.",
         "requestBody": {
-          "content": {}
-        },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@ejemplo.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
             },
-            "description": "Basic Auth header with base64 encoded email:password",
-            "example": "Basic <base64(email:password)>"
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@ejemplo.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
           }
-        ],
+        },
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -64,7 +93,19 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          }
+        ]
       }
     },
     "/users": {
@@ -75,18 +116,44 @@
         "summary": "create",
         "description": "Creates a new user with an optional profile image.",
         "requestBody": {
-          "content": {}
-        },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "roleId": {
+                    "type": "integer"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password",
+                  "roleId"
+                ]
+              }
+            }
           }
-        ],
+        },
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -106,10 +173,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -133,10 +202,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -160,10 +231,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -187,10 +260,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -214,10 +289,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -230,7 +307,7 @@
         }
       }
     },
-    "/users/:id": {
+    "/users/{id}": {
       "get": {
         "tags": [
           "Users"
@@ -241,10 +318,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -263,16 +351,51 @@
         "summary": "update",
         "description": "Updates an existing user with an optional profile image.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "integer"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -297,10 +420,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -321,16 +455,53 @@
         "summary": "create",
         "description": "Creates a new incident with an image. Automatically geocodes and assigns severity.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  },
+                  "typeId": {
+                    "type": "integer"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "latitude",
+                  "longitude",
+                  "typeId",
+                  "image"
+                ]
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -369,10 +540,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -385,7 +558,7 @@
         }
       }
     },
-    "/incidents/:id": {
+    "/incidents/{id}": {
       "get": {
         "tags": [
           "Incidents"
@@ -399,7 +572,18 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -408,16 +592,48 @@
         "summary": "update",
         "description": "Updates an existing incident with an optional image.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "statusId": {
+                    "type": "integer"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -442,10 +658,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -466,16 +693,32 @@
         "summary": "create",
         "description": "Creates a like for an incident.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "incidentId"
+                ]
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -500,10 +743,22 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          }
+        ]
       }
     },
-    "/incidentLikes/:id": {
+    "/incidentLikes/{id}": {
       "get": {
         "tags": [
           "IncidentLikes"
@@ -517,7 +772,28 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -532,10 +808,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -560,10 +847,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -576,7 +874,7 @@
         }
       }
     },
-    "/incidentLikes/incident/:incidentId/user/:userId": {
+    "/incidentLikes/incident/{incidentId}/user/{userId}": {
       "get": {
         "tags": [
           "IncidentLikes"
@@ -590,7 +888,37 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The userId"
+          }
+        ]
       }
     },
     "/incidentFollows": {
@@ -601,16 +929,32 @@
         "summary": "create",
         "description": "Creates a follow for an incident.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "incidentId"
+                ]
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -635,10 +979,22 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          }
+        ]
       }
     },
-    "/incidentFollows/:id": {
+    "/incidentFollows/{id}": {
       "get": {
         "tags": [
           "IncidentFollows"
@@ -652,7 +1008,28 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -667,10 +1044,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -695,10 +1083,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -711,7 +1110,7 @@
         }
       }
     },
-    "/incidentFollows/incident/:incidentId": {
+    "/incidentFollows/incident/{incidentId}": {
       "get": {
         "tags": [
           "IncidentFollows"
@@ -725,10 +1124,31 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          }
+        ]
       }
     },
-    "/incidentFollows/incident/:incidentId/user/:userId": {
+    "/incidentFollows/incident/{incidentId}/user/{userId}": {
       "get": {
         "tags": [
           "IncidentFollows"
@@ -742,7 +1162,37 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The userId"
+          }
+        ]
       }
     },
     "/incident-comments": {
@@ -753,16 +1203,36 @@
         "summary": "create",
         "description": "Creates a new comment on an incident. Validates incident existence and comment length.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  },
+                  "comment": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "incidentId",
+                  "comment"
+                ]
+              }
+            }
+          }
         },
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -775,7 +1245,7 @@
         }
       }
     },
-    "/incident-comments/incident/:incidentId": {
+    "/incident-comments/incident/{incidentId}": {
       "get": {
         "tags": [
           "IncidentComments"
@@ -789,10 +1259,31 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          }
+        ]
       }
     },
-    "/incident-comments/:id": {
+    "/incident-comments/{id}": {
       "get": {
         "tags": [
           "IncidentComments"
@@ -806,7 +1297,28 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -821,10 +1333,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -849,10 +1372,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -879,10 +1413,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -904,10 +1440,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -920,7 +1458,7 @@
         }
       }
     },
-    "/notifications/:id": {
+    "/notifications/{id}": {
       "get": {
         "tags": [
           "Notifications"
@@ -931,10 +1469,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -959,10 +1508,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -987,10 +1547,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1013,16 +1584,7 @@
         "requestBody": {
           "content": {}
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1048,7 +1610,7 @@
         }
       }
     },
-    "/blogArticles/:id": {
+    "/blogArticles/{id}": {
       "get": {
         "tags": [
           "BlogArticles"
@@ -1062,7 +1624,18 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -1075,12 +1648,13 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1103,12 +1677,13 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1135,10 +1710,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -1160,10 +1737,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -1176,7 +1755,7 @@
         }
       }
     },
-    "/conversations/:id": {
+    "/conversations/{id}": {
       "get": {
         "tags": [
           "Conversations"
@@ -1187,10 +1766,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1215,10 +1805,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1243,10 +1844,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1259,7 +1871,7 @@
         }
       }
     },
-    "/conversationMessages/:conversationId": {
+    "/conversationMessages/{conversationId}": {
       "post": {
         "tags": [
           "ConversationMessages"
@@ -1273,10 +1885,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The conversationId"
           }
         ],
         "responses": {
@@ -1298,10 +1921,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The conversationId"
           }
         ],
         "responses": {
@@ -1314,7 +1948,7 @@
         }
       }
     },
-    "/conversationMessages/:conversationId/:id": {
+    "/conversationMessages/{conversationId}/{id}": {
       "get": {
         "tags": [
           "ConversationMessages"
@@ -1325,10 +1959,30 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1353,10 +2007,30 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1381,10 +2055,30 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1411,10 +2105,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -1436,10 +2132,12 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
             "schema": {
-              "type": "string"
-            },
-            "example": "Bearer {{token}}"
+              "type": "string",
+              "default": "Bearer "
+            }
           }
         ],
         "responses": {
@@ -1452,7 +2150,7 @@
         }
       }
     },
-    "/logs/:id": {
+    "/logs/{id}": {
       "get": {
         "tags": [
           "Logs"
@@ -1463,10 +2161,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
@@ -1494,7 +2203,28 @@
               "application/json": {}
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1509,10 +2239,21 @@
           {
             "name": "Authorization",
             "in": "header",
+            "description": "Bearer Token. Format: \"Bearer <token>\"",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Bearer "
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{token}}"
+            "description": "The id"
           }
         ],
         "responses": {
