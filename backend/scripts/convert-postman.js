@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const inputPath = path.join(__dirname, '../../docs/CanAccesible APIs.json');
+const inputPath = path.join(__dirname, '../../docs/CanAccesible_Postman_Collection.json');
 const outputPath = path.join(__dirname, '../../docs/swagger.json');
 
 // Options for the conversion
@@ -29,6 +29,10 @@ async function convert() {
         
         // Convert YAML to JSON object
         let doc = yaml.load(result);
+
+        // Add authentication instructions to the description
+        const authInstructions = "\n\nFor endpoints protected by JWT, users must sign in using POST /auth/signin, copy the token from the response, and paste it in the Authorize button.";
+        doc.info.description = (doc.info.description || "") + authInstructions;
 
         // Remove global security
         delete doc.security;
