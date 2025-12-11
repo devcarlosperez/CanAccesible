@@ -205,6 +205,13 @@
             id="paginationControls"
             class="flex justify-center gap-2 mt-8 flex-wrap"
           ></div>
+
+          <div class="w-full mt-12">
+            <%- include('../../../partials/incidentsChart', { 
+              topLiked: (typeof topLiked !== 'undefined' ? topLiked : []), 
+              topFollowed: (typeof topFollowed !== 'undefined' ? topFollowed : []) 
+            }) %>
+          </div>
         </div>
       </div>
       <% } %>

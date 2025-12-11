@@ -1,60 +1,137 @@
-<div
-  class="w-full md:w-5/12 lg:w-2/5 rounded-xl shadow-md p-6"
-  style="background-color: #ffffff; border: 2px solid #e5edfa"
->
-  <h3
-    class="text-lg md:text-xl font-bold mb-8"
-    style="color: #0c0c22"
-  >
-    Incidencias aprobadas
-  </h3>
-  <div id="incidentsChart" style="width: 100%; height: 350px"></div>
+<div class="bg-white rounded-xl shadow-md p-6 mb-8 border-2 border-[#e5edfa]">
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+    <h3 class="text-xl font-bold text-neutral-2 mb-4 sm:mb-0">
+      Incidencias mas apoyadas (Top 10)
+    </h3>
+    
+    <!-- Filter Select (No Form) -->
+    <div class="flex gap-2 items-center">
+      <label for="engagementFilter" class="text-sm text-gray-600 font-semibold">Filtrar por:</label>
+      <select 
+        id="engagementFilter" 
+        class="px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-sm bg-white"
+      >
+        <option value="likes">Likes</option>
+        <option value="followers">Seguidores</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="relative w-full h-[350px]">
+    <div id="incidentEngagementChart" class="w-full h-full"></div>
+  </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-      const approvedIncidents = <%= typeof chartData !== 'undefined' && chartData.approvedIncidents !== undefined ? chartData.approvedIncidents : 5 %>;
-      const notApprovedIncidents = <%= typeof chartData !== 'undefined' && chartData.notApprovedIncidents !== undefined ? chartData.notApprovedIncidents : 3 %>;
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Incident Engagement Chart (Top 10 View)...');
+    const chartDom = document.getElementById('incidentEngagementChart');
+    
+    if (typeof echarts === 'undefined') {
+      console.error('ECharts library not loaded!');
+      chartDom.innerHTML = '<p class="text-red-500 text-center p-4">Error: Librería de gráficas no cargada.</p>';
+      return;
+    }
 
-      const incidentsChartDOM = document.getElementById('incidentsChart');
-      if (incidentsChartDOM && typeof echarts !== 'undefined') {
-          const incidentsChart = echarts.init(incidentsChartDOM);
-          const incidentsOption = {
-            tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-            legend: {
-              orient: 'horizontal',
-              bottom: 0,
-              left: 'center'
-            },
-            series: [{
-              name: 'Incidencias',
-              type: 'pie',
-              radius: ['40%', '70%'],
-              center: ['50%', '40%'],
-              avoidLabelOverlap: false,
-              label: {
-                show: false,
-                position: 'center'
-              },
-              emphasis: {
-                label: {
-                  show: false
-                }
-              },
-              labelLine: {
-                show: false
-              },
-              data: [
-                { value: approvedIncidents, name: 'Aprobadas', itemStyle: { color: '#22c55e' } },
-                { value: notApprovedIncidents, name: 'No aprobadas', itemStyle: { color: '#ff312e' } }
-              ]
-            }]
-          };
-          incidentsChart.setOption(incidentsOption);
-          
-          window.addEventListener('resize', function() {
-            incidentsChart.resize();
-          });
+    const myChart = echarts.init(chartDom);
+    
+    // Data from server
+    const topLiked = <%- (typeof topLiked !== 'undefined') ? JSON.stringify(topLiked) : '[]' %>;
+    const topFollowed = <%- (typeof topFollowed !== 'undefined') ? JSON.stringify(topFollowed) : '[]' %>;
+    
+    console.log('Top Liked:', topLiked);
+    console.log('Top Followed:', topFollowed);
+
+    let currentData = topLiked;
+    let currentFilter = 'likes';
+
+    function updateChart() {
+      // If currentData is empty (e.g. no incidents), handle gracefully
+      if (!currentData || currentData.length === 0) {
+         myChart.clear();
+         chartDom.innerHTML = '<p class="text-gray-500 text-center p-4 flex items-center justify-center h-full">No hay datos disponibles para mostrar.</p>';
+         return;
+      } else {
+         // Restore chart if it was cleared
+         if (chartDom.innerHTML.includes('No hay datos')) {
+             chartDom.innerHTML = '';
+             myChart = echarts.init(chartDom);
+         }
       }
+
+      const labels = currentData.map(item => item.name);
+      const data = currentData.map(item => parseInt(item.count, 10));
+      
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: labels,
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLabel: {
+              interval: 0,
+              rotate: 30,
+              formatter: function (value) {
+                return value.length > 15 ? value.substring(0, 15) + '...' : value;
+              }
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            minInterval: 1
+          }
+        ],
+        series: [
+          {
+            name: currentFilter === 'followers' ? "Seguidores" : "Likes",
+            type: 'bar',
+            barWidth: '50%',
+            data: data,
+            itemStyle: {
+              color: '#004aad',
+              borderRadius: [4, 4, 0, 0]
+            },
+            emphasis: {
+              itemStyle: {
+                color: '#003380'
+              }
+            }
+          }
+        ]
+      };
+
+      myChart.setOption(option);
+    }
+
+    document.getElementById('engagementFilter').addEventListener('change', (e) => {
+      currentFilter = e.target.value;
+      currentData = currentFilter === 'likes' ? topLiked : topFollowed;
+      updateChart();
+    });
+
+    // Initial render
+    updateChart();
+
+    // Resize chart on window resize
+    window.addEventListener('resize', function() {
+      myChart.resize();
+    });
   });
 </script>
