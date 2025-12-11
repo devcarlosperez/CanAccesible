@@ -205,7 +205,7 @@ NODE_ENV=development                          # Environment mode (development or
 DB_HOST=localhost                             # MySQL server host
 DB_PORT=3306                                  # MySQL server port
 DB_USER=root                                  # MySQL username
-DB_PASS=cji_canaccesible                      # MySQL password
+DB_PASS=******                                # MySQL password
 DB_NAME=db_canaccesible                       # Database name
 DB_SSL=false                                  # Enable SSL for database connection
 
