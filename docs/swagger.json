@@ -93,19 +93,7 @@
               "application/json": {}
             }
           }
-        },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          }
-        ]
+        }
       }
     },
     "/users": {
@@ -743,19 +731,7 @@
               "application/json": {}
             }
           }
-        },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          }
-        ]
+        }
       }
     },
     "/incidentLikes/{id}": {
@@ -774,16 +750,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -891,16 +857,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
-          {
             "name": "incidentId",
             "in": "path",
             "required": true,
@@ -979,19 +935,7 @@
               "application/json": {}
             }
           }
-        },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          }
-        ]
+        }
       }
     },
     "/incidentFollows/{id}": {
@@ -1010,16 +954,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1127,16 +1061,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
-          {
             "name": "incidentId",
             "in": "path",
             "required": true,
@@ -1164,16 +1088,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "incidentId",
             "in": "path",
@@ -1262,16 +1176,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
-          {
             "name": "incidentId",
             "in": "path",
             "required": true,
@@ -1299,16 +1203,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -2101,18 +1995,7 @@
         "requestBody": {
           "content": {}
         },
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2128,18 +2011,7 @@
         ],
         "summary": "findAll",
         "description": "Retrieves all logs (Admin only).",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2158,16 +2030,6 @@
         "summary": "findOne",
         "description": "Retrieves a specific log by ID (Admin only).",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -2206,16 +2068,6 @@
         },
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -2236,16 +2088,6 @@
           "content": {}
         },
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Bearer Token. Format: \"Bearer <token>\"",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "Bearer "
-            }
-          },
           {
             "name": "id",
             "in": "path",

@@ -88,36 +88,34 @@ async function convert() {
                     // Remove global security requirement
                     delete operation.security;
 
-                    // Define public endpoints (no auth needed)
-                    const publicEndpoints = [
-                        '/auth/signup',
-                        '/auth/forgot-password',
-                        '/incidents' + (method === 'get' ? '' : 'PROTECTED'), // GET /incidents is public
-                        '/incidents/{id}' + (method === 'get' ? '' : 'PROTECTED'), // GET /incidents/:id is public
-                        '/blogArticles' + (method === 'get' ? '' : 'PROTECTED'), // GET /blogArticles is public
-                        '/blogArticles/{id}' + (method === 'get' ? '' : 'PROTECTED'), // GET /blogArticles/:id is public
-                        '/users' + (method === 'post' ? '' : 'PROTECTED') // POST /users is public (register)
-                    ];
+                    // Logic to determine if Authorization header is needed
+                    let needsAuth = true;
 
-                    // Define session-only endpoints (cookies, no token needed)
-                    const sessionEndpoints = [
-                        '/blogArticles' + (method === 'post' ? '' : 'OTHER'),
-                        '/blogArticles/{id}' + (method === 'put' ? '' : 'OTHER'),
-                        '/blogArticles/{id}' + (method === 'delete' ? '' : 'OTHER')
-                    ];
+                    // 1. Public Endpoints (No Auth needed)
+                    if (
+                        (newPathKey === '/auth/logout') ||
+                        (newPathKey === '/auth/signup') ||
+                        (newPathKey === '/auth/forgot-password') ||
+                        (newPathKey === '/incidents' && method === 'get') ||
+                        (newPathKey === '/incidents/{id}' && method === 'get') ||
+                        (newPathKey.startsWith('/incident-comments') && method === 'get') ||
+                        (newPathKey.startsWith('/incidentFollows') && method === 'get') ||
+                        (newPathKey.startsWith('/incidentLikes') && method === 'get') ||
+                        (newPathKey === '/users' && method === 'post')
+                    ) {
+                        needsAuth = false;
+                    }
 
-                    const isPublic = publicEndpoints.some(ep => {
-                        if (ep.endsWith('PROTECTED')) return false;
-                        return ep === newPathKey;
-                    });
+                    // 2. Session-Only Endpoints (Cookies used, No Token needed)
+                    if (
+                        newPathKey.startsWith('/blogArticles') ||
+                        newPathKey.startsWith('/logs')
+                    ) {
+                        needsAuth = false;
+                    }
 
-                    const isSessionOnly = sessionEndpoints.some(ep => {
-                        if (ep.endsWith('OTHER')) return false;
-                        return ep === newPathKey;
-                    });
-
-                    // Only add Authorization header if it's NOT public and NOT session-only
-                    if (!isPublic && !isSessionOnly) {
+                    // Add Authorization header if needed
+                    if (needsAuth) {
                         operation.parameters = operation.parameters || [];
                         operation.parameters.push({
                             name: 'Authorization',
