@@ -25,36 +25,17 @@
         "description": "Logs in a user using email/password (Basic Auth). Validates against LDAP, generates JWT, creates a session, and logs the action.",
         "requestBody": {
           "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "usuario@ejemplo.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password123"
-                  }
-                },
-                "required": [
-                  "email",
-                  "password"
-                ]
-              }
-            },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "email": {
                     "type": "string",
-                    "example": "usuario@ejemplo.com"
+                    "example": ""
                   },
                   "password": {
                     "type": "string",
-                    "example": "password123"
+                    "example": ""
                   }
                 },
                 "required": [
@@ -110,17 +91,21 @@
                 "type": "object",
                 "properties": {
                   "firstName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "lastName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "password": {
                     "type": "string",
-                    "format": "password"
+                    "format": "password",
+                    "example": ""
                   },
                   "roleId": {
                     "type": "integer"
@@ -310,13 +295,16 @@
                 "type": "object",
                 "properties": {
                   "firstName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "lastName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "roleId": {
                     "type": "integer"
@@ -403,11 +391,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "title": {
-                    "type": "string"
+                  "name": {
+                    "type": "string",
+                    "example": ""
                   },
                   "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "latitude": {
                     "type": "number"
@@ -418,18 +408,37 @@
                   "typeId": {
                     "type": "integer"
                   },
+                  "incidentStatusId": {
+                    "type": "integer"
+                  },
+                  "incidentSeverityId": {
+                    "type": "integer"
+                  },
+                  "isApproved": {
+                    "type": "boolean"
+                  },
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "area": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "island": {
+                    "type": "string",
+                    "example": ""
+                  },
                   "image": {
                     "type": "string",
                     "format": "binary"
                   }
                 },
                 "required": [
-                  "title",
+                  "name",
                   "description",
                   "latitude",
                   "longitude",
-                  "typeId",
-                  "image"
+                  "typeId"
                 ]
               }
             }
@@ -528,14 +537,36 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "title": {
-                    "type": "string"
+                  "name": {
+                    "type": "string",
+                    "example": ""
                   },
                   "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
-                  "statusId": {
+                  "incidentStatusId": {
                     "type": "integer"
+                  },
+                  "incidentTypeId": {
+                    "type": "integer"
+                  },
+                  "incidentSeverityId": {
+                    "type": "integer"
+                  },
+                  "isApproved": {
+                    "type": "boolean"
+                  },
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "area": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "island": {
+                    "type": "string",
+                    "example": ""
                   },
                   "image": {
                     "type": "string",
@@ -1462,8 +1493,7 @@
                 "type": "object",
                 "properties": {
                   "type": {
-                    "type": "string",
-                    "example": "individual"
+                    "type": "string"
                   }
                 },
                 "required": [

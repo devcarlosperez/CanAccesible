@@ -30,6 +30,24 @@ async function convert() {
         // Convert YAML to JSON object
         let doc = yaml.load(result);
 
+        // Remove examples and defaults from the initial doc
+        function removeExamples(obj) {
+            if (typeof obj === 'object' && obj !== null) {
+                if (Array.isArray(obj)) {
+                    obj.forEach(removeExamples);
+                } else {
+                    for (const key in obj) {
+                        if (key === 'example' || key === 'examples' || key === 'default') {
+                            delete obj[key];
+                        } else {
+                            removeExamples(obj[key]);
+                        }
+                    }
+                }
+            }
+        }
+        removeExamples(doc);
+
         // Add authentication instructions to the description
         const authInstructions = "\n\nFor endpoints protected by JWT, users must sign in using POST /auth/signin, copy the token from the response, and paste it in the Authorize button.";
         doc.info.description = (doc.info.description || "") + authInstructions;
@@ -74,22 +92,12 @@ async function convert() {
                     // Add Request Body for Email/Password
                     operation.requestBody = {
                         content: {
-                            'application/json': {
-                                schema: {
-                                    type: 'object',
-                                    properties: {
-                                        email: { type: 'string', example: 'usuario@ejemplo.com' },
-                                        password: { type: 'string', example: 'password123' }
-                                    },
-                                    required: ['email', 'password']
-                                }
-                            },
                             'application/x-www-form-urlencoded': {
                                 schema: {
                                     type: 'object',
                                     properties: {
-                                        email: { type: 'string', example: 'usuario@ejemplo.com' },
-                                        password: { type: 'string', example: 'password123' }
+                                        email: { type: 'string', example: '' },
+                                        password: { type: 'string', example: '' }
                                     },
                                     required: ['email', 'password']
                                 }
@@ -182,10 +190,10 @@ async function convert() {
                                     schema: {
                                         type: 'object',
                                         properties: {
-                                            firstName: { type: 'string' },
-                                            lastName: { type: 'string' },
-                                            email: { type: 'string' },
-                                            password: { type: 'string', format: 'password' },
+                                            firstName: { type: 'string', example: '' },
+                                            lastName: { type: 'string', example: '' },
+                                            email: { type: 'string', example: '' },
+                                            password: { type: 'string', format: 'password', example: '' },
                                             roleId: { type: 'integer' },
                                             image: { type: 'string', format: 'binary' }
                                         },
@@ -202,9 +210,9 @@ async function convert() {
                                     schema: {
                                         type: 'object',
                                         properties: {
-                                            firstName: { type: 'string' },
-                                            lastName: { type: 'string' },
-                                            email: { type: 'string' },
+                                            firstName: { type: 'string', example: '' },
+                                            lastName: { type: 'string', example: '' },
+                                            email: { type: 'string', example: '' },
                                             roleId: { type: 'integer' },
                                             image: { type: 'string', format: 'binary' }
                                         }
@@ -220,14 +228,20 @@ async function convert() {
                                     schema: {
                                         type: 'object',
                                         properties: {
-                                            title: { type: 'string' },
-                                            description: { type: 'string' },
+                                            name: { type: 'string', example: '' },
+                                            description: { type: 'string', example: '' },
                                             latitude: { type: 'number' },
                                             longitude: { type: 'number' },
                                             typeId: { type: 'integer' },
+                                            incidentStatusId: { type: 'integer' },
+                                            incidentSeverityId: { type: 'integer' },
+                                            isApproved: { type: 'boolean' },
+                                            userId: { type: 'integer' },
+                                            area: { type: 'string', example: '' },
+                                            island: { type: 'string', example: '' },
                                             image: { type: 'string', format: 'binary' }
                                         },
-                                        required: ['title', 'description', 'latitude', 'longitude', 'typeId', 'image']
+                                        required: ['name', 'description', 'latitude', 'longitude', 'typeId']
                                     }
                                 }
                             }
@@ -240,9 +254,15 @@ async function convert() {
                                     schema: {
                                         type: 'object',
                                         properties: {
-                                            title: { type: 'string' },
-                                            description: { type: 'string' },
-                                            statusId: { type: 'integer' },
+                                            name: { type: 'string', example: '' },
+                                            description: { type: 'string', example: '' },
+                                            incidentStatusId: { type: 'integer' },
+                                            incidentTypeId: { type: 'integer' },
+                                            incidentSeverityId: { type: 'integer' },
+                                            isApproved: { type: 'boolean' },
+                                            userId: { type: 'integer' },
+                                            area: { type: 'string', example: '' },
+                                            island: { type: 'string', example: '' },
                                             image: { type: 'string', format: 'binary' }
                                         }
                                     }
@@ -291,7 +311,7 @@ async function convert() {
                                     schema: {
                                         type: 'object',
                                         properties: {
-                                            type: { type: 'string', example: 'individual' }
+                                            type: { type: 'string' }
                                         },
                                         required: ['type']
                                     }

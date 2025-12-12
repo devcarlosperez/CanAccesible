@@ -246,8 +246,8 @@ exports.update = async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email, password, roleId } = req.body;
 
-    // Check if the authenticated user is trying to edit their own profile
-    if (req.user.id !== parseInt(id)) {
+    // Check if the authenticated user is trying to edit their own profile or is an admin
+    if (req.user.id !== parseInt(id) && req.user.roleId !== 2) {
       return res
         .status(403)
         .json({ message: "You do not have permission to perform this action" });
