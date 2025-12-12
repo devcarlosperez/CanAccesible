@@ -11,6 +11,7 @@ const DashboardUser = () => {
   const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     pending: 0,
     published: 0,
@@ -54,6 +55,8 @@ const DashboardUser = () => {
         setStats(newStats);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -75,6 +78,18 @@ const DashboardUser = () => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     return date >= sevenDaysAgo;
   });
+
+  if (loading) {
+    return (
+      <>
+        <Header transparent={false} />
+        <div className="flex justify-center items-center min-h-screen pt-32 bg-gray-200">
+          <p className="text-xl font-semibold text-gray-600">Cargando...</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
