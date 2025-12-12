@@ -1231,7 +1231,47 @@
         "summary": "create",
         "description": "Creates a new notification.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "User ID (optional, defaults to authenticated user)"
+                  },
+                  "entity": {
+                    "type": "string",
+                    "enum": [
+                      "User",
+                      "Incident",
+                      "IncidentComment",
+                      "IncidentLike",
+                      "IncidentFollow",
+                      "Blog",
+                      "Conversation",
+                      "ConversationMessage"
+                    ]
+                  },
+                  "entityId": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "dateNotification": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "entity",
+                  "entityId",
+                  "message"
+                ]
+              }
+            }
+          }
         },
         "parameters": [],
         "responses": {
@@ -1309,7 +1349,41 @@
         "summary": "update",
         "description": "Updates a notification.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "entity": {
+                    "type": "string",
+                    "enum": [
+                      "User",
+                      "Incident",
+                      "IncidentComment",
+                      "IncidentLike",
+                      "IncidentFollow",
+                      "Blog",
+                      "Conversation",
+                      "ConversationMessage"
+                    ]
+                  },
+                  "entityId": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "dateNotification": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
         },
         "parameters": [
           {
@@ -1379,7 +1453,42 @@
         "summary": "create",
         "description": "Creates a new blog article with an image.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "dateCreation": {
+                    "type": "string",
+                    "format": "date",
+                    "example": ""
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "content",
+                  "dateCreation"
+                ]
+              }
+            }
+          }
         },
         "parameters": [],
         "responses": {
@@ -1441,7 +1550,36 @@
         "summary": "update",
         "description": "Updates a blog article with an optional image.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "dateCreation": {
+                    "type": "string",
+                    "format": "date",
+                    "example": ""
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
         },
         "parameters": [
           {
@@ -1502,12 +1640,13 @@
         "description": "Creates a new conversation.",
         "requestBody": {
           "content": {
-            "application/json": {
+            "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "type": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   }
                 },
                 "required": [
@@ -1664,21 +1803,17 @@
         "description": "Creates a new message in a conversation.",
         "requestBody": {
           "content": {
-            "application/json": {
+            "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "message": {
-                    "type": "string"
-                  },
-                  "dateMessage": {
                     "type": "string",
-                    "format": "date-time"
+                    "example": ""
                   }
                 },
                 "required": [
-                  "message",
-                  "dateMessage"
+                  "message"
                 ]
               }
             }
@@ -1789,7 +1924,22 @@
         "summary": "update",
         "description": "Updates a message.",
         "requestBody": {
-          "content": {}
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
         },
         "parameters": [
           {
@@ -1878,7 +2028,7 @@
         "description": "Creates a new log entry.",
         "requestBody": {
           "content": {
-            "application/json": {
+            "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
                 "properties": {
@@ -1886,20 +2036,27 @@
                     "type": "integer"
                   },
                   "action": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "entity": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                   },
                   "entityId": {
                     "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": ""
                   }
                 },
                 "required": [
                   "userId",
                   "action",
                   "entity",
-                  "entityId"
+                  "entityId",
+                  "message"
                 ]
               }
             }

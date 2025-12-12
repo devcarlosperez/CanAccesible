@@ -8,11 +8,11 @@ const { getIo } = require("../services/socket.service");
 exports.create = async (req, res) => {
   try {
     const senderId = req.user.id; // Extracted from JWT token
-    const { message, dateMessage } = req.body;
+    const { message } = req.body;
     const conversationId = req.params.conversationId;
 
-    if (!conversationId || !message || !dateMessage) {
-      return res.status(400).json({ message: "All fields are required." });
+    if (!conversationId || !message) {
+      return res.status(400).json({ message: "conversationId and message are required." });
     }
 
     // Verify that the conversation exists and user has access
@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
       conversationId,
       senderId,
       message,
-      dateMessage,
+      dateMessage: new Date(),
     });
 
     // Emit new message to conversation room
