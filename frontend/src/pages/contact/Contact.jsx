@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { motion } from "motion/react";
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -115,7 +116,12 @@ const Contact = () => {
       <main className="min-h-screen py-12 mt-15 md:mt-20 lg:mt-25 px-6 bg-gray-200">
         <div className="max-w-4xl mx-auto">
           {/* Title Section */}
-          <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
             <h1
               className="text-3xl md:text-4xl font-poppins font-bold mb-4"
               style={{ color: "var(--color-neutral-2)" }}
@@ -128,10 +134,16 @@ const Contact = () => {
             >
               Selecciona una opción para continuar
             </p>
-          </div>
+          </motion.div>
 
           {/* Contact Options Flex */}
-          <div className="flex flex-wrap gap-y-6 gap-x-6 mb-6 md:mb-8 mx-4 md:mx-8 lg:mx-4 justify-center lg:justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-wrap gap-y-6 gap-x-6 mb-6 md:mb-8 mx-4 md:mx-8 lg:mx-4 justify-center lg:justify-center"
+          >
             {contactLiveChats.map((option, index) => (
               <div
                 key={index}
@@ -174,11 +186,17 @@ const Contact = () => {
                 </button>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Contact Info */}
-        <div className="max-w-6xl mx-auto mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="max-w-6xl mx-auto mt-16"
+        >
           <h2
             className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center px-4 md:px-0"
             style={{ color: "var(--color-neutral-2)" }}
@@ -310,7 +328,7 @@ const Contact = () => {
               <i className="fa-solid fa-location-dot ml-3"></i>
             </a>
           </div>
-        </div>
+        </motion.div>
       </main>
 
       <Footer />

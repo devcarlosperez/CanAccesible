@@ -15,6 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import { motion } from "motion/react";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -239,7 +240,12 @@ const Incident = () => {
   return (
     <section>
       <Header transparent={false} />
-      <div className="pt-40 p-8 pb-20 bg-gray-200">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="pt-40 p-8 pb-20 bg-gray-200"
+      >
         <h1
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
@@ -308,7 +314,7 @@ const Incident = () => {
           viewMoreIncidentId={viewMoreIncidentId}
           handleCloseViewMore={handleCloseViewMore}
         />
-      </div>
+      </motion.div>
       <Footer />
     </section>
   );

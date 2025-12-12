@@ -80,7 +80,7 @@ const DashboardUser = () => {
     <>
       <Header transparent={false} />
 
-      <div className="bg-gray-200 min-h-screen pt-32 px-4 md:px-8 lg:px-16 pb-8">
+      <main className="bg-gray-200 min-h-screen pt-32 px-4 md:px-8 lg:px-16 pb-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-2 text-gray-800">
             Hola {user?.firstName},{" "}
@@ -99,17 +99,17 @@ const DashboardUser = () => {
             <StatCard
               title="INCIDENCIAS PUBLICADAS"
               count={stats.published}
-              color="text-red-500"
+              color="text-red-700"
             />
             <StatCard
               title="INCIDENCIAS EN PROGRESO"
               count={stats.inProgress}
-              color="text-green-500"
+              color="text-green-700"
             />
             <StatCard
               title="INCIDENCIAS RESUELTAS"
               count={stats.resolved}
-              color="text-green-600"
+              color="text-green-800"
             />
           </div>
 
@@ -159,7 +159,7 @@ const DashboardUser = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </>
@@ -168,7 +168,7 @@ const DashboardUser = () => {
 
 const StatCard = ({ title, count, color }) => (
   <div className="bg-white p-6 rounded-lg shadow flex flex-col justify-between h-32">
-    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+    <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
       {title}
     </span>
     <div className="flex justify-between items-end">
@@ -189,7 +189,7 @@ const NotificationItem = ({ notification }) => {
       <div className="flex items-center gap-4 flex-1">
         <span
           className={`px-3 py-1 rounded-full text-xs font-bold ${
-            isRead ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+            isRead ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
           {isRead ? "Readed" : "Unread"}

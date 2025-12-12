@@ -54,9 +54,9 @@ const Footer = () => {
         </div>
         <div className="flex flex-row justify-evenly md:justify-around text-center md:text-left w-full md:w-2/3">
           <div className="text-left">
-            <h3 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
+            <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
               Compañía
-            </h3>
+            </h2>
             <ul className="space-y-8.5 lg:space-y-5 text-base font-roboto font-semibold">
               <li>
                 <Link
@@ -85,12 +85,17 @@ const Footer = () => {
             </ul>
           </div>
           <div className="text-left">
-            <h3 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
+            <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
               Ayuda
-            </h3>
+            </h2>
             <ul className="space-y-5 text-base font-roboto font-semibold">
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Soporte
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  Soporte
+                </Link>
               </li>
               <li>
                 <Link

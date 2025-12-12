@@ -6,6 +6,7 @@ import Footer from "../../components/footer/Footer";
 import useAuthStore from "../../services/authService";
 import { getUserById, updateUser } from "../../services/userService";
 import ProfileForm from "./ProfileForm";
+import { motion } from "motion/react";
 
 const Profile = () => {
   const { user: authUser } = useAuthStore();
@@ -116,9 +117,14 @@ const Profile = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header transparent={false} />
-        <div className="grow flex items-center justify-center bg-gray-100">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grow flex items-center justify-center bg-gray-100"
+        >
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-        </div>
+        </motion.div>
         <Footer />
       </div>
     );
@@ -128,7 +134,12 @@ const Profile = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header transparent={false} />
 
-      <main className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8">
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8"
+      >
         <ProfileForm
           userData={userData}
           imagePreview={imagePreview}
@@ -139,7 +150,7 @@ const Profile = () => {
           onCancel={handleCancel}
           isDirty={isDirty}
         />
-      </main>
+      </motion.main>
 
       <Footer />
     </div>
