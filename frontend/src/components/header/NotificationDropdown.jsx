@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { formatDate } from "../../utils/dateUtils";
 
 const NotificationDropdown = ({
   notificationsCount,
@@ -23,23 +24,6 @@ const NotificationDropdown = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [setShowNotifications]);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (err) {
-      console.error("Error formatting date:", err);
-      return "";
-    }
-  };
 
   return (
     <div className="relative" ref={dropdownRef}>
