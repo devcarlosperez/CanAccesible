@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import DashboardUser from "./DashboardUser";
@@ -56,7 +56,9 @@ describe("DashboardUser Component", () => {
     );
 
     // Check for welcome message
-    expect(screen.getByText(/Hola Carlos/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Hola Carlos/i)).toBeInTheDocument();
+    });
 
     // Check for Header and Footer
     expect(screen.getByTestId("header")).toBeInTheDocument();
@@ -65,5 +67,48 @@ describe("DashboardUser Component", () => {
     // Check for stats titles (static text)
     expect(screen.getByText("INCIDENCIAS PENDIENTES")).toBeInTheDocument();
     expect(screen.getByText("INCIDENCIAS PUBLICADAS")).toBeInTheDocument();
+  });
+
+  it("should show loading state initially", () => {
+    // Mock promises that don't resolve immediately to keep loading state true
+    getMyIncidents.mockReturnValue(new Promise(() => {}));
+    getAllNotifications.mockReturnValue(new Promise(() => {}));
+
+    render(
+      <BrowserRouter>
+        <DashboardUser />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Cargando...")).toBeInTheDocument();
+  });
+
+  it("should handle API errors gracefully", async () => {
+    // Silenciar console.error para que no ensucie el output del test
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    // Simular error en la API
+    getMyIncidents.mockRejectedValue(new Error("Error de red"));
+
+    render(
+      <BrowserRouter>
+        <DashboardUser />
+      </BrowserRouter>
+    );
+
+    // Esperar a que el componente intente cargar y falle (el useEffect catch el error)
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+
+    // Verificar que se muestran los mensajes de estado vacío (ya que la carga falló)
+    expect(
+      screen.getByText("No hay notificaciones recientes")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("No tienes incidencias con likes aún")
+    ).toBeInTheDocument();
+
+    consoleSpy.mockRestore();
   });
 });
