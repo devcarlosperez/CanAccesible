@@ -238,9 +238,9 @@ const Incident = () => {
   };
 
   return (
-    <section>
+    <>
       <Header transparent={false} />
-      <motion.div
+      <motion.main
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -314,9 +314,9 @@ const Incident = () => {
           viewMoreIncidentId={viewMoreIncidentId}
           handleCloseViewMore={handleCloseViewMore}
         />
-      </motion.div>
+      </motion.main>
       <Footer />
-    </section>
+    </>
   );
 };
 
