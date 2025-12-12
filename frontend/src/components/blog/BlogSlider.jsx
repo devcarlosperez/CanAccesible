@@ -128,12 +128,14 @@ const BlogSlider = ({ articleIds = null, maxArticles = 6 }) => {
 
       <button
         onClick={scrollPrev}
+        aria-label="Artículo anterior"
         className="absolute -left-3 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-4 z-10 bg-white rounded-full p-1.5 md:p-3 shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
       >
         <i className="fa-solid fa-arrow-left text-sm md:text-base"></i>
       </button>
       <button
         onClick={scrollNext}
+        aria-label="Artículo siguiente"
         className="absolute -right-3 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-4 z-10 bg-white rounded-full p-1.5 md:p-3 shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
       >
         <i className="fa-solid fa-arrow-right text-sm md:text-base"></i>
