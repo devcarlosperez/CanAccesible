@@ -8,15 +8,26 @@ exports.create = async (req, res) => {
     // Validate required fields
     if (!req.body.incidentId)
       return res.status(400).json({ message: "incidentId is required" });
-    if (!req.body.userId)
-      return res.status(400).json({ message: "userId is required" });
-    if (!req.body.dateLike)
-      return res.status(400).json({ message: "dateLike is required" });
+
+    // Get userId from the token (req.user is set by verifyToken middleware)
+    const userId = req.user.id;
+
+    // Check if the user has already liked this incident
+    const existingLike = await incidentLikeObject.findOne({
+      where: { incidentId: req.body.incidentId, userId: userId },
+    });
+
+    if (existingLike) {
+      return res.status(400).json({ message: "You have already liked this incident." });
+    }
+
+    // Use current date if not provided
+    const dateLike = req.body.dateLike || new Date();
 
     const newIncidentLike = await incidentLikeObject.create({
       incidentId: req.body.incidentId,
-      userId: req.body.userId,
-      dateLike: req.body.dateLike,
+      userId: userId,
+      dateLike: dateLike,
     });
 
     // Count total likes for this incident
@@ -100,34 +111,7 @@ exports.findByIncidentAndUser = async (req, res) => {
 
 // Updates an existing incident
 exports.update = async (req, res) => {
-  try {
-    const incidentLikeToUpdate = {};
-    const incidentLikeId = req.params.id;
-
-    if (req.body.incidentId !== undefined)
-      incidentLikeToUpdate.description = req.body.description;
-    if (req.body.userId !== undefined)
-      incidentLikeToUpdate.userId = req.body.userId;
-    if (req.body.dateLike !== undefined)
-      incidentLikeToUpdate.dateLike = req.body.dateLike;
-
-    const [updated] = await incidentLikeObject.update(incidentLikeToUpdate, {
-      where: { id: incidentLikeId },
-    });
-
-    if (updated) {
-      const updatedIncident = await incidentLikeObject.findOne({
-        where: { id: incidentLikeId },
-      });
-      return res.status(200).json(updatedIncident);
-    }
-
-    res.status(404).json({ message: "IncidentLike not found." });
-  } catch (err) {
-    res.status(500).json({
-      message: err.message || "An error occurred while updating the IncidentLike.",
-    });
-  }
+  res.status(403).json({ message: "Likes cannot be updated" });
 };
 
 // Deletes an incidence by ID
@@ -140,6 +124,11 @@ exports.delete = async (req, res) => {
 
     if (!incidentLike) {
       return res.status(404).json({ message: "IncidentLike not found." });
+    }
+
+    // Check permissions: only the creator can delete
+    if (req.user.id !== incidentLike.userId) {
+      return res.status(403).json({ message: "You do not have permission to delete this like." });
     }
 
     await incidentLikeObject.destroy({ where: { id: incidentLikeId } });

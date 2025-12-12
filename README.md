@@ -21,6 +21,7 @@ Our mission is to build a strong community dedicated to transforming the islands
 ## Documentation
 
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3dSP8Yt) - Complete API endpoint documentation.
+- [API Documentation in Swagger](https://canaccesible.es/api-docs) - Interactive API documentation.
 - [OpenLDAP Setup](./docs/openldap-setup.md) - Technical documentation for the OpenLDAP server setup and configuration.
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
@@ -205,7 +206,7 @@ NODE_ENV=development                          # Environment mode (development or
 DB_HOST=localhost                             # MySQL server host
 DB_PORT=3306                                  # MySQL server port
 DB_USER=root                                  # MySQL username
-DB_PASS=cji_canaccesible                      # MySQL password
+DB_PASS=******                                # MySQL password
 DB_NAME=db_canaccesible                       # Database name
 DB_SSL=false                                  # Enable SSL for database connection
 

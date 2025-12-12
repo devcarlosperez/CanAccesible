@@ -9,15 +9,23 @@ const { createLog } = require("../services/log.service");
 
 exports.signIn = async (req, res) => {
   try {
+    let email, password;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Basic ")) {
-      return res.status(400).json({ message: "Missing Authorization header" });
+    // 1. Try Basic Auth Header
+    if (authHeader && authHeader.startsWith("Basic ")) {
+      const base64Credentials = authHeader.split(" ")[1];
+      const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
+      [email, password] = decoded.split(":");
+    } 
+    // 2. Try Request Body (JSON or URL-encoded)
+    else if (req.body.email && req.body.password) {
+      email = req.body.email;
+      password = req.body.password;
+    } 
+    else {
+      return res.status(400).json({ message: "Missing credentials. Please provide Basic Auth header or email/password in body." });
     }
-
-    const base64Credentials = authHeader.split(" ")[1];
-    const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
-    const [email, password] = decoded.split(":");
 
     const user = await User.findOne({
       where: { email },

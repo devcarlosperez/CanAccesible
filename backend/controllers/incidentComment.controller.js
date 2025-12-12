@@ -158,8 +158,12 @@ exports.update = async (req, res) => {
       });
     }
 
+    if (!req.body.comment) {
+      return res.status(400).json({ message: "comment is required for update" });
+    }
+
     const updatedData = {
-      comment: req.body.comment || comment.comment,
+      comment: req.body.comment,
     };
 
     await comment.update(updatedData);

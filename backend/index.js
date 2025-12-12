@@ -20,6 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   const allowedOrigins = [
     "http://localhost:5173",
+    "http://localhost:85",
     "https://canaccesible.es",
     "https://www.canaccesible.es",
   ];
@@ -60,6 +61,10 @@ app.use(
     },
   })
 );
+
+// Swagger Documentation
+// Swagger Configuration
+require('./config/swagger')(app);
 
 // Dashboard admin routes (before API routes)
 require("./routes/dashboard-admin/main.routes")(app);
