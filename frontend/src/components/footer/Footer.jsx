@@ -89,8 +89,13 @@ const Footer = () => {
               Ayuda
             </h2>
             <ul className="space-y-5 text-base font-roboto font-semibold">
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Soporte
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  Soporte
+                </Link>
               </li>
               <li>
                 <Link
