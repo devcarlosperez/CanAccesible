@@ -10,7 +10,7 @@ export default defineConfig({
     allowedHosts: ["canaccesible.es", "www.canaccesible.es", "localhost"],
   },
   test: {
-    enviroment: "jsdom",
+    environment: "jsdom",
     globals: true,
     setupFiles: "./src/setupTest.js",
   },
