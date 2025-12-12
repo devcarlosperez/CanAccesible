@@ -10,6 +10,16 @@ exports.create = async (req, res) => {
 
     // Get userId from the token (req.user is set by verifyToken middleware)
     const userId = req.user.id;
+
+    // Check if the user is already following this incident
+    const existingFollow = await incidentFollowObject.findOne({
+      where: { incidentId: req.body.incidentId, userId: userId },
+    });
+
+    if (existingFollow) {
+      return res.status(400).json({ message: "You are already following this incident." });
+    }
+
     // Use current date if not provided
     const dateFollowed = req.body.dateFollowed || new Date();
 
@@ -92,38 +102,7 @@ exports.findByIncidentAndUser = async (req, res) => {
 
 // Updates an existing incident
 exports.update = async (req, res) => {
-  try {
-    const incidentFollowToUpdate = {};
-    const incidentFollowId = req.params.id;
-
-    if (req.body.incidentId !== undefined)
-      incidentFollowToUpdate.description = req.body.description;
-    if (req.body.userId !== undefined)
-      incidentFollowToUpdate.userId = req.body.userId;
-    if (req.body.dateFollowed !== undefined)
-      incidentFollowToUpdate.dateFollowed = req.body.dateFollowed;
-
-    const [updated] = await incidentFollowObject.update(
-      incidentFollowToUpdate,
-      {
-        where: { id: incidentFollowId },
-      }
-    );
-
-    if (updated) {
-      const updatedIncident = await incidentFollowObject.findOne({
-        where: { id: incidentFollowId },
-      });
-      return res.status(200).json(updatedIncident);
-    }
-
-    res.status(404).json({ message: "IncidentFollow not found." });
-  } catch (err) {
-    res.status(500).json({
-      message:
-        err.message || "An error occurred while updating the IncidentFollow.",
-    });
-  }
+  res.status(403).json({ message: "Follows cannot be updated" });
 };
 
 // Deletes an incidence by ID
@@ -136,6 +115,11 @@ exports.delete = async (req, res) => {
 
     if (!incidentFollow) {
       return res.status(404).json({ message: "IncidentFollow not found." });
+    }
+
+    // Check permissions: only the creator can delete
+    if (req.user.id !== incidentFollow.userId) {
+      return res.status(403).json({ message: "You do not have permission to delete this follow." });
     }
 
     await incidentFollowObject.destroy({ where: { id: incidentFollowId } });
