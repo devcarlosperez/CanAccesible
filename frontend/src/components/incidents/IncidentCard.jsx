@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { Card, CardHeader, CardContent, CardActions, CardMedia, Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, InputAdornment } from "@mui/material";
 import { red } from "@mui/material/colors";
@@ -10,10 +10,13 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import TranslateIcon from "@mui/icons-material/Translate";
 
 import { getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
 import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
 import useAuthStore from "../../services/authService.js";
+import { translateText } from "../../services/translationService";
+import { useIncidentTranslationStore } from "../../stores/incidentTranslationStore";
 
 
 const IncidentCard = ({
@@ -34,12 +37,52 @@ const IncidentCard = ({
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
+  // Translation Store
+  const { 
+    isTranslated: getIsTranslated, 
+    getTranslation, 
+    setTranslatedText, 
+    toggleTranslationStatus 
+  } = useIncidentTranslationStore();
+
+  const isTranslated = getIsTranslated(incident.id);
+  const cachedTranslation = getTranslation(incident.id);
+  const [isLoadingTranslation, setIsLoadingTranslation] = useState(false);
+
   const shareUrl = `${window.location.origin}/incidents/${incident?.id}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleTranslate = async (e) => {
+    e.stopPropagation();
+
+    if (isTranslated) {
+      toggleTranslationStatus(incident.id);
+      return;
+    }
+
+    if (cachedTranslation?.title && cachedTranslation?.description) {
+      toggleTranslationStatus(incident.id);
+      return;
+    }
+
+    setIsLoadingTranslation(true);
+    try {
+      const [title, description] = await Promise.all([
+        translateText(incident.name),
+        translateText(incident.description)
+      ]);
+      setTranslatedText(incident.id, { title, description });
+      toggleTranslationStatus(incident.id);
+    } catch (error) {
+      console.error('Failed to translate:', error);
+    } finally {
+      setIsLoadingTranslation(false);
+    }
   };
 
   useEffect(() => {
@@ -80,7 +123,7 @@ const IncidentCard = ({
 
   const handleViewMore = () => {
     navigate(`/incidents/${incident.id}`);
-  };
+  };// 
 
   return (
     <>
@@ -108,9 +151,9 @@ const IncidentCard = ({
           }
           title={
             <>
-              {incident.name}
+              {isTranslated && cachedTranslation?.title ? cachedTranslation.title : incident.name}
               <Typography variant="body2" color="text.secondary">
-                Reportado por:{" "}
+                {isTranslated ? "Reported by: " : "Reportado por: "}
                 {incidentUser
                   ? `${incidentUser.firstName} ${incidentUser.lastName || ""}`
                   : "Unknown"}
@@ -148,7 +191,7 @@ const IncidentCard = ({
               textOverflow: "ellipsis",
             }}
           >
-            {incident.description}
+            {isTranslated && cachedTranslation?.description ? cachedTranslation.description : incident.description}
           </Typography>
         </CardContent>
 
@@ -169,6 +212,24 @@ const IncidentCard = ({
             <ShareIcon />
           </IconButton>
 
+          {/* Translate Button */}
+          <button
+            onClick={handleTranslate}
+            disabled={isLoadingTranslation}
+            className={`text-xs px-2 py-1 rounded transition-colors mr-2 cursor-pointer ${
+              isTranslated 
+                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            }`}
+            title={isTranslated ? "Traducido al inglés (Click para ver original)" : "Original en español (Click para traducir)"}
+          >
+            {isLoadingTranslation ? (
+              <span className="animate-pulse">...</span>
+            ) : (
+              isTranslated ? 'EN' : 'ES'
+            )}
+          </button>
+
           {/* Edit and delete buttons */}
           {user?.id === incident.userId && (
             <>
@@ -183,9 +244,9 @@ const IncidentCard = ({
 
           {/* More information button */}
           <Button
-            variant="outlined"
+            component={RouterLink}
+            to={`/incidents/${incident.id}`}
             sx={{ marginLeft: "auto" }}
-            onClick={handleViewMore}
           >
             Ver más
           </Button>
@@ -201,7 +262,7 @@ const IncidentCard = ({
       >
         <DialogTitle sx={{ m: 0, p: 2 }}>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold" }}>
-            Compartir Incidencia
+            {isTranslated ? "Share Incident" : "Compartir Incidencia"}
           </Typography>
           <IconButton
             aria-label="close"
@@ -242,7 +303,7 @@ const IncidentCard = ({
               textAlign="center"
               sx={{ mt: 1 }}
             >
-              Enlace copiado al portapapeles!
+              {isTranslated ? "Link copied to clipboard!" : "Enlace copiado al portapapeles!"}
             </Typography>
           )}
         </DialogContent>

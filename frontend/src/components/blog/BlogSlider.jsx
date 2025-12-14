@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import EmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { getAllBlogArticles } from '../../services/blogArticleService';
+import BlogCard from './BlogCard';
 
 /**
  * BlogSlider - Component that displays blog articles in a carousel
@@ -72,50 +72,7 @@ const BlogSlider = ({ articleIds = null, maxArticles = 6 }) => {
           {articles && articles.length > 0 ? (
             articles.map((article) => (
             <div key={article.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 p-1 md:p-2">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                {/* Image Container */}
-                <div className="aspect-video md:aspect-square bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-                  <img
-                    src={article.nameFile}
-                    alt={article.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-
-                {/* Content Container */}
-                <div className="p-2 md:p-4 flex flex-col grow">
-                  <Link
-                    to={`/blog/${article.id}`}
-                    className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors"
-                  >
-                    {article.title}
-                  </Link>
-                  
-                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
-                    {article.description}
-                  </p>
-
-                  {/* Footer with date and read more link */}
-                  <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
-                    <span className="text-xs text-gray-500">
-                      {article.dateCreation 
-                        ? new Date(article.dateCreation).toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })
-                        : 'Sin fecha'
-                      }
-                    </span>
-                    <Link
-                      to={`/blog/${article.id}`}
-                      className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium"
-                    >
-                      Leer más →
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <BlogCard article={article} />
             </div>
             ))
           ) : (
