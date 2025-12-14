@@ -16,10 +16,12 @@ import AddIcon from "@mui/icons-material/Add";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 import "react-toastify/dist/ReactToastify.css";
 
 const Incident = () => {
+  const { t } = useTranslation();
   const [incidents, setIncidents] = useState([]);
   const [users] = useState([]);
   const [editingIncident, setEditingIncident] = useState(null);
@@ -112,7 +114,7 @@ const Incident = () => {
         for (const follower of followers) {
           await createNotification({
             userId: follower.userId,
-            message: `La incidencia "${formData.name}" ha sido actualizada.`,
+            message: t('incident_updated', { name: formData.name }),
             entity: "IncidentFollow",
             entityId: updatedIncidentId,
             dateNotification: new Date().toISOString().split("T")[0],
@@ -121,7 +123,7 @@ const Incident = () => {
       }
 
       if (!editingIncident) {
-        toast.success("La incidencia ha sido enviada para ser revisada.");
+        toast.success(t('incidents_sent_for_review'));
       }
     } catch (err) {
       console.error("Error guardando incidencia:", err);
@@ -166,7 +168,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Debes iniciar sesión para poder dar like a una incidencia.");
+        showErrorToast(t('incidents_like_login'));
         return;
       }
 
@@ -198,7 +200,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Debes iniciar sesión para poder seguir una incidencia.");
+        showErrorToast(t('incidents_follow_login'));
         return;
       }
 
@@ -250,7 +252,7 @@ const Incident = () => {
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
         >
-          Gestión de Incidencias
+          {t('incidents_title')}
         </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           {!showForm && (
@@ -269,8 +271,8 @@ const Incident = () => {
               }}
             >
               {isAuthenticated
-                ? "Nueva Incidencia"
-                : "Inicia sesión para crear una incidencia"}
+                ? t('incidents_new')
+                : t('incidents_login_to_create')}
             </Button>
           )}
         </div>

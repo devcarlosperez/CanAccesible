@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import logo from "../../assets/canaccesible-logo.webp";
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="flex flex-col items-center justify-center bg-neutral-100 text-neutral-800 py-10 px-6 lg:px-20">
       <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full max-w-7xl mb-10">
@@ -17,8 +20,7 @@ const Footer = () => {
           </Link>
 
           <p className="hidden md:block text-sm text-neutral-600 font-roboto leading-relaxed max-w-sm mb-4">
-            CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología
-            y la accesibilidad digital.
+            {t('footer_description')}
           </p>
 
           <div className="flex gap-6 text-3xl">
@@ -55,7 +57,7 @@ const Footer = () => {
         <div className="flex flex-row justify-evenly md:justify-around text-center md:text-left w-full md:w-2/3">
           <div className="text-left">
             <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
-              Compañía
+              {t('company')}
             </h2>
             <ul className="space-y-8.5 lg:space-y-5 text-base font-roboto font-semibold">
               <li>
@@ -63,7 +65,7 @@ const Footer = () => {
                   to="/home#mission"
                   className="hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  Nuestra misión
+                  {t('our_mission')}
                 </Link>
               </li>
               <li>
@@ -71,7 +73,7 @@ const Footer = () => {
                   to="/home#services"
                   className="hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  Servicios
+                  {t('services')}
                 </Link>
               </li>
               <li>
@@ -79,14 +81,14 @@ const Footer = () => {
                   to="/home#about-us"
                   className="hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  Sobre nosotros
+                  {t('about_us')}
                 </Link>
               </li>
             </ul>
           </div>
           <div className="text-left">
             <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
-              Ayuda
+              {t('help')}
             </h2>
             <ul className="space-y-5 text-base font-roboto font-semibold">
               <li>
@@ -94,7 +96,7 @@ const Footer = () => {
                   to="/contact"
                   className="hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  Soporte
+                  {t('support')}
                 </Link>
               </li>
               <li>
@@ -102,9 +104,7 @@ const Footer = () => {
                   to={"/terms-conditions"}
                   className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
                 >
-                  Términos y <br className="block lg:hidden" />
-                  <span className="hidden md:inline"> </span>
-                  Condiciones
+                  {t('terms_conditions')}
                 </Link>
               </li>
               <li>
@@ -112,9 +112,7 @@ const Footer = () => {
                   to={"/privacy-policy"}
                   className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
                 >
-                  Política de <br className="block lg:hidden" />
-                  <span className="hidden md:inline"> </span>
-                  Privacidad
+                  {t('privacy_policy')}
                 </Link>
               </li>
               <li>
@@ -122,9 +120,7 @@ const Footer = () => {
                   to={"/push-notifications-guide"}
                   className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
                 >
-                  Guía de <br className="block lg:hidden" />
-                  <span className="hidden md:inline"> </span>
-                  Notificaciones
+                  {t('push_notifications_guide')}
                 </Link>
               </li>
             </ul>
@@ -133,7 +129,7 @@ const Footer = () => {
       </div>
       <hr className="w-full max-w-7xl border-neutral-200 mb-6" />
       <p className="text-xs text-neutral-700 text-center font-roboto">
-        © CANACCESIBLE 2025, All Rights Reserved
+        {t('all_rights_reserved')}
       </p>
     </footer>
   );

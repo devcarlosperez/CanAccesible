@@ -2,8 +2,10 @@ import { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { useTranslation } from 'react-i18next';
 
 const ChatWindow = ({ conversation }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
@@ -51,7 +53,7 @@ const ChatWindow = ({ conversation }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      showErrorToast('Debes iniciar sesión para acceder a esta conversación.');
+      showErrorToast(t('chat_login_required'));
       return;
     }
 
@@ -66,7 +68,7 @@ const ChatWindow = ({ conversation }) => {
         setMessages(response.data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          showErrorToast('Debes iniciar sesión para acceder a esta conversación.');
+          showErrorToast(t('chat_login_required'));
         } else {
           console.error('Error fetching messages:', error);
         }
@@ -156,7 +158,7 @@ const ChatWindow = ({ conversation }) => {
       setEditedText('');
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        showErrorToast('Debes iniciar sesión para realizar esta acción.');
+        showErrorToast(t('chat_login_required'));
       } else {
         console.error('Error updating message:', error);
       }
@@ -176,13 +178,13 @@ const ChatWindow = ({ conversation }) => {
 
   return (
     <div className="bg-white md:rounded-lg md:shadow-md p-4 md:p-6">
-      <h2 class="text-2xl font-bold mb-4 text-center">
-        {conversation.type ? `Chat: ${conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1)}` : 'Chat'}
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        {conversation.type ? t('chat_title', { type: conversation.type.charAt(0).toUpperCase() + conversation.type.slice(1) }) : 'Chat'}
       </h2>
 
       <div className="md:h-96 h-[calc(100vh-200px)] overflow-y-auto border border-gray-300 rounded p-4 mb-4 bg-gray-50">
         {messages.length === 0 ? (
-          <p className="text-gray-500 text-center">No hay mensajes aún. ¡Inicia la conversación!</p>
+          <p className="text-gray-500 text-center">{t('chat_no_messages')}</p>
         ) : (
           messages.map((msg) => {
             const isOwnMessage = msg.senderId === currentUserId;
@@ -200,8 +202,8 @@ const ChatWindow = ({ conversation }) => {
                       className="text-black p-1 rounded mb-1 bg-white"
                     />
                     <div className="flex justify-end gap-2">
-                      <button onClick={cancelEditing} className="text-xs underline">Cancelar</button>
-                      <button onClick={() => saveEdit(msg.id)} className="text-xs underline">Guardar</button>
+                      <button onClick={cancelEditing} className="text-xs underline">{t('cancel')}</button>
+                      <button onClick={() => saveEdit(msg.id)} className="text-xs underline">{t('save')}</button>
                     </div>
                   </div>
                 ) : (
@@ -226,13 +228,13 @@ const ChatWindow = ({ conversation }) => {
                               onClick={() => startEditing(msg)}
                               className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                             >
-                              Editar
+                              {t('edit')}
                             </button>
                             <button 
                               onClick={() => deleteMessage(msg.id)}
                               className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
                             >
-                              Eliminar
+                              {t('delete')}
                             </button>
                           </div>
                         )}
@@ -252,7 +254,7 @@ const ChatWindow = ({ conversation }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Escribe tu mensaje..."
+          placeholder={t('chat_placeholder')}
           className="flex-1 min-w-0 border border-gray-300 rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button

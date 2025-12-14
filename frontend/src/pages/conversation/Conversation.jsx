@@ -2,8 +2,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ChatWindow from '../../components/conversation/ChatWindow';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const Conversation = () => {
+  const { t } = useTranslation();
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const [conversation, setConversation] = useState(null);
@@ -31,11 +33,11 @@ const Conversation = () => {
   }, [conversationId]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Cargando conversación...</div>;
+    return <div className="min-h-screen flex items-center justify-center">{t('chat_loading')}</div>;
   }
 
   if (!conversation) {
-    return <div className="min-h-screen flex items-center justify-center">Conversación no encontrada.</div>;
+    return <div className="min-h-screen flex items-center justify-center">{t('chat_not_found')}</div>;
   }
 
   return (
@@ -46,7 +48,7 @@ const Conversation = () => {
             onClick={() => navigate(-1)} 
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
           >
-            ← Volver
+            ← {t('back')}
           </button>
         </div>
         <ChatWindow conversation={conversation} />

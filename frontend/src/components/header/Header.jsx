@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import useAuthStore from "../../services/authService.js";
 import {
   getAllNotifications,
@@ -13,6 +14,7 @@ const Header = ({ transparent = true }) => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { isAuthenticated } = useAuthStore();
 
@@ -58,12 +60,12 @@ const Header = ({ transparent = true }) => {
   }, [open]);
 
   const menuItems = [
-    { text: "Inicio", to: "/home", icon: "home" },
-    { text: "Incidencias", to: "/incidents", icon: "assignment" },
-    { text: "Mapa", to: "/map", icon: "map" },
-    { text: "Blog", to: "/blog", icon: "article" },
-    { text: "Contacto", to: "/contact", icon: "contact_mail" },
-    { text: "Iniciar Sesión", to: "/login", icon: "login", login: true },
+    { text: t('home'), to: "/home", icon: "home" },
+    { text: t('incidents'), to: "/incidents", icon: "assignment" },
+    { text: t('map'), to: "/map", icon: "map" },
+    { text: t('blog'), to: "/blog", icon: "article" },
+    { text: t('contact'), to: "/contact", icon: "contact_mail" },
+    { text: t('login'), to: "/login", icon: "login", login: true },
   ];
 
   const filteredMenuItems = menuItems.filter((item) => {
