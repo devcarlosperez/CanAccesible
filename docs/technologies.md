@@ -70,6 +70,10 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **Headless UI**: Unstyled UI components (accessible and functional) that integrate well with Tailwind CSS.
 - **MUI Icons, Font Awesome & Lucide React**: Comprehensive collections of icons, providing a wide range of SVG icons for the interface.
 
+### Internationalization (i18n)
+
+- **react-i18next**: Library for internationalization in React applications. Enables multi-language support by managing translations in JSON files. Used for static UI text (labels, buttons, messages) across the application, allowing users to switch between Spanish and English seamlessly.
+
 ### Maps & Visualization
 
 - **Leaflet & React Leaflet**: Libraries for displaying interactive maps. Essential for incident geolocation in the project.
@@ -109,7 +113,11 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 ## External APIs
 
 - **Nominatim API (OpenStreetMap)**: Used in the backend for **reverse geocoding**. It converts geographic coordinates (latitude and longitude) provided by the user (when reporting an incident) into a human-readable address (street, city, etc.), which is then stored with the incident details.
-- **MyMemory API**: Used in the frontend to provide **automatic translation** of blog articles. It allows users to translate article titles and descriptions from Spanish to English directly within the interface.
+- **MyMemory API**: Used in the frontend to provide **automatic translation** of dynamic user-generated content, such as blog article titles and descriptions. It translates from Spanish to English on-demand, allowing users to view content in their preferred language without requiring pre-translated versions.
+
+## Internationalization (i18n)
+
+- **react-i18next**: Implements internationalization for static UI elements. Unlike the MyMemory API (which translates dynamic content in real-time), i18n manages pre-defined translations stored in JSON files (`public/locales/{lang}/translation.json`). This approach is used for interface text (buttons, labels, error messages) and provides instant loading without external API calls, ensuring better performance and offline capability for core UI elements.
 
 ---
 

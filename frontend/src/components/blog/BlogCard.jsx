@@ -71,7 +71,7 @@ const BlogCard = ({ article }) => {
           {isTranslated && cachedTranslation?.title ? cachedTranslation.title : article.title}
         </Link>
         
-        <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
+        <p className="text-xs md:text-sm text-gray-600 line-clamp-3 mt-1 md:mt-2 grow">
           {isTranslated && cachedTranslation?.description ? cachedTranslation.description : article.description}
         </p>
 
