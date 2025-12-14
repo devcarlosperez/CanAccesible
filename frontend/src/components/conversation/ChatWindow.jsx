@@ -259,7 +259,7 @@ const ChatWindow = ({ conversation }) => {
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition flex items-center justify-center flex-shrink-0"
+          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition flex items-center justify-center shrink-0"
         >
           <i className="fas fa-paper-plane"></i>
         </button>

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 const ProfileForm = ({
   userData,
   imagePreview,
@@ -10,6 +12,8 @@ const ProfileForm = ({
   pushEnabled,
   handlePushToggle,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
@@ -37,7 +41,7 @@ const ProfileForm = ({
             <label
               htmlFor="image-upload"
               className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-100 transition-colors"
-              title="Cambiar foto"
+              title={t('profile_change_photo')}
             >
               <i className="fa-solid fa-camera"></i>
               <input
@@ -63,7 +67,7 @@ const ProfileForm = ({
                   htmlFor="firstName"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Nombre
+                  {t('profile_firstname')}
                 </label>
                 <input
                   type="text"
@@ -73,7 +77,7 @@ const ProfileForm = ({
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder="Tu nombre"
+                  placeholder={t('profile_firstname_placeholder')}
                 />
               </div>
 
@@ -82,7 +86,7 @@ const ProfileForm = ({
                   htmlFor="lastName"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Apellidos
+                  {t('profile_lastname')}
                 </label>
                 <input
                   type="text"
@@ -92,7 +96,7 @@ const ProfileForm = ({
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder="Tus apellidos"
+                  placeholder={t('profile_lastname_placeholder')}
                 />
               </div>
             </div>
@@ -102,7 +106,7 @@ const ProfileForm = ({
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Correo Electrónico
+                {t('profile_email')}
               </label>
               <input
                 type="email"
@@ -112,17 +116,17 @@ const ProfileForm = ({
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder="tu@email.com"
+                placeholder={t('profile_email_placeholder')}
               />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div>
                 <h3 className="text-sm font-medium text-gray-900">
-                  Notificaciones Push
+                  {t('profile_push_title')}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  Recibe alertas sobre nuevos mensajes y actualizaciones.
+                  {t('profile_push_desc')}
                 </p>
                 <a
                   href="/push-notifications-guide"
@@ -130,7 +134,7 @@ const ProfileForm = ({
                   rel="noopener noreferrer"
                   className="text-xs text-blue-600 hover:text-blue-800 mt-1 inline-block"
                 >
-                  ¿Cómo activar las notificaciones? →
+                  {t('profile_push_how_to')}
                 </a>
               </div>
               <button
@@ -157,7 +161,7 @@ const ProfileForm = ({
                 onClick={onCancel}
                 className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors cursor-pointer"
               >
-                Cancelar
+                {t('profile_cancel')}
               </button>
               <button
                 type="submit"
@@ -169,10 +173,10 @@ const ProfileForm = ({
                 {updating ? (
                   <span className="flex items-center gap-2">
                     <i className="fa-solid fa-circle-notch fa-spin"></i>
-                    Guardando...
+                    {t('profile_saving')}
                   </span>
                 ) : (
-                  "Guardar Cambios"
+                  t('profile_save')
                 )}
               </button>
             </div>

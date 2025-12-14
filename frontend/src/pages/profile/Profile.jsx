@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -13,6 +14,7 @@ import ProfileForm from "./ProfileForm";
 import { motion } from "motion/react";
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user: authUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -56,7 +58,7 @@ const Profile = () => {
           setPushEnabled(!!subscription);
         }
       } catch (error) {
-        toast.error("Error al cargar los datos del perfil");
+        toast.error(t('profile_load_error'));
       } finally {
         setLoading(false);
       }
@@ -70,18 +72,18 @@ const Profile = () => {
       if (pushEnabled) {
         await unsubscribeFromPushNotifications();
         setPushEnabled(false);
-        toast.info("Notificaciones push desactivadas");
+        toast.info(t('profile_push_disabled'));
       } else {
         const subscription = await subscribeToPushNotifications();
         if (subscription) {
           setPushEnabled(true);
-          toast.success("Notificaciones push activadas");
+          toast.success(t('profile_push_enabled'));
         } else {
-          toast.error("No se pudieron activar las notificaciones push");
+          toast.error(t('profile_push_enable_error'));
         }
       }
     } catch (error) {
-      toast.error("Error al cambiar configuración de notificaciones push");
+      toast.error(t('profile_push_toggle_error'));
     }
   };
 
@@ -130,13 +132,13 @@ const Profile = () => {
 
       await updateUser(authUser.id, formData);
 
-      toast.success("Perfil actualizado correctamente");
+      toast.success(t('profile_update_success'));
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Error al actualizar el perfil"
+        error.response?.data?.message || t('profile_update_error')
       );
     } finally {
       setUpdating(false);
