@@ -4,6 +4,7 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { toast } from "react-toastify"; // Importar toast
 
@@ -107,6 +108,7 @@ const IncidentForm = ({
     open,
     setOpen,
 }) => {
+    const { t } = useTranslation();
 
     const [errors, setErrors] = useState({
         image: "",
@@ -122,12 +124,12 @@ const IncidentForm = ({
         let hasError = false;
 
         if (!formData.previewUrl && !formData.nameFile) {
-            newErrors.image = "Debes subir una imagen antes de continuar.";
+            newErrors.image = t('form_error_image');
             hasError = true;
         }
 
         if (!formData.island || formData.island === "Desconocida") {
-            newErrors.island = "No se pudo detectar correctamente la isla. Selecciona un punto válido en el mapa.";
+            newErrors.island = t('form_error_island');
             hasError = true;
         }
 
@@ -148,35 +150,35 @@ const IncidentForm = ({
         <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
             <DialogContent>
                 <Typography variant="h5" align="center" sx={{ fontWeight: "bold", mb: 4, mt: 2 }}>
-                    {editingIncident ? "Editar Incidencia" : "Nuevo Incidencia"}
+                    {editingIncident ? t('form_edit_incident') : t('form_new_incident')}
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3} direction="column">
                         {/* Name */}
                         <Grid item>
-                            <TextField fullWidth label="Nombre" name="name" value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
+                            <TextField fullWidth label={t('form_name')} name="name" value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
                         </Grid>
                         {/* Description */}
                         <Grid item>
-                            <TextField fullWidth label="Descripción" name="description" multiline rows={3} value={formData.description} onChange={e => setFormData(f => ({ ...f, description: e.target.value }))} required />
+                            <TextField fullWidth label={t('form_description')} name="description" multiline rows={3} value={formData.description} onChange={e => setFormData(f => ({ ...f, description: e.target.value }))} required />
                         </Grid>
                         {/* Area */}
                         <Grid item>
                             <TextField
                                 select
                                 fullWidth
-                                label="Area"
+                                label={t('form_area')}
                                 name="area"
                                 value={formData.area || ''}
                                 onChange={e => setFormData(f => ({ ...f, area: e.target.value }))
                                 }
                                 required
                             >
-                                <MenuItem value="movilidad">movilidad</MenuItem>
-                                <MenuItem value="sensorial">sensorial</MenuItem>
-                                <MenuItem value="arquitectura">arquitectura</MenuItem>
-                                <MenuItem value="transporte">transporte</MenuItem>
-                                <MenuItem value="otro">otro</MenuItem>
+                                <MenuItem value="movilidad">{t('form_area_mobility')}</MenuItem>
+                                <MenuItem value="sensorial">{t('form_area_sensory')}</MenuItem>
+                                <MenuItem value="arquitectura">{t('form_area_architecture')}</MenuItem>
+                                <MenuItem value="transporte">{t('form_area_transport')}</MenuItem>
+                                <MenuItem value="otro">{t('form_area_other')}</MenuItem>
                             </TextField>
                         </Grid>
                         {/* Type */}
@@ -184,7 +186,7 @@ const IncidentForm = ({
                             <TextField
                                 select
                                 fullWidth
-                                label="Tipo"
+                                label={t('form_type')}
                                 name="incidentTypeId"
                                 value={formData.incidentTypeId}
                                 onChange={e => {
@@ -198,8 +200,8 @@ const IncidentForm = ({
                                 }}
                                 required
                             >
-                                <MenuItem value={1}>Buena Practica</MenuItem>
-                                <MenuItem value={2}>Mala Practica</MenuItem>
+                                <MenuItem value={1}>{t('form_good_practice')}</MenuItem>
+                                <MenuItem value={2}>{t('form_bad_practice')}</MenuItem>
                             </TextField>
                         </Grid>
                         {/* Severity (only if Bad Practice) */}
@@ -208,16 +210,16 @@ const IncidentForm = ({
                                 <TextField
                                     select
                                     fullWidth
-                                    label="Severidad"
+                                    label={t('form_severity')}
                                     name="incidentSeverityId"
                                     value={formData.incidentSeverityId ? Number(formData.incidentSeverityId) : ''}
                                     onChange={e => setFormData(f => ({ ...f, incidentSeverityId: Number(e.target.value) }))
                                     }
                                     required
                                 >
-                                    <MenuItem value={1}>Baja</MenuItem>
-                                    <MenuItem value={2}>Media</MenuItem>
-                                    <MenuItem value={3}>Alta</MenuItem>
+                                    <MenuItem value={1}>{t('form_severity_low')}</MenuItem>
+                                    <MenuItem value={2}>{t('form_severity_medium')}</MenuItem>
+                                    <MenuItem value={3}>{t('form_severity_high')}</MenuItem>
                                 </TextField>
                             </Grid>
                         )}
@@ -225,7 +227,7 @@ const IncidentForm = ({
                         <Grid item>
                             <TextField
                                 fullWidth
-                                label="Fecha"
+                                label={t('form_date')}
                                 name="dateIncident"
                                 type="date"
                                 value={formData.dateIncident}
@@ -264,7 +266,7 @@ const IncidentForm = ({
                         {/* Image */}
                         <Grid item>
                             <Button variant="outlined" component="label" startIcon={<PhotoCamera />} fullWidth>
-                                {formData.previewUrl || formData.nameFile ? "Cambiar Imagen" : "Subir Imagen"}
+                                {formData.previewUrl || formData.nameFile ? t('form_change_image') : t('form_upload_image')}
                                 <input 
                                     type="file" 
                                     accept="image/*" 
@@ -316,12 +318,12 @@ const IncidentForm = ({
                         <Grid item>
                             <Button variant="contained" color="success" type="submit" fullWidth sx={{ mt: 2 }}>
                                 {submitting
-                                    ? (editingIncident ? "Actualizando..." : "Creando...")
-                                    : (editingIncident ? "Actualizar Incidencia" : "Crear Incidencia")}
+                                    ? (editingIncident ? t('form_updating') : t('form_creating'))
+                                    : (editingIncident ? t('form_update_incident') : t('form_create_incident'))}
                             </Button>
                             {onCancel && (
                                 <Button variant="outlined" color="error" fullWidth sx={{ mt: 1 }} onClick={onCancel}>
-                                    Cancelar
+                                    {t('cancel')}
                                 </Button>
                             )}
                         </Grid>

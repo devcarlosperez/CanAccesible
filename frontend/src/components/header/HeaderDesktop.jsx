@@ -1,7 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useAuthStore from "../../services/authService.js";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import UserMenu from "./HeaderUserMenu.jsx";
+import LanguageSwitcher from "../utils/LanguageSwitcher.jsx";
 import logo from "../../assets/canaccesible-logo-2.webp";
 
 const HeaderDesktop = ({
@@ -13,6 +15,7 @@ const HeaderDesktop = ({
   transparent,
   scrolled,
 }) => {
+  const { t } = useTranslation();
   const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
   const navigate = useNavigate();
   const notificationsCount = notifications.length;
@@ -52,6 +55,7 @@ const HeaderDesktop = ({
       </nav>
 
       <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+        <LanguageSwitcher />
         {isAuthenticated && (
           <NotificationDropdown
             notificationsCount={notificationsCount}
@@ -71,7 +75,7 @@ const HeaderDesktop = ({
             to="/login"
             className="bg-blue-600 text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5 lg:text-md xl:text-base rounded-xl font-semibold hover:bg-blue-700 hover:scale-105 transition-all duration-200"
           >
-            Iniciar Sesión
+            {t('login')}
           </Link>
         )}
       </div>

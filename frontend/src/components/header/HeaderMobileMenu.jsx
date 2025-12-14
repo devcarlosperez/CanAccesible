@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Transition } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../utils/LanguageSwitcher.jsx";
 
 const MobileMenu = ({
   open,
@@ -11,6 +13,7 @@ const MobileMenu = ({
   isAdmin,
   onLogout,
 }) => {
+  const { t } = useTranslation();
   const [accountOpen, setAccountOpen] = useState(false);
   const dashboardLink = isAdmin ? "/dashboard-admin" : "/dashboard-user";
 
@@ -103,7 +106,7 @@ const MobileMenu = ({
                         onClick={() => setOpen(false)}
                         className="text-white hover:text-[#92B2EA] cursor-pointer"
                       >
-                        Perfil
+                        {t('profile')}
                       </Link>
                     </li>
                     <li>
@@ -136,7 +139,7 @@ const MobileMenu = ({
                         }}
                         className="text-white hover:text-[#FF6B6B] cursor-pointer text-left"
                       >
-                        Cerrar sesión
+                        {t('logout')}
                       </button>
                     </li>
                   </ul>
@@ -145,6 +148,9 @@ const MobileMenu = ({
             </li>
           )}
         </ul>
+        <div className="p-4 flex justify-center">
+          <LanguageSwitcher />
+        </div>
       </div>
     </>
   );

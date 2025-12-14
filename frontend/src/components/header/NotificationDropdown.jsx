@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { formatDate } from "../../utils/dateUtils";
+import { useTranslation } from "react-i18next";
 
 const NotificationDropdown = ({
   notificationsCount,
@@ -10,6 +11,7 @@ const NotificationDropdown = ({
   iconSize = "text-xl md:text-2xl lg:text-3xl",
   dropdownWidth = "w-80",
 }) => {
+  const { t } = useTranslation();
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const NotificationDropdown = ({
       <button
         type="button"
         className="relative text-white hover:text-accent-1 transition-colors focus:outline-none cursor-pointer mt-2"
-        aria-label="Notificaciones"
+        aria-label={t('notifications_title')}
         onClick={() => setShowNotifications((prev) => !prev)}
       >
         <span className={`material-symbols-outlined ${iconSize}`}>
@@ -48,12 +50,12 @@ const NotificationDropdown = ({
         >
           <div className="flex justify-between items-center px-4 py-3 border-b">
             <span className="text-lg font-bold text-[#1b226b]">
-              Notificaciones
+              {t('notifications_title')}
             </span>
           </div>
           <div className="p-4 max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <p className="text-gray-500">No tienes notificaciones.</p>
+              <p className="text-gray-500">{t('notifications_empty')}</p>
             ) : (
               <ul className="space-y-3">
                 {notifications.map((n) => (
@@ -70,7 +72,7 @@ const NotificationDropdown = ({
                     <button
                       className="text-red-500 hover:text-red-700 shrink-0"
                       onClick={() => handleDeleteNotification(n.id)}
-                      title="Borrar notificación"
+                      title={t('notifications_delete')}
                     >
                       <span className="material-symbols-outlined text-lg cursor-pointer">
                         delete

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const UserMenu = ({ user, isAdmin, onLogout }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
 
@@ -45,7 +47,7 @@ const UserMenu = ({ user, isAdmin, onLogout }) => {
                 className="block px-4 py-2 hover:bg-gray-100 rounded-lg"
                 onClick={() => setOpen(false)}
               >
-                Perfil
+                {t('profile')}
               </Link>
             </li>
             <li>
@@ -58,7 +60,7 @@ const UserMenu = ({ user, isAdmin, onLogout }) => {
                   }}
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg bg-none border-none cursor-pointer"
                 >
-                  Dashboard
+                  {t('dashboard')}
                 </button>
               ) : (
                 <Link
@@ -66,7 +68,7 @@ const UserMenu = ({ user, isAdmin, onLogout }) => {
                   className="block px-4 py-2 hover:bg-gray-100 rounded-lg"
                   onClick={() => setOpen(false)}
                 >
-                  Dashboard
+                  {t('dashboard')}
                 </Link>
               )}
             </li>
@@ -78,7 +80,7 @@ const UserMenu = ({ user, isAdmin, onLogout }) => {
                 }}
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer"
               >
-                Cerrar sesión
+                {t('logout')}
               </button>
             </li>
           </ul>

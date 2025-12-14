@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import Background from "../../components/utils/Background";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
@@ -6,7 +7,8 @@ import Hero from "../../components/utils/Hero";
 import { motion } from "motion/react";
 
 const Home = () => {
-  let heroData = { text1: "Por unas islas", text2: "accesibles para todos" };
+  const { t } = useTranslation();
+  let heroData = { text1: t('hero_text1'), text2: t('hero_text2') };
 
   return (
     <>
@@ -28,7 +30,7 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold text-gray-800 mb-8"
           >
-            Nuestra Misión
+            {t('our_mission')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -37,12 +39,7 @@ const Home = () => {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto"
           >
-            CanAccesible es una plataforma comunitaria diseñada para transformar
-            las Islas Canarias en un referente de accesibilidad. <br />
-            <br />
-            Permite que cualquier persona pueda registrar, compartir y mejorar
-            la accesibilidad de lugares públicos y privados, fomentando un
-            entorno más inclusivo para toda la comunidad.
+            <Trans i18nKey="mission_text" />
           </motion.p>
         </div>
       </section>
@@ -60,7 +57,7 @@ const Home = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-              Servicios
+              {t('services_title')}
             </h2>
           </motion.div>
 
@@ -75,17 +72,16 @@ const Home = () => {
                 <i className="fa-solid fa-bullhorn"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Reporta Incidencias
+                {t('service_report_title')}
               </h3>
               <p className="text-gray-600 mb-6">
-                Documenta barreras arquitectónicas o destaca buenas prácticas de
-                accesibilidad. Tu voz ayuda a identificar áreas de mejora.
+                {t('service_report_desc')}
               </p>
               <Link
                 to="/incidents"
                 className="text-blue-600 font-semibold hover:text-blue-800 transition-colors"
               >
-                Ver Incidencias <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t('service_report_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
 
@@ -100,17 +96,16 @@ const Home = () => {
                 <i className="fa-solid fa-map-location-dot"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Mapa Interactivo
+                {t('service_map_title')}
               </h3>
               <p className="text-gray-600 mb-6">
-                Explora el estado de la accesibilidad en tiempo real. Visualiza
-                puntos críticos y zonas accesibles en todas las islas.
+                {t('service_map_desc')}
               </p>
               <Link
                 to="/map"
                 className="text-green-700 font-semibold hover:text-green-800 transition-colors"
               >
-                Explorar Mapa <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t('service_map_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
 
@@ -126,17 +121,16 @@ const Home = () => {
                 <i className="fa-solid fa-envelope"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Contáctanos
+                {t('service_contact_title')}
               </h3>
               <p className="text-gray-600 mb-6">
-                Si tienes alguna duda, sugerencia o necesitas asistencia, no
-                dudes en contactarnos. Estamos aquí para ayudarte.
+                {t('service_contact_desc')}
               </p>
               <Link
                 to="/contact"
                 className="text-purple-600 font-semibold hover:text-purple-800 transition-colors"
               >
-                Contactar <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t('service_contact_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
           </div>
@@ -152,10 +146,10 @@ const Home = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-7">
-              ¿Cómo funciona?
+              {t('how_it_works')}
             </h2>
             <p className="text-xl text-gray-600">
-              Tres simples pasos para hacer un cambio real.
+              {t('how_it_works_subtitle')}
             </p>
           </motion.div>
 
@@ -172,11 +166,10 @@ const Home = () => {
                 1
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Identifica
+                {t('step_identify')}
               </h3>
               <p className="text-gray-600">
-                Observa tu entorno. ¿Hay una rampa bloqueada? ¿Un semáforo sin
-                sonido? ¿O un local perfectamente adaptado?
+                {t('step_identify_desc')}
               </p>
             </motion.div>
 
@@ -190,10 +183,9 @@ const Home = () => {
               <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg border-4 border-white z-10 relative">
                 2
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Reporta</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('step_report')}</h3>
               <p className="text-gray-600">
-                Usa la app para subir una foto, geolocalizar el punto y
-                describir la incidencia en segundos.
+                {t('step_report_desc')}
               </p>
             </motion.div>
 
@@ -207,10 +199,9 @@ const Home = () => {
               <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg border-4 border-white z-10 relative">
                 3
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Mejora</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('step_improve')}</h3>
               <p className="text-gray-600">
-                Tu reporte notifica a la comunidad y autoridades, impulsando
-                acciones para eliminar la barrera.
+                {t('step_improve_desc')}
               </p>
             </motion.div>
           </div>
@@ -231,28 +222,22 @@ const Home = () => {
               className="md:w-1/2"
             >
               <div className="inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
-                Sobre Nosotros
+                {t('about_us_tag')}
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-6">
-                Más que un proyecto, <br />
-                <span className="text-blue-600">una iniciativa.</span>
+                {t('about_us_title1')} <br />
+                <span className="text-blue-600">{t('about_us_title2')}</span>
               </h2>
               <p className="text-gray-600 text-lg text-justify leading-relaxed mb-6">
-                CANACCESIBLE nació en las aulas del IES El Rincón como un
-                proyecto final de ciclo, pero con el corazón puesto en las
-                calles de Canarias. Somos un equipo de tres estudiantes
-                apasionados por la tecnología y el impacto social.
+                {t('about_us_text1')}
               </p>
               <p className="text-gray-600 text-lg text-justify leading-relaxed mb-8">
-                Creemos que la programación es una herramienta poderosa para
-                derribar barreras. Lo que comenzó como una simple idea entre
-                compañeros, hoy busca ser la voz de una comunidad que exige y
-                merece accesibilidad real.
+                {t('about_us_text2')}
               </p>
 
               <div className="flex items-center gap-4">
                 <p className="text-sm text-gray-500 font-medium">
-                  Creado con ❤️ por estudiantes de 2º DAW del IES El Rincón
+                  {t('about_us_footer')}
                 </p>
               </div>
             </motion.div>
@@ -267,9 +252,9 @@ const Home = () => {
                 <div className="w-12 h-12 bg-red-100 text-red-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-heart"></i>
                 </div>
-                <h3 className="font-bold text-gray-800 text-lg mb-2">Pasión</h3>
+                <h3 className="font-bold text-gray-800 text-lg mb-2">{t('passion')}</h3>
                 <p className="text-sm text-gray-500">
-                  Desarrollamos software pensando en las personas.
+                  {t('passion_desc')}
                 </p>
               </div>
 
@@ -278,11 +263,10 @@ const Home = () => {
                   <i className="fa-solid fa-code"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  Innovación
+                  {t('innovation')}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Usamos las últimas tecnologías para crear una experiencia
-                  fluida.
+                  {t('innovation_desc')}
                 </p>
               </div>
 
@@ -291,10 +275,10 @@ const Home = () => {
                   <i className="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  Aprendizaje
+                  {t('learning')}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Un proyecto que busca tener un impacto real en el mundo.
+                  {t('learning_desc')}
                 </p>
               </div>
 
@@ -303,11 +287,10 @@ const Home = () => {
                   <i className="fa-solid fa-hand-holding-heart"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  Compromiso
+                  {t('commitment')}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Dedicados a mejorar la calidad de vida a través de la
-                  accesibilidad.
+                  {t('commitment_desc')}
                 </p>
               </div>
             </motion.div>
@@ -323,24 +306,23 @@ const Home = () => {
           className="max-w-4xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            ¿Listo para marcar la diferencia?
+            {t('cta_title')}
           </h2>
           <p className="text-xl mb-10 text-blue-100">
-            Tu participación es clave para mejorar la accesibilidad en Canarias.
-            Regístrate hoy y empieza a colaborar.
+            {t('cta_subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
               className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg"
             >
-              Crear Cuenta
+              {t('cta_create_account')}
             </Link>
             <Link
               to="/incidents"
               className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors"
             >
-              Ver Incidencias
+              {t('cta_view_incidents')}
             </Link>
           </div>
         </motion.div>

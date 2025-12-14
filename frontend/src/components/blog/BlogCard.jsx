@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { translateText } from '../../services/translationService';
 import { useBlogTranslationStore } from '../../stores/blogTranslationStore';
 
 const BlogCard = ({ article }) => {
+  const { t, i18n } = useTranslation();
   const { 
     isTranslated: getIsTranslated, 
     getTranslation, 
@@ -69,19 +71,19 @@ const BlogCard = ({ article }) => {
           {isTranslated && cachedTranslation?.title ? cachedTranslation.title : article.title}
         </Link>
         
-        <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
+        <p className="text-xs md:text-sm text-gray-600 line-clamp-3 mt-1 md:mt-2 grow">
           {isTranslated && cachedTranslation?.description ? cachedTranslation.description : article.description}
         </p>
 
         <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
           <span className="text-xs text-gray-500 truncate max-w-[45%]">
             {article.dateCreation 
-              ? new Date(article.dateCreation).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES', {
+              ? new Date(article.dateCreation).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric'
                 })
-              : 'Sin fecha'
+              : t('blog_no_date')
             }
           </span>
           
@@ -94,7 +96,7 @@ const BlogCard = ({ article }) => {
                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                   : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
               }`}
-              title={isTranslated ? "Traducido al inglés (Click para ver original)" : "Original en español (Click para traducir)"}
+              title={isTranslated ? t('blog_card_view_original') : t('blog_card_translate_to_english')}
             >
               {isLoading ? (
                 <span className="animate-pulse">...</span>
@@ -107,7 +109,7 @@ const BlogCard = ({ article }) => {
               to={`/blog/${article.id}`}
               className="text-blue-600 hover:text-blue-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap"
             >
-              Leer más
+              {t('blog_card_read_more')}
             </Link>
           </div>
         </div>

@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useAuthStore from "../../../services/authService.js";
 import logo from "../../../assets/canaccesible-logo-2.webp";
 import { createUser } from "../../../services/userService.js";
 import { subscribeToPushNotifications } from "../../../services/pushNotificationService.js";
 
 const RegisterForm = () => {
+  const { t } = useTranslation();
   const { login, loading, error: authError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -62,7 +64,7 @@ const RegisterForm = () => {
 
       navigate("/home");
     } catch (err) {
-      setError("No se pudo registrar el usuario");
+      setError(t('register_error'));
     }
   };
 
@@ -85,7 +87,7 @@ const RegisterForm = () => {
           <input
             type="text"
             name="firstName"
-            placeholder="Nombre"
+            placeholder={t('register_name_placeholder')}
             value={newUser.firstName}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
@@ -94,7 +96,7 @@ const RegisterForm = () => {
           <input
             type="text"
             name="lastName"
-            placeholder="Apellidos"
+            placeholder={t('register_lastname_placeholder')}
             value={newUser.lastName}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
@@ -105,7 +107,7 @@ const RegisterForm = () => {
         <input
           type="email"
           name="email"
-          placeholder="Correo electrónico"
+          placeholder={t('register_email_placeholder')}
           value={newUser.email}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
@@ -115,7 +117,7 @@ const RegisterForm = () => {
         <input
           type="password"
           name="password"
-          placeholder="Contraseña"
+          placeholder={t('register_password_placeholder')}
           value={newUser.password}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
@@ -125,7 +127,7 @@ const RegisterForm = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <div>
             <label className="block mb-1 font-medium text-gray-700 text-sm">
-              Foto de perfil
+              {t('register_profile_pic_label')}
             </label>
             <input
               type="file"
@@ -144,7 +146,7 @@ const RegisterForm = () => {
 
           <div>
             <label className="block mb-1 font-medium text-gray-700 text-sm">
-              Tipo de cuenta
+              {t('register_account_type_label')}
             </label>
             <select
               value={newUser.rol}
@@ -152,9 +154,9 @@ const RegisterForm = () => {
               className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
               required
             >
-              <option value="">Seleccionar tipo</option>
-              <option value="1">Usuario</option>
-              <option value="3">Municipio</option>
+              <option value="">{t('register_select_type')}</option>
+              <option value="1">{t('register_type_user')}</option>
+              <option value="3">{t('register_type_municipality')}</option>
             </select>
           </div>
         </div>
@@ -171,7 +173,7 @@ const RegisterForm = () => {
             htmlFor="push-notifications"
             className="ml-2 block text-sm text-gray-900"
           >
-            Activar notificaciones push
+            {t('register_enable_push')}
           </label>
         </div>
 
@@ -184,16 +186,16 @@ const RegisterForm = () => {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 hover:bg-blue-700 transition font-semibold"
         >
-          {loading ? "Cargando..." : "Registrarse"}
+          {loading ? t('register_loading') : t('register_button')}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          ¿Ya tienes una cuenta?{" "}
+          {t('register_already_account')}{" "}
           <a
             href="/login"
             className="text-primary-2 font-medium hover:underline"
           >
-            Iniciar sesión aquí
+            {t('register_login_link')}
           </a>
         </p>
       </form>
