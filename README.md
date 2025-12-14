@@ -12,6 +12,7 @@ The platform serves as a community-driven hub where users can:
 - **User Dashboard:** View and manage their own reported incidents.
 - **Community Interaction:** Engage with the community by commenting on and liking reports, fostering a collaborative environment.
 - **User Support:** Access direct support channels, including chat functionality with administrators and contact information for assistance.
+- **Real-time Notifications:** Receive instant push notifications for chat responses, incident updates, and important announcements.
 - **Stay Informed:** Read blog articles to stay updated on the latest accessibility trends, news, and improvements within the CanAccesible network.
 
 Our mission is to build a strong community dedicated to transforming the islands into a more accessible place for everyone, combining modern technology with social awareness.
@@ -31,15 +32,16 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - **Description**: Server-side session management for maintaining user state across requests. Implemented using express-session with Sequelize store for database persistence.
 
 ### 3. Web Sockets
+
 - **Description**: Enables real-time, bidirectional communication between client and server for live updates.
 
 ### 4. External APIs
+
 - **Description**: Integration with third-party APIs for extended functionality, such as translation or geocoding.
 
-### 5. Push Notifications
-- **Description**: Server-initiated notifications sent to users for updates, alerts, or interactions.
+### 5. Web Push Notifications
 
-These approaches ensure scalability, security, and interactivity. While some are fully implemented, others are noted for future enhancements.
+- **Description**: Server-initiated notifications sent to users for real-time updates, alerts, or interactions. Fully implemented using the Web Push API with VAPID authentication.
 
 ---
 
