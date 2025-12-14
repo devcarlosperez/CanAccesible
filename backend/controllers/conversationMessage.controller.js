@@ -46,17 +46,24 @@ exports.create = async (req, res) => {
 
     // Send Push Notification logic
     // If sender is NOT the conversation owner (meaning an Admin is replying), notify the user
+    console.log(`[PUSH] Checking notification: senderId=${senderId}, conversationOwner=${conversation.userId}`);
+    
     if (senderId !== conversation.userId) {
+      console.log(`[PUSH] Condition met! Sending notification to user ${conversation.userId}`);
       const payload = {
         title: "Nueva respuesta de soporte",
         body: message.length > 50 ? message.substring(0, 50) + "..." : message,
-        url: `/dashboard/chat`, // Adjust URL to match frontend route
+        url: `/dashboard/chat`,
         data: {
             conversationId: conversationId
         }
       };
       // Fire and forget - don't await to not block response
-      pushSubscriptionController.sendNotificationToUser(conversation.userId, payload);
+      pushSubscriptionController.sendNotificationToUser(conversation.userId, payload)
+        .then(() => console.log(`[PUSH] Notification sent successfully to user ${conversation.userId}`))
+        .catch(err => console.error(`[PUSH] Error sending notification:`, err));
+    } else {
+      console.log(`[PUSH] Skipped: sender is the conversation owner`);
     }
 
     res.status(201).json(conversationMessage);
