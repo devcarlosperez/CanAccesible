@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import { getAllBlogArticles } from '../../services/blogArticleService';
+import BlogCard from './BlogCard';
 
 const BlogArticlesList = ({ onPageChange }) => {
   const [articles, setArticles] = useState([]);
@@ -53,56 +53,7 @@ const BlogArticlesList = ({ onPageChange }) => {
               key={article.id} 
               className="flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0"
             >
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                {/* Image Container */}
-                <div className="aspect-video md:aspect-square bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {article.nameFile ? (
-                    <img
-                      src={article.nameFile}
-                      alt={article.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                      <i className="fas fa-image text-gray-400 text-3xl"></i>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content Container */}
-                <div className="p-2 md:p-4 flex flex-col grow">
-                  <Link
-                    to={`/blog/${article.id}`}
-                    className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block"
-                  >
-                    {article.title}
-                  </Link>
-                  
-                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
-                    {article.description}
-                  </p>
-
-                  {/* Footer with date */}
-                  <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
-                    <span className="text-xs text-gray-500">
-                      {article.dateCreation 
-                        ? new Date(article.dateCreation).toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })
-                        : 'Sin fecha'
-                      }
-                    </span>
-                    <Link
-                      to={`/blog/${article.id}`}
-                      className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium"
-                    >
-                      Leer más →
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <BlogCard article={article} />
             </div>
           ))}
         </div>
