@@ -8,16 +8,56 @@ import { getIncidentById } from "../../services/incidentService";
 import { getAllIncidentLikes } from "../../services/incidentLikesService";
 import useAuthStore from "../../services/authService.js";
 import { initSocket } from "../../services/socketService";
+import { translateText } from "../../services/translationService";
+import { useIncidentTranslationStore } from "../../stores/incidentTranslationStore";
 
-import { Chip } from "@mui/material";
+import { Chip, IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const IncidentDetail = () => {
   const { id } = useParams();
+  const incidentId = parseInt(id);
   const [incident, setIncident] = useState(null);
   const [error, setError] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
   const { user, token } = useAuthStore();
+
+  // Translation Store
+  const { 
+    isTranslated: getIsTranslated, 
+    getTranslation, 
+    setTranslatedText, 
+    toggleTranslationStatus 
+  } = useIncidentTranslationStore();
+
+  const isTranslated = getIsTranslated(incidentId);
+  const cachedTranslation = getTranslation(incidentId);
+  const [isLoadingTranslation, setIsLoadingTranslation] = useState(false);
+
+  useEffect(() => {
+    const performTranslation = async () => {
+      if (isTranslated && incident && (!cachedTranslation?.description || !cachedTranslation?.area)) {
+        setIsLoadingTranslation(true);
+        try {
+          const title = cachedTranslation?.title || await translateText(incident.name);
+          const description = cachedTranslation?.description || await translateText(incident.description);
+          const area = cachedTranslation?.area || await translateText(incident.area);
+          
+          setTranslatedText(incidentId, { title, description, area });
+        } catch (err) {
+          console.error('Translation failed in detail view', err);
+        } finally {
+          setIsLoadingTranslation(false);
+        }
+      }
+    };
+
+    performTranslation();
+  }, [isTranslated, incident, cachedTranslation, incidentId, setTranslatedText]);
+
+  const handleTranslateToggle = () => {
+    toggleTranslationStatus(incidentId);
+  };
 
   useEffect(() => {
     const socket = initSocket(token);
@@ -92,6 +132,14 @@ const IncidentDetail = () => {
   }
 
   const getStatusLabel = (statusId) => {
+    if (isTranslated) {
+      switch (statusId) {
+        case 1: return "Pending";
+        case 2: return "In Progress";
+        case 3: return "Resolved";
+        default: return "Unknown";
+      }
+    }
     switch (statusId) {
       case 1:
         return "Pendiente";
@@ -102,6 +150,20 @@ const IncidentDetail = () => {
       default:
         return "Desconocido";
     }
+  };
+
+  const getIncidentTypeLabel = (typeId) => {
+    if (isTranslated) {
+      return typeId === 1 ? "Good Practice" : "Bad Practice";
+    }
+    return typeId === 1 ? "Buena Práctica" : "Mala Práctica";
+  };
+
+  const getSeverityLabel = (severityId) => {
+    if (isTranslated) {
+      return severityId === 1 ? "Low" : severityId === 2 ? "Medium" : "High";
+    }
+    return severityId === 1 ? "Baja" : severityId === 2 ? "Media" : "Alta";
   };
 
   const getStatusColor = (statusId) => {
@@ -134,9 +196,27 @@ const IncidentDetail = () => {
             {/* Header */}
             <div className="p-6 md:p-8 border-b border-gray-100">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-                  {incident.name}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                    {isTranslated && cachedTranslation?.title ? cachedTranslation.title : incident.name}
+                  </h1>
+                  <button 
+                    onClick={handleTranslateToggle} 
+                    disabled={isLoadingTranslation}
+                    className={`text-xs px-2 py-1 rounded transition-colors cursor-pointer ${
+                      isTranslated 
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                        : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                    }`}
+                    title={isTranslated ? "Ver original" : "Traducir al inglés"}
+                  >
+                    {isLoadingTranslation ? (
+                      <span className="animate-pulse">...</span>
+                    ) : (
+                      isTranslated ? 'EN' : 'ES'
+                    )}
+                  </button>
+                </div>
                 <Chip
                   label={getStatusLabel(incident.incidentStatusId)}
                   color={getStatusColor(incident.incidentStatusId)}
@@ -147,15 +227,15 @@ const IncidentDetail = () => {
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
                   <i className="fas fa-calendar-alt"></i>
-                  {new Date(incident.dateIncident).toLocaleDateString()}
+                  {new Date(incident.dateIncident).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES')}
                 </span>
                 <span className="flex items-center gap-1">
                   <i className="fas fa-map-marker-alt"></i>
-                  {incident.island || "Isla no especificada"}
+                  {incident.island || (isTranslated ? "Unspecified Island" : "Isla no especificada")}
                 </span>
                 <span className="flex items-center gap-1">
                   <i className="fas fa-tag"></i>
-                  {incident.area}
+                  {isTranslated && cachedTranslation?.area ? cachedTranslation.area : incident.area}
                 </span>
               </div>
             </div>
@@ -175,36 +255,30 @@ const IncidentDetail = () => {
             <div className="p-6 md:p-8">
               <div className="mb-8">
                 <h2 className="text-lg font-semibold text-gray-800 mb-3">
-                  Descripción
+                  {isTranslated ? "Description" : "Descripción"}
                 </h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {incident.description}
+                  {isTranslated && cachedTranslation?.description ? cachedTranslation.description : incident.description}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <span className="block text-sm font-medium text-gray-500 mb-1">
-                    Tipo de Incidencia
+                    {isTranslated ? "Incident Type" : "Tipo de Incidencia"}
                   </span>
                   <span className="text-gray-800 font-medium">
-                    {incident.incidentTypeId === 1
-                      ? "Buena Práctica"
-                      : "Mala Práctica"}
+                    {getIncidentTypeLabel(incident.incidentTypeId)}
                   </span>
                 </div>
 
                 {incident.incidentTypeId === 2 && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <span className="block text-sm font-medium text-gray-500 mb-1">
-                      Severidad
+                      {isTranslated ? "Severity" : "Severidad"}
                     </span>
                     <span className="text-gray-800 font-medium">
-                      {incident.incidentSeverityId === 1
-                        ? "Baja"
-                        : incident.incidentSeverityId === 2
-                        ? "Media"
-                        : "Alta"}
+                      {getSeverityLabel(incident.incidentSeverityId)}
                     </span>
                   </div>
                 )}

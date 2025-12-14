@@ -89,7 +89,7 @@ const BlogCard = ({ article }) => {
             <button
               onClick={handleTranslate}
               disabled={isLoading}
-              className={`text-xs px-2 py-1 rounded transition-colors ${
+              className={`text-xs px-2 py-1 rounded transition-colors cursor-pointer ${
                 isTranslated 
                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                   : 'bg-blue-100 text-blue-700 hover:bg-blue-200'

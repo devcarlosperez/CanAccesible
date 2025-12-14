@@ -135,7 +135,7 @@ const BlogArticleDetail = () => {
                 <button
                   onClick={handleTranslateToggle}
                   disabled={isLoadingTranslation}
-                  className="shrink-0 px-3 py-1.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors text-sm font-medium"
+                  className="shrink-0 px-3 py-1.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors text-sm font-medium cursor-pointer"
                   title={isTranslated ? "Ver original" : "Traducir al inglés"}
                 >
                   {isLoadingTranslation ? "..." : (isTranslated ? "EN" : "ES")}
