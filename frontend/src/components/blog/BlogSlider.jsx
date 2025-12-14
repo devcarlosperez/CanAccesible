@@ -37,6 +37,9 @@ const BlogSlider = ({ articleIds = null, maxArticles = 6 }) => {
         // Limit number of articles
         filteredArticles = filteredArticles.slice(0, maxArticles);
         
+        // Duplicate articles for seamless infinite loop
+        filteredArticles = [...filteredArticles, ...filteredArticles];
+        
         setArticles(filteredArticles);
       } catch (err) {
         console.error('Error loading slider articles:', err);
@@ -65,13 +68,13 @@ const BlogSlider = ({ articleIds = null, maxArticles = 6 }) => {
   }, [emblaApi]);
 
   return (
-    <div className="w-full px-4 md:px-6 lg:px-0 flex justify-center">
+    <div className="w-full px-4 md:px-6 lg:px-8 flex justify-center">
       <div className="w-full max-w-sm md:max-w-4xl lg:max-w-6xl relative">
       <div className="overflow-hidden rounded-lg" ref={emblaRef}>
-        <div className="flex gap-4">
+        <div className="flex gap-2 md:gap-3 lg:gap-4">
           {articles && articles.length > 0 ? (
             articles.map((article) => (
-            <div key={article.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 p-1 md:p-2">
+            <div key={article.id} className="flex-[0_0_100%] md:flex-[0_0_48%] lg:flex-[0_0_32%] min-w-0 p-1 md:p-2">
               <BlogCard article={article} />
             </div>
             ))
