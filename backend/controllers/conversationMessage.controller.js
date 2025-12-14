@@ -3,6 +3,7 @@ const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
 const { getIo } = require("../services/socket.service");
+const pushSubscriptionController = require("./pushSubscription.controller");
 
 // Create a new conversation message
 exports.create = async (req, res) => {
@@ -42,6 +43,21 @@ exports.create = async (req, res) => {
     // Emit new message to conversation room
     const io = getIo();
     io.to(conversationId).emit("newMessage", conversationMessage);
+
+    // Send Push Notification logic
+    // If sender is NOT the conversation owner (meaning an Admin is replying), notify the user
+    if (senderId !== conversation.userId) {
+      const payload = {
+        title: "Nueva respuesta de soporte",
+        body: message.length > 50 ? message.substring(0, 50) + "..." : message,
+        url: `/dashboard/chat`, // Adjust URL to match frontend route
+        data: {
+            conversationId: conversationId
+        }
+      };
+      // Fire and forget - don't await to not block response
+      pushSubscriptionController.sendNotificationToUser(conversation.userId, payload);
+    }
 
     res.status(201).json(conversationMessage);
   } catch (err) {

@@ -16,6 +16,7 @@ const log = require('./log.model')(sequelize, DataTypes);
 const notification = require('./notification.model')(sequelize, DataTypes);
 const conversation = require('./conversation.model')(sequelize, DataTypes);
 const conversationMessage = require('./conversationMessage.model')(sequelize, DataTypes);
+const pushSubscription = require('./pushSubscription.model')(sequelize, DataTypes);
 
 // Execute associations
 Object.values(sequelize.models).forEach(model => {
@@ -41,4 +42,5 @@ module.exports = {
   notification,
   conversation,
   conversationMessage,
+  pushSubscription,
 };
