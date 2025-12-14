@@ -117,6 +117,16 @@ const Footer = () => {
                   Privacidad
                 </Link>
               </li>
+              <li>
+                <Link
+                  to={"/push-notifications-guide"}
+                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
+                >
+                  Guía de <br className="block lg:hidden" />
+                  <span className="hidden md:inline"> </span>
+                  Notificaciones
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

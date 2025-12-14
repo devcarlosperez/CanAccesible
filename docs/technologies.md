@@ -35,6 +35,9 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 ### Communication & Notifications
 
 - **Nodemailer**: Module for sending emails from the server (e.g., confirmations, notifications).
+- **Web Push API**: Browser API for sending push notifications to users. Implemented using the `web-push` library for server-side notification delivery.
+- **VAPID (Voluntary Application Server Identification)**: Protocol for identifying the application server when sending push notifications, ensuring secure and authenticated delivery.
+- **Service Workers**: JavaScript files that run in the background to handle push notification events and display them to users.
 - **EJS**: Template engine used to render dynamic content, possibly for email bodies or simple administrative views.
 
 ### Utilities

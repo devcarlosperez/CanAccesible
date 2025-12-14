@@ -5,6 +5,10 @@ import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import useAuthStore from "../../services/authService";
 import { getUserById, updateUser } from "../../services/userService";
+import {
+  subscribeToPushNotifications,
+  unsubscribeFromPushNotifications,
+} from "../../services/pushNotificationService";
 import ProfileForm from "./ProfileForm";
 import { motion } from "motion/react";
 
@@ -24,6 +28,7 @@ const Profile = () => {
   const [originalUserData, setOriginalUserData] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
 
   useEffect(() => {
     if (!authUser) {
@@ -43,8 +48,14 @@ const Profile = () => {
         };
         setUserData(initialData);
         setOriginalUserData(initialData);
+
+        // Check push notification status
+        if ("serviceWorker" in navigator && "PushManager" in window) {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          setPushEnabled(!!subscription);
+        }
       } catch (error) {
-        console.error("Error fetching user data:", error);
         toast.error("Error al cargar los datos del perfil");
       } finally {
         setLoading(false);
@@ -53,6 +64,26 @@ const Profile = () => {
 
     fetchUser();
   }, [authUser, navigate]);
+
+  const handlePushToggle = async () => {
+    try {
+      if (pushEnabled) {
+        await unsubscribeFromPushNotifications();
+        setPushEnabled(false);
+        toast.info("Notificaciones push desactivadas");
+      } else {
+        const subscription = await subscribeToPushNotifications();
+        if (subscription) {
+          setPushEnabled(true);
+          toast.success("Notificaciones push activadas");
+        } else {
+          toast.error("No se pudieron activar las notificaciones push");
+        }
+      }
+    } catch (error) {
+      toast.error("Error al cambiar configuración de notificaciones push");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,7 +135,6 @@ const Profile = () => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error updating profile:", error);
       toast.error(
         error.response?.data?.message || "Error al actualizar el perfil"
       );
@@ -149,6 +179,8 @@ const Profile = () => {
           updating={updating}
           onCancel={handleCancel}
           isDirty={isDirty}
+          pushEnabled={pushEnabled}
+          handlePushToggle={handlePushToggle}
         />
       </motion.main>
 

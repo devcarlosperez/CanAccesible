@@ -7,6 +7,8 @@ const ProfileForm = ({
   updating,
   onCancel,
   isDirty,
+  pushEnabled,
+  handlePushToggle,
 }) => {
   return (
     <div className="max-w-3xl mx-auto">
@@ -112,6 +114,41 @@ const ProfileForm = ({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="tu@email.com"
               />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Notificaciones Push
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Recibe alertas sobre nuevos mensajes y actualizaciones.
+                </p>
+                <a
+                  href="/push-notifications-guide"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-800 mt-1 inline-block"
+                >
+                  ¿Cómo activar las notificaciones? →
+                </a>
+              </div>
+              <button
+                type="button"
+                onClick={handlePushToggle}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  pushEnabled ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={pushEnabled}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    pushEnabled ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
 
             <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-100">

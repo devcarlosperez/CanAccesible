@@ -3,6 +3,7 @@ const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
 const { getIo } = require("../services/socket.service");
+const pushSubscriptionController = require("./pushSubscription.controller");
 
 // Create a new conversation message
 exports.create = async (req, res) => {
@@ -42,6 +43,9 @@ exports.create = async (req, res) => {
     // Emit new message to conversation room
     const io = getIo();
     io.to(conversationId).emit("newMessage", conversationMessage);
+
+    // Notification logic moved to socket to avoid duplication
+    // if (senderId !== conversation.userId) { ... }
 
     res.status(201).json(conversationMessage);
   } catch (err) {

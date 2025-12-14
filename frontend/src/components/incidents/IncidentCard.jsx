@@ -130,7 +130,7 @@ const IncidentCard = ({
       <Card
         sx={{
           maxWidth: 500,
-          width: 500,
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           margin: "0 auto",

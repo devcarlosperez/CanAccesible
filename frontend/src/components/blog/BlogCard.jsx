@@ -74,18 +74,18 @@ const BlogCard = ({ article }) => {
         </p>
 
         <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 truncate max-w-[45%]">
             {article.dateCreation 
               ? new Date(article.dateCreation).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES', {
                   year: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   day: 'numeric'
                 })
               : 'Sin fecha'
             }
           </span>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <button
               onClick={handleTranslate}
               disabled={isLoading}
@@ -105,7 +105,7 @@ const BlogCard = ({ article }) => {
             
             <Link
               to={`/blog/${article.id}`}
-              className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium"
+              className="text-blue-600 hover:text-blue-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap"
             >
               Leer más
             </Link>

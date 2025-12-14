@@ -80,6 +80,7 @@ require("./routes/auth.routes")(app);
 require("./routes/blogArticle.routes")(app);
 require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
+require("./routes/pushSubscription.routes")(app);
 require("./routes/log.routes")(app);
 
 // Initialize scheduled tasks
