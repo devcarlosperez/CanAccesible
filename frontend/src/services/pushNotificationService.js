@@ -1,6 +1,6 @@
 import api from './api';
 
-const PUBLIC_VAPID_KEY = 'BI7bigXd2j06EY9gyEYpKHuKCjfLZGLyzsbde83_xgpwa5mY32mIpfREBS5uWebPvR0Y4iFE8Xw4wyEPyjDP2gc';
+const PUBLIC_VAPID_KEY = 'BERgLLd2_B1K-eW4DIiGHufqPzReM8dRIZwRD1JmgCwdvImZpvK1hRF0x9Bi6_175zylm6AZ9wxYgGhGEHZpP9s';
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -52,11 +52,13 @@ export const subscribeToPushNotifications = async () => {
       applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
     });
 
+    console.log('Subscribed successfully:', subscription);
     await sendSubscriptionToBackend(subscription);
-    console.log('Push Notification Subscribed');
     return subscription;
   } catch (error) {
     console.error('Failed to subscribe to push notifications:', error);
+    console.error('VAPID Key used:', PUBLIC_VAPID_KEY);
+    throw error;
   }
 };
 

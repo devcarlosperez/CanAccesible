@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../services/authService.js";
 import logo from "../../../assets/canaccesible-logo-2.webp";
 import { createUser } from "../../../services/userService.js";
+import { subscribeToPushNotifications } from "../../../services/pushNotificationService.js";
 
 const RegisterForm = () => {
   const { login, loading, error: authError, isAuthenticated } = useAuthStore();
@@ -17,6 +18,7 @@ const RegisterForm = () => {
     rol: "",
     avatar: null,
   });
+  const [enablePush, setEnablePush] = useState(false);
 
   const [error, setError] = useState(null);
 
@@ -53,6 +55,11 @@ const RegisterForm = () => {
 
       await createUser(formData);
       await login(newUser.email, newUser.password);
+
+      if (enablePush) {
+        await subscribeToPushNotifications();
+      }
+
       navigate("/home");
     } catch (err) {
       console.error("Error en registro o login:", err);
@@ -151,6 +158,22 @@ const RegisterForm = () => {
               <option value="3">Municipio</option>
             </select>
           </div>
+        </div>
+
+        <div className="flex items-center mt-4">
+          <input
+            id="push-notifications"
+            type="checkbox"
+            checked={enablePush}
+            onChange={(e) => setEnablePush(e.target.checked)}
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="push-notifications"
+            className="ml-2 block text-sm text-gray-900"
+          >
+            Activar notificaciones push
+          </label>
         </div>
 
         {error && (

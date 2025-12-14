@@ -248,13 +248,17 @@ DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
 
 # Email Configuration (Gmail SMTP)
 SMTP_USER=your_email@gmail.com               # Gmail address for sending emails
-SMTP_PASS=your_gmail_app_password            # Gmail App Password
+SMTP_PASS=your_gmail_app_password            # Gmail App Password (not your regular password)
 
 # LDAP Configuration
 LDAP_URL=ldap://localhost:389                # LDAP server URL
 LDAP_BASE_DN=dc=canaccesible,dc=es           # Base DN for the LDAP directory
 LDAP_ADMIN_DN=cn=admin,dc=canaccesible,dc=es # DN of the LDAP admin user
 LDAP_ADMIN_PASSWORD=admin                    # Password for the LDAP admin user
+
+# Web Push Notifications (VAPID Keys)
+VAPID_PUBLIC_KEY=your_vapid_public_key       # Public key for web push notifications
+VAPID_PRIVATE_KEY=your_vapid_private_key     # Private key for web push notifications
 ```
 
 **Install dependencies:**
