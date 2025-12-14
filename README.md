@@ -48,7 +48,7 @@ Our mission is to build a strong community dedicated to transforming the islands
 - **Maps:** ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-blue?logo=leaflet&logoColor=white)
 - **File Uploads:** ![Multer](https://img.shields.io/badge/Multer-1.4-blue?logo=multer&logoColor=white)
 - **Email Service:** ![Nodemailer](https://img.shields.io/badge/Nodemailer-6.9-blue?logo=nodemailer&logoColor=white)
-- **Translation API:** ![LibreTranslate](https://img.shields.io/badge/LibreTranslate-API-blue?logo=google-translate&logoColor=white)
+- **Translation API:** ![MyMemory](https://img.shields.io/badge/MyMemory-API-blue?logo=google-translate&logoColor=white)
 
 ### Additional Technologies
 

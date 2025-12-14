@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { translateText } from '../../services/translationService';
+import { useBlogTranslationStore } from '../../stores/blogTranslationStore';
 
 const BlogCard = ({ article }) => {
-  const [isTranslated, setIsTranslated] = useState(false);
-  const [translatedData, setTranslatedData] = useState({ title: '', description: '' });
+  const { 
+    isTranslated: getIsTranslated, 
+    getTranslation, 
+    setTranslatedText, 
+    toggleTranslationStatus 
+  } = useBlogTranslationStore();
+
+  const isTranslated = getIsTranslated(article.id);
+  const cachedTranslation = getTranslation(article.id);
+  
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTranslate = async (e) => {
@@ -12,12 +21,12 @@ const BlogCard = ({ article }) => {
     e.stopPropagation();
 
     if (isTranslated) {
-      setIsTranslated(false);
+      toggleTranslationStatus(article.id);
       return;
     }
 
-    if (translatedData.title && translatedData.description) {
-      setIsTranslated(true);
+    if (cachedTranslation?.title && cachedTranslation?.description) {
+      toggleTranslationStatus(article.id);
       return;
     }
 
@@ -27,8 +36,8 @@ const BlogCard = ({ article }) => {
         translateText(article.title),
         translateText(article.description)
       ]);
-      setTranslatedData({ title, description });
-      setIsTranslated(true);
+      setTranslatedText(article.id, { title, description });
+      toggleTranslationStatus(article.id);
     } catch (error) {
       console.error('Failed to translate:', error);
     } finally {
@@ -57,17 +66,17 @@ const BlogCard = ({ article }) => {
           to={`/blog/${article.id}`}
           className="font-semibold text-sm md:text-lg line-clamp-2 text-gray-800 hover:text-blue-600 transition-colors inline-block"
         >
-          {isTranslated ? translatedData.title : article.title}
+          {isTranslated && cachedTranslation?.title ? cachedTranslation.title : article.title}
         </Link>
         
         <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-1 md:mt-2 grow">
-          {isTranslated ? translatedData.description : article.description}
+          {isTranslated && cachedTranslation?.description ? cachedTranslation.description : article.description}
         </p>
 
         <div className="mt-3 pt-2 border-t border-gray-200 flex justify-between items-center">
           <span className="text-xs text-gray-500">
             {article.dateCreation 
-              ? new Date(article.dateCreation).toLocaleDateString('es-ES', {
+              ? new Date(article.dateCreation).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -83,14 +92,14 @@ const BlogCard = ({ article }) => {
               className={`text-xs px-2 py-1 rounded transition-colors ${
                 isTranslated 
                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
               }`}
-              title={isTranslated ? "Ver original" : "Traducir al inglés"}
+              title={isTranslated ? "Traducido al inglés (Click para ver original)" : "Original en español (Click para traducir)"}
             >
               {isLoading ? (
                 <span className="animate-pulse">...</span>
               ) : (
-                isTranslated ? 'ES' : 'EN'
+                isTranslated ? 'EN' : 'ES'
               )}
             </button>
             

@@ -106,7 +106,7 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 ## External APIs
 
 - **Nominatim API (OpenStreetMap)**: Used in the backend for **reverse geocoding**. It converts geographic coordinates (latitude and longitude) provided by the user (when reporting an incident) into a human-readable address (street, city, etc.), which is then stored with the incident details.
-- **LibreTranslate API**: Used in the frontend to provide **automatic translation** of blog articles. It allows users to translate article titles and descriptions from Spanish to English directly within the interface.
+- **MyMemory API**: Used in the frontend to provide **automatic translation** of blog articles. It allows users to translate article titles and descriptions from Spanish to English directly within the interface.
 
 ---
 
