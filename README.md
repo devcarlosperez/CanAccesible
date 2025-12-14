@@ -67,42 +67,40 @@ Our mission is to build a strong community dedicated to transforming the islands
 ## Project Structure
 
 ```
-frontend/
-├── public/
-├── src/
-│   ├── assets/           # Images, logos, and static files
-│   ├── components/       # Reusable React components
-│   ├── layouts/          # Layout components
-│   ├── pages/            # Page components
-│   ├── services/         # API call logic
-│   ├── App.jsx
-│   ├── App.css
-│   ├── index.css
-│   └── main.jsx
-├── vite.config.js
-├── eslint.config.js
-└── package.json          # Frontend dependencies and scripts
-
 backend/
-├── config/               # Server and DB configuration
-├── controllers/          # Route controllers
-├── middlewares/          # Express middlewares (auth, uploads, etc.)
+├── config/               # Configuration (DB, JWT, Mailer, Swagger, DO Spaces)
+├── controllers/          # Controllers for API and Admin Dashboard
+├── middlewares/          # Custom middlewares (Auth, Uploads)
 ├── migrations/           # Database migrations
 ├── models/               # Sequelize models
-├── routes/               # API route definitions
-├── seeders/              # Initial database data
-├── services/             # Business logic services
-├── views/                # Server-side rendered views
-├── db.js                 # Main database connection
-├── index.js              # Express app entry point
-├── .env.development      # Development environment variables
-├── .env.production       # Production environment variables
-└── package.json          # Backend dependencies and scripts
+├── public/               # Static files (CSS, Images for Dashboard)
+├── routes/               # Route definitions
+├── scripts/              # Utility scripts
+├── seeders/              # Database seeders
+├── services/             # Business logic (Socket, LogCleanup, etc.)
+├── sockets/              # Socket.io handlers
+├── views/                # EJS views for Admin Dashboard
+├── db.js                 # Database connection
+├── index.js              # Server entry point
+└── package.json          # Backend dependencies
 
-docs/
-├── images/               # Diagrams and screenshots
-├── deployment.md         # Deployment guide
-└── diagrams.md           # System architecture diagrams
+frontend/
+├── public/               # Public static assets
+├── src/
+│   ├── assets/           # Images and global styles
+│   ├── components/       # Reusable React components
+│   ├── layouts/          # Layout components
+│   ├── pages/            # View components/Pages
+│   ├── routes/           # Frontend routing configuration
+│   ├── services/         # API service calls
+│   ├── utils/            # Utility functions
+│   ├── App.jsx           # Main application component
+│   └── main.jsx          # Entry point
+├── vite.config.js        # Vite configuration
+└── package.json          # Frontend dependencies
+
+docs/                     # Documentation files
+ldap/                     # OpenLDAP configuration and data
 ```
 ---
 
