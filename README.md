@@ -18,6 +18,31 @@ Our mission is to build a strong community dedicated to transforming the islands
 
 ---
 
+## Key Approaches
+
+CanAccesible incorporates several modern web development approaches to enhance functionality, security, and user experience. Below is an overview of the five main approaches used (or planned for future implementation):
+
+### 1. JWT (JSON Web Tokens)
+
+- **Description**: Used for stateless authentication. Tokens are issued upon login and included in API requests to verify user identity without maintaining server-side sessions.
+
+### 2. Sessions
+
+- **Description**: Server-side session management for maintaining user state across requests. Implemented using express-session with Sequelize store for database persistence.
+
+### 3. Web Sockets
+- **Description**: Enables real-time, bidirectional communication between client and server for live updates.
+
+### 4. External APIs
+- **Description**: Integration with third-party APIs for extended functionality, such as translation or geocoding.
+
+### 5. Push Notifications
+- **Description**: Server-initiated notifications sent to users for updates, alerts, or interactions.
+
+These approaches ensure scalability, security, and interactivity. While some are fully implemented, others are noted for future enhancements.
+
+---
+
 ## Documentation
 
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3dSP8Yt) - Complete API endpoint documentation.
