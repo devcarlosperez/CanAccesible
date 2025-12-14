@@ -62,7 +62,6 @@ const RegisterForm = () => {
 
       navigate("/home");
     } catch (err) {
-      console.error("Error en registro o login:", err);
       setError("No se pudo registrar el usuario");
     }
   };

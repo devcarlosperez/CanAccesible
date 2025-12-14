@@ -56,7 +56,6 @@ const Profile = () => {
           setPushEnabled(!!subscription);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
         toast.error("Error al cargar los datos del perfil");
       } finally {
         setLoading(false);
@@ -71,19 +70,18 @@ const Profile = () => {
       if (pushEnabled) {
         await unsubscribeFromPushNotifications();
         setPushEnabled(false);
-        toast.info("Notificaciones desactivadas");
+        toast.info("Notificaciones push desactivadas");
       } else {
         const subscription = await subscribeToPushNotifications();
         if (subscription) {
           setPushEnabled(true);
-          toast.success("Notificaciones activadas");
+          toast.success("Notificaciones push activadas");
         } else {
-          toast.error("No se pudieron activar las notificaciones");
+          toast.error("No se pudieron activar las notificaciones push");
         }
       }
     } catch (error) {
-      console.error("Error toggling push notifications:", error);
-      toast.error("Error al cambiar configuración de notificaciones");
+      toast.error("Error al cambiar configuración de notificaciones push");
     }
   };
 
@@ -137,7 +135,6 @@ const Profile = () => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error updating profile:", error);
       toast.error(
         error.response?.data?.message || "Error al actualizar el perfil"
       );

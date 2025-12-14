@@ -23,14 +23,11 @@ export const registerServiceWorker = async () => {
       const register = await navigator.serviceWorker.register('/sw.js', {
         scope: '/'
       });
-      console.log('Service Worker registered');
       return register;
     } catch (error) {
-      console.error('Service Worker registration failed:', error);
       throw error;
     }
   } else {
-    console.warn('Push notifications not supported');
     return null;
   }
 };
@@ -52,12 +49,9 @@ export const subscribeToPushNotifications = async () => {
       applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
     });
 
-    console.log('Subscribed successfully:', subscription);
     await sendSubscriptionToBackend(subscription);
     return subscription;
   } catch (error) {
-    console.error('Failed to subscribe to push notifications:', error);
-    console.error('VAPID Key used:', PUBLIC_VAPID_KEY);
     throw error;
   }
 };
@@ -66,7 +60,7 @@ const sendSubscriptionToBackend = async (subscription) => {
   try {
     await api.post('/push/subscribe', subscription);
   } catch (error) {
-    console.error('Error sending subscription to backend:', error);
+    // Silently fail - subscription might still work
   }
 };
 
@@ -77,9 +71,8 @@ export const unsubscribeFromPushNotifications = async () => {
         if (subscription) {
             await subscription.unsubscribe();
             await api.post('/push/unsubscribe', { endpoint: subscription.endpoint });
-            console.log('Unsubscribed from push notifications');
         }
     } catch (error) {
-        console.error('Error unsubscribing:', error);
+        // Silently fail
     }
 };

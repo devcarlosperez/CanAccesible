@@ -65,16 +65,12 @@ exports.unsubscribe = async (req, res) => {
 
 // Helper function to send notification to a specific user
 exports.sendNotificationToUser = async (userId, payload) => {
-  console.log(`[PUSH] sendNotificationToUser called for userId=${userId}`);
   try {
     const subscriptions = await PushSubscription.findAll({
       where: { userId: userId },
     });
 
-    console.log(`[PUSH] Found ${subscriptions?.length || 0} subscription(s) for user ${userId}`);
-    
     if (!subscriptions || subscriptions.length === 0) {
-      console.log(`[PUSH] No subscriptions found for user ${userId}, skipping`);
       return;
     }
 
@@ -92,7 +88,6 @@ exports.sendNotificationToUser = async (userId, payload) => {
         .catch((err) => {
           if (err.statusCode === 410 || err.statusCode === 404) {
             // Subscription has expired or is no longer valid
-            console.log("Subscription expired, deleting from DB:", sub.id);
             return PushSubscription.destroy({ where: { id: sub.id } });
           }
           console.error("Error sending notification:", err);

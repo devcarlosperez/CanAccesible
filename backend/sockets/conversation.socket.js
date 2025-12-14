@@ -5,7 +5,6 @@ module.exports = (io, socket) => {
     if (!socket.user) return; // Require auth
     const roomId = String(conversationId);
     socket.join(roomId);
-    console.log(`User ${socket.user.id} joined conversation room: ${roomId}`);
   });
 
   socket.on("sendMessage", async (data) => {
@@ -38,7 +37,6 @@ module.exports = (io, socket) => {
 
       // Send Push Notification if Admin is replying to User
       const senderId = socket.user.id;
-      console.log(`[PUSH] Socket: senderId=${senderId}, conversationOwner=${conversation.userId}`);
       
       if (senderId !== conversation.userId) {
         // Check if the user is currently in the conversation room
@@ -46,12 +44,9 @@ module.exports = (io, socket) => {
         const roomSockets = io.sockets.adapter.rooms.get(roomId);
         let isUserInRoom = false;
         
-        console.log(`[PUSH] Checking room: ${roomId}, Room exists: ${!!roomSockets}, Sockets in room: ${roomSockets ? roomSockets.size : 0}`);
-        
         if (roomSockets) {
           for (const socketId of roomSockets) {
             const s = io.sockets.sockets.get(socketId);
-            console.log(`[PUSH] Socket in room: ${socketId}, user: ${s?.user?.id}, looking for: ${conversation.userId}`);
             if (s && s.user && s.user.id === conversation.userId) {
               isUserInRoom = true;
               break;
@@ -59,10 +54,7 @@ module.exports = (io, socket) => {
           }
         }
 
-        if (isUserInRoom) {
-          console.log(`[PUSH] User ${conversation.userId} is in the room. Skipping notification.`);
-        } else {
-          console.log(`[PUSH] Admin replying! Sending push to user ${conversation.userId}`);
+        if (!isUserInRoom) {
           const payload = {
             title: `Nueva respuesta de CanAccesible`,
             body: `Desde el chat de ${conversation.type}: ${message.length > 50 ? message.substring(0, 50) + "..." : message}`,
@@ -70,8 +62,7 @@ module.exports = (io, socket) => {
             data: { conversationId: conversationId }
           };
           pushSubscriptionController.sendNotificationToUser(conversation.userId, payload)
-            .then(() => console.log(`[PUSH] Notification sent to user ${conversation.userId}`))
-            .catch(err => console.error(`[PUSH] Error:`, err));
+            .catch(err => console.error(`Error sending push notification:`, err));
         }
       }
     } catch (error) {

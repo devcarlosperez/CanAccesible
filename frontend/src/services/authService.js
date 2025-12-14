@@ -90,7 +90,7 @@ const useAuthStore = create((set) => ({
         }
       );
     } catch (err) {
-      console.error("Backend logout error:", err);
+      // Silently fail backend logout
     }
 
     localStorage.removeItem("token");

@@ -70,7 +70,7 @@ const Incident = () => {
       const data = await getAllIncidents();
       setIncidents(data);
     } catch (err) {
-      console.error("Error cargando incidencias:", err);
+      // Silently fail
     }
   };
 
