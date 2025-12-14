@@ -22,7 +22,7 @@
           "Auth"
         ],
         "summary": "signin",
-        "description": "Logs in a user using email/password (Basic Auth). Validates against LDAP, generates JWT, creates a session, and logs the action.",
+        "description": "Logs in a user using email/password. Validates against LDAP, generates JWT, creates a session, and logs the action.",
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
@@ -31,11 +31,11 @@
                 "properties": {
                   "email": {
                     "type": "string",
-                    "example": ""
+                    "example": "admin@canaccesible.es"
                   },
                   "password": {
                     "type": "string",
-                    "example": ""
+                    "example": "admin123"
                   }
                 },
                 "required": [
@@ -49,10 +49,36 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful login",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successful login"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 1 },
+                        "nombre": { "type": "string", "example": "Admin" },
+                        "email": { "type": "string", "example": "admin@canaccesible.es" },
+                        "role": { "type": "string", "example": "admin" }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
             }
+          },
+          "401": {
+            "description": "Invalid credentials"
           }
         }
       }
@@ -92,23 +118,25 @@
                 "properties": {
                   "firstName": {
                     "type": "string",
-                    "example": ""
+                    "example": "John"
                   },
                   "lastName": {
                     "type": "string",
-                    "example": ""
+                    "example": "Doe"
                   },
                   "email": {
                     "type": "string",
-                    "example": ""
+                    "example": "john.doe@example.com"
                   },
                   "password": {
                     "type": "string",
                     "format": "password",
-                    "example": ""
+                    "example": "securePass123"
                   },
                   "roleId": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 2,
+                    "description": "1 for Admin, 2 for User"
                   },
                   "image": {
                     "type": "string",
@@ -128,10 +156,21 @@
         },
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "Successful response",
+          "201": {
+            "description": "User created successfully",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 15 },
+                    "firstName": { "type": "string", "example": "John" },
+                    "lastName": { "type": "string", "example": "Doe" },
+                    "email": { "type": "string", "example": "john.doe@example.com" },
+                    "roleId": { "type": "integer", "example": 2 }
+                  }
+                }
+              }
             }
           }
         }
@@ -393,37 +432,29 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": ""
+                    "example": "Broken Ramp"
                   },
                   "description": {
                     "type": "string",
-                    "example": ""
+                    "example": "The wheelchair ramp at the park entrance is damaged."
                   },
                   "latitude": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 28.123456
                   },
                   "longitude": {
-                    "type": "number"
+                    "type": "number",
+                    "example": -15.432100
                   },
                   "incidentTypeId": {
-                    "type": "integer"
-                  },
-                  "incidentStatusId": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 2,
+                    "description": "1: Good Practice, 2: Bad Practice"
                   },
                   "incidentSeverityId": {
-                    "type": "integer"
-                  },
-                  "isApproved": {
-                    "type": "boolean"
-                  },
-                  "area": {
-                    "type": "string",
-                    "example": ""
-                  },
-                  "island": {
-                    "type": "string",
-                    "example": ""
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Required if Type is Bad Practice (1: Low, 2: Medium, 3: High)"
                   },
                   "image": {
                     "type": "string",
@@ -435,7 +466,8 @@
                   "description",
                   "latitude",
                   "longitude",
-                  "incidentTypeId"
+                  "incidentTypeId",
+                  "image"
                 ]
               }
             }
@@ -443,10 +475,20 @@
         },
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "Successful response",
+          "201": {
+            "description": "Incident created successfully",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 101 },
+                    "name": { "type": "string", "example": "Broken Ramp" },
+                    "address": { "type": "string", "example": "Calle Mayor, Las Palmas" },
+                    "isApproved": { "type": "boolean", "example": false }
+                  }
+                }
+              }
             }
           }
         },
@@ -502,14 +544,6 @@
         ],
         "summary": "findOne",
         "description": "Retrieves a specific incident by ID.",
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        },
         "parameters": [
           {
             "name": "id",
@@ -520,7 +554,45 @@
             },
             "description": "The id"
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 101 },
+                    "name": { "type": "string", "example": "Broken Ramp" },
+                    "description": { "type": "string", "example": "The wheelchair ramp at the park entrance is damaged." },
+                    "latitude": { "type": "number", "example": 28.123456 },
+                    "longitude": { "type": "number", "example": -15.432100 },
+                    "address": { "type": "string", "example": "Calle Mayor, Las Palmas" },
+                    "nameFile": { "type": "string", "example": "https://bucket.digitaloceanspaces.com/incident-image/123.jpg" },
+                    "incidentType": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 2 },
+                        "name": { "type": "string", "example": "Bad Practice" }
+                      }
+                    },
+                    "incidentStatus": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 1 },
+                        "name": { "type": "string", "example": "Pending" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found"
+          }
+        }
       },
       "put": {
         "tags": [
