@@ -7,8 +7,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 const Contact = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const positionIesElRincon = [28.127549871601353, -15.446679030776401];
@@ -34,47 +36,42 @@ const Contact = () => {
 
   const contactLiveChats = [
     {
-      title: "Soporte de cuenta",
-      description: "¿Tiene problemas con su cuenta o necesita asistencia con su perfil?",
+      title: t('contact_account_support'),
+      description: t('contact_account_support_desc'),
       icon: "fa-user",
       iconType: "fa-solid",
+      apiType: "soporte de cuenta",
     },
     {
-      title: "Reportar una incidencia",
-      description:
-        "¿Encontró algún obstáculo o problema que afecte la accesibilidad?",
+      title: t('contact_report_incident'),
+      description: t('contact_report_incident_desc'),
       icon: "fa-triangle-exclamation",
       iconType: "fa-solid",
+      apiType: "reportar una incidencia",
     },
     {
-      title: "Recursos de accesibilidad",
-      description:
-        "¿Necesita ayuda para encontrar guías, herramientas o recursos?",
+      title: t('contact_accessibility_resources'),
+      description: t('contact_accessibility_resources_desc'),
       icon: "fa-wheelchair-move",
       iconType: "fa-solid",
+      apiType: "recursos de accesibilidad",
     },
     {
-      title: "Consulta general",
-      description: "¿Alguna otra pregunta, sugerencia o tiene ideas para mejorar la plataforma?",
+      title: t('contact_general_inquiry'),
+      description: t('contact_general_inquiry_desc'),
       icon: "fa-lightbulb",
       iconType: "fa-solid",
+      apiType: "consulta general",
     },
   ];
 
-  const handleStartChat = async (title) => {
+  const handleStartChat = async (apiType) => {
     const token = localStorage.getItem('token');
     if (!token) {
-      showErrorToast('Debes iniciar sesión para iniciar una conversación.');
+      showErrorToast(t('contact_login_required'));
       return;
     }
-    // Map title to type
-    const typeMap = {
-      "Soporte de cuenta": "soporte de cuenta",
-      "Reportar una incidencia": "reportar una incidencia",
-      "Recursos de accesibilidad": "recursos de accesibilidad",
-      "Consulta general": "consulta general",
-    };
-    const type = typeMap[title];
+    const type = apiType;
 
     try {
       // First, check if a conversation of this type already exists for the user
@@ -101,9 +98,7 @@ const Contact = () => {
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        showErrorToast('Debes iniciar sesión para iniciar una conversación.');
-      } else {
-        console.error('Error handling conversation:', error);
+        showErrorToast(t('contact_login_required'));
       }
     }
   };
@@ -126,13 +121,13 @@ const Contact = () => {
               className="text-3xl md:text-4xl font-poppins font-bold mb-4"
               style={{ color: "var(--color-neutral-2)" }}
             >
-              ¿En qué podemos ayudarte?
+              {t('contact_title')}
             </h1>
             <p
               className="text-base font-roboto"
               style={{ color: "var(--color-neutral-3)" }}
             >
-              Selecciona una opción para continuar
+              {t('contact_subtitle')}
             </p>
           </motion.div>
 
@@ -179,10 +174,10 @@ const Contact = () => {
 
                 {/* Button */}
                 <button
-                  onClick={() => handleStartChat(option.title)}
+                  onClick={() => handleStartChat(option.apiType)}
                   className="bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer mt-4"
                 >
-                  Iniciar Chat
+                  {t('contact_start_chat')}
                 </button>
               </div>
             ))}
@@ -201,7 +196,7 @@ const Contact = () => {
             className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center px-4 md:px-0"
             style={{ color: "var(--color-neutral-2)" }}
           >
-            Contacto
+            {t('contact_info_title')}
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 items-stretch px-4 md:px-8 lg:px-0">
@@ -220,7 +215,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    Email
+                    {t('contact_email')}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2"
@@ -239,7 +234,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    Número de teléfono
+                    {t('contact_phone')}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2"
@@ -258,7 +253,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    Localización
+                    {t('contact_location')}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2 mb-4"
@@ -277,13 +272,13 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    Soporte de accesibilidad
+                    {t('contact_accessibility_support')}
                   </p>
                   <p
                     className="font-roboto text-base"
                     style={{ color: "var(--color-neutral-3)" }}
                   >
-                    ¿Necesita ayuda? Estamos comprometidos con la inclusión.
+                    {t('contact_accessibility_support_desc')}
                   </p>
                 </div>
               </div>
@@ -324,7 +319,7 @@ const Contact = () => {
                 color: "#ffffff",
               }}
             >
-              Ver ubicación en el mapa
+              {t('contact_view_map')}
               <i className="fa-solid fa-location-dot ml-3"></i>
             </a>
           </div>

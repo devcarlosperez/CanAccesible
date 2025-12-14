@@ -76,6 +76,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - **File Uploads:** ![Multer](https://img.shields.io/badge/Multer-1.4-blue?logo=multer&logoColor=white)
 - **Email Service:** ![Nodemailer](https://img.shields.io/badge/Nodemailer-6.9-blue?logo=nodemailer&logoColor=white)
 - **Translation API:** ![MyMemory](https://img.shields.io/badge/MyMemory-API-blue?logo=google-translate&logoColor=white)
+- **Internationalization:** ![react-i18next](https://img.shields.io/badge/react--i18next-14.1-blue?logo=react&logoColor=white)
 
 ### Additional Technologies
 

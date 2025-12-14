@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import IncidentCommentSection from "../../components/incidents/IncidentCommentSection";
@@ -15,6 +16,7 @@ import { Chip, IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const IncidentDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const incidentId = parseInt(id);
   const [incident, setIncident] = useState(null);
@@ -86,9 +88,7 @@ const IncidentDetail = () => {
         const data = await getIncidentById(id);
 
         if (!data.isApproved) {
-          setError(
-            "Esta incidencia no está disponible o está pendiente de aprobación."
-          );
+          setError(t('incident_not_available'));
           return;
         }
 
@@ -101,7 +101,7 @@ const IncidentDetail = () => {
         setLikeCount(incidentLikes.length);
       } catch (err) {
         console.error("Error al cargar la incidencia:", err);
-        setError("No se pudo cargar la incidencia.");
+        setError(t('incident_load_error'));
       }
     };
 
@@ -119,10 +119,10 @@ const IncidentDetail = () => {
               className="inline-flex items-center gap-2 transition-colors mb-8 font-roboto font-medium text-blue-600 hover:text-blue-800"
             >
               <i className="fas fa-arrow-left"></i>
-              Volver a Incidencias
+              {t('incident_back')}
             </Link>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">
-              {error || "Cargando incidencia..."}
+              {error || t('incident_loading')}
             </h1>
           </div>
         </main>
@@ -132,7 +132,7 @@ const IncidentDetail = () => {
   }
 
   const getStatusLabel = (statusId) => {
-    if (isTranslated) {
+    if (i18n.language === 'en') {
       switch (statusId) {
         case 1: return "Pending";
         case 2: return "In Progress";
@@ -153,14 +153,14 @@ const IncidentDetail = () => {
   };
 
   const getIncidentTypeLabel = (typeId) => {
-    if (isTranslated) {
+    if (i18n.language === 'en') {
       return typeId === 1 ? "Good Practice" : "Bad Practice";
     }
     return typeId === 1 ? "Buena Práctica" : "Mala Práctica";
   };
 
   const getSeverityLabel = (severityId) => {
-    if (isTranslated) {
+    if (i18n.language === 'en') {
       return severityId === 1 ? "Low" : severityId === 2 ? "Medium" : "High";
     }
     return severityId === 1 ? "Baja" : severityId === 2 ? "Media" : "Alta";
@@ -189,7 +189,7 @@ const IncidentDetail = () => {
             className="inline-flex items-center gap-2 transition-colors mb-6 font-roboto font-medium text-blue-600 hover:text-blue-800"
           >
             <i className="fas fa-arrow-left"></i>
-            Volver a Incidencias
+            {t('incident_back')}
           </Link>
 
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -208,7 +208,7 @@ const IncidentDetail = () => {
                         ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                         : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
-                    title={isTranslated ? "Ver original" : "Traducir al inglés"}
+                    title={isTranslated ? t('incident_view_original') : t('incident_translate_to_english')}
                   >
                     {isLoadingTranslation ? (
                       <span className="animate-pulse">...</span>
@@ -227,11 +227,11 @@ const IncidentDetail = () => {
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
                   <i className="fas fa-calendar-alt"></i>
-                  {new Date(incident.dateIncident).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES')}
+                  {new Date(incident.dateIncident).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES')}
                 </span>
                 <span className="flex items-center gap-1">
                   <i className="fas fa-map-marker-alt"></i>
-                  {incident.island || (isTranslated ? "Unspecified Island" : "Isla no especificada")}
+                  {incident.island || (i18n.language === 'en' ? "Unspecified Island" : "Isla no especificada")}
                 </span>
                 <span className="flex items-center gap-1">
                   <i className="fas fa-tag"></i>
@@ -255,7 +255,7 @@ const IncidentDetail = () => {
             <div className="p-6 md:p-8">
               <div className="mb-8">
                 <h2 className="text-lg font-semibold text-gray-800 mb-3">
-                  {isTranslated ? "Description" : "Descripción"}
+                  {t('incident_description')}
                 </h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {isTranslated && cachedTranslation?.description ? cachedTranslation.description : incident.description}
@@ -265,7 +265,7 @@ const IncidentDetail = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <span className="block text-sm font-medium text-gray-500 mb-1">
-                    {isTranslated ? "Incident Type" : "Tipo de Incidencia"}
+                    {t('incident_type')}
                   </span>
                   <span className="text-gray-800 font-medium">
                     {getIncidentTypeLabel(incident.incidentTypeId)}
@@ -275,7 +275,7 @@ const IncidentDetail = () => {
                 {incident.incidentTypeId === 2 && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <span className="block text-sm font-medium text-gray-500 mb-1">
-                      {isTranslated ? "Severity" : "Severidad"}
+                      {t('incident_severity')}
                     </span>
                     <span className="text-gray-800 font-medium">
                       {getSeverityLabel(incident.incidentSeverityId)}

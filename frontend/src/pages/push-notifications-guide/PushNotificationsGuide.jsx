@@ -1,7 +1,10 @@
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
+import { useTranslation, Trans } from "react-i18next";
 
 const PushNotificationsGuide = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Header transparent={false} />
@@ -12,11 +15,8 @@ const PushNotificationsGuide = () => {
           {/* Title Section */}
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-4 text-neutral-2">
-              Guía de Notificaciones Push
+              {t('push_guide_title')}
             </h1>
-            <p className="text-base font-roboto text-neutral-3">
-              Última actualización: 14 de diciembre de 2025
-            </p>
           </div>
 
           {/* Content Card */}
@@ -24,159 +24,148 @@ const PushNotificationsGuide = () => {
             {/* Introduction */}
             <section className="mb-8">
               <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Introducción
+                {t('push_intro_title')}
               </h2>
-              <p className="text-base font-roboto leading-relaxed text-neutral-3">
-                Las notificaciones push te permiten recibir alertas importantes de CanAccesible directamente en tu dispositivo,
-                incluso cuando no tengas la aplicación abierta en tu navegador.
+              <p className="text-base font-roboto leading-relaxed text-neutral-3 mb-4">
+                {t('push_intro_text')}
               </p>
-            </section>
-
-            {/* Important Note */}
-            <section className="mb-8">
-              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
-                <div className="ml-3">
-                  <p className="text-sm font-roboto text-blue-700">
-                    <strong>Importante:</strong> Para recibir notificaciones push, necesitas activarlas tanto en tu navegador
-                    como en la configuración de tu sistema operativo (Windows, macOS, etc.).
-                  </p>
-                </div>
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                <p className="text-base font-roboto text-neutral-3">
+                  <Trans i18nKey="push_important" />
+                </p>
               </div>
             </section>
 
-            {/* Step 1 */}
+            {/* Step 1: Enable in CanAccesible */}
             <section className="mb-8">
               <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Paso 1: Activar en CanAccesible
+                {t('push_step1')}
               </h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <ol className="list-decimal list-inside space-y-2 text-neutral-3 font-roboto">
-                  <li>Inicia sesión en tu cuenta de CanAccesible</li>
-                  <li>Ve a tu <strong>Perfil</strong> (haz clic en tu nombre en la esquina superior derecha)</li>
-                  <li>Busca la sección <strong>"Notificaciones Push"</strong></li>
-                  <li>Activa el interruptor para permitir notificaciones</li>
+              <ol className="list-decimal pl-6 space-y-2">
+                <li className="text-base font-roboto text-neutral-3">{t('push_step1_li1')}</li>
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_step1_li2" /></li>
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_step1_li3" /></li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_step1_li4')}</li>
+              </ol>
+            </section>
+
+            {/* Step 2: Enable in Browser */}
+            <section className="mb-8">
+              <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
+                {t('push_step2')}
+              </h2>
+              
+              {/* Chrome */}
+              <div className="mb-6">
+                <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                  {t('push_chrome')}
+                </h3>
+                <ol className="list-decimal pl-6 space-y-2">
+                  <li className="text-base font-roboto text-neutral-3">{t('push_chrome_li1')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_chrome_li2')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_chrome_li3')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_chrome_li4')}</li>
+                </ol>
+              </div>
+
+              {/* Firefox */}
+              <div className="mb-6">
+                <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                  {t('push_firefox')}
+                </h3>
+                <ol className="list-decimal pl-6 space-y-2">
+                  <li className="text-base font-roboto text-neutral-3">{t('push_firefox_li1')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_firefox_li2')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_firefox_li3')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_firefox_li4')}</li>
+                </ol>
+              </div>
+
+              {/* Edge */}
+              <div className="mb-6">
+                <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                  {t('push_edge')}
+                </h3>
+                <ol className="list-decimal pl-6 space-y-2">
+                  <li className="text-base font-roboto text-neutral-3">{t('push_edge_li1')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_edge_li2')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_edge_li3')}</li>
                 </ol>
               </div>
             </section>
 
-            {/* Step 2 */}
+            {/* Step 3: Enable in Windows */}
             <section className="mb-8">
               <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Paso 2: Activar en tu Navegador
+                {t('push_step3')}
               </h2>
-
-              <div className="space-y-6">
-                {/* Chrome */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-lg font-poppins font-semibold text-neutral-2 mb-3 flex items-center">
-                    <i className="fab fa-chrome text-blue-500 mr-2"></i>
-                    Google Chrome
-                  </h3>
-                  <ol className="list-decimal list-inside space-y-1 text-neutral-3 font-roboto text-sm">
-                    <li>Haz clic en el icono del candado (🔒) en la barra de direcciones</li>
-                    <li>Selecciona "Sitio no seguro" → "Notificaciones"</li>
-                    <li>Elige "Permitir" o "Preguntar"</li>
-                    <li>Si no aparece, haz clic en el icono de notificaciones (🔔) en la barra de direcciones</li>
-                  </ol>
-                </div>
-
-                {/* Firefox */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-lg font-poppins font-semibold text-neutral-2 mb-3 flex items-center">
-                    <i className="fab fa-firefox text-orange-500 mr-2"></i>
-                    Mozilla Firefox
-                  </h3>
-                  <ol className="list-decimal list-inside space-y-1 text-neutral-3 font-roboto text-sm">
-                    <li>Haz clic en el icono de escudo (🛡️) en la barra de direcciones</li>
-                    <li>Selecciona "Más información"</li>
-                    <li>Busca "Permisos" → "Notificaciones"</li>
-                    <li>Selecciona "Permitir"</li>
-                  </ol>
-                </div>
-
-                {/* Edge */}
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-lg font-poppins font-semibold text-neutral-2 mb-3 flex items-center">
-                    <i className="fab fa-edge text-blue-600 mr-2"></i>
-                    Microsoft Edge
-                  </h3>
-                  <ol className="list-decimal list-inside space-y-1 text-neutral-3 font-roboto text-sm">
-                    <li>Haz clic en el icono de candado (🔒) en la barra de direcciones</li>
-                    <li>Selecciona "Permisos del sitio"</li>
-                    <li>Busca "Notificaciones" y selecciona "Permitir"</li>
-                  </ol>
-                </div>
-              </div>
+              <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                {t('push_windows')}
+              </h3>
+              <ol className="list-decimal pl-6 space-y-2">
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_windows_li1" /></li>
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_windows_li2" /></li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_windows_li3')}</li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_windows_li4')}</li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_windows_li5')}</li>
+              </ol>
             </section>
 
-            {/* Step 3 */}
+            {/* Step 4: Enable in macOS */}
             <section className="mb-8">
               <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Paso 3: Activar en Windows
+                {t('push_step4')}
               </h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-lg font-poppins font-semibold text-neutral-2 mb-3">Windows 10/11</h3>
-                <ol className="list-decimal list-inside space-y-2 text-neutral-3 font-roboto">
-                  <li>Abre <strong>Configuración</strong> (Win + I)</li>
-                  <li>Ve a <strong>Sistema</strong> → <strong>Notificaciones y acciones</strong></li>
-                  <li>Activa "Obtener notificaciones de aplicaciones y otros remitentes"</li>
-                  <li>Busca "CanAccesible" en la lista de aplicaciones</li>
-                  <li>Asegúrate de que las notificaciones estén activadas</li>
-                </ol>
-              </div>
-            </section>
-
-            {/* Step 4 */}
-            <section className="mb-8">
-              <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Paso 4: Activar en macOS
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-lg font-poppins font-semibold text-neutral-2 mb-3">macOS</h3>
-                <ol className="list-decimal list-inside space-y-2 text-neutral-3 font-roboto">
-                  <li>Abre <strong>Preferencias del Sistema</strong></li>
-                  <li>Ve a <strong>Notificaciones</strong></li>
-                  <li>Busca tu navegador (Chrome, Firefox, Safari)</li>
-                  <li>Activa "Permitir notificaciones"</li>
-                  <li>Asegúrate de que "Mostrar notificaciones en el centro de notificaciones" esté activado</li>
-                </ol>
-              </div>
+              <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                {t('push_macos')}
+              </h3>
+              <ol className="list-decimal pl-6 space-y-2">
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_macos_li1" /></li>
+                <li className="text-base font-roboto text-neutral-3"><Trans i18nKey="push_macos_li2" /></li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_macos_li3')}</li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_macos_li4')}</li>
+                <li className="text-base font-roboto text-neutral-3">{t('push_macos_li5')}</li>
+              </ol>
             </section>
 
             {/* Troubleshooting */}
             <section className="mb-8">
               <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
-                Solución de Problemas
+                {t('push_troubleshooting')}
               </h2>
-              <div className="space-y-4">
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                  <h4 className="font-poppins font-semibold text-yellow-800 mb-2">¿No recibes notificaciones?</h4>
-                  <ul className="text-yellow-700 font-roboto text-sm space-y-1">
-                    <li>• Verifica que tu navegador esté actualizado</li>
-                    <li>• Comprueba que no tengas bloqueadas las notificaciones en el navegador</li>
-                    <li>• Asegúrate de que CanAccesible esté activado en la configuración de Windows/macOS</li>
-                    <li>• Prueba recargando la página y activando las notificaciones nuevamente</li>
-                  </ul>
-                </div>
+              
+              <div className="mb-6">
+                <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                  {t('push_not_receiving')}
+                </h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li className="text-base font-roboto text-neutral-3">{t('push_not_receiving_li1')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_not_receiving_li2')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_not_receiving_li3')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_not_receiving_li4')}</li>
+                </ul>
+              </div>
 
-                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-                  <h4 className="font-poppins font-semibold text-red-800 mb-2">¿Las notificaciones aparecen pero no suenan?</h4>
-                  <ul className="text-red-700 font-roboto text-sm space-y-1">
-                    <li>• Ve a Configuración de Windows → Sistema → Sonido</li>
-                    <li>• Asegúrate de que el volumen general no esté silenciado</li>
-                    <li>• Verifica que las notificaciones de aplicaciones puedan reproducir sonido</li>
-                  </ul>
-                </div>
+              <div className="mb-6">
+                <h3 className="text-lg font-poppins font-semibold mb-3 text-neutral-2">
+                  {t('push_no_sound')}
+                </h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li className="text-base font-roboto text-neutral-3">{t('push_no_sound_li1')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_no_sound_li2')}</li>
+                  <li className="text-base font-roboto text-neutral-3">{t('push_no_sound_li3')}</li>
+                </ul>
               </div>
             </section>
 
             {/* Success */}
-            <section className="mb-8">
-              <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
-                <h4 className="font-poppins font-semibold text-green-800 mb-2">¿Todo funciona correctamente?</h4>
-                <p className="text-green-700 font-roboto text-sm">
-                  ¡Perfecto! Ahora recibirás notificaciones push de CanAccesible cuando haya nuevas respuestas
-                  en tus conversaciones de soporte, actualizaciones importantes y más.
+            <section className="border-t pt-8">
+              <h2 className="text-2xl font-poppins font-semibold mb-4 text-primary-2">
+                {t('push_success')}
+              </h2>
+              <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                <p className="text-base font-roboto text-neutral-3">
+                  {t('push_success_text')}
                 </p>
               </div>
             </section>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -29,6 +30,7 @@ import useAuthStore from "../../services/authService";
 import { initSocket } from "../../services/socketService";
 
 const IncidentCommentSection = ({ incidentId }) => {
+  const { t, i18n } = useTranslation();
   const [comments, setComments] = useState([]);
   const [displayedComments, setDisplayedComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -158,19 +160,17 @@ const IncidentCommentSection = ({ incidentId }) => {
     e.preventDefault();
 
     if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión para comentar");
+      toast.error(t('comments_login_required'));
       return;
     }
 
     if (!newComment.trim()) {
-      toast.error("El comentario no puede estar vacío");
+      toast.error(t('comments_empty_error'));
       return;
     }
 
     if (newComment.length > MAX_COMMENT_LENGTH) {
-      toast.error(
-        `El comentario no puede exceder ${MAX_COMMENT_LENGTH} caracteres`
-      );
+      toast.error(t('comments_max_length', { max: MAX_COMMENT_LENGTH }));
       return;
     }
 
@@ -182,10 +182,10 @@ const IncidentCommentSection = ({ incidentId }) => {
       });
       setNewComment("");
       // fetchComments(); // Removed to prevent list reset, handled by socket
-      toast.success("Comentario publicado exitosamente");
+      toast.success(t('comments_published'));
     } catch (error) {
       console.error("Error creating comment:", error);
-      toast.error("Error al publicar el comentario");
+      toast.error(t('comments_publish_error'));
     } finally {
       setSubmitting(false);
     }
@@ -216,14 +216,12 @@ const IncidentCommentSection = ({ incidentId }) => {
 
   const handleEditSubmit = async () => {
     if (!editedComment.trim()) {
-      toast.error("El comentario no puede estar vacío");
+      toast.error(t('comments_empty_error'));
       return;
     }
 
     if (editedComment.length > MAX_COMMENT_LENGTH) {
-      toast.error(
-        `El comentario no puede exceder ${MAX_COMMENT_LENGTH} caracteres`
-      );
+      toast.error(t('comments_max_length', { max: MAX_COMMENT_LENGTH }));
       return;
     }
 
@@ -235,10 +233,10 @@ const IncidentCommentSection = ({ incidentId }) => {
       setEditDialogOpen(false);
       setCommentToEdit(null);
       // fetchComments(); // Removed to prevent list reset, handled by socket
-      toast.success("Comentario actualizado exitosamente");
+      toast.success(t('comments_updated'));
     } catch (error) {
       console.error("Error updating comment:", error);
-      toast.error("Error al actualizar el comentario");
+      toast.error(t('comments_update_error'));
     } finally {
       setUpdating(false);
     }
@@ -253,10 +251,10 @@ const IncidentCommentSection = ({ incidentId }) => {
       setDeleteDialogOpen(false);
       setCommentToDelete(null);
       // fetchComments(); // Removed to prevent list reset, handled by socket
-      toast.success("Comentario eliminado exitosamente");
+      toast.success(t('comments_deleted'));
     } catch (error) {
       console.error("Error deleting comment:", error);
-      toast.error("Error al eliminar el comentario");
+      toast.error(t('comments_delete_error'));
     } finally {
       setDeleting(false);
     }
@@ -265,7 +263,7 @@ const IncidentCommentSection = ({ incidentId }) => {
   return (
     <Box sx={{ mt: 3 }}>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-        Comentarios ({comments.length})
+        {t('comments_title')} ({comments.length})
       </Typography>
 
       {/* Comment Form */}
@@ -275,12 +273,12 @@ const IncidentCommentSection = ({ incidentId }) => {
             fullWidth
             multiline
             rows={3}
-            placeholder="Escribe un comentario..."
+            placeholder={t('comments_placeholder')}
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             variant="outlined"
             disabled={submitting}
-            helperText={`${newComment.length}/${MAX_COMMENT_LENGTH} caracteres`}
+            helperText={t('comments_characters', { current: newComment.length, max: MAX_COMMENT_LENGTH })}
             sx={{ mb: 1 }}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -292,7 +290,7 @@ const IncidentCommentSection = ({ incidentId }) => {
               }
               disabled={submitting || !newComment.trim()}
             >
-              {submitting ? "Publicando..." : "Publicar"}
+              {submitting ? t('comments_publishing') : t('comments_publish')}
             </Button>
           </Box>
         </Box>
@@ -301,7 +299,7 @@ const IncidentCommentSection = ({ incidentId }) => {
       {!isAuthenticated && (
         <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.100" }}>
           <Typography variant="body2" color="text.secondary" align="center">
-            Debes iniciar sesión para comentar
+            {t('comments_login_required')}
           </Typography>
         </Paper>
       )}
@@ -320,7 +318,7 @@ const IncidentCommentSection = ({ incidentId }) => {
           align="center"
           sx={{ py: 3 }}
         >
-          No hay comentarios aún. ¡Sé el primero en comentar!
+          {t('comments_be_first')}
         </Typography>
       ) : (
         <Box
@@ -378,7 +376,7 @@ const IncidentCommentSection = ({ incidentId }) => {
                       •
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {new Date(comment.createdAt).toLocaleDateString("es-ES", {
+                      {new Date(comment.createdAt).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
@@ -416,7 +414,7 @@ const IncidentCommentSection = ({ incidentId }) => {
               align="center"
               sx={{ py: 2 }}
             >
-              No hay más comentarios
+              {t('comments_no_more')}
             </Typography>
           )}
         </Box>
@@ -428,9 +426,9 @@ const IncidentCommentSection = ({ incidentId }) => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleEditClick}>Editar</MenuItem>
+        <MenuItem onClick={handleEditClick}>{t('edit')}</MenuItem>
         <MenuItem onClick={handleDeleteClick} sx={{ color: "error.main" }}>
-          Eliminar
+          {t('delete')}
         </MenuItem>
       </Menu>
 
@@ -441,7 +439,7 @@ const IncidentCommentSection = ({ incidentId }) => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Editar comentario</DialogTitle>
+        <DialogTitle>{t('comments_edit_title')}</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -451,20 +449,20 @@ const IncidentCommentSection = ({ incidentId }) => {
             onChange={(e) => setEditedComment(e.target.value)}
             variant="outlined"
             disabled={updating}
-            helperText={`${editedComment.length}/${MAX_COMMENT_LENGTH} caracteres`}
+            helperText={t('comments_characters', { current: editedComment.length, max: MAX_COMMENT_LENGTH })}
             sx={{ mt: 2 }}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)} disabled={updating}>
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button
             onClick={handleEditSubmit}
             variant="contained"
             disabled={updating || !editedComment.trim()}
           >
-            {updating ? "Guardando..." : "Guardar"}
+            {updating ? t('comments_saving') : t('save')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -474,11 +472,10 @@ const IncidentCommentSection = ({ incidentId }) => {
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
       >
-        <DialogTitle>¿Eliminar comentario?</DialogTitle>
+        <DialogTitle>{t('comments_delete_title')}</DialogTitle>
         <DialogContent>
           <Typography>
-            Esta acción no se puede deshacer. ¿Estás seguro de que deseas
-            eliminar este comentario?
+            {t('comments_delete_confirm')}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -486,7 +483,7 @@ const IncidentCommentSection = ({ incidentId }) => {
             onClick={() => setDeleteDialogOpen(false)}
             disabled={deleting}
           >
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button
             onClick={handleDeleteConfirm}
@@ -494,7 +491,7 @@ const IncidentCommentSection = ({ incidentId }) => {
             variant="contained"
             disabled={deleting}
           >
-            {deleting ? "Eliminando..." : "Eliminar"}
+            {deleting ? t('comments_deleting') : t('delete')}
           </Button>
         </DialogActions>
       </Dialog>

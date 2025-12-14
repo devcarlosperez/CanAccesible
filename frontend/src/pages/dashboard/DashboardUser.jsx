@@ -5,8 +5,10 @@ import useAuthStore from "../../services/authService";
 import { getMyIncidents } from "../../services/incidentService";
 import { getAllNotifications } from "../../services/notificationService";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const DashboardUser = () => {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
@@ -84,7 +86,7 @@ const DashboardUser = () => {
       <>
         <Header transparent={false} />
         <div className="flex justify-center items-center min-h-screen pt-32 bg-gray-200">
-          <p className="text-xl font-semibold text-gray-600">Cargando...</p>
+          <p className="text-xl font-semibold text-gray-600">{t('loading')}</p>
         </div>
         <Footer />
       </>
@@ -98,31 +100,31 @@ const DashboardUser = () => {
       <main className="bg-gray-200 min-h-screen pt-32 px-4 md:px-8 lg:px-16 pb-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-2 text-gray-800">
-            Hola {user?.firstName},{" "}
+            {t('dashboard_hello', { name: user?.firstName })}{" "}
             <span className="text-gray-500 font-normal">
-              descubre todas tus publicaciones aquí
+              {t('dashboard_subtitle')}
             </span>
           </h1>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 mt-8">
             <StatCard
-              title="INCIDENCIAS PENDIENTES"
+              title={t('dashboard_pending')}
               count={stats.pending}
               color="text-gray-800"
             />
             <StatCard
-              title="INCIDENCIAS PUBLICADAS"
+              title={t('dashboard_published')}
               count={stats.published}
               color="text-red-700"
             />
             <StatCard
-              title="INCIDENCIAS EN PROGRESO"
+              title={t('dashboard_in_progress')}
               count={stats.inProgress}
               color="text-green-700"
             />
             <StatCard
-              title="INCIDENCIAS RESUELTAS"
+              title={t('dashboard_resolved')}
               count={stats.resolved}
               color="text-green-800"
             />
@@ -132,17 +134,17 @@ const DashboardUser = () => {
             {/* Notifications Section */}
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-bold mb-6 text-gray-800">
-                Notificaciones
+                {t('dashboard_notifications')}
               </h2>
 
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {recentNotifications.length > 0 ? (
                   recentNotifications.map((notif) => (
-                    <NotificationItem key={notif.id} notification={notif} />
+                    <NotificationItem key={notif.id} notification={notif} t={t} />
                   ))
                 ) : (
                   <p className="text-gray-500 text-center py-4">
-                    No hay notificaciones recientes
+                    {t('dashboard_no_notifications')}
                   </p>
                 )}
               </div>
@@ -152,7 +154,7 @@ const DashboardUser = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800">
-                  Incidencias más apoyadas
+                  {t('dashboard_most_supported')}
                 </h2>
               </div>
 
@@ -167,7 +169,7 @@ const DashboardUser = () => {
                   ))
                 ) : (
                   <p className="text-gray-500 text-center py-4">
-                    No tienes incidencias con likes aún
+                    {t('dashboard_no_likes')}
                   </p>
                 )}
               </div>
@@ -193,7 +195,7 @@ const StatCard = ({ title, count, color }) => (
   </div>
 );
 
-const NotificationItem = ({ notification }) => {
+const NotificationItem = ({ notification, t }) => {
   const date = new Date(notification.createdAt).toLocaleDateString();
   // Simple logic to determine "read" status style based on message content or random for demo
   // In a real app, we'd have a 'read' field in the DB
@@ -207,7 +209,7 @@ const NotificationItem = ({ notification }) => {
             isRead ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
-          {isRead ? "Readed" : "Unread"}
+          {isRead ? t('dashboard_read') : t('dashboard_unread')}
         </span>
         <span className="font-semibold text-gray-800 truncate max-w-[200px] md:max-w-[300px]">
           {notification.message}

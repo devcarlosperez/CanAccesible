@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Header from '../../components/header/Header';
 import Footer from '../../components/footer/Footer';
 import { getBlogArticleById } from '../../services/blogArticleService';
@@ -7,6 +8,7 @@ import { translateText } from '../../services/translationService';
 import { useBlogTranslationStore } from '../../stores/blogTranslationStore';
 
 const BlogArticleDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const articleId = parseInt(id);
   const [article, setArticle] = useState(null);
@@ -80,15 +82,15 @@ const BlogArticleDetail = () => {
               className="inline-flex items-center gap-2 transition-colors mb-8 font-roboto font-medium text-blue-600 hover:text-blue-800"
             >
               <i className="fas fa-arrow-left"></i>
-              Volver al Blog
+              {t('blog_back')}
             </Link>
 
             <div className="text-center">
               <h1 className="text-2xl sm:text-3xl font-poppins font-bold mb-4 text-neutral-800">
-                Artículo no encontrado
+                {t('blog_not_found')}
               </h1>
               <p className="font-roboto text-neutral-600">
-                {error || 'El artículo que buscas no existe.'}
+                {error || t('blog_not_found_desc')}
               </p>
             </div>
           </div>
@@ -109,7 +111,7 @@ const BlogArticleDetail = () => {
             className="inline-flex items-center gap-2 transition-colors mb-8 sm:mb-10 md:mb-12 font-roboto font-medium text-blue-600 hover:text-blue-800"
           >
             <i className="fas fa-arrow-left"></i>
-            Volver al Blog
+            {t('blog_back')}
           </Link>
 
           {/* Article Container */}
@@ -136,7 +138,7 @@ const BlogArticleDetail = () => {
                   onClick={handleTranslateToggle}
                   disabled={isLoadingTranslation}
                   className="shrink-0 px-3 py-1.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors text-sm font-medium cursor-pointer"
-                  title={isTranslated ? "Ver original" : "Traducir al inglés"}
+                  title={isTranslated ? t('blog_view_original') : t('blog_translate_to_english')}
                 >
                   {isLoadingTranslation ? "..." : (isTranslated ? "EN" : "ES")}
                 </button>
@@ -147,12 +149,12 @@ const BlogArticleDetail = () => {
                 <i className="fas fa-calendar-alt mr-2"></i>
                 <span>
                   {article.dateCreation
-                    ? new Date(article.dateCreation).toLocaleDateString(isTranslated ? 'en-US' : 'es-ES', {
+                    ? new Date(article.dateCreation).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                       })
-                    : 'Sin fecha'
+                    : t('blog_no_date')
                   }
                 </span>
               </div>

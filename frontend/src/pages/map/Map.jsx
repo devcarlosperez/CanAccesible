@@ -6,6 +6,7 @@ import { getAllIncidents } from "../../services/incidentService";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const greenIcon = new L.Icon({
     iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
@@ -31,6 +32,7 @@ const canariasBounds = [
 ];
 
 const Map = () => {
+    const { t } = useTranslation();
     const [incidents, setIncidents] = useState([]);
     const navigate = useNavigate();
 
@@ -51,7 +53,7 @@ const Map = () => {
 
             <main className="pt-40 p-8 bg-gray-200">
                 <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center" style={{ color: "var(--color-neutral-2)" }}>
-                    En este mapa puedes ver las incidencias
+                    {t('map_title')}
                 </h1>
                 <div className="mx-auto w-full max-w-6xl h-140 border-2 border-black rounded-lg overflow-hidden">
 
@@ -83,7 +85,7 @@ const Map = () => {
                                                 className="mt-1 inline-block underline text-blue-600 cursor-pointer"
                                                 onClick={() => handleViewDetails(incident.id)}
                                             >
-                                                Ver detalles
+                                                {t('view_details')}
                                             </button>
                                         </div>
                                     </Popup>
