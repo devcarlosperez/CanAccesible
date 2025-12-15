@@ -40,10 +40,24 @@ exports.create = async (req, res) => {
       dateMessage: new Date(),
     });
 
+    // Fetch the message with sender info to emit complete data
+    const messageWithSender = await ConversationMessage.findByPk(conversationMessage.id, {
+      include: [{
+        model: db.user,
+        as: 'sender',
+        attributes: ['id', 'firstName', 'lastName', 'nameFile'],
+        include: [{
+          model: db.role,
+          as: 'role',
+          attributes: ['role']
+        }]
+      }]
+    });
+
     // Emit new message to conversation room
     const io = getIo();
     const roomId = String(conversationId);
-    io.to(roomId).emit("newMessage", conversationMessage);
+    io.to(roomId).emit("newMessage", messageWithSender);
 
     // Notification logic moved to socket to avoid duplication
     // if (senderId !== conversation.userId) { ... }
@@ -84,6 +98,17 @@ exports.findAll = async (req, res) => {
     // Get all messages of this conversation
     const messages = await ConversationMessage.findAll({
       where: { conversationId },
+      include: [{
+        model: db.user,
+        as: 'sender',
+        attributes: ['id', 'firstName', 'lastName', 'nameFile'],
+        include: [{
+          model: db.role,
+          as: 'role',
+          attributes: ['role']
+        }]
+      }],
+      order: [['createdAt', 'ASC']]
     });
 
     res.status(200).json(messages);

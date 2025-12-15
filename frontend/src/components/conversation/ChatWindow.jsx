@@ -17,21 +17,21 @@ const ChatWindow = ({ conversation }) => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  // Get current user ID (decode JWT or from localStorage)
-  const getCurrentUserId = () => {
+  // Get current user ID and Role (decode JWT or from localStorage)
+  const getCurrentUser = () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.id;
+        return { id: payload.id, role: payload.role };
       } catch (error) {
         console.error('Error decoding JWT:', error);
       }
     }
-    return null;
+    return { id: null, role: null };
   };
 
-  const currentUserId = getCurrentUserId();
+  const { id: currentUserId, role: currentUserRole } = getCurrentUser();
 
   const showErrorToast = (message) => {
     if (lastErrorToastId) {
@@ -200,60 +200,98 @@ const ChatWindow = ({ conversation }) => {
           <p className="text-gray-500 text-center">{t('chat_no_messages')}</p>
         ) : (
           messages.map((msg) => {
+            const isSenderAdmin = msg.sender?.role?.role === 'admin';
             const isOwnMessage = msg.senderId === currentUserId;
             const isEditing = editingMessageId === msg.id;
+            
+            // Logic: If I am admin, all admin messages go right. If I am user, only my messages go right.
+            const showOnRight = currentUserRole === 'admin' ? isSenderAdmin : isOwnMessage;
+
+            const sender = msg.sender;
+            const avatarSrc = sender?.nameFile;
+            const initial = sender?.firstName?.[0]?.toUpperCase() || "U";
 
             return (
-              <div key={msg.id} className={`mb-2 p-2 rounded max-w-[70%] relative group ${isOwnMessage ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}`}>
-                
-                {isEditing ? (
-                  <div className="flex flex-col">
-                    <input 
-                      type="text" 
-                      value={editedText} 
-                      onChange={(e) => setEditedText(e.target.value)}
-                      className="text-black p-1 rounded mb-1 bg-white"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <button onClick={cancelEditing} className="text-xs underline">{t('cancel')}</button>
-                      <button onClick={() => saveEdit(msg.id)} className="text-xs underline">{t('save')}</button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-sm pr-6">{msg.message}</p>
-                    <small className={`text-xs ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}`}>
-                      {new Date(msg.createdAt).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                    </small>
-                    
-                    {isOwnMessage && (
-                      <>
-                        <button 
-                          onClick={(e) => toggleMenu(e, msg.id)}
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
-                        >
-                          <i className="fas fa-chevron-down text-xs"></i>
-                        </button>
-                        
-                        {activeMenuId === msg.id && (
-                          <div ref={menuRef} className="absolute top-5 right-0 bg-white text-black shadow-lg rounded z-10 w-32 py-1">
-                            <button 
-                              onClick={() => startEditing(msg)}
-                              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                            >
-                              {t('edit')}
-                            </button>
-                            <button 
-                              onClick={() => deleteMessage(msg.id)}
-                              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-                            >
-                              {t('delete')}
-                            </button>
-                          </div>
-                        )}
-                      </>
+              <div key={msg.id} className={`mb-4 flex items-start gap-3 ${showOnRight ? 'justify-end' : 'justify-start'}`}>
+                {!showOnRight && (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm bg-blue-600 shrink-0">
+                    {avatarSrc ? (
+                      <img
+                        src={avatarSrc}
+                        alt={`${sender.firstName} ${sender.lastName}`}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span>{initial}</span>
                     )}
-                  </>
+                  </div>
+                )}
+
+                <div className={`p-2 rounded max-w-[70%] relative group ${showOnRight ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'}`}>
+                  
+                  {isEditing ? (
+                    <div className="flex flex-col">
+                      <input 
+                        type="text" 
+                        value={editedText} 
+                        onChange={(e) => setEditedText(e.target.value)}
+                        className="text-black p-1 rounded mb-1 bg-white"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button onClick={cancelEditing} className="text-xs underline">{t('cancel')}</button>
+                        <button onClick={() => saveEdit(msg.id)} className="text-xs underline">{t('save')}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm pr-6">{msg.message}</p>
+                      <small className={`text-xs ${showOnRight ? 'text-blue-100' : 'text-gray-500'}`}>
+                        {new Date(msg.createdAt).toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      </small>
+                      
+                      {isOwnMessage && (
+                        <>
+                          <button 
+                            onClick={(e) => toggleMenu(e, msg.id)}
+                            className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                          >
+                            <i className="fas fa-chevron-down text-xs"></i>
+                          </button>
+                          
+                          {activeMenuId === msg.id && (
+                            <div ref={menuRef} className="absolute top-5 right-0 bg-white text-black shadow-lg rounded z-10 w-32 py-1">
+                              <button 
+                                onClick={() => startEditing(msg)}
+                                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                              >
+                                {t('edit')}
+                              </button>
+                              <button 
+                                onClick={() => deleteMessage(msg.id)}
+                                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                              >
+                                {t('delete')}
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {showOnRight && (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm bg-blue-600 shrink-0">
+                    {avatarSrc ? (
+                      <img
+                        src={avatarSrc}
+                        alt={`${sender.firstName} ${sender.lastName}`}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span>{initial}</span>
+                    )}
+                  </div>
                 )}
               </div>
             );

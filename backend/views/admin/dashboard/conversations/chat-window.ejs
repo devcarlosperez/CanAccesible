@@ -159,58 +159,76 @@
         }
 
         container.innerHTML = messages.map(msg => {
+          const isSenderAdmin = msg.sender?.role?.role === 'admin';
           const isOwn = msg.senderId === currentUserId;
           const isEditing = editingMessageId === msg.id;
           const date = new Date(msg.createdAt).toLocaleString('es-ES', {
             year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
           });
 
+          // Admin viewer sees all admin messages on the right
+          const showOnRight = isSenderAdmin;
+
+          const sender = msg.sender;
+          const avatarSrc = sender?.nameFile;
+          const initial = sender?.firstName?.[0]?.toUpperCase() || 'U';
+
+          const avatarHtml = avatarSrc 
+            ? `<img src="${avatarSrc}" alt="${sender?.firstName || ''} ${sender?.lastName || ''}" class="w-8 h-8 object-cover rounded-full">`
+            : `<span class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm bg-blue-600">${initial}</span>`;
+
           return `
-            <div class="mb-2 p-2 rounded max-w-[70%] relative group ${isOwn ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-200 text-black mr-auto'}">
+            <div class="mb-4 flex items-start gap-3 ${showOnRight ? 'justify-end' : 'justify-start'}">
+              ${!showOnRight ? `<div class="shrink-0">${avatarHtml}</div>` : ''}
+              
+              <div class="p-2 rounded max-w-[70%] relative group ${showOnRight ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'}">
 
-              ${isEditing ? `
-                <div class="flex flex-col">
-                  <input
-                    type="text"
-                    id="editInput-${msg.id}"
-                    value="${escapeHtml(msg.message)}"
-                    class="text-black p-1 rounded mb-1 bg-white"
-                  >
-                  <div class="flex justify-end gap-2">
-                    <button onclick="cancelEditing()" class="text-xs underline">Cancelar</button>
-                    <button onclick="saveEdit(${msg.id})" class="text-xs underline">Guardar</button>
-                  </div>
-                </div>
-              ` : `
-                <p class="text-sm pr-6 whitespace-pre-wrap break-words">${escapeHtml(msg.message)}</p>
-                <small class="text-xs ${isOwn ? 'text-blue-100' : 'text-gray-500'}">
-                  ${date}
-                </small>
-
-                ${isOwn ? `
-                  <button
-                    onclick="toggleMenu(event, ${msg.id})"
-                    class="message-menu-btn absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
-                  >
-                    <i class="fas fa-chevron-down text-xs"></i>
-                  </button>
-
-                  <div id="menu-${msg.id}" class="message-menu hidden absolute top-5 right-0 bg-white text-black shadow-lg rounded z-10 w-32 py-1">
-                    <button
-                      onclick="startEditing(${msg.id})"
-                      class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                ${isEditing ? `
+                  <div class="flex flex-col">
+                    <input
+                      type="text"
+                      id="editInput-${msg.id}"
+                      value="${escapeHtml(msg.message)}"
+                      class="text-black p-1 rounded mb-1 bg-white"
                     >
-                      Editar
-                    </button>
-                    <button
-                      onclick="deleteMessage(${msg.id})"
-                      class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-                    >
-                      Eliminar
-                    </button>
+                    <div class="flex justify-end gap-2">
+                      <button onclick="cancelEditing()" class="text-xs underline">Cancelar</button>
+                      <button onclick="saveEdit(${msg.id})" class="text-xs underline">Guardar</button>
+                    </div>
                   </div>
-                ` : ''}
-              `}
+                ` : `
+                  <p class="text-sm pr-6 whitespace-pre-wrap break-words">${escapeHtml(msg.message)}</p>
+                  <small class="text-xs ${showOnRight ? 'text-blue-100' : 'text-gray-500'}">
+                    ${date}
+                  </small>
+
+                  ${isOwn ? `
+                    <button
+                      onclick="toggleMenu(event, ${msg.id})"
+                      class="message-menu-btn absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                    >
+                      <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+
+                    <div id="menu-${msg.id}" class="message-menu hidden absolute top-5 right-0 bg-white text-black shadow-lg rounded z-10 w-32 py-1">
+                      <button
+                        onclick="startEditing(${msg.id})"
+                        class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onclick="deleteMessage(${msg.id})"
+                        class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  ` : ''}
+                `}
+              </div>
+
+              ${showOnRight ? `<div class="shrink-0">${avatarHtml}</div>` : ''}
             </div>
           `;
         }).join('');
