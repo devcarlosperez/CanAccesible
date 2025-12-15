@@ -88,33 +88,40 @@ sudo apt install nginx
 
 ### Concept
 
-A **Reverse Proxy** is a server that sits in front of web servers and forwards client requests to those web servers. In this architecture, Nginx accepts traffic on port 80 (HTTP) and 443 (HTTPS) and forwards it to the Vite development server running internally on port 5173.
+A **Reverse Proxy** is a server that sits in front of web servers and forwards client requests to those web servers. In this architecture, Nginx accepts traffic on port 80 (HTTP) and 443 (HTTPS) and forwards it to the appropriate internal service.
 
 **Why is it necessary?**
-*   **Port Hiding (User Experience):** It allows users to access the application via the standard domain (`canaccesible.es`) without needing to append the development port `:5173` to the URL.
+*   **Performance:** Nginx serves static files (Frontend) much faster than Node.js.
+*   **Port Hiding (User Experience):** It allows users to access the application via the standard domain (`canaccesible.es`) without needing to append ports.
 *   **Security:** It hides the internal topology of the network.
-*   **SSL Termination:** Nginx handles HTTPS encryption/decryption, offloading this work from the application.
+*   **SSL Termination:** Nginx handles HTTPS encryption/decryption.
 
-### Initial Configuration (HTTP)
+### Final Configuration (Static Frontend + Backend Proxy)
 
-The following configuration was created in `/etc/nginx/sites-available/canaccesible.es`. This configuration tells Nginx to forward traffic as follows:
-
-- Root traffic (`/`) to the **Vite development server** (port 5173).
-- API traffic (`/api`) to the **Backend server** (port 85).
-- Dashboard admin traffic (`/dashboard-admin`) to the **Backend server** (port 85).
-- Images traffic (`/images`) to the **Backend server** (port 85).
+The following configuration is the final version used in production (`/etc/nginx/sites-available/canaccesible.es`). It serves the frontend as static files and proxies API and WebSocket requests to the backend.
 
 ```nginx
 server {
-    listen 80;
     server_name canaccesible.es www.canaccesible.es;
 
-    # Frontend (Vite)
+    # Frontend (Static Files)
+    # Serves the React application built in the 'dist' folder
     location / {
-        proxy_pass http://127.0.0.1:5173;
+        root /var/www/canaccesible;
+        index index.html index.htm;
+        # Essential for React Router: redirects 404s to index.html
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Socket.io (WebSockets)
+    # Specific configuration to allow real-time communication
+    location /socket.io/ {
+        proxy_pass http://127.0.0.1:85;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        
+        # Headers required for WebSocket upgrade
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
     }
@@ -142,6 +149,26 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
+
+    # SSL Configuration (Managed by Certbot)
+    listen 443 ssl http2;
+    ssl_certificate /etc/letsencrypt/live/canaccesible.es/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/canaccesible.es/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+# HTTP -> HTTPS Redirection
+server {
+    if ($host = www.canaccesible.es) {
+        return 301 https://$host$request_uri;
+    }
+    if ($host = canaccesible.es) {
+        return 301 https://$host$request_uri;
+    }
+    listen 80;
+    server_name canaccesible.es www.canaccesible.es;
+    return 404;
 }
 ```
 
@@ -162,17 +189,18 @@ sudo systemctl restart nginx
 
 ### Directive Explanation
 
-The following summarizes the role of each section in the Nginx configuration file `/etc/nginx/sites-available/canaccesible.es`. This setup acts as a reverse proxy, directing traffic to internal servers while handling headers for client information preservation.
+The following summarizes the role of each section in the Nginx configuration file `/etc/nginx/sites-available/canaccesible.es`.
 
 *   `server { ... }`: Defines the server block for handling HTTP traffic (port 80) on `canaccesible.es` and `www.canaccesible.es`.
 *   `listen 80;`: Binds to port 80 for incoming HTTP requests.
 *   `server_name canaccesible.es www.canaccesible.es;`: Specifies the domains this block serves.
-*   `location / { ... }`: Routes root traffic (`/`) to the Vite frontend server on port 5173. Includes headers for WebSocket support and client IP forwarding.
+*   `location / { ... }`: Serves static files from `/var/www/canaccesible`. `try_files` ensures that if a file is not found, `index.html` is served, allowing React Router to handle client-side routing.
+*   `location /socket.io/ { ... }`: Handles WebSocket connections, upgrading the HTTP connection to a persistent WebSocket connection.
 *   `location /api { ... }`: Routes API requests (`/api`) to the backend server on port 85, forwarding client headers.
-*   `location /dashboard-admin { ... }`: Routes admin dashboard requests (`/dashboard-admin`) to the backend on port 85, preserving client information.
-*   `location /images { ... }`: Routes image requests (`/images`) to the backend on port 85 for static asset serving.
+*   `location /dashboard-admin { ... }`: Routes admin dashboard requests (`/dashboard-admin`) to the backend on port 85.
+*   `location /images { ... }`: Routes image requests (`/images`) to the backend on port 85.
 
-Each `location` block uses `proxy_pass` to redirect traffic, and `proxy_set_header` directives to pass essential client data (Host, real IP, forwarded IPs) to the backend, ensuring proper routing and logging.
+Each `location` block uses `proxy_pass` to redirect traffic (except the static frontend), and `proxy_set_header` directives to pass essential client data (Host, real IP, forwarded IPs) to the backend, ensuring proper routing and logging.
 
 ---
 
@@ -232,32 +260,6 @@ sudo certbot --nginx -d canaccesible.es -d www.canaccesible.es
 2.  **Issuance:** Obtained a signed certificate from Let's Encrypt.
 3.  **Installation:** Automatically modified the Nginx configuration to use the certificate.
 4.  **Redirection:** Configured a 301 redirect to force all HTTP traffic to HTTPS.
-
-**Actual configuration automatically appended by Certbot to the Nginx file:**
-
-```nginx
-    # ... inside the main server block ...
-
-    # Configuración SSL (Certbot)
-    listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/canaccesible.es/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/canaccesible.es/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
-# Redirección HTTP -> HTTPS
-server {
-    if ($host = www.canaccesible.es) {
-        return 301 https://$host$request_uri;
-    }
-    if ($host = canaccesible.es) {
-        return 301 https://$host$request_uri;
-    }
-    listen 80;
-    server_name canaccesible.es www.canaccesible.es;
-    return 404;
-}
-```
 
 ### Certificate Details
 
