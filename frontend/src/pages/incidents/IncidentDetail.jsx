@@ -112,11 +112,11 @@ const IncidentDetail = () => {
     return (
       <>
         <Header transparent={false} />
-        <main className="min-h-screen bg-gray-200 pt-40 pb-12 px-4">
+        <main className="min-h-screen bg-gray-100 pt-40 pb-12 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <Link
               to="/incidents"
-              className="inline-flex items-center gap-2 transition-colors mb-8 font-roboto font-medium text-blue-600 hover:text-blue-800"
+              className="inline-flex items-center gap-2 transition-colors mb-8 font-roboto font-medium text-blue-800 hover:text-blue-900"
             >
               <i className="fas fa-arrow-left"></i>
               {t('incident_back')}
@@ -182,11 +182,11 @@ const IncidentDetail = () => {
   return (
     <>
       <Header transparent={false} />
-      <main className="min-h-screen bg-gray-200 pt-40 pb-12 px-4">
+      <main className="min-h-screen bg-gray-100 pt-40 pb-12 px-4">
         <div className="max-w-4xl mx-auto">
           <Link
             to="/incidents"
-            className="inline-flex items-center gap-2 transition-colors mb-6 font-roboto font-medium text-blue-600 hover:text-blue-800"
+            className="inline-flex items-center gap-2 transition-colors mb-6 font-roboto font-medium text-blue-800 hover:text-blue-900"
           >
             <i className="fas fa-arrow-left"></i>
             {t('incident_back')}
