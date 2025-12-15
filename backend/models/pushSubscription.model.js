@@ -16,8 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+    }, {
+      tableName: 'PushSubscriptions',
     });
-
+  
     PushSubscription.associate = (models) => {
       PushSubscription.belongsTo(models.User, {
         foreignKey: "userId",
