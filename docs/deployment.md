@@ -1,14 +1,30 @@
 # Deployment Guide
 
-CanAccesible is deployed on **DigitalOcean** with both frontend and backend running on a single Droplet (VPS) managed by **PM2**. We use DigitalOcean's managed MySQL database for data storage and Spaces for image storage.
+This document details the complete deployment process of the **CanAccesible** application to a production environment. The deployment evolved over four sprints, each adding layers of functionality, security, and optimization.
 
 ---
 
-## Deployment Process
+## Infrastructure Overview
+
+*   **Provider:** DigitalOcean
+*   **Server Type:** Droplet (Virtual Private Server)
+*   **Operating System:** Ubuntu 24.04 LTS
+*   **Web Server / Proxy:** Nginx
+*   **Process Manager:** PM2 (for Node.js Backend)
+*   **Containerization:** Docker (for OpenLDAP)
+*   **Database:** Managed MySQL (DigitalOcean)
+*   **Storage:** DigitalOcean Spaces (S3-compatible Object Storage)
+*   **Security:** SSL/TLS via Let's Encrypt (Certbot)
+
+---
+
+## Sprint 1: Initial Deployment (Carlos)
+
+**Objective:** Establish the basic server infrastructure and get the application running on the VPS.
 
 ### 1. Initial Droplet Setup
 
-Connect via SSH and update the system:
+Access via the **DigitalOcean Console** and update the system:
 
 ```bash
 # Update system packages
@@ -44,13 +60,14 @@ npm install
 ```bash
 cd ../backend
 npm install
+```
 
-# Create .env file with environment variables
+**Create `.env.production` file:**
+```bash
 nano .env.production
 ```
 
-**Add these environment variables to `.env.production`:**
-
+Add these environment variables to `.env.production`:
 ```env
 # Node Environment
 NODE_ENV=production
@@ -71,15 +88,8 @@ DO_REGION=fra1
 DO_ACCESS_KEY=your_spaces_access_key
 DO_SECRET_KEY=your_spaces_secret_key
 
-# Email Configuration (Gmail SMTP)
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_gmail_app_password
-
 # Frontend URL
-FRONTEND_URL=your_frontend_url
-
-# JWT Secret (if using authentication)
-JWT_SECRET=your_jwt_secret_key
+FRONTEND_URL=http://<DROPLET_IP>:5173
 ```
 
 ### 5. Database Initialization
@@ -95,19 +105,16 @@ NODE_ENV=production npx sequelize-cli db:seed:all
 ### 6. Start Applications with PM2
 
 **For the frontend:**
-
 ```bash
-pm2 start "npm run dev -- --host 0.0.0.0" --name frontend
+pm2 start "NODE_ENV=production npm run dev -- --host 0.0.0.0" --name frontend
 ```
 
 **For the backend:**
-
 ```bash
 pm2 start "NODE_ENV=production node index.js" --name backend
 ```
 
 **Save PM2 configuration and enable startup on reboot:**
-
 ```bash
 # Save current PM2 configuration
 pm2 save
@@ -126,47 +133,279 @@ pm2 status
 
 ![PM2 Status](./images/pm2-status.png)
 
-Both applications should show status **"online"** in the PM2 list.
+---
+
+## Sprint 2: Production Hardening (Carlos)
+
+**Objective:** Transition from a development setup to a production-ready configuration, securing the environment variables and connecting to the managed database.
+
+### 1. Environment Variables
+
+*   Created `.env.production` files for both backend and frontend with secure credentials.
+*   **Backend:** Configured to connect to DigitalOcean Managed MySQL. Added SMTP, JWT, Session, and DigitalOcean Spaces configurations.
+    ```env
+    # SMTP Configuration
+    SMTP_USER=canaccesible@gmail.com
+    SMTP_PASS=rgsamiqztuuoilaq
+
+    # Security Secrets
+    JWT_SECRET=Canaccesible_ultra_super_secret_key_2025
+    SESSION_SECRET=Canaccesible_ultra_super_secret_session_key_2025
+
+    # DigitalOcean Spaces
+    DO_ACCESS_KEY=DO00382BZ2C492XWJF8Q
+    DO_SECRET_KEY=eeW6oJ6iNRYDkwgsq4w1oV+nqr7G6EeDF1PZxbEYZko
+    DO_SPACE_NAME=images-cruds
+    DO_SPACE_ENDPOINT=fra1.digitaloceanspaces.com
+    ```
+*   **Frontend:** Pointed `VITE_API_URL` to the production IP.
+
+### 2. CORS Configuration
+
+*   Updated `backend/index.js` to strictly allow requests only from the production IP and localhost, preventing unauthorized cross-origin requests.
+    ```javascript
+    // backend/index.js
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://localhost:85",
+      "http://<DROPLET_IP>:5173",
+    ];
+    ```
+
+### 3. Database Reset & Seeding
+
+*   To ensure a clean state for production, the database was reset using Sequelize CLI with the `NODE_ENV=production` flag. This ensures the commands run against the managed database defined in `.env.production`.
+
+    ```bash
+    # 1. Drop existing tables (Clean slate)
+    npx cross-env NODE_ENV=production sequelize-cli db:drop
+    
+    # 2. Run migrations (Create schema)
+    npx cross-env NODE_ENV=production sequelize-cli db:migrate
+    
+    # 3. Seed initial data (Populate tables)
+    npx cross-env NODE_ENV=production sequelize-cli db:seed:all
+    ```
 
 ---
 
-## Image Storage
+## Sprint 3: Domain, Proxy & Security (Jonathan)
 
-Images are stored in **DigitalOcean Spaces** (Frankfurt region):
+**Objective:** Make the application accessible via a public domain (`canaccesible.es`), secure it with SSL/TLS, and implement Nginx as a reverse proxy to hide internal ports.
 
-- **Upload**: Via Multer middleware in the backend.
-- **Storage**: Persistent storage in Spaces.
-- **Access**: Public URLs returned to frontend.
-- **Lifecycle**: Automatic deletion when records are updated or deleted.
+### 1. Domain & DNS
 
----
+*   Acquired `canaccesible.es` via Nominalia.
+*   Configured **A Records** in the DNS panel to point `@` and `www` to the Droplet's Public IP.
 
-## Updating the Application
+### 2. Nginx Reverse Proxy
 
-To update the code and restart applications:
+*   **Installation:**
+    ```bash
+    sudo apt install nginx
+    ```
+*   **Configuration:**
+    Created `/etc/nginx/sites-available/canaccesible.es` to forward traffic.
+    
+    **Initial Nginx Configuration (Proxy Mode):**
+    ```nginx
+    server {
+        listen 80;
+        server_name canaccesible.es www.canaccesible.es;
+
+        # Proxy to Frontend (Vite Dev Server)
+        location / {
+            proxy_pass http://localhost:5173;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        # Proxy to Backend API
+        location /api/ {
+            proxy_pass http://localhost:85;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+    ```
+
+*   **Enabling the Site:**
+    ```bash
+    sudo ln -s /etc/nginx/sites-available/canaccesible.es /etc/nginx/sites-enabled/
+    sudo rm /etc/nginx/sites-enabled/default
+    sudo systemctl restart nginx
+    ```
+
+### 3. SSL/TLS Encryption
+
+*   Secured the connection using Let's Encrypt and Certbot.
+    ```bash
+    sudo apt install certbot python3-certbot-nginx
+    sudo certbot --nginx -d canaccesible.es -d www.canaccesible.es
+    ```
+*   This automatically configured Nginx to listen on port 443 (HTTPS) and redirect all HTTP traffic to HTTPS.
+
+### 4. Environment Variables Update
+
+Update the `backend/.env.production` file to reflect the new domain:
 
 ```bash
-cd /CanAccesible
-
-# Pull latest changes
-git pull origin main
-
-# Update frontend
-cd frontend
-npm install
-
-# Update backend
-cd ../backend
-npm install
-
-# Restart all PM2 processes
-pm2 restart all
+nano backend/.env.production
 ```
+
+Update the `FRONTEND_URL` variable:
+```env
+FRONTEND_URL=https://canaccesible.es
+```
+
+*   Updated `backend/index.js` CORS configuration to allow the new domain.
+
+### 5. Database Maintenance
+
+*   Performed another round of database reset (drop/migrate/seed) to ensure data integrity with the new domain configurations and verify that the production environment was stable.
 
 ---
 
-## Next Steps: Public Access & Security
+## Sprint 4: Optimization & Dockerization (Iriome)
 
-Once the application is running with PM2, it is accessible via the IP address and port. To configure the **domain name**, **remove the port from the URL**, and enable **HTTPS**, please proceed to the:
+**Objective:** Optimize frontend performance by serving static files (removing the need for a Node process for frontend), containerize the LDAP service for security, and finalize real-time communication features.
 
-👉 **[Domain, DNS & SSL Configuration Guide](./domain-dns-setup.md)**
+### 1. Docker Implementation (OpenLDAP)
+
+*   **Installation:**
+    Installed Docker Engine and Docker Compose on the VPS.
+    ```bash
+    sudo apt install docker.io docker-compose-v2
+    ```
+*   **Deployment:**
+    Deployed OpenLDAP using the `docker-compose.yml` file. This isolates the user directory service.
+    ```bash
+    # Start the container in detached mode
+    docker compose up -d
+    
+    # Verify it's running
+    docker ps
+    ```
+*   **Integration & Environment Updates:** 
+    
+    Edit `backend/.env.production` to include LDAP configuration and VAPID keys:
+    
+    ```bash
+    nano backend/.env.production
+    ```
+
+    Add the following variables:
+    ```env
+    # LDAP Configuration
+    LDAP_URL=ldap://localhost:389
+    LDAP_BASE_DN=dc=canaccesible,dc=es
+    LDAP_ADMIN_DN=cn=admin,dc=canaccesible,dc=es
+    LDAP_ADMIN_PASSWORD=kjhslIOP9002NSILXO
+
+    # Web Push VAPID Keys
+    VAPID_PUBLIC_KEY=BERgLLd2_B1K-eW4DIiGHufqPzReM8dRIZwRD1JmgCwdvImZpvK1hRF0x9Bi6_175zylm6AZ9wxYgGhGEHZpP9s
+    VAPID_PRIVATE_KEY=qyBspyIIQshY-D2nx2SvB3TQHQcg4XIJt78Qmepq7js
+    ```
+
+### 2. Frontend Optimization (Static Serving)
+
+*   **Build Process:**
+    Instead of running `vite dev` or `vite preview`, we built the application for production. This generates optimized HTML, CSS, and JS files.
+    ```bash
+    cd frontend
+    npm run build
+    ```
+*   **Deployment:**
+    Moved the generated `dist` folder to a standard web directory.
+    ```bash
+    sudo mkdir -p /var/www/canaccesible
+    sudo cp -r dist/* /var/www/canaccesible/
+    ```
+
+### 3. Final Nginx Configuration
+
+*   Updated Nginx to serve the frontend **directly as static files** from `/var/www/canaccesible`. This significantly reduces server load and improves load times.
+*   Added configuration for **Socket.io (WebSockets)** to enable real-time chat and notifications.
+
+    **Full Nginx Configuration (`/etc/nginx/sites-available/canaccesible.es`):**
+    ```nginx
+    server {
+        listen 80;
+        server_name canaccesible.es www.canaccesible.es;
+        return 301 https://$host$request_uri;
+    }
+
+    server {
+        listen 443 ssl; # managed by Certbot
+        server_name canaccesible.es www.canaccesible.es;
+
+        ssl_certificate /etc/letsencrypt/live/canaccesible.es/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/canaccesible.es/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+        # Serve Static Frontend
+        location / {
+            root /var/www/canaccesible;
+            index index.html;
+            try_files $uri $uri/ /index.html;
+        }
+
+        # Proxy API Requests
+        location /api/ {
+            proxy_pass http://127.0.0.1:85;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        # WebSocket Support
+        location /socket.io/ {
+            proxy_pass http://127.0.0.1:85;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+        }
+    }
+    ```
+*   **Apply Changes:**
+    ```bash
+    sudo nginx -t
+    sudo systemctl restart nginx
+    ```
+
+### 4. Final Deployment Steps
+
+*   **Backend:** Running on PM2 in production mode.
+    ```bash
+    # Start backend in production mode
+    NODE_ENV=production pm2 start index.js --name "backend"
+    ```
+*   **Database & LDAP:** Reset one final time to populate initial data into MySQL and create the admin users in the new OpenLDAP container.
+    ```bash
+    # Run migrations and seeders (populates MySQL and LDAP)
+    npm run db:migrate
+    npm run db:seed
+    ```
+
+---
+
+## Current Architecture Summary
+
+1.  **User Request** -> **Nginx (Port 443)**
+2.  **Nginx Routes:**
+    *   `/` -> Serves **Static Files** (React Build) from `/var/www/canaccesible`
+    *   `/api` -> Proxies to **Backend (PM2 Port 85)**
+    *   `/socket.io` -> Proxies to **Backend (PM2 Port 85)** with Upgrade headers
+3.  **Backend Connects to:**
+    *   **MySQL Database** (Managed DigitalOcean)
+    *   **OpenLDAP** (Docker Container on localhost:389)
