@@ -231,7 +231,7 @@
               ${showOnRight ? `<div class="shrink-0">${avatarHtml}</div>` : ''}
             </div>
           `;
-        }).join('');
+        }).join('') + '<div id="messagesEnd"></div>';
       }
 
       function startEditing(msgId) {
@@ -267,8 +267,10 @@
       }
 
       function scrollToBottom() {
-        const container = document.getElementById('messagesContainer');
-        container.scrollTop = container.scrollHeight;
+        const element = document.getElementById('messagesEnd');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
 
       async function sendMessage() {
