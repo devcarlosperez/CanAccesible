@@ -73,8 +73,7 @@ module.exports = {
         roleId: 2,
         roleName: "admin",
         password: "admin2",
-        nameFile:
-          "https://images-cruds.fra1.digitaloceanspaces.com/user-image/57087.jpg",
+        nameFile: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -86,8 +85,7 @@ module.exports = {
         roleId: 2,
         roleName: "admin",
         password: "admin3",
-        nameFile:
-          "https://images-cruds.fra1.digitaloceanspaces.com/user-image/raf,360x360,075,t,fafafa_ca443f4786.jpg",
+        nameFile: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
