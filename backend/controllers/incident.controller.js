@@ -41,14 +41,8 @@ exports.create = async (req, res) => {
       return res.status(400).json({ message: "latitude is required" });
     if (!req.body.longitude)
       return res.status(400).json({ message: "longitude is required" });
-    if (!req.body.userId)
-      return res.status(400).json({ message: "userId is required" });
     if (!req.body.incidentTypeId)
       return res.status(400).json({ message: "incidentTypeId is required" });
-    if (!req.body.incidentSeverityId)
-      return res.status(400).json({ message: "incidentSeverityId is required" });
-    if (!req.body.incidentStatusId)
-      return res.status(400).json({ message: "incidentStatusId is required" });
     if (!req.file)
       return res.status(400).json({ message: "Image is required" });
 
@@ -69,10 +63,10 @@ exports.create = async (req, res) => {
     const nameFile = req.file.location;
 
     const incidentToCreate = {
-      incidentStatusId: req.body.incidentStatusId,
+      incidentStatusId: req.body.incidentStatusId || 1,
       incidentSeverityId: incidentSeverityIdFromBody,
       incidentTypeId: req.body.incidentTypeId,
-      userId: req.body.userId,
+      userId: req.user.id,
       name: req.body.name,
       description: req.body.description,
       island: req.body.island,
@@ -80,7 +74,7 @@ exports.create = async (req, res) => {
       address: addressFromBody,
       latitude: req.body.latitude,
       longitude: req.body.longitude,
-      dateIncident: req.body.dateIncident,
+      dateIncident: req.body.dateIncident || new Date(),
       nameFile: nameFile,
       isApproved: isApprovedDefault,
     };
@@ -89,32 +83,13 @@ exports.create = async (req, res) => {
 
     // Create notification for the user
     await Notification.create({
-      userId: req.body.userId,
+      userId: req.user.id,
       entity: "Incident",
       entityId: newIncident.id,
-      message: `New incident "${newIncident.name}" has been created.`,
+      message: `La incidencia "${newIncident.name}" ha sido enviada para su revisión.`,
     });
 
     return res.status(201).json(newIncident);
-
-    // Send email asynchronously
-    setImmediate(async () => {
-      try {
-        const user = await db.user.findByPk(req.body.userId);
-        await transporter.sendMail({
-          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-          to: user.email,
-          subject: "Nueva incidencia creada 🚨",
-          html: `
-        <h2>¡Hola ${user.firstName}!</h2>
-        <p>Tu incidencia <strong>${newIncident.name}</strong> ha sido creada con éxito.</p>
-        <p>La revisaremos en breve brooo 😎🔥</p>
-      `,
-        });
-      } catch (emailError) {
-        console.error("Error sending incident creation email:", emailError);
-      }
-    });
   } catch (err) {
     res.status(500).json({
       message: err.message || "An error occurred while creating the incident.",
@@ -138,8 +113,7 @@ exports.findAll = async (req, res) => {
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
-      message:
-        err.message || "An error occurred while retrieving incidents.",
+      message: err.message || "An error occurred while retrieving incidents.",
     });
   }
 };
@@ -169,6 +143,18 @@ exports.update = async (req, res) => {
     const incidentToUpdate = {};
     const incidentId = req.params.id;
 
+    const incident = await incidentObject.findOne({
+      where: { id: incidentId },
+    });
+    if (!incident) {
+      return res.status(404).json({ message: "Incident not found." });
+    }
+
+    // Check permissions: only creator or admin can update
+    if (req.user.id !== incident.userId && req.user.roleId !== 2) {
+      return res.status(403).json({ message: "You do not have permission to update this incident." });
+    }
+
     if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
       const locationData = await reverseGeocode(
         req.body.latitude,
@@ -188,7 +174,7 @@ exports.update = async (req, res) => {
       incidentToUpdate.incidentTypeId = req.body.incidentTypeId;
     if (req.body.isApproved !== undefined)
       incidentToUpdate.isApproved = req.body.isApproved;
-    if (req.body.userId !== undefined)
+    if (req.body.userId !== undefined && req.user.roleId === 2)
       incidentToUpdate.userId = req.body.userId;
     if (req.body.area !== undefined) incidentToUpdate.area = req.body.area;
     if (req.body.island !== undefined)
@@ -243,6 +229,11 @@ exports.delete = async (req, res) => {
       return res.status(404).json({ message: "Incident not found." });
     }
 
+    // Check permissions: only creator or admin can delete
+    if (req.user.id !== incident.userId && req.user.roleId !== 2) {
+      return res.status(403).json({ message: "You do not have permission to delete this incident." });
+    }
+
     await deleteImageFromStorage(incident.nameFile);
     await incidentObject.destroy({ where: { id: incidentId } });
 
@@ -251,8 +242,44 @@ exports.delete = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
+      message: err.message || "An error occurred while deleting the incident.",
+    });
+  }
+};
+
+// Retrieves all incidents created by the authenticated user with like count
+exports.findMyIncidents = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const data = await incidentObject.findAll({
+      where: { userId: userId },
+      include: [
+        {
+          model: db.incidentLike,
+          as: "likes",
+          attributes: ["id"],
+        },
+        {
+          model: db.incidentStatus,
+          as: "status",
+          attributes: ["status"],
+        },
+      ],
+    });
+
+    // Transform data to include like count
+    const incidentsWithLikes = data.map((incident) => {
+      const incidentJson = incident.toJSON();
+      incidentJson.likesCount = incidentJson.likes.length;
+      delete incidentJson.likes; // Remove the array to keep it clean
+      return incidentJson;
+    });
+
+    res.status(200).json(incidentsWithLikes);
+  } catch (err) {
+    res.status(500).json({
       message:
-        err.message || "An error occurred while deleting the incident.",
+        err.message || "An error occurred while retrieving user incidents.",
     });
   }
 };

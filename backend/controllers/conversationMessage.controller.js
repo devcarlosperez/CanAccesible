@@ -2,16 +2,18 @@ const db = require("../models");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
+const { getIo } = require("../services/socket.service");
+const pushSubscriptionController = require("./pushSubscription.controller");
 
 // Create a new conversation message
 exports.create = async (req, res) => {
   try {
     const senderId = req.user.id; // Extracted from JWT token
-    const { message, dateMessage } = req.body;
+    const { message } = req.body;
     const conversationId = req.params.conversationId;
 
-    if (!conversationId || !message || !dateMessage) {
-      return res.status(400).json({ message: "All fields are required." });
+    if (!conversationId || !message) {
+      return res.status(400).json({ message: "conversationId and message are required." });
     }
 
     // Verify that the conversation exists and user has access
@@ -21,21 +23,37 @@ exports.create = async (req, res) => {
     }
 
     // Check if user is owner of conversation or admin
-    const isAdmin = req.user.role === 'admin';
+    const isAdmin = req.user.role === "admin";
     if (conversation.userId !== senderId && !isAdmin) {
-      return res.status(403).json({ message: "You do not have permission to send messages in this conversation." });
+      return res
+        .status(403)
+        .json({
+          message:
+            "You do not have permission to send messages in this conversation.",
+        });
     }
 
     const conversationMessage = await ConversationMessage.create({
       conversationId,
       senderId,
       message,
-      dateMessage,
+      dateMessage: new Date(),
     });
+
+    // Emit new message to conversation room
+    const io = getIo();
+    io.to(conversationId).emit("newMessage", conversationMessage);
+
+    // Notification logic moved to socket to avoid duplication
+    // if (senderId !== conversation.userId) { ... }
 
     res.status(201).json(conversationMessage);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error creating the conversation message." });
+    res
+      .status(500)
+      .json({
+        message: err.message || "Error creating the conversation message.",
+      });
   }
 };
 
@@ -44,7 +62,7 @@ exports.findAll = async (req, res) => {
   try {
     const conversationId = req.params.conversationId;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'admin';
+    const isAdmin = req.user.role === "admin";
 
     // Verify conversation exists
     const conversation = await Conversation.findByPk(conversationId);
@@ -54,17 +72,26 @@ exports.findAll = async (req, res) => {
 
     // Check if user is owner of conversation or admin
     if (conversation.userId !== userId && !isAdmin) {
-      return res.status(403).json({ message: "You do not have permission to view messages in this conversation." });
+      return res
+        .status(403)
+        .json({
+          message:
+            "You do not have permission to view messages in this conversation.",
+        });
     }
 
     // Get all messages of this conversation
     const messages = await ConversationMessage.findAll({
-      where: { conversationId }
+      where: { conversationId },
     });
 
     res.status(200).json(messages);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving conversation messages." });
+    res
+      .status(500)
+      .json({
+        message: err.message || "Error retrieving conversation messages.",
+      });
   }
 };
 
@@ -74,7 +101,7 @@ exports.findOne = async (req, res) => {
     const messageId = req.params.id;
     const conversationId = req.params.conversationId;
     const userId = req.user.id;
-    const isAdmin = req.user.role === 'admin';
+    const isAdmin = req.user.role === "admin";
 
     // Verify conversation exists
     const conversation = await Conversation.findByPk(conversationId);
@@ -84,7 +111,7 @@ exports.findOne = async (req, res) => {
 
     // Find the message
     const message = await ConversationMessage.findOne({
-      where: { id: messageId, conversationId }
+      where: { id: messageId, conversationId },
     });
 
     if (!message) {
@@ -92,13 +119,21 @@ exports.findOne = async (req, res) => {
     }
 
     // Check if user can view: is owner of conversation, admin, or author of message
-    if (conversation.userId !== userId && !isAdmin && message.senderId !== userId) {
-      return res.status(403).json({ message: "You do not have permission to view this message." });
+    if (
+      conversation.userId !== userId &&
+      !isAdmin &&
+      message.senderId !== userId
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You do not have permission to view this message." });
     }
 
     res.status(200).json(message);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error retrieving the message." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error retrieving the message." });
   }
 };
 
@@ -111,7 +146,9 @@ exports.update = async (req, res) => {
     const { message: updatedMessage } = req.body;
 
     if (!updatedMessage) {
-      return res.status(400).json({ message: "The message field is required." });
+      return res
+        .status(400)
+        .json({ message: "The message field is required." });
     }
 
     // Verify conversation exists
@@ -122,7 +159,7 @@ exports.update = async (req, res) => {
 
     // Find the message
     const messageRecord = await ConversationMessage.findOne({
-      where: { id: messageId, conversationId }
+      where: { id: messageId, conversationId },
     });
 
     if (!messageRecord) {
@@ -131,14 +168,18 @@ exports.update = async (req, res) => {
 
     // Check if user is the owner of the message (only sender can edit)
     if (messageRecord.senderId !== userId) {
-      return res.status(403).json({ message: "You do not have permission to edit this message." });
+      return res
+        .status(403)
+        .json({ message: "You do not have permission to edit this message." });
     }
 
     await messageRecord.update({ message: updatedMessage });
 
     res.status(200).json(messageRecord);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error updating the message." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error updating the message." });
   }
 };
 
@@ -157,7 +198,7 @@ exports.delete = async (req, res) => {
 
     // Find the message
     const message = await ConversationMessage.findOne({
-      where: { id: messageId, conversationId }
+      where: { id: messageId, conversationId },
     });
 
     if (!message) {
@@ -166,15 +207,21 @@ exports.delete = async (req, res) => {
 
     // Check if user is the owner of the message (only sender can delete)
     if (message.senderId !== userId) {
-      return res.status(403).json({ message: "You do not have permission to delete this message." });
+      return res
+        .status(403)
+        .json({
+          message: "You do not have permission to delete this message.",
+        });
     }
 
     await ConversationMessage.destroy({
-      where: { id: messageId }
+      where: { id: messageId },
     });
 
     res.status(200).json({ message: "Message deleted successfully." });
   } catch (err) {
-    res.status(500).json({ message: err.message || "Error deleting the message." });
+    res
+      .status(500)
+      .json({ message: err.message || "Error deleting the message." });
   }
 };

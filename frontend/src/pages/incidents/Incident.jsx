@@ -1,24 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  getAllIncidents,
-  createIncident,
-  updateIncident,
-  deleteIncident,
-} from "../../services/incidentService";
-import {
-  getIncidentLikeByIncidentAndUserId,
-  createIncidentLike,
-  deleteIncidentLike,
-} from "../../services/incidentLikesService";
-import {
-  getAllIncidentFollows,
-  getIncidentFollowsByIncidentId,
-  getIncidentFollowByIncidentAndUserId,
-  createIncidentFollow,
-  deleteIncidentFollow,
-} from "../../services/incidentFollowsService.js";
+import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
+import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
+import { getIncidentFollowsByIncidentId, getIncidentFollowByIncidentAndUserId, createIncidentFollow, deleteIncidentFollow } from "../../services/incidentFollowsService.js";
 import { createNotification } from "../../services/notificationService.js";
 
 import useAuthStore from "../../services/authService.js";
@@ -30,10 +15,13 @@ import AddIcon from "@mui/icons-material/Add";
 
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 import "react-toastify/dist/ReactToastify.css";
 
 const Incident = () => {
+  const { t } = useTranslation();
   const [incidents, setIncidents] = useState([]);
   const [users] = useState([]);
   const [editingIncident, setEditingIncident] = useState(null);
@@ -53,7 +41,7 @@ const Incident = () => {
   const initialFormData = {
     name: "",
     description: "",
-    incidentStatusId: 1,
+    incidentStatusId: 3,
     incidentTypeId: 1,
     incidentSeverityId: 1,
     userId: isAuthenticated ? user.id : null,
@@ -61,6 +49,7 @@ const Incident = () => {
     area: "",
     latitude: "",
     longitude: "",
+    isApproved: false,
     dateIncident: new Date().toISOString().split("T")[0],
   };
 
@@ -83,7 +72,7 @@ const Incident = () => {
       const data = await getAllIncidents();
       setIncidents(data);
     } catch (err) {
-      console.error("Error cargando incidencias:", err);
+      // Silently fail
     }
   };
 
@@ -125,12 +114,16 @@ const Incident = () => {
         for (const follower of followers) {
           await createNotification({
             userId: follower.userId,
-            message: `La incidencia "${formData.name}" ha sido actualizada.`,
+            message: t('incident_updated', { name: formData.name }),
             entity: "IncidentFollow",
             entityId: updatedIncidentId,
             dateNotification: new Date().toISOString().split("T")[0],
           });
         }
+      }
+
+      if (!editingIncident) {
+        toast.success(t('incidents_sent_for_review'));
       }
     } catch (err) {
       console.error("Error guardando incidencia:", err);
@@ -158,11 +151,15 @@ const Incident = () => {
       if (isActive) return;
     }
 
+    const isMobile = window.innerWidth < 768;
+    const position = isMobile ? "bottom-center" : "bottom-right";
+
     const toastId = toast.error(message, {
       autoClose: 5000,
-      position: "bottom-right",
+      position: position,
       hideProgressBar: false,
       closeButton: true,
+      style: isMobile ? { fontSize: "14px", padding: "16px" } : {},
     });
     setLastErrorToastId(toastId);
   };
@@ -171,7 +168,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder dar like a una incidencia.");
+        showErrorToast(t('incidents_like_login'));
         return;
       }
 
@@ -203,7 +200,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast("Inicia sesión para poder seguir una incidencia.");
+        showErrorToast(t('incidents_follow_login'));
         return;
       }
 
@@ -243,28 +240,39 @@ const Incident = () => {
   };
 
   return (
-    <section>
+    <>
       <Header transparent={false} />
-      <div className="pt-40 p-8 bg-gray-200">
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="pt-40 p-8 pb-20 bg-gray-200"
+      >
         <h1
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
         >
-          Gestión de Incidencias
+          {t('incidents_title')}
         </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          {isAuthenticated && !showForm && (
+          {!showForm && (
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              startIcon={isAuthenticated ? <AddIcon /> : null}
               onClick={() => {
-                setShowForm(true);
-                setFormData(initialFormData);
-                setEditingIncident(null);
+                if (isAuthenticated) {
+                  setShowForm(true);
+                  setFormData(initialFormData);
+                  setEditingIncident(null);
+                } else {
+                  navigate("/register");
+                }
               }}
             >
-              Nueva Incidencia
+              {isAuthenticated
+                ? t('incidents_new')
+                : t('incidents_login_to_create')}
             </Button>
           )}
         </div>
@@ -308,9 +316,9 @@ const Incident = () => {
           viewMoreIncidentId={viewMoreIncidentId}
           handleCloseViewMore={handleCloseViewMore}
         />
-      </div>
+      </motion.main>
       <Footer />
-    </section>
+    </>
   );
 };
 

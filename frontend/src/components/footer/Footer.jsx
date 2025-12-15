@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
-import logo from "../../assets/canaccesible-logo.png";
+import { useTranslation } from "react-i18next";
+import logo from "../../assets/canaccesible-logo.webp";
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="flex flex-col items-center justify-center bg-neutral-100 text-neutral-800 py-10 px-6 lg:px-20">
-      {/* Contenedor principal */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full max-w-7xl mb-10">
-        {/* IZQUIERDA: Logo, texto y redes */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0 md:w-2/3 ">
-          {/* Logo */}
           <Link to="/">
             <div className="transition-all duration-300 hover:scale-105 mb-4">
               <img
@@ -19,93 +19,117 @@ const Footer = () => {
             </div>
           </Link>
 
-          {/* Texto visible solo en tablet y desktop */}
           <p className="hidden md:block text-sm text-neutral-600 font-roboto leading-relaxed max-w-sm mb-4">
-            CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología
-            y la accesibilidad digital.
+            {t('footer_description')}
           </p>
 
-          {/* Redes sociales */}
           <div className="flex gap-6 text-3xl">
             <a
-              href="#"
+              href="https://www.youtube.com/channel/UC_IICs-9f1KYxOuIBQxfQ0g"
               className="text-neutral-800 hover:text-red-600 transition-colors"
+              aria-label="Visita nuestro canal de YouTube"
             >
               <i className="fa-brands fa-youtube"></i>
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/canaccesible/"
               className="text-neutral-800 hover:text-pink-600 transition-colors"
+              aria-label="Visita nuestro perfil de Instagram"
             >
               <i className="fa-brands fa-instagram"></i>
             </a>
             <a
-              href="#"
+              href="https://www.tiktok.com/@canaccesible"
               className="text-neutral-800 hover:text-black transition-colors"
+              aria-label="Visita nuestro perfil de TikTok"
             >
               <i className="fa-brands fa-tiktok"></i>
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/canaccesible-el-rinc%C3%B3n-83b8a83a0/"
               className="text-neutral-800 hover:text-blue-700 transition-colors"
+              aria-label="Visita nuestro perfil de LinkedIn"
             >
               <i className="fa-brands fa-linkedin"></i>
             </a>
           </div>
         </div>
-
-        {/* DERECHA: Secciones */}
         <div className="flex flex-row justify-evenly md:justify-around text-center md:text-left w-full md:w-2/3">
-          {/* Compañía */}
           <div className="text-left">
-            <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-3 font-poppins font-semibold">
-              Compañía
-            </h3>
+            <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
+              {t('company')}
+            </h2>
             <ul className="space-y-8.5 lg:space-y-5 text-base font-roboto font-semibold">
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Sobre Nosotros
-              </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Trabajos
-              </li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Servicios
-              </li>
-            </ul>
-          </div>
-
-          {/* Ayuda */}
-          <div className="text-left">
-            <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-3 font-poppins font-semibold">
-              Ayuda
-            </h3>
-            <ul className="space-y-5 text-base font-roboto font-semibold">
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">
-                Soporte
-              </li>
               <li>
-                <Link to={"/terms-conditions"} className="hover:text-blue-600 transition-colors cursor-pointer inline-block">
-                  Términos y <br className="block lg:hidden" />
-                  <span className="hidden md:inline"> </span>
-                  Condiciones
+                <Link
+                  to="/home#mission"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {t('our_mission')}
                 </Link>
               </li>
               <li>
-                <Link to={"/privacy-policy"} className="hover:text-blue-600 transition-colors cursor-pointer inline-block">
-                  Política de <br className="block lg:hidden" />
-                  <span className="hidden md:inline"> </span>
-                  Privacidad
+                <Link
+                  to="/home#services"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {t('services')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/home#about-us"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {t('about_us')}
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="text-left">
+            <h2 className="text-sm uppercase tracking-wider text-neutral-700 mb-3 font-poppins font-semibold">
+              {t('help')}
+            </h2>
+            <ul className="space-y-5 text-base font-roboto font-semibold">
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {t('support')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"/terms-conditions"}
+                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
+                >
+                  {t('terms_conditions')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"/privacy-policy"}
+                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
+                >
+                  {t('privacy_policy')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"/push-notifications-guide"}
+                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
+                >
+                  {t('push_notifications_guide')}
                 </Link>
               </li>
             </ul>
           </div>
         </div>
       </div>
-
-      {/* COPYRIGHT */}
       <hr className="w-full max-w-7xl border-neutral-200 mb-6" />
-      <p className="text-xs text-neutral-500 text-center font-roboto">
-        © CANACCESIBLE 2025, All Rights Reserved
+      <p className="text-xs text-neutral-700 text-center font-roboto">
+        {t('all_rights_reserved')}
       </p>
     </footer>
   );

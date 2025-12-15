@@ -3,15 +3,10 @@ import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaf
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
-
-const markerIcon = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
+import { toast } from "react-toastify"; // Importar toast
 
 const canariasBounds = [
     [27.5, -18.5],
@@ -50,14 +45,17 @@ async function reverseGeocode(latitude, longitude) {
     }
 }
 
-function ClickMarker({ setFormData }) {
-    const [position, setPosition] = useState(null);
+function ClickMarker({ setFormData, initialPosition }) {
+    const [position, setPosition] = useState(
+        Array.isArray(initialPosition) && initialPosition.length === 2
+            ? initialPosition
+            : null
+    );
 
     useMapEvents({
         async click(e) {
             const { lat, lng } = e.latlng;
             setPosition([lat, lng]);
-
             try {
                 const result = await reverseGeocode(lat, lng);
                 const postalCode = result.address.postcode;
@@ -70,7 +68,6 @@ function ClickMarker({ setFormData }) {
                     island: island,
                 }));
             } catch (error) {
-                console.error("Error in reverse geocoding:", error);
                 setFormData(f => ({
                     ...f,
                     latitude: lat,
@@ -81,15 +78,25 @@ function ClickMarker({ setFormData }) {
         }
     });
 
-    return position ? (
+    useEffect(() => {
+        if (Array.isArray(initialPosition) && initialPosition.length === 2) {
+            setPosition(initialPosition);
+        } else {
+            setPosition(null);
+        }
+    }, [initialPosition]);
+
+    if (!Array.isArray(position) || position.length !== 2) return null;
+
+    return (
         <Marker position={position}>
             <Popup>
                 Marcador añadido<br />
-                Lat: {position[0].toFixed(5)} <br />
-                Lng: {position[1].toFixed(5)}
+                Lat: {typeof position[0] === "number" ? position[0].toFixed(5) : ""} <br />
+                Lng: {typeof position[1] === "number" ? position[1].toFixed(5) : ""}
             </Popup>
         </Marker>
-    ) : null;
+    );
 }
 
 const IncidentForm = ({
@@ -101,6 +108,7 @@ const IncidentForm = ({
     open,
     setOpen,
 }) => {
+    const { t } = useTranslation();
 
     const [errors, setErrors] = useState({
         image: "",
@@ -115,13 +123,13 @@ const IncidentForm = ({
         let newErrors = { image: "", island: "" };
         let hasError = false;
 
-        if (!formData.imageFile && !formData.previewUrl) {
-            newErrors.image = "Debes subir una imagen antes de continuar.";
+        if (!formData.previewUrl && !formData.nameFile) {
+            newErrors.image = t('form_error_image');
             hasError = true;
         }
 
         if (!formData.island || formData.island === "Desconocida") {
-            newErrors.island = "No se pudo detectar correctamente la isla. Selecciona un punto válido en el mapa.";
+            newErrors.island = t('form_error_island');
             hasError = true;
         }
 
@@ -133,54 +141,44 @@ const IncidentForm = ({
         onSubmit(e);
     };
 
+    const initialMarkerPosition =
+        formData.latitude && formData.longitude
+            ? [formData.latitude, formData.longitude]
+            : null;
+
     return (
         <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
             <DialogContent>
                 <Typography variant="h5" align="center" sx={{ fontWeight: "bold", mb: 4, mt: 2 }}>
-                    {editingIncident ? "Editar Incidencia" : "Nuevo Incidencia"}
+                    {editingIncident ? t('form_edit_incident') : t('form_new_incident')}
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3} direction="column">
                         {/* Name */}
                         <Grid item>
-                            <TextField fullWidth label="Nombre" name="title" value={formData.title} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
+                            <TextField fullWidth label={t('form_name')} name="name" value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} required />
                         </Grid>
                         {/* Description */}
                         <Grid item>
-                            <TextField fullWidth label="Descripción" name="description" multiline rows={3} value={formData.description} onChange={e => setFormData(f => ({ ...f, description: e.target.value }))} required />
+                            <TextField fullWidth label={t('form_description')} name="description" multiline rows={3} value={formData.description} onChange={e => setFormData(f => ({ ...f, description: e.target.value }))} required />
                         </Grid>
                         {/* Area */}
                         <Grid item>
                             <TextField
                                 select
                                 fullWidth
-                                label="Area"
+                                label={t('form_area')}
                                 name="area"
-                                value={formData.area}
-                                onChange={e => setFormData(f => ({ ...f, area: e.target.value }))}
+                                value={formData.area || ''}
+                                onChange={e => setFormData(f => ({ ...f, area: e.target.value }))
+                                }
                                 required
                             >
-                                <MenuItem value={1}>movilidad</MenuItem>
-                                <MenuItem value={2}>sensorial</MenuItem>
-                                <MenuItem value={3}>arquitectura</MenuItem>
-                                <MenuItem value={4}>transporte</MenuItem>
-                                <MenuItem value={5}>otro</MenuItem>
-                            </TextField>
-                        </Grid>
-                        {/* Status */}
-                        <Grid item>
-                            <TextField
-                                select
-                                fullWidth
-                                label="Estado"
-                                name="incidentStatusId"
-                                value={formData.incidentStatusId}
-                                onChange={e => setFormData(f => ({ ...f, incidentStatusId: Number(e.target.value) }))}
-                                required
-                            >
-                                <MenuItem value={1}>Pendiente</MenuItem>
-                                <MenuItem value={2}>En progreso</MenuItem>
-                                <MenuItem value={3}>Resuelto</MenuItem>
+                                <MenuItem value="movilidad">{t('form_area_mobility')}</MenuItem>
+                                <MenuItem value="sensorial">{t('form_area_sensory')}</MenuItem>
+                                <MenuItem value="arquitectura">{t('form_area_architecture')}</MenuItem>
+                                <MenuItem value="transporte">{t('form_area_transport')}</MenuItem>
+                                <MenuItem value="otro">{t('form_area_other')}</MenuItem>
                             </TextField>
                         </Grid>
                         {/* Type */}
@@ -188,14 +186,22 @@ const IncidentForm = ({
                             <TextField
                                 select
                                 fullWidth
-                                label="Tipo"
+                                label={t('form_type')}
                                 name="incidentTypeId"
                                 value={formData.incidentTypeId}
-                                onChange={e => setFormData(f => ({ ...f, incidentTypeId: Number(e.target.value) }))}
+                                onChange={e => {
+                                    const newVal = Number(e.target.value);
+                                    setFormData(f => ({ 
+                                        ...f, 
+                                        incidentTypeId: newVal,
+                                        incidentSeverityId: newVal === 1 ? null : f.incidentSeverityId,
+                                        incidentStatusId: newVal === 1 ? 3 : 1
+                                    }));
+                                }}
                                 required
                             >
-                                <MenuItem value={1}>Buena Practica</MenuItem>
-                                <MenuItem value={2}>Mala Practica</MenuItem>
+                                <MenuItem value={1}>{t('form_good_practice')}</MenuItem>
+                                <MenuItem value={2}>{t('form_bad_practice')}</MenuItem>
                             </TextField>
                         </Grid>
                         {/* Severity (only if Bad Practice) */}
@@ -204,15 +210,16 @@ const IncidentForm = ({
                                 <TextField
                                     select
                                     fullWidth
-                                    label="Severidad"
+                                    label={t('form_severity')}
                                     name="incidentSeverityId"
-                                    value={formData.incidentSeverityId}
-                                    onChange={e => setFormData(f => ({ ...f, incidentSeverityId: Number(e.target.value) }))}
+                                    value={formData.incidentSeverityId ? Number(formData.incidentSeverityId) : ''}
+                                    onChange={e => setFormData(f => ({ ...f, incidentSeverityId: Number(e.target.value) }))
+                                    }
                                     required
                                 >
-                                    <MenuItem value={1}>Baja</MenuItem>
-                                    <MenuItem value={2}>Media</MenuItem>
-                                    <MenuItem value={3}>Alta</MenuItem>
+                                    <MenuItem value={1}>{t('form_severity_low')}</MenuItem>
+                                    <MenuItem value={2}>{t('form_severity_medium')}</MenuItem>
+                                    <MenuItem value={3}>{t('form_severity_high')}</MenuItem>
                                 </TextField>
                             </Grid>
                         )}
@@ -220,7 +227,7 @@ const IncidentForm = ({
                         <Grid item>
                             <TextField
                                 fullWidth
-                                label="Fecha"
+                                label={t('form_date')}
                                 name="dateIncident"
                                 type="date"
                                 value={formData.dateIncident}
@@ -246,7 +253,7 @@ const IncidentForm = ({
                                         attribution='&copy; OpenStreetMap contributors'
                                     />
 
-                                    <ClickMarker setFormData={setFormData} />
+                                    <ClickMarker setFormData={setFormData} initialPosition={initialMarkerPosition} />
                                 </MapContainer>
                             </div>
 
@@ -259,11 +266,23 @@ const IncidentForm = ({
                         {/* Image */}
                         <Grid item>
                             <Button variant="outlined" component="label" startIcon={<PhotoCamera />} fullWidth>
-                                {formData.previewUrl ? "Cambiar Imagen" : "Subir Imagen"}
-                                <input type="file" accept="image/*" name="imageFile" hidden onChange={e => {
-                                    const file = e.target.files[0];
-                                    if (file) setFormData(f => ({ ...f, imageFile: file, previewUrl: URL.createObjectURL(file) }));
-                                }} />
+                                {formData.previewUrl || formData.nameFile ? t('form_change_image') : t('form_upload_image')}
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    name="image" 
+                                    hidden 
+                                    onChange={e => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            setFormData(f => ({ 
+                                                ...f, 
+                                                image: file,
+                                                previewUrl: URL.createObjectURL(file) 
+                                            }));
+                                        }
+                                    }} 
+                                />
                             </Button>
                         </Grid>
 
@@ -274,21 +293,37 @@ const IncidentForm = ({
                         )}
 
                         {/* Image preview */}
-                        {formData.previewUrl && (
+                        {(formData.previewUrl || formData.nameFile) && (
                             <Grid item textAlign="center">
-                                <img src={formData.previewUrl} alt="Preview" style={{ width: "100%", maxWidth: 400, borderRadius: "8px", marginTop: "10px" }} />
+                                <img 
+                                    src={
+                                        formData.previewUrl || 
+                                        (typeof formData.nameFile === 'string' ? formData.nameFile : '') || 
+                                        ''
+                                    } 
+                                    alt="Preview" 
+                                    style={{ 
+                                        width: "100%", 
+                                        maxWidth: "400px", 
+                                        maxHeight: "250px", 
+                                        objectFit: "contain", 
+                                        borderRadius: "8px", 
+                                        margin: "10px auto",
+                                        display: "block"
+                                    }} 
+                                />
                             </Grid>
                         )}
                         {/* Buttons */}
                         <Grid item>
                             <Button variant="contained" color="success" type="submit" fullWidth sx={{ mt: 2 }}>
                                 {submitting
-                                    ? (editingIncident ? "Actualizando..." : "Creando...")
-                                    : (editingIncident ? "Actualizar Incidencia" : "Crear Incidencia")}
+                                    ? (editingIncident ? t('form_updating') : t('form_creating'))
+                                    : (editingIncident ? t('form_update_incident') : t('form_create_incident'))}
                             </Button>
                             {onCancel && (
                                 <Button variant="outlined" color="error" fullWidth sx={{ mt: 1 }} onClick={onCancel}>
-                                    Cancelar
+                                    {t('cancel')}
                                 </Button>
                             )}
                         </Grid>

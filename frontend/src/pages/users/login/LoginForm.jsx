@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useAuthStore from "../../../services/authService.js";
-import logo from "../../../assets/canaccesible-logo-2.png";
+import logo from "../../../assets/canaccesible-logo-2.webp";
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const { login, loading, error, isAuthenticated } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,11 +45,11 @@ const LoginForm = () => {
         className="w-full max-w-md font-roboto mt-11"
       >
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
-          Correo electrónico
+          {t('login_email_label')}
         </label>
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t('login_email_placeholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -55,11 +57,11 @@ const LoginForm = () => {
         />
 
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
-          Contraseña
+          {t('login_password_label')}
         </label>
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder={t('login_password_placeholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -69,10 +71,10 @@ const LoginForm = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-6 gap-2">
           <label className="flex items-center gap-2">
             <input type="checkbox" className="accent-primary-2" />
-            Recuérdame
+            {t('login_remember_me')}
           </label>
           <a href="#" className="text-primary-2 hover:underline">
-            Olvidé mi contraseña
+            {t('login_forgot_password')}
           </a>
         </div>
 
@@ -85,16 +87,16 @@ const LoginForm = () => {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer disabled:opacity-70"
         >
-          {loading ? "Cargando..." : "Iniciar Sesión"}
+          {loading ? t('login_loading') : t('login_button')}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          ¿No tienes una cuenta?{" "}
+          {t('login_no_account')}{" "}
           <a
             href="/register"
             className="text-primary-2 font-medium hover:underline"
           >
-            Regístrate aquí
+            {t('login_register_link')}
           </a>
         </p>
       </form>

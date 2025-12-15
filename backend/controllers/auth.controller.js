@@ -1,6 +1,6 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const userService = require("../services/user.service");
 const User = db.user;
 const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
@@ -9,15 +9,23 @@ const { createLog } = require("../services/log.service");
 
 exports.signIn = async (req, res) => {
   try {
+    let email, password;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Basic ")) {
-      return res.status(400).json({ message: "Missing Authorization header" });
+    // 1. Try Basic Auth Header
+    if (authHeader && authHeader.startsWith("Basic ")) {
+      const base64Credentials = authHeader.split(" ")[1];
+      const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
+      [email, password] = decoded.split(":");
+    } 
+    // 2. Try Request Body (JSON or URL-encoded)
+    else if (req.body.email && req.body.password) {
+      email = req.body.email;
+      password = req.body.password;
+    } 
+    else {
+      return res.status(400).json({ message: "Missing credentials. Please provide Basic Auth header or email/password in body." });
     }
-
-    const base64Credentials = authHeader.split(" ")[1];
-    const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
-    const [email, password] = decoded.split(":");
 
     const user = await User.findOne({
       where: { email },
@@ -28,9 +36,9 @@ exports.signIn = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const ldapResult = await userService.authenticate(email, password);
 
-    if (!validPassword) {
+    if (!ldapResult) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
@@ -58,11 +66,11 @@ exports.signIn = async (req, res) => {
       userId: user.id,
       entity: "User",
       entityId: user.id,
-      message: "Inicio de sesión detectado en tu cuenta",
+      message: "Login detected on your account",
       dateNotification: new Date(),
     });
 
-    await createLog(user.id, "User Login", "User", user.id);
+    await createLog(user.id, "LOGIN", "User", user.id);
 
     res.status(200).json({
       message: "Successful login",
@@ -75,7 +83,6 @@ exports.signIn = async (req, res) => {
       token,
     });
 
-    // Send email asynchronously (don't block the response)
     setImmediate(async () => {
       try {
         await transporter.sendMail({
@@ -90,19 +97,18 @@ exports.signIn = async (req, res) => {
           `,
         });
       } catch (emailError) {
-        console.error("Error sending login notification email:", emailError);
-        // Don't fail the login if email fails
+        console.error("[MAIL] Send error:", emailError);
       }
     });
   } catch (error) {
-    console.error("Error in signIn:", error);
+    console.error("[AUTH] SignIn error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 exports.logout = async (req, res) => {
   if (req.session && req.session.userId) {
-    await createLog(req.session.userId, "User Logout", "User", req.session.userId);
+    await createLog(req.session.userId, "LOGOUT", "User", req.session.userId);
   }
 
   req.session.destroy((err) => {

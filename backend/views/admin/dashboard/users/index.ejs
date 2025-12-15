@@ -2,6 +2,11 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/images/canaccesible_fav_icon.png"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -17,7 +22,7 @@
   <body class="bg-gray-200 min-h-screen">
     <%- include('../../../partials/header') %>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <!-- Breadcrumb & Title -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-6">
@@ -87,27 +92,27 @@
             <thead class="bg-gray-50">
               <tr>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
                 >
                   Usuario
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
                 >
                   Email
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
                 >
                   Rol
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
                 >
                   Fecha Registro
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider hidden"
                   id="col-incidents"
                 >
                   Incidencias
@@ -125,7 +130,7 @@
         <!-- Pagination -->
         <div id="paginationContainer" class="p-4 flex justify-center"></div>
       </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -165,7 +170,7 @@
       async function loadUsers() {
         const container = document.getElementById("usersTableBody");
         container.innerHTML =
-          '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Cargando...</td></tr>';
+          '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-700">Cargando...</td></tr>';
 
         try {
           let url = "/api/users";
@@ -181,7 +186,7 @@
         } catch (error) {
           console.error("Error loading users:", error);
           container.innerHTML =
-            '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error al cargar usuarios</td></tr>';
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-red-700">Error al cargar usuarios</td></tr>';
         }
       }
 
@@ -191,7 +196,7 @@
 
         if (allUsers.length === 0) {
           container.innerHTML =
-            '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No se encontraron usuarios</td></tr>';
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-700">No se encontraron usuarios</td></tr>';
           return;
         }
 
@@ -217,10 +222,10 @@
 
           const incidentsCell =
             currentFilter === "top"
-              ? `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center font-bold">${
+              ? `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center font-bold">${
                   user.incidenceCount || 0
                 }</td>`
-              : '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden"></td>';
+              : '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 hidden"></td>';
 
           const row = `
                 <tr>
@@ -240,12 +245,12 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">${user.email}</div>
+                        <div class="text-sm text-gray-700">${user.email}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         ${roleBadge}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         ${date}
                     </td>
                     ${incidentsCell}

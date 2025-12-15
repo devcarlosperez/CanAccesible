@@ -7,9 +7,11 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
-    allowedHosts: ['canaccesible.es', 'www.canaccesible.es', 'localhost'],
-    hmr: {
-      clientPort: 443
-    }
-  }
+    allowedHosts: ["canaccesible.es", "www.canaccesible.es", "localhost"],
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/setupTest.js",
+  },
 });

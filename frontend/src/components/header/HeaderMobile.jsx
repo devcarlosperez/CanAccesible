@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import MobileMenu from "./HeaderMobileMenu.jsx";
 import useAuthStore from "../../services/authService.js";
-import logo from "../../assets/canaccesible-logo-2.png";
+import logo from "../../assets/canaccesible-logo-2.webp";
 import "./Header.css";
 
 const HeaderMobile = ({
@@ -16,7 +16,13 @@ const HeaderMobile = ({
   scrolled,
 }) => {
   const { isAuthenticated, user, isAdmin, logout } = useAuthStore();
+  const navigate = useNavigate();
   const notificationsCount = notifications.length;
+
+  const handleLogout = () => {
+    navigate("/home");
+    logout();
+  };
 
   return (
     <>
@@ -60,7 +66,7 @@ const HeaderMobile = ({
         isAuthenticated={isAuthenticated}
         user={user}
         isAdmin={isAdmin}
-        onLogout={logout}
+        onLogout={handleLogout}
       />
     </>
   );

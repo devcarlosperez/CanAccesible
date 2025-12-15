@@ -31,10 +31,6 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     nameFile: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -54,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Conversation, { foreignKey: 'userId', as: 'conversations' });
     User.hasMany(models.ConversationMessage, { foreignKey: 'senderId', as: 'messages' });
     User.hasMany(models.Log, { foreignKey: 'userId', as: 'logs' });
+    User.hasMany(models.pushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions' });
   };
 
   return User;

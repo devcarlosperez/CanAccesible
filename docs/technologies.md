@@ -22,7 +22,8 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 ### Authentication & Security
 
 - **JSON Web Token (JWT)**: Used for secure user authentication. Tokens are generated upon login and validated on each protected request.
-- **Bcrypt**: Library for password hashing before storage in the database, ensuring credential security.
+- **LDAP JS**: Client library for interacting with LDAP servers, used for user authentication and directory operations.
+- **SSHA Password Hashing**: Secure password hashing implemented in LDAP using the SSHA (Salted SHA) algorithm for credential security.
 - **Express Session**: Middleware to handle user sessions.
 
 ### File Handling & Storage
@@ -34,6 +35,9 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 ### Communication & Notifications
 
 - **Nodemailer**: Module for sending emails from the server (e.g., confirmations, notifications).
+- **Web Push API**: Browser API for sending push notifications to users. Implemented using the `web-push` library for server-side notification delivery.
+- **VAPID (Voluntary Application Server Identification)**: Protocol for identifying the application server when sending push notifications, ensuring secure and authenticated delivery.
+- **Service Workers**: JavaScript files that run in the background to handle push notification events and display them to users.
 - **EJS**: Template engine used to render dynamic content, possibly for email bodies or simple administrative views.
 
 ### Utilities
@@ -65,6 +69,10 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **Emotion**: Library for writing CSS styles with JavaScript, used internally by MUI.
 - **Headless UI**: Unstyled UI components (accessible and functional) that integrate well with Tailwind CSS.
 - **MUI Icons, Font Awesome & Lucide React**: Comprehensive collections of icons, providing a wide range of SVG icons for the interface.
+
+### Internationalization (i18n)
+
+- **react-i18next**: Library for internationalization in React applications. Enables multi-language support by managing translations in JSON files. Used for static UI text (labels, buttons, messages) across the application, allowing users to switch between Spanish and English seamlessly.
 
 ### Maps & Visualization
 
@@ -105,6 +113,11 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 ## External APIs
 
 - **Nominatim API (OpenStreetMap)**: Used in the backend for **reverse geocoding**. It converts geographic coordinates (latitude and longitude) provided by the user (when reporting an incident) into a human-readable address (street, city, etc.), which is then stored with the incident details.
+- **MyMemory API**: Used in the frontend to provide **automatic translation** of dynamic user-generated content, such as blog article titles and descriptions. It translates from Spanish to English on-demand, allowing users to view content in their preferred language without requiring pre-translated versions.
+
+## Internationalization (i18n)
+
+- **react-i18next**: Implements internationalization for static UI elements. Unlike the MyMemory API (which translates dynamic content in real-time), i18n manages pre-defined translations stored in JSON files (`public/locales/{lang}/translation.json`). This approach is used for interface text (buttons, labels, error messages) and provides instant loading without external API calls, ensuring better performance and offline capability for core UI elements.
 
 ---
 
@@ -120,3 +133,4 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **ESLint**: Linting tool to identify and report patterns in JavaScript/React code, ensuring consistency and avoiding errors.
 - **Postman**: For testing REST API endpoints during development.
 - **Cross-env**: Tool to set environment variables across different operating systems (Windows/Linux) consistently.
+- **Docker & Docker Compose**: Containerization platform used to run the OpenLDAP server in an isolated environment, ensuring consistent deployment and easy setup for development.

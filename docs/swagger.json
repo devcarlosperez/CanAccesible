@@ -1,0 +1,2261 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CanAccesible APIs",
+    "description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api\n\nFor endpoints protected by JWT, users must sign in using POST /auth/signin, copy the token from the response, and paste it in the Authorize button.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:85/api",
+      "description": "Development server"
+    },
+    {
+      "url": "https://canaccesible.es/api",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/auth/signin": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "signin",
+        "description": "Logs in a user using email/password. Validates against LDAP, generates JWT, creates a session, and logs the action.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "admin@canaccesible.es"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "admin123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successful login"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 1 },
+                        "nombre": { "type": "string", "example": "Admin" },
+                        "email": { "type": "string", "example": "admin@canaccesible.es" },
+                        "role": { "type": "string", "example": "admin" }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "logout",
+        "description": "Logs out the user, destroys the session cookie, and logs the action.",
+        "requestBody": {
+          "content": {}
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "create",
+        "description": "Creates a new user with an optional profile image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "securePass123"
+                  },
+                  "roleId": {
+                    "type": "integer",
+                    "example": 2,
+                    "description": "1 for Admin, 2 for User"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password",
+                  "roleId"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 15 },
+                    "firstName": { "type": "string", "example": "John" },
+                    "lastName": { "type": "string", "example": "Doe" },
+                    "email": { "type": "string", "example": "john.doe@example.com" },
+                    "roleId": { "type": "integer", "example": 2 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all users.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/user": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "findAllUsers",
+        "description": "Retrieves a list of users.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/municipalities": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "municipalities",
+        "description": "Retrieves all municipalities.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/admin": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "admins",
+        "description": "Retrieves all admin users.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/top-reporting": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "top-reporting",
+        "description": "Retrieves users with the most reports.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific user by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "update",
+        "description": "Updates an existing user with an optional profile image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "roleId": {
+                    "type": "integer"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "delete",
+        "description": "Deletes a user by ID.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incidents": {
+      "post": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "create",
+        "description": "Creates a new incident with an image. Automatically geocodes and assigns severity.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Broken Ramp"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "The wheelchair ramp at the park entrance is damaged."
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "example": 28.123456
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "example": -15.432100
+                  },
+                  "incidentTypeId": {
+                    "type": "integer",
+                    "example": 2,
+                    "description": "1: Good Practice, 2: Bad Practice"
+                  },
+                  "incidentSeverityId": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Required if Type is Bad Practice (1: Low, 2: Medium, 3: High)"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "latitude",
+                  "longitude",
+                  "incidentTypeId",
+                  "image"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Incident created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 101 },
+                    "name": { "type": "string", "example": "Broken Ramp" },
+                    "address": { "type": "string", "example": "Calle Mayor, Las Palmas" },
+                    "isApproved": { "type": "boolean", "example": false }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all incidents.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/incidents/my-incidents": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "my-incidents",
+        "description": "Retrieves incidents reported by the authenticated user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incidents/{id}": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific incident by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer", "example": 101 },
+                    "name": { "type": "string", "example": "Broken Ramp" },
+                    "description": { "type": "string", "example": "The wheelchair ramp at the park entrance is damaged." },
+                    "latitude": { "type": "number", "example": 28.123456 },
+                    "longitude": { "type": "number", "example": -15.432100 },
+                    "address": { "type": "string", "example": "Calle Mayor, Las Palmas" },
+                    "nameFile": { "type": "string", "example": "https://bucket.digitaloceanspaces.com/incident-image/123.jpg" },
+                    "incidentType": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 2 },
+                        "name": { "type": "string", "example": "Bad Practice" }
+                      }
+                    },
+                    "incidentStatus": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer", "example": 1 },
+                        "name": { "type": "string", "example": "Pending" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "update",
+        "description": "Updates an existing incident with an optional image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  },
+                  "incidentStatusId": {
+                    "type": "integer"
+                  },
+                  "incidentTypeId": {
+                    "type": "integer"
+                  },
+                  "incidentSeverityId": {
+                    "type": "integer"
+                  },
+                  "isApproved": {
+                    "type": "boolean"
+                  },
+                  "area": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "island": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "delete",
+        "description": "Deletes an incident by ID.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incidentLikes": {
+      "post": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "create",
+        "description": "Creates a like for an incident.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "incidentId"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all incident likes.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/incidentLikes/{id}": {
+      "get": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific like by ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "update",
+        "description": "Updates a like.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "delete",
+        "description": "Deletes a like.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incidentLikes/incident/{incidentId}/user/{userId}": {
+      "get": {
+        "tags": [
+          "IncidentLikes"
+        ],
+        "summary": "findByIncidentAndUser",
+        "description": "Retrieves a like by incident ID and user ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The userId"
+          }
+        ]
+      }
+    },
+    "/incidentFollows": {
+      "post": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "create",
+        "description": "Creates a follow for an incident.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "incidentId"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all incident follows.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/incidentFollows/{id}": {
+      "get": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific follow by ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "update",
+        "description": "Updates a follow.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "delete",
+        "description": "Deletes a follow.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incidentFollows/incident/{incidentId}": {
+      "get": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "findByIncident",
+        "description": "Retrieves follows for a specific incident.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          }
+        ]
+      }
+    },
+    "/incidentFollows/incident/{incidentId}/user/{userId}": {
+      "get": {
+        "tags": [
+          "IncidentFollows"
+        ],
+        "summary": "findByIncidentAndUser",
+        "description": "Retrieves a follow by incident ID and user ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The userId"
+          }
+        ]
+      }
+    },
+    "/incident-comments": {
+      "post": {
+        "tags": [
+          "IncidentComments"
+        ],
+        "summary": "create",
+        "description": "Creates a new comment on an incident. Validates incident existence and comment length.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "incidentId": {
+                    "type": "integer"
+                  },
+                  "comment": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "incidentId",
+                  "comment"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/incident-comments/incident/{incidentId}": {
+      "get": {
+        "tags": [
+          "IncidentComments"
+        ],
+        "summary": "findByIncident",
+        "description": "Retrieves all comments for a specific incident.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The incidentId"
+          }
+        ]
+      }
+    },
+    "/incident-comments/{id}": {
+      "get": {
+        "tags": [
+          "IncidentComments"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific comment by ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "IncidentComments"
+        ],
+        "summary": "update",
+        "description": "Updates an existing comment. Only the author can update it.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "comment"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "IncidentComments"
+        ],
+        "summary": "delete",
+        "description": "Deletes a comment. Only the author can delete it.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/notifications": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "create",
+        "description": "Creates a new notification.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "User ID (optional, defaults to authenticated user)"
+                  },
+                  "entity": {
+                    "type": "string",
+                    "enum": [
+                      "User",
+                      "Incident",
+                      "IncidentComment",
+                      "IncidentLike",
+                      "IncidentFollow",
+                      "Blog",
+                      "Conversation",
+                      "ConversationMessage"
+                    ]
+                  },
+                  "entityId": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "dateNotification": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "entity",
+                  "entityId",
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all notifications.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/notifications/{id}": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific notification by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "update",
+        "description": "Updates a notification.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "entity": {
+                    "type": "string",
+                    "enum": [
+                      "User",
+                      "Incident",
+                      "IncidentComment",
+                      "IncidentLike",
+                      "IncidentFollow",
+                      "Blog",
+                      "Conversation",
+                      "ConversationMessage"
+                    ]
+                  },
+                  "entityId": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "dateNotification": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "delete",
+        "description": "Deletes a notification.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/blogArticles": {
+      "post": {
+        "tags": [
+          "BlogArticles"
+        ],
+        "summary": "create",
+        "description": "Creates a new blog article with an image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "dateCreation": {
+                    "type": "string",
+                    "format": "date",
+                    "example": ""
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "content",
+                  "dateCreation"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "BlogArticles"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all blog articles.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/blogArticles/{id}": {
+      "get": {
+        "tags": [
+          "BlogArticles"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific blog article by ID.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "BlogArticles"
+        ],
+        "summary": "update",
+        "description": "Updates a blog article with an optional image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "dateCreation": {
+                    "type": "string",
+                    "format": "date",
+                    "example": ""
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BlogArticles"
+        ],
+        "summary": "delete",
+        "description": "Deletes a blog article.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/conversations": {
+      "post": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "create",
+        "description": "Creates a new conversation.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all conversations.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/conversations/{id}": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific conversation by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "update",
+        "description": "Updates a conversation.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "delete",
+        "description": "Deletes a conversation.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/conversationMessages/{conversationId}": {
+      "post": {
+        "tags": [
+          "ConversationMessages"
+        ],
+        "summary": "create",
+        "description": "Creates a new message in a conversation.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The conversationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "ConversationMessages"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all messages in a conversation.",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The conversationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/conversationMessages/{conversationId}/{id}": {
+      "get": {
+        "tags": [
+          "ConversationMessages"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific message by ID.",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "ConversationMessages"
+        ],
+        "summary": "update",
+        "description": "Updates a message.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ConversationMessages"
+        ],
+        "summary": "delete",
+        "description": "Deletes a message.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The conversationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/logs": {
+      "post": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "create",
+        "description": "Creates a new log entry.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "action": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "entity": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "entityId": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "userId",
+                  "action",
+                  "entity",
+                  "entityId",
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "findAll",
+        "description": "Retrieves all logs (Admin only).",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/logs/{id}": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "findOne",
+        "description": "Retrieves a specific log by ID (Admin only).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "update",
+        "description": "Not allowed (logs are immutable).",
+        "requestBody": {
+          "content": {}
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "delete",
+        "description": "Deletes a log (Admin only).",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "JWT Token. Just paste your token here (without Bearer prefix)."
+      }
+    }
+  }
+}

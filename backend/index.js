@@ -2,8 +2,12 @@ const express = require("express");
 const path = require("path");
 const { sequelize } = require("./models");
 const session = require("express-session");
+const http = require("http");
+const { init: initSocket } = require("./services/socket.service");
 
 const app = express();
+const server = http.createServer(app);
+const io = initSocket(server);
 
 // Set view engine to EJS
 app.set("view engine", "ejs");
@@ -14,10 +18,15 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Add CORS middleware
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:5173', 'https://canaccesible.es', 'https://www.canaccesible.es'];
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:85",
+    "https://canaccesible.es",
+    "https://www.canaccesible.es",
+  ];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -48,24 +57,30 @@ app.use(
       maxAge: 24 * 60 * 60 * 1000,
       secure: false,
       httpOnly: true,
-      sameSite: 'lax'
+      sameSite: "lax",
     },
   })
 );
 
+// Swagger Documentation
+// Swagger Configuration
+require('./config/swagger')(app);
+
 // Dashboard admin routes (before API routes)
-require("./routes/dashboardAdmin.views.routes")(app);
+require("./routes/dashboard-admin/main.routes")(app);
 
 // API routes
 require("./routes/incident.routes")(app);
 require("./routes/incidentLikes.routes")(app);
 require("./routes/incidentFollows.routes")(app);
+require("./routes/incidentComment.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/notification.routes")(app);
 require("./routes/auth.routes")(app);
 require("./routes/blogArticle.routes")(app);
 require("./routes/conversation.routes")(app);
 require("./routes/conversationMessage.routes")(app);
+require("./routes/pushSubscription.routes")(app);
 require("./routes/log.routes")(app);
 
 // Initialize scheduled tasks
@@ -85,6 +100,6 @@ sessionStore.sync();
 
 // Use environment variable for port or default to 8080
 const port = 85;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
 });

@@ -13,12 +13,14 @@ const IncidentList = ({
   viewMoreIncidentId,
   handleCloseViewMore,
 }) => {
+  const approvedIncidents = incidents.filter(incident => incident.isApproved);
+
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedIncidents = incidents.slice(startIndex, endIndex);
-  const pageCount = Math.ceil(incidents.length / itemsPerPage);
+  const paginatedIncidents = approvedIncidents.slice(startIndex, endIndex);
+  const pageCount = Math.ceil(approvedIncidents.length / itemsPerPage);
 
-  return incidents.length === 0 ? (
+  return approvedIncidents.length === 0 ? (
     <Typography>No hay incidencias registradas.</Typography>
   ) : (
     <>
@@ -42,7 +44,7 @@ const IncidentList = ({
           );
         })}
       </Grid>
-      {incidents.length > itemsPerPage && (
+      {approvedIncidents.length > itemsPerPage && (
         <Grid container justifyContent="center" sx={{ mt: 4 }}>
           <Pagination
             count={pageCount}

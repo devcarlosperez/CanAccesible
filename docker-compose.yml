@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    environment:
+      LDAP_ORGANISATION: "CanAccesible"
+      LDAP_DOMAIN: "canaccesible.es"
+      LDAP_ADMIN_PASSWORD: "admin"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap/data.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/data.ldif
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+    command: --copy-service
+    networks:
+      - canaccesible-network
+
+networks:
+  canaccesible-network:
+    driver: bridge
+
+volumes:
+  ldap_data:
+  ldap_config:

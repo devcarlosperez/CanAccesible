@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import useAuthStore from "../../services/authService";
 import { getUserById, updateUser } from "../../services/userService";
+import {
+  subscribeToPushNotifications,
+  unsubscribeFromPushNotifications,
+} from "../../services/pushNotificationService";
 import ProfileForm from "./ProfileForm";
+import { motion } from "motion/react";
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user: authUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -23,6 +30,7 @@ const Profile = () => {
   const [originalUserData, setOriginalUserData] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
 
   useEffect(() => {
     if (!authUser) {
@@ -42,9 +50,15 @@ const Profile = () => {
         };
         setUserData(initialData);
         setOriginalUserData(initialData);
+
+        // Check push notification status
+        if ("serviceWorker" in navigator && "PushManager" in window) {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          setPushEnabled(!!subscription);
+        }
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        toast.error("Error al cargar los datos del perfil");
+        toast.error(t('profile_load_error'));
       } finally {
         setLoading(false);
       }
@@ -52,6 +66,26 @@ const Profile = () => {
 
     fetchUser();
   }, [authUser, navigate]);
+
+  const handlePushToggle = async () => {
+    try {
+      if (pushEnabled) {
+        await unsubscribeFromPushNotifications();
+        setPushEnabled(false);
+        toast.info(t('profile_push_disabled'));
+      } else {
+        const subscription = await subscribeToPushNotifications();
+        if (subscription) {
+          setPushEnabled(true);
+          toast.success(t('profile_push_enabled'));
+        } else {
+          toast.error(t('profile_push_enable_error'));
+        }
+      }
+    } catch (error) {
+      toast.error(t('profile_push_toggle_error'));
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,14 +132,13 @@ const Profile = () => {
 
       await updateUser(authUser.id, formData);
 
-      toast.success("Perfil actualizado correctamente");
+      toast.success(t('profile_update_success'));
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error updating profile:", error);
       toast.error(
-        error.response?.data?.message || "Error al actualizar el perfil"
+        error.response?.data?.message || t('profile_update_error')
       );
     } finally {
       setUpdating(false);
@@ -116,9 +149,14 @@ const Profile = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header transparent={false} />
-        <div className="grow flex items-center justify-center bg-gray-100">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grow flex items-center justify-center bg-gray-100"
+        >
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-        </div>
+        </motion.div>
         <Footer />
       </div>
     );
@@ -128,7 +166,12 @@ const Profile = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header transparent={false} />
 
-      <main className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8">
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8"
+      >
         <ProfileForm
           userData={userData}
           imagePreview={imagePreview}
@@ -138,8 +181,10 @@ const Profile = () => {
           updating={updating}
           onCancel={handleCancel}
           isDirty={isDirty}
+          pushEnabled={pushEnabled}
+          handlePushToggle={handlePushToggle}
         />
-      </main>
+      </motion.main>
 
       <Footer />
     </div>

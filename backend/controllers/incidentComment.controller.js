@@ -1,0 +1,238 @@
+const db = require("../models");
+const IncidentComment = db.incidentComment;
+const User = db.user;
+const Incident = db.incident;
+const { getIo } = require("../services/socket.service");
+
+// Create a new comment
+exports.create = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    if (!req.body.incidentId) {
+      return res.status(400).json({ message: "incidentId is required" });
+    }
+    if (!req.body.comment) {
+      return res.status(400).json({ message: "comment is required" });
+    }
+    if (req.body.comment.length > 500) {
+      return res.status(400).json({
+        message: "Comment cannot exceed 500 characters",
+      });
+    }
+
+    const incident = await Incident.findByPk(req.body.incidentId);
+    if (!incident) {
+      return res.status(404).json({ message: "Incident not found" });
+    }
+
+    const commentToCreate = {
+      userId: req.user.id,
+      incidentId: req.body.incidentId,
+      comment: req.body.comment,
+      dateComment: req.body.dateComment || new Date(),
+    };
+
+    const newComment = await IncidentComment.create(commentToCreate);
+
+    // Fetch the created comment with user information
+    const commentWithUser = await IncidentComment.findByPk(newComment.id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["firstName", "lastName", "email", "nameFile"],
+        },
+      ],
+    });
+
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${req.body.incidentId}`).emit(
+        "comment_created",
+        commentWithUser
+      );
+    }
+
+    return res.status(201).json(commentWithUser);
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    return res.status(500).json({
+      message: "Error creating comment",
+      error: error.message,
+    });
+  }
+};
+
+exports.findByIncident = async (req, res) => {
+  try {
+    const incidentId = req.params.incidentId;
+
+    if (!incidentId) {
+      return res.status(400).json({ message: "incidentId is required" });
+    }
+
+    const comments = await IncidentComment.findAll({
+      where: { incidentId },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["firstName", "lastName", "email", "nameFile"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    return res.status(500).json({
+      message: "Error fetching comments",
+      error: error.message,
+    });
+  }
+};
+
+exports.findOne = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const comment = await IncidentComment.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["firstName", "lastName", "email", "nameFile"],
+        },
+        {
+          model: Incident,
+          as: "incident",
+          attributes: ["id", "name", "description"],
+        },
+      ],
+    });
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    return res.status(200).json(comment);
+  } catch (error) {
+    console.error("Error fetching comment:", error);
+    return res.status(500).json({
+      message: "Error fetching comment",
+      error: error.message,
+    });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const comment = await IncidentComment.findByPk(id);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
+      return res.status(403).json({
+        message: "You are not authorized to update this comment",
+      });
+    }
+
+    if (req.body.comment && req.body.comment.length > 500) {
+      return res.status(400).json({
+        message: "Comment cannot exceed 500 characters",
+      });
+    }
+
+    if (!req.body.comment) {
+      return res.status(400).json({ message: "comment is required for update" });
+    }
+
+    const updatedData = {
+      comment: req.body.comment,
+    };
+
+    await comment.update(updatedData);
+
+    const updatedComment = await IncidentComment.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["firstName", "lastName", "email", "nameFile"],
+        },
+      ],
+    });
+
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${comment.incidentId}`).emit(
+        "comment_updated",
+        updatedComment
+      );
+    }
+
+    return res.status(200).json(updatedComment);
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return res.status(500).json({
+      message: "Error updating comment",
+      error: error.message,
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const comment = await IncidentComment.findByPk(id);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Comparación estricta de tipos
+    const commentUserId = parseInt(comment.userId);
+    const requestUserId = parseInt(req.user.id);
+
+    if (commentUserId !== requestUserId) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this comment",
+      });
+    }
+
+    await comment.destroy();
+
+    const io = getIo();
+    if (io) {
+      io.to(`incident_${comment.incidentId}`).emit("comment_deleted", id);
+    }
+
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return res.status(500).json({
+      message: "Error deleting comment",
+      error: error.message,
+    });
+  }
+};
