@@ -53,7 +53,7 @@ module.exports = {
         latitude: 28.2917,
         longitude: -16.6293,
         dateIncident: new Date('2025-10-20'),
-        nameFile: 'https://images-cruds.fra1.digitaloceanspaces.com/incident-image/Tipos-de-botones-de-un-ascensor-y-significado.jpg',
+        nameFile: 'https://images-cruds.fra1.digitaloceanspaces.com/incident-image/ascensor.webp',
         isApproved: true,
         createdAt: new Date(),
         updatedAt: new Date(),
