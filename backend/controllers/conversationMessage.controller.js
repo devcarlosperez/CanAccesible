@@ -42,7 +42,8 @@ exports.create = async (req, res) => {
 
     // Emit new message to conversation room
     const io = getIo();
-    io.to(conversationId).emit("newMessage", conversationMessage);
+    const roomId = String(conversationId);
+    io.to(roomId).emit("newMessage", conversationMessage);
 
     // Notification logic moved to socket to avoid duplication
     // if (senderId !== conversation.userId) { ... }
@@ -175,6 +176,11 @@ exports.update = async (req, res) => {
 
     await messageRecord.update({ message: updatedMessage });
 
+    // Emit messageEdited event
+    const io = getIo();
+    const roomId = String(conversationId);
+    io.to(roomId).emit("messageEdited", { messageId: parseInt(messageId), message: updatedMessage });
+
     res.status(200).json(messageRecord);
   } catch (err) {
     res
@@ -217,6 +223,11 @@ exports.delete = async (req, res) => {
     await ConversationMessage.destroy({
       where: { id: messageId },
     });
+
+    // Emit messageDeleted event
+    const io = getIo();
+    const roomId = String(conversationId);
+    io.to(roomId).emit("messageDeleted", parseInt(messageId));
 
     res.status(200).json({ message: "Message deleted successfully." });
   } catch (err) {

@@ -123,6 +123,16 @@
           renderMessages();
           scrollToBottom();
         });
+
+        socket.on('messageEdited', (data) => {
+          messages = messages.map(msg => msg.id === data.messageId ? { ...msg, message: data.message } : msg);
+          renderMessages();
+        });
+
+        socket.on('messageDeleted', (messageId) => {
+          messages = messages.filter(msg => msg.id !== messageId);
+          renderMessages();
+        });
       }
 
       async function fetchMessages() {

@@ -14,6 +14,8 @@ const ChatWindow = ({ conversation }) => {
   const [editedText, setEditedText] = useState('');
   const [lastErrorToastId, setLastErrorToastId] = useState(null);
   const menuRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
 
   // Get current user ID (decode JWT or from localStorage)
   const getCurrentUserId = () => {
@@ -88,6 +90,15 @@ const ChatWindow = ({ conversation }) => {
       setMessages(prev => [...prev, msg]);
     });
 
+    newSocket.on('messageEdited', (data) => {
+      setMessages(prev => prev.map(msg => msg.id === data.messageId ? { ...msg, message: data.message } : msg));
+    });
+
+    newSocket.on('messageDeleted', (messageId) => {
+      setMessages(prev => prev.filter(msg => msg.id !== messageId));
+    });
+
+    socketRef.current = newSocket;
     setSocket(newSocket);
 
     return () => {
@@ -95,21 +106,17 @@ const ChatWindow = ({ conversation }) => {
     };
   }, [conversation.id]);
 
-  // Close menu when clicking outside
+  // Scroll to bottom when messages change
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setActiveMenuId(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const sendMessage = () => {
-    if (!newMessage.trim() || !socket) return;
+    if (!newMessage.trim() || !socketRef.current) return;
 
-    socket.emit('sendMessage', {
+    socketRef.current.emit('sendMessage', {
       conversationId: conversation.id,
       message: newMessage,
       dateMessage: new Date()
@@ -119,12 +126,18 @@ const ChatWindow = ({ conversation }) => {
   };
 
   const deleteMessage = async (messageId) => {
+    if (!window.confirm(t('confirm_delete_message'))) return;
+
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/conversationMessages/${conversation.id}/${messageId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
+      // Optimistic update or wait for socket?
+      // If we wait for socket, it might feel slow.
+      // But if we update optimistically and socket also comes in, React handles it fine usually.
+      // Let's keep optimistic update for responsiveness, but remove the manual socket emit.
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
       setActiveMenuId(null);
     } catch (error) {
@@ -246,6 +259,7 @@ const ChatWindow = ({ conversation }) => {
             );
           })
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex">
