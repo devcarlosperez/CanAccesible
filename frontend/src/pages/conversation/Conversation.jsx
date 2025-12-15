@@ -46,7 +46,7 @@ const Conversation = () => {
         <div className="text-center mb-4">
           <button 
             onClick={() => navigate(-1)} 
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
           >
             ← {t('back')}
           </button>

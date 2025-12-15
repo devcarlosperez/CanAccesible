@@ -17,6 +17,9 @@ const PushNotificationsGuide = () => {
             <h1 className="text-3xl md:text-4xl font-poppins font-bold mb-4 text-neutral-2">
               {t('push_guide_title')}
             </h1>
+            <p className="text-base font-roboto text-neutral-3">
+              {t('last_update', { date: '15/12/2025' })}
+            </p>
           </div>
 
           {/* Content Card */}
