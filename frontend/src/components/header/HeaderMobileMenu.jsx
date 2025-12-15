@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Transition } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../utils/LanguageSwitcher.jsx";
@@ -45,20 +45,24 @@ const MobileMenu = ({
         <ul className="flex flex-col p-4 gap-4">
           {menuItems.map((item) => (
             <li key={item.text}>
-              <Link
+              <NavLink
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className={`flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${
-                  item.login
-                    ? "bg-white text-[#1b226b] hover:bg-gray-200"
-                    : "text-white hover:text-[#92B2EA]"
-                }`}
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 rounded-xl font-semibold transition duration-200 ${
+                    item.login
+                      ? "bg-white text-[#1b226b] hover:bg-gray-200"
+                      : isActive
+                      ? "text-[#92B2EA]"
+                      : "text-white hover:text-[#92B2EA]"
+                  }`
+                }
               >
                 <span className="material-symbols-outlined mr-3">
                   {item.icon}
                 </span>
                 {item.text}
-              </Link>
+              </NavLink>
             </li>
           ))}
 
@@ -106,7 +110,7 @@ const MobileMenu = ({
                         onClick={() => setOpen(false)}
                         className="text-white hover:text-[#92B2EA] cursor-pointer"
                       >
-                        {t('profile')}
+                        {t("profile")}
                       </Link>
                     </li>
                     <li>
@@ -139,7 +143,7 @@ const MobileMenu = ({
                         }}
                         className="text-white hover:text-[#FF6B6B] cursor-pointer text-left"
                       >
-                        {t('logout')}
+                        {t("logout")}
                       </button>
                     </li>
                   </ul>
