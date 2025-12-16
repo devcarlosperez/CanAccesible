@@ -1,7 +1,25 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { BrowserRouter } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "../../components/footer/Footer";
+
+// Mock translations to match the user's expected text
+const translations = {
+  footer_description:
+    "CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología",
+  company: "Compañía",
+  help: "Ayuda",
+  our_mission: "Nuestra misión",
+  services: "Servicios",
+  about_us: "Sobre nosotros",
+  all_rights_reserved: "© CANACCESIBLE 2025, All Rights Reserved",
+};
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key) => translations[key] || key,
+  }),
+}));
 
 describe("Footer Component", () => {
   const renderComponent = () => {
