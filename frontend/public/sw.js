@@ -3,7 +3,7 @@ self.addEventListener('push', function(event) {
     const data = event.data.json();
     const options = {
       body: data.body,
-      icon: '/canaccesible_fav_icon.png', // Asegúrate de que este icono exista
+      icon: '/canaccesible_fav_icon.png',
       badge: '/canaccesible_fav_icon.png',
       vibrate: [100, 50, 100],
       data: {

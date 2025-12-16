@@ -97,6 +97,7 @@
   "chat_title": "Chat: {{type}}",
   "chat_no_messages": "No messages yet. Start the conversation!",
   "chat_placeholder": "Write your message...",
+  "confirm_delete_message": "Are you sure you want to delete this message?",
   "chat_loading": "Loading conversation...",
   "chat_not_found": "Conversation not found.",
   "chat_login_required": "You must log in to access this conversation.",

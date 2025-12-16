@@ -99,6 +99,7 @@
   "chat_title": "Chat: {{type}}",
   "chat_no_messages": "No hay mensajes aún. ¡Inicia la conversación!",
   "chat_placeholder": "Escribe tu mensaje...",
+  "confirm_delete_message": "¿Estás seguro de que quieres eliminar este mensaje?",
   "chat_loading": "Cargando conversación...",
   "chat_not_found": "Conversación no encontrada.",
   "chat_login_required": "Debes iniciar sesión para acceder a esta conversación.",

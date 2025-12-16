@@ -3,9 +3,6 @@ import io from "socket.io-client";
 let socket;
 
 export const initSocket = (token) => {
-  // If socket exists and is connected, check if we need to reconnect with new token?
-  // For simplicity, if we call initSocket, we return existing or create new.
-
   if (!socket) {
     const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
     const options = {

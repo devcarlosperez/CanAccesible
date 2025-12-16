@@ -40,9 +40,24 @@ exports.create = async (req, res) => {
       dateMessage: new Date(),
     });
 
+    // Fetch the message with sender info to emit complete data
+    const messageWithSender = await ConversationMessage.findByPk(conversationMessage.id, {
+      include: [{
+        model: db.user,
+        as: 'sender',
+        attributes: ['id', 'firstName', 'lastName', 'nameFile'],
+        include: [{
+          model: db.role,
+          as: 'role',
+          attributes: ['role']
+        }]
+      }]
+    });
+
     // Emit new message to conversation room
     const io = getIo();
-    io.to(conversationId).emit("newMessage", conversationMessage);
+    const roomId = String(conversationId);
+    io.to(roomId).emit("newMessage", messageWithSender);
 
     // Notification logic moved to socket to avoid duplication
     // if (senderId !== conversation.userId) { ... }
@@ -83,6 +98,17 @@ exports.findAll = async (req, res) => {
     // Get all messages of this conversation
     const messages = await ConversationMessage.findAll({
       where: { conversationId },
+      include: [{
+        model: db.user,
+        as: 'sender',
+        attributes: ['id', 'firstName', 'lastName', 'nameFile'],
+        include: [{
+          model: db.role,
+          as: 'role',
+          attributes: ['role']
+        }]
+      }],
+      order: [['createdAt', 'ASC']]
     });
 
     res.status(200).json(messages);
@@ -175,6 +201,11 @@ exports.update = async (req, res) => {
 
     await messageRecord.update({ message: updatedMessage });
 
+    // Emit messageEdited event
+    const io = getIo();
+    const roomId = String(conversationId);
+    io.to(roomId).emit("messageEdited", { messageId: parseInt(messageId), message: updatedMessage });
+
     res.status(200).json(messageRecord);
   } catch (err) {
     res
@@ -217,6 +248,11 @@ exports.delete = async (req, res) => {
     await ConversationMessage.destroy({
       where: { id: messageId },
     });
+
+    // Emit messageDeleted event
+    const io = getIo();
+    const roomId = String(conversationId);
+    io.to(roomId).emit("messageDeleted", parseInt(messageId));
 
     res.status(200).json({ message: "Message deleted successfully." });
   } catch (err) {
