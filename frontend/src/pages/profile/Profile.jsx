@@ -15,7 +15,7 @@ import { motion } from "motion/react";
 
 const Profile = () => {
   const { t } = useTranslation();
-  const { user: authUser } = useAuthStore();
+  const { user: authUser, setUser } = useAuthStore();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -41,6 +41,10 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const data = await getUserById(authUser.id);
+
+        // Update global store with fresh data from DB to ensure header is correct on refresh
+        setUser(data);
+
         const initialData = {
           firstName: data.firstName,
           lastName: data.lastName,
@@ -58,32 +62,32 @@ const Profile = () => {
           setPushEnabled(!!subscription);
         }
       } catch (error) {
-        toast.error(t('profile_load_error'));
+        toast.error(t("profile_load_error"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, [authUser, navigate]);
+  }, [authUser?.id, navigate, setUser]);
 
   const handlePushToggle = async () => {
     try {
       if (pushEnabled) {
         await unsubscribeFromPushNotifications();
         setPushEnabled(false);
-        toast.info(t('profile_push_disabled'));
+        toast.info(t("profile_push_disabled"));
       } else {
         const subscription = await subscribeToPushNotifications();
         if (subscription) {
           setPushEnabled(true);
-          toast.success(t('profile_push_enabled'));
+          toast.success(t("profile_push_enabled"));
         } else {
-          toast.error(t('profile_push_enable_error'));
+          toast.error(t("profile_push_enable_error"));
         }
       }
     } catch (error) {
-      toast.error(t('profile_push_toggle_error'));
+      toast.error(t("profile_push_toggle_error"));
     }
   };
 
@@ -130,16 +134,32 @@ const Profile = () => {
         formData.append("image", imageFile);
       }
 
-      await updateUser(authUser.id, formData);
+      const updatedUser = await updateUser(authUser.id, formData);
 
-      toast.success(t('profile_update_success'));
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setUser(updatedUser);
+
+      setOriginalUserData({
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        nameFile: updatedUser.nameFile,
+        dateRegister: userData.dateRegister,
+      });
+
+      setUserData((prev) => ({
+        ...prev,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        nameFile: updatedUser.nameFile,
+      }));
+
+      setImageFile(null);
+      setImagePreview(null);
+
+      toast.success(t("profile_update_success"));
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || t('profile_update_error')
-      );
+      toast.error(error.response?.data?.message || t("profile_update_error"));
     } finally {
       setUpdating(false);
     }
@@ -168,9 +188,9 @@ const Profile = () => {
 
       <motion.main
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8"
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="grow pt-32 pb-12 px-4 sm:px-6 lg:px-8"
       >
         <ProfileForm
           userData={userData}

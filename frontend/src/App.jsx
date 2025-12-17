@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
 import Home from "./pages/home/Home";
@@ -21,6 +27,7 @@ import DashboardUser from "./pages/dashboard/DashboardUser.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Conversation from "./pages/conversation/Conversation.jsx";
+import useAuthStore from "./services/authService.js";
 
 function App() {
   return (
@@ -32,18 +39,25 @@ function App() {
 
 function AppContent() {
   const navigate = useNavigate();
+  const { fetchCurrentUser, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCurrentUser();
+    }
+  }, [isAuthenticated, fetchCurrentUser]);
 
   useEffect(() => {
     const handleMessage = (event) => {
-      if (event.data && event.data.action === 'navigate') {
+      if (event.data && event.data.action === "navigate") {
         navigate(event.data.url);
       }
     };
 
-    navigator.serviceWorker.addEventListener('message', handleMessage);
+    navigator.serviceWorker.addEventListener("message", handleMessage);
 
     return () => {
-      navigator.serviceWorker.removeEventListener('message', handleMessage);
+      navigator.serviceWorker.removeEventListener("message", handleMessage);
     };
   }, [navigate]);
 
@@ -88,10 +102,16 @@ function AppContent() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogArticleDetail />} />
         <Route path="/error" element={<ErrorPage />} />
-        <Route path="/conversations/:conversationId" element={<Conversation/>}/>
+        <Route
+          path="/conversations/:conversationId"
+          element={<Conversation />}
+        />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
-        <Route path="/push-notifications-guide" element={<PushNotificationsGuide />} />
+        <Route
+          path="/push-notifications-guide"
+          element={<PushNotificationsGuide />}
+        />
       </Routes>
     </>
   );
