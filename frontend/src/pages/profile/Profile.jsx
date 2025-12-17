@@ -58,7 +58,7 @@ const Profile = () => {
           setPushEnabled(!!subscription);
         }
       } catch (error) {
-        toast.error(t('profile_load_error'));
+        toast.error(t("profile_load_error"));
       } finally {
         setLoading(false);
       }
@@ -72,18 +72,18 @@ const Profile = () => {
       if (pushEnabled) {
         await unsubscribeFromPushNotifications();
         setPushEnabled(false);
-        toast.info(t('profile_push_disabled'));
+        toast.info(t("profile_push_disabled"));
       } else {
         const subscription = await subscribeToPushNotifications();
         if (subscription) {
           setPushEnabled(true);
-          toast.success(t('profile_push_enabled'));
+          toast.success(t("profile_push_enabled"));
         } else {
-          toast.error(t('profile_push_enable_error'));
+          toast.error(t("profile_push_enable_error"));
         }
       }
     } catch (error) {
-      toast.error(t('profile_push_toggle_error'));
+      toast.error(t("profile_push_toggle_error"));
     }
   };
 
@@ -132,14 +132,12 @@ const Profile = () => {
 
       await updateUser(authUser.id, formData);
 
-      toast.success(t('profile_update_success'));
+      toast.success(t("profile_update_success"));
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || t('profile_update_error')
-      );
+      toast.error(error.response?.data?.message || t("profile_update_error"));
     } finally {
       setUpdating(false);
     }
@@ -168,9 +166,9 @@ const Profile = () => {
 
       <motion.main
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="grow pt-33 pb-12 px-4 sm:px-6 lg:px-8"
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="grow pt-32 pb-12 px-4 sm:px-6 lg:px-8"
       >
         <ProfileForm
           userData={userData}
