@@ -15,7 +15,7 @@ import { motion } from "motion/react";
 
 const Profile = () => {
   const { t } = useTranslation();
-  const { user: authUser } = useAuthStore();
+  const { user: authUser, setUser } = useAuthStore();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -130,12 +130,30 @@ const Profile = () => {
         formData.append("image", imageFile);
       }
 
-      await updateUser(authUser.id, formData);
+      const updatedUser = await updateUser(authUser.id, formData);
+      
+      setUser(updatedUser);
+      
+      setOriginalUserData({
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        nameFile: updatedUser.nameFile,
+        dateRegister: userData.dateRegister,
+      });
+
+      setUserData((prev) => ({
+        ...prev,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        nameFile: updatedUser.nameFile,
+      }));
+
+      setImageFile(null);
+      setImagePreview(null);
 
       toast.success(t("profile_update_success"));
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
     } catch (error) {
       toast.error(error.response?.data?.message || t("profile_update_error"));
     } finally {

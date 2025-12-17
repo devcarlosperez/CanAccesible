@@ -35,6 +35,13 @@ const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
+  // Update user in store manually
+  setUser: (userData) => {
+    set((state) => ({
+      user: { ...state.user, ...userData },
+    }));
+  },
+
   // Login function (Basic Auth + JWT + Session)
   login: async (email, password) => {
     set({ loading: true, error: null });
