@@ -1542,7 +1542,7 @@
 								}
 							]
 						},
-						"description": "Retrieves all messages in a conversation."
+						"description": "Retrieves all messages in a conversation. Messages not sent by the current user will be marked as seen."
 					},
 					"response": []
 				},
