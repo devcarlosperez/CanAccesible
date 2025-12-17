@@ -131,9 +131,9 @@ const Profile = () => {
       }
 
       const updatedUser = await updateUser(authUser.id, formData);
-      
+
       setUser(updatedUser);
-      
+
       setOriginalUserData({
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
