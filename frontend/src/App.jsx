@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import "./App.css";
 import Home from "./pages/home/Home";
 import Incident from "./pages/incidents/Incident";
@@ -24,6 +25,30 @@ import Conversation from "./pages/conversation/Conversation.jsx";
 function App() {
   return (
     <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
+
+function AppContent() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.action === 'navigate') {
+        navigate(event.data.url);
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', handleMessage);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', handleMessage);
+    };
+  }, [navigate]);
+
+  return (
+    <>
       <ScrollToTopRoutes />
       <ToastContainer
         position="bottom-right"
@@ -68,7 +93,7 @@ function App() {
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/push-notifications-guide" element={<PushNotificationsGuide />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

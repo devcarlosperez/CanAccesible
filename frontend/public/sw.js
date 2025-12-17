@@ -1,3 +1,11 @@
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
 self.addEventListener('push', function(event) {
   if (event.data) {
     const data = event.data.json();
@@ -21,6 +29,22 @@ self.addEventListener('push', function(event) {
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      const url = event.notification.data.url || '/';
+      // Check if there's an open client for our app
+      // We look for any window client that is controlled by this SW or is in the same scope
+      const openClient = clientList.find(client => 
+        client.url.startsWith(self.location.origin) && 'focus' in client
+      );
+      
+      if (openClient) {
+        // Send message to navigate
+        openClient.postMessage({ action: 'navigate', url: url });
+        return openClient.focus();
+      } else {
+        // Open new window
+        return clients.openWindow(url);
+      }
+    })
   );
 });

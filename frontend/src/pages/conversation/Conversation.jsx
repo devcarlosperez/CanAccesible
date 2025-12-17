@@ -40,12 +40,16 @@ const Conversation = () => {
     return <div className="min-h-screen flex items-center justify-center">{t('chat_not_found')}</div>;
   }
 
+  const handleBack = () => {
+    navigate('/contact');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-8 md:py-8">
       <div className="w-full mx-auto md:max-w-4xl md:mx-auto px-4">
         <div className="text-center mb-4">
           <button 
-            onClick={() => navigate(-1)} 
+            onClick={handleBack} 
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
           >
             ← {t('back')}

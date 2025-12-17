@@ -72,7 +72,7 @@ module.exports = (io, socket) => {
           const payload = {
             title: `Nueva respuesta de CanAccesible`,
             body: `Desde el chat de ${conversation.type}: ${message.length > 50 ? message.substring(0, 50) + "..." : message}`,
-            url: `/dashboard/chat`,
+            url: `/conversations/${conversationId}`,
             data: { conversationId: conversationId }
           };
           pushSubscriptionController.sendNotificationToUser(conversation.userId, payload)
