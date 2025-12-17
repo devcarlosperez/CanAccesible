@@ -42,6 +42,21 @@ const useAuthStore = create((set) => ({
     }));
   },
 
+  // Fetch fresh user data from backend
+  fetchCurrentUser: async () => {
+    const state = useAuthStore.getState();
+    if (!state.token || !state.user?.id) return;
+
+    try {
+      const res = await api.get(`/users/${state.user.id}`);
+      set((state) => ({
+        user: { ...state.user, ...res.data },
+      }));
+    } catch (err) {
+      console.error("Failed to fetch current user:", err);
+    }
+  },
+
   // Login function (Basic Auth + JWT + Session)
   login: async (email, password) => {
     set({ loading: true, error: null });

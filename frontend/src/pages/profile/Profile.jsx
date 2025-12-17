@@ -41,6 +41,10 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const data = await getUserById(authUser.id);
+
+        // Update global store with fresh data from DB to ensure header is correct on refresh
+        setUser(data);
+
         const initialData = {
           firstName: data.firstName,
           lastName: data.lastName,
@@ -65,7 +69,7 @@ const Profile = () => {
     };
 
     fetchUser();
-  }, [authUser, navigate]);
+  }, [authUser?.id, navigate, setUser]);
 
   const handlePushToggle = async () => {
     try {

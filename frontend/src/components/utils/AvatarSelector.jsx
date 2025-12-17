@@ -9,7 +9,15 @@ const AvatarSelector = ({ onSelect, onCancel }) => {
 
   const generateAvatars = () => {
     const newAvatars = [];
-    const styles = ["avataaars", "bottts", "lorelei", "notionists", "micah"];
+    const styles = [
+      "glass",
+      "bottts",
+      "identicon",
+      "shapes",
+      "fun-emoji",
+      "dylan",
+      "pixel-art",
+    ];
 
     for (let i = 0; i < 8; i++) {
       const randomStyle = styles[Math.floor(Math.random() * styles.length)];
