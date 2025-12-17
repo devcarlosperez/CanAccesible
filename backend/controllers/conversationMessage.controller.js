@@ -1,4 +1,5 @@
 const db = require("../models");
+const { Op } = require("sequelize");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const ConversationMessage = db.conversationMessage;
 const Conversation = db.conversation;
@@ -38,6 +39,7 @@ exports.create = async (req, res) => {
       senderId,
       message,
       dateMessage: new Date(),
+      seen: false,
     });
 
     // Fetch the message with sender info to emit complete data
@@ -94,6 +96,18 @@ exports.findAll = async (req, res) => {
             "You do not have permission to view messages in this conversation.",
         });
     }
+
+    // Mark messages as seen
+    await ConversationMessage.update(
+      { seen: true },
+      {
+        where: {
+          conversationId: conversationId,
+          senderId: { [Op.ne]: userId },
+          seen: false,
+        },
+      }
+    );
 
     // Get all messages of this conversation
     const messages = await ConversationMessage.findAll({
