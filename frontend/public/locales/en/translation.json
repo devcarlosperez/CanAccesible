@@ -27,6 +27,17 @@
   "refresh_avatars": "New avatars",
   "upload_image": "Upload image",
 
+  "login_welcome_back": "Welcome back to our community!",
+  "register_welcome": "Welcome to our community!",
+  "error_user_not_found": "User not found",
+  "error_invalid_password": "Invalid password",
+  "error_email_registered": "Email already registered",
+  "error_email_invalid": "Invalid email format",
+  "error_missing_fields": "Missing required fields",
+  "error_login_failed": "Login failed",
+  "error_token_expired": "Your session has expired",
+  "error_generic": "An error occurred",
+
   "hero_text1": "For islands",
   "hero_text2": "accessible to all",
   "our_mission": "Our Mission",

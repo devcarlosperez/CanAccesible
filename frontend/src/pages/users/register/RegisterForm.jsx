@@ -71,7 +71,12 @@ const RegisterForm = () => {
 
       navigate("/home");
     } catch (err) {
-      setError(t("register_error"));
+      const msg = err.response?.data?.message;
+      const errorMap = {
+        "Email already registered": "error_email_registered",
+        "Email format is invalid": "error_email_invalid",
+      };
+      setError(errorMap[msg] || "register_error");
     }
   };
 
@@ -138,16 +143,14 @@ const RegisterForm = () => {
             </label>
 
             <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAvatarSelector(true)}
-                  className="w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-                >
-                  <i className="fa-solid fa-image"></i>
-                  {t("choose_avatar") || "Elegir foto de perfil"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowAvatarSelector(true)}
+                className="w-full bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <i className="fa-solid fa-image text-gray-900"></i>
+                {t("choose_avatar") || "Elegir foto de perfil"}
+              </button>
 
               {newUser.avatar && (
                 <div className="relative w-24 h-24 mx-auto mt-2">
@@ -175,7 +178,7 @@ const RegisterForm = () => {
             <select
               value={newUser.rol}
               onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 cursor-pointer"
               required
             >
               <option value="">{t("register_select_type")}</option>
@@ -202,7 +205,7 @@ const RegisterForm = () => {
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm text-center mt-3">{error}</p>
+          <p className="text-red-500 text-sm text-center mt-3">{t(error)}</p>
         )}
 
         <button

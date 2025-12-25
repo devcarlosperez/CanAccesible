@@ -1,6 +1,7 @@
 import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import LoginForm from "./LoginForm";
 import bgHero from "../../../assets/background-hero.webp";
+import { useTranslation } from "react-i18next";
 
 const imagenes = [
   {
@@ -42,6 +43,7 @@ const imagenes = [
 ];
 
 const Login = () => {
+  const { t } = useTranslation();
   return (
     <section className="flex h-screen">
       <div className="hidden lg:flex bg-primary-2 w-2/3 flex-col items-center justify-start relative overflow-hidden">
@@ -50,7 +52,7 @@ const Login = () => {
         <div className="absolute -bottom-50 -right-70 w-[520px] h-80 border-6 border-primary-1 rounded-full opacity-90"></div>
 
         <h1 className="text-white text-5xl font-poppins font-semibold text-center mt-32 z-10">
-          ¡Bienvenido/a de vuelta a nuestra comunidad!
+          {t("login_welcome_back")}
         </h1>
 
         <div className="flex justify-center items-center w-full h-full z-10">

@@ -76,7 +76,7 @@ const useAuthStore = create((set) => ({
 
       if (isTokenExpired(token)) {
         return set({
-          error: "Token already expired",
+          error: "error_token_expired",
           loading: false,
         });
       }
@@ -94,8 +94,14 @@ const useAuthStore = create((set) => ({
         loading: false,
       });
     } catch (err) {
+      const msg = err.response?.data?.message;
+      const errorMap = {
+        "User not found": "error_user_not_found",
+        "Invalid password": "error_invalid_password",
+      };
+
       set({
-        error: err.response?.data?.message || "Login failed",
+        error: errorMap[msg] || "error_login_failed",
         loading: false,
       });
     }
