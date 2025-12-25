@@ -51,7 +51,7 @@ const Register = () => {
 
         <div className="absolute -bottom-50 -right-70 w-[520px] h-80 border-6 border-primary-2 rounded-full opacity-90"></div>
 
-        <h1 className="text-black text-5xl font-poppins font-semibold text-center mt-37 pb-7 z-10">
+        <h1 className="text-black text-5xl font-poppins font-semibold text-center mt-32 z-10">
           {t("register_welcome")}
         </h1>
 
