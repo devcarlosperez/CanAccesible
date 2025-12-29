@@ -1,7 +1,7 @@
 import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import RegisterForm from "./RegisterForm";
-import { useTranslation } from "react-i18next";
 import { registerImages } from "../../../utils/registerImages";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
   const { t } = useTranslation();

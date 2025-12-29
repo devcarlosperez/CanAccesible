@@ -1,46 +1,7 @@
 import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import LoginForm from "./LoginForm";
-import bgHero from "../../../assets/background-hero.webp";
+import { registerImages } from "../../../utils/registerImages";
 import { useTranslation } from "react-i18next";
-
-const imagenes = [
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-  {
-    image: new URL(bgHero, import.meta.url).href,
-    text: "Montaña nevada",
-  },
-];
 
 const Login = () => {
   const { t } = useTranslation();
@@ -59,7 +20,7 @@ const Login = () => {
           <CircularGallery
             bend={3}
             scrollEase={0.03}
-            items={imagenes}
+            items={registerImages}
             textColor="white"
           />
         </div>
