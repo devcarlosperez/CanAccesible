@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getAllBlogArticles, getBlogArticleById, createBlogArticle, updateBlogArticle, deleteBlogArticle } from "../../services/blogArticleService";
 import api from "../../services/api";
 
-// Mock the api module
 vi.mock("../../services/api", () => ({
     default: {
         get: vi.fn(),
@@ -19,33 +18,33 @@ describe("Unit Test: blogArticleService", () => {
 
     describe("getAllBlogArticles", () => {
         it("should fetch all blog articles successfully", async () => {
-            // ARRANGE
+            // Arrange
             const mockArticles = [
                 { id: 1, title: "Article 1" },
                 { id: 2, title: "Article 2" }
             ];
             api.get.mockResolvedValue({ data: mockArticles });
 
-            // ACT
+            // Act
             const result = await getAllBlogArticles();
 
-            // ASSERT
+            // Assert
             expect(api.get).toHaveBeenCalledWith("/blogArticles");
             expect(result).toEqual(mockArticles);
         });
 
         it("should handle network errors when fetching articles", async () => {
-            // ARRANGE
+            // Arrange
             api.get.mockRejectedValue(new Error("Network Error"));
 
-            // ACT & ASSERT
+            // Act & Assert
             await expect(getAllBlogArticles()).rejects.toThrow("Network Error");
         });
     });
 
     describe("createBlogArticle", () => {
         it("should create a blog article with FormData including image", async () => {
-            // ARRANGE
+            // Arrange
             const articleData = {
                 title: "New Article",
                 description: "Description",
@@ -55,10 +54,10 @@ describe("Unit Test: blogArticleService", () => {
             const mockResponse = { id: 1, ...articleData };
             api.post.mockResolvedValue({ data: mockResponse });
 
-            // ACT
+            // Act
             const result = await createBlogArticle(articleData, imageFile);
 
-            // ASSERT
+            // Assert
             expect(api.post).toHaveBeenCalledWith(
                 "/blogArticles",
                 expect.any(FormData),
@@ -67,6 +66,40 @@ describe("Unit Test: blogArticleService", () => {
                 })
             );
             expect(result).toEqual(mockResponse);
+        });
+
+        it("should handle 401 Unauthorized error", async () => {
+            // Arrange
+            const error = new Error("Unauthorized");
+            error.response = { status: 401 };
+            api.post.mockRejectedValue(error);
+
+            // Act & Assert
+            await expect(createBlogArticle({}, null)).rejects.toThrow("Unauthorized");
+        });
+
+        it("should handle 500 Server error", async () => {
+            // Arrange
+            const error = new Error("Internal Server Error");
+            error.response = { status: 500 };
+            api.post.mockRejectedValue(error);
+
+            // Act & Assert
+            await expect(createBlogArticle({}, null)).rejects.toThrow("Internal Server Error");
+        });
+    });
+
+    describe("deleteBlogArticle", () => {
+        it("should delete a blog article by id", async () => {
+            // Arrange
+            api.delete.mockResolvedValue({ data: { success: true } });
+
+            // Act
+            const result = await deleteBlogArticle(1);
+
+            // Assert
+            expect(api.delete).toHaveBeenCalledWith("/blogArticles/1");
+            expect(result).toEqual({ success: true });
         });
     });
 });

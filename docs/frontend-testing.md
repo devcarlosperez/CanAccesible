@@ -53,16 +53,16 @@ Report is generated in `coverage/`. Open `coverage/index.html` in browser for de
 ```
 frontend/src/tests/
 ├── unit/                    # Pure logic tests (utils, services)
-│   ├── dateUtils.test.js         (Jonathan)
-│   ├── textUtils.test.js         (Carlos)
-│   └── blogArticleService.test.js (Carlos)
+│   ├── dateUtils.test.js
+│   ├── textUtils.test.js
+│   └── blogArticleService.test.js
 ├── components/              # React component tests
-│   ├── Footer.test.jsx           (Jonathan)
-│   ├── LoginForm.test.jsx        (Jonathan)
-│   └── BlogCard.test.jsx         (Carlos)
+│   ├── Footer.test.jsx
+│   ├── LoginForm.test.jsx
+│   └── BlogCard.test.jsx
 └── integration/             # Full flow tests
-    ├── AuthFlow.test.jsx         (Jonathan)
-    └── ChatFlow.test.jsx         (Carlos)
+    ├── AuthFlow.test.jsx
+    └── ChatFlow.test.jsx
 ```
 
 ---
