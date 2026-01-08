@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import { vi, afterEach } from "vitest";
 
 // Mock react-i18next
 vi.mock("react-i18next", () => ({
@@ -14,3 +14,8 @@ vi.mock("react-i18next", () => ({
     init: () => {},
   },
 }));
+
+// Cleanup after each test
+afterEach(() => {
+  vi.clearAllMocks();
+});
