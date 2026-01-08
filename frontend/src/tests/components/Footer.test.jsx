@@ -6,12 +6,16 @@ import Footer from "../../components/footer/Footer";
 // Mock translations to match the user's expected text
 const translations = {
   footer_description:
-    "CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología",
+    "CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología y la accesibilidad digital.",
   company: "Compañía",
   help: "Ayuda",
   our_mission: "Nuestra misión",
   services: "Servicios",
   about_us: "Sobre nosotros",
+  support: "Soporte",
+  terms_conditions: "Términos y condiciones",
+  privacy_policy: "Política de privacidad",
+  push_notifications_guide: "Guía de notificaciones",
   all_rights_reserved: "© CANACCESIBLE 2025, All Rights Reserved",
 };
 
@@ -41,7 +45,7 @@ describe("Footer Component", () => {
     renderComponent();
     expect(
       screen.getByText(
-        /CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología/i
+        /CANACCESIBLE promueve un mundo más inclusivo mediante la tecnología y la accesibilidad digital./i
       )
     ).toBeInTheDocument();
   });
@@ -94,6 +98,11 @@ describe("Footer Component", () => {
     expect(screen.getByText("Nuestra misión")).toBeInTheDocument();
     expect(screen.getByText("Servicios")).toBeInTheDocument();
     expect(screen.getByText("Sobre nosotros")).toBeInTheDocument();
+
+    expect(screen.getByText("Soporte")).toBeInTheDocument();
+    expect(screen.getByText("Términos y condiciones")).toBeInTheDocument();
+    expect(screen.getByText("Política de privacidad")).toBeInTheDocument();
+    expect(screen.getByText("Guía de notificaciones")).toBeInTheDocument();
   });
 
   it("should render copyright text", () => {
