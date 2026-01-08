@@ -4,6 +4,11 @@ import { BrowserRouter } from "react-router-dom";
 import IncidentPage from "../../pages/incidents/Incident";
 import api from "../../services/api";
 
+vi.mock("react-helmet-async", () => ({
+  Helmet: ({ children }) => <>{children}</>,
+  HelmetProvider: ({ children }) => <>{children}</>,
+}));
+
 vi.mock("../../services/api", () => {
   const mockApi = {
     get: vi.fn(),
