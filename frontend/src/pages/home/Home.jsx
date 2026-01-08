@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 import Background from "../../components/utils/Background";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
@@ -8,10 +9,15 @@ import { motion } from "motion/react";
 
 const Home = () => {
   const { t } = useTranslation();
-  let heroData = { text1: t('hero_text1'), text2: t('hero_text2') };
+  let heroData = { text1: t("hero_text1"), text2: t("hero_text2") };
 
   return (
     <>
+      <Helmet>
+        <title>{t("home_meta_title")}</title>
+        <meta name="description" content={t("home_meta_description")} />
+        <link rel="canonical" href="https://canaccesible.es/" />
+      </Helmet>
       <section className="relative min-h-screen overflow-hidden flex flex-col">
         <Background />
         <Header />
@@ -30,7 +36,7 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold text-gray-800 mb-8"
           >
-            {t('our_mission')}
+            {t("our_mission")}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -57,7 +63,7 @@ const Home = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-              {t('services_title')}
+              {t("services_title")}
             </h2>
           </motion.div>
 
@@ -72,16 +78,15 @@ const Home = () => {
                 <i className="fa-solid fa-bullhorn"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {t('service_report_title')}
+                {t("service_report_title")}
               </h3>
-              <p className="text-gray-600 mb-6">
-                {t('service_report_desc')}
-              </p>
+              <p className="text-gray-600 mb-6">{t("service_report_desc")}</p>
               <Link
                 to="/incidents"
                 className="text-blue-600 font-semibold hover:text-blue-800 transition-colors"
               >
-                {t('service_report_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t("service_report_link")}{" "}
+                <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
 
@@ -96,16 +101,15 @@ const Home = () => {
                 <i className="fa-solid fa-map-location-dot"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {t('service_map_title')}
+                {t("service_map_title")}
               </h3>
-              <p className="text-gray-600 mb-6">
-                {t('service_map_desc')}
-              </p>
+              <p className="text-gray-600 mb-6">{t("service_map_desc")}</p>
               <Link
                 to="/map"
                 className="text-green-700 font-semibold hover:text-green-800 transition-colors"
               >
-                {t('service_map_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t("service_map_link")}{" "}
+                <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
 
@@ -121,16 +125,15 @@ const Home = () => {
                 <i className="fa-solid fa-envelope"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {t('service_contact_title')}
+                {t("service_contact_title")}
               </h3>
-              <p className="text-gray-600 mb-6">
-                {t('service_contact_desc')}
-              </p>
+              <p className="text-gray-600 mb-6">{t("service_contact_desc")}</p>
               <Link
                 to="/contact"
                 className="text-purple-600 font-semibold hover:text-purple-800 transition-colors"
               >
-                {t('service_contact_link')} <i className="fa-solid fa-arrow-right ml-1"></i>
+                {t("service_contact_link")}{" "}
+                <i className="fa-solid fa-arrow-right ml-1"></i>
               </Link>
             </motion.div>
           </div>
@@ -146,10 +149,10 @@ const Home = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-7">
-              {t('how_it_works')}
+              {t("how_it_works")}
             </h2>
             <p className="text-xl text-gray-600">
-              {t('how_it_works_subtitle')}
+              {t("how_it_works_subtitle")}
             </p>
           </motion.div>
 
@@ -166,11 +169,9 @@ const Home = () => {
                 1
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {t('step_identify')}
+                {t("step_identify")}
               </h3>
-              <p className="text-gray-600">
-                {t('step_identify_desc')}
-              </p>
+              <p className="text-gray-600">{t("step_identify_desc")}</p>
             </motion.div>
 
             <motion.div
@@ -183,10 +184,10 @@ const Home = () => {
               <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg border-4 border-white z-10 relative">
                 2
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('step_report')}</h3>
-              <p className="text-gray-600">
-                {t('step_report_desc')}
-              </p>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                {t("step_report")}
+              </h3>
+              <p className="text-gray-600">{t("step_report_desc")}</p>
             </motion.div>
 
             <motion.div
@@ -199,10 +200,10 @@ const Home = () => {
               <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg border-4 border-white z-10 relative">
                 3
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('step_improve')}</h3>
-              <p className="text-gray-600">
-                {t('step_improve_desc')}
-              </p>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                {t("step_improve")}
+              </h3>
+              <p className="text-gray-600">{t("step_improve_desc")}</p>
             </motion.div>
           </div>
         </div>
@@ -222,22 +223,22 @@ const Home = () => {
               className="md:w-1/2"
             >
               <div className="inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
-                {t('about_us_tag')}
+                {t("about_us_tag")}
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-6">
-                {t('about_us_title1')} <br />
-                <span className="text-blue-600">{t('about_us_title2')}</span>
+                {t("about_us_title1")} <br />
+                <span className="text-blue-600">{t("about_us_title2")}</span>
               </h2>
               <p className="text-gray-600 text-lg text-justify leading-relaxed mb-6">
-                {t('about_us_text1')}
+                {t("about_us_text1")}
               </p>
               <p className="text-gray-600 text-lg text-justify leading-relaxed mb-8">
-                {t('about_us_text2')}
+                {t("about_us_text2")}
               </p>
 
               <div className="flex items-center gap-4">
                 <p className="text-sm text-gray-500 font-medium">
-                  {t('about_us_footer')}
+                  {t("about_us_footer")}
                 </p>
               </div>
             </motion.div>
@@ -252,10 +253,10 @@ const Home = () => {
                 <div className="w-12 h-12 bg-red-100 text-red-500 rounded-xl flex items-center justify-center text-2xl mb-4">
                   <i className="fa-solid fa-heart"></i>
                 </div>
-                <h3 className="font-bold text-gray-800 text-lg mb-2">{t('passion')}</h3>
-                <p className="text-sm text-gray-500">
-                  {t('passion_desc')}
-                </p>
+                <h3 className="font-bold text-gray-800 text-lg mb-2">
+                  {t("passion")}
+                </h3>
+                <p className="text-sm text-gray-500">{t("passion_desc")}</p>
               </div>
 
               <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
@@ -263,11 +264,9 @@ const Home = () => {
                   <i className="fa-solid fa-code"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  {t('innovation')}
+                  {t("innovation")}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  {t('innovation_desc')}
-                </p>
+                <p className="text-sm text-gray-500">{t("innovation_desc")}</p>
               </div>
 
               <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
@@ -275,11 +274,9 @@ const Home = () => {
                   <i className="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  {t('learning')}
+                  {t("learning")}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  {t('learning_desc')}
-                </p>
+                <p className="text-sm text-gray-500">{t("learning_desc")}</p>
               </div>
 
               <div className="bg-white p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-transform duration-300">
@@ -287,11 +284,9 @@ const Home = () => {
                   <i className="fa-solid fa-hand-holding-heart"></i>
                 </div>
                 <h3 className="font-bold text-gray-800 text-lg mb-2">
-                  {t('commitment')}
+                  {t("commitment")}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  {t('commitment_desc')}
-                </p>
+                <p className="text-sm text-gray-500">{t("commitment_desc")}</p>
               </div>
             </motion.div>
           </div>
@@ -306,23 +301,21 @@ const Home = () => {
           className="max-w-4xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            {t('cta_title')}
+            {t("cta_title")}
           </h2>
-          <p className="text-xl mb-10 text-blue-100">
-            {t('cta_subtitle')}
-          </p>
+          <p className="text-xl mb-10 text-blue-100">{t("cta_subtitle")}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
               className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg"
             >
-              {t('cta_create_account')}
+              {t("cta_create_account")}
             </Link>
             <Link
               to="/incidents"
               className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors"
             >
-              {t('cta_view_incidents')}
+              {t("cta_view_incidents")}
             </Link>
           </div>
         </motion.div>

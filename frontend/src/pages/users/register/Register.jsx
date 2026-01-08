@@ -2,11 +2,17 @@ import CircularGallery from "../../../components/react-bits/CircullarGallery";
 import RegisterForm from "./RegisterForm";
 import { registerImages } from "../../../utils/registerImages";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 const Register = () => {
   const { t } = useTranslation();
   return (
     <section className="flex h-screen">
+      <Helmet>
+        <title>{t("register_meta_title")}</title>
+        <meta name="description" content={t("register_meta_description")} />
+        <link rel="canonical" href="https://canaccesible.es/register" />
+      </Helmet>
       <div className="hidden lg:flex bg-primary-1 w-2/3 flex-col items-center justify-start relative overflow-hidden">
         <div className="absolute -top-56 -left-80 w-[520px] h-80 border-6 border-primary-2 rounded-full opacity-90"></div>
 

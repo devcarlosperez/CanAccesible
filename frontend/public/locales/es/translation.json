@@ -28,7 +28,11 @@
   "upload_image": "Subir imagen",
 
   "login_welcome_back": "¡Bienvenido/a de vuelta a nuestra comunidad!",
+  "login_meta_title": "Iniciar Sesión - CanAccesible",
+  "login_meta_description": "Accede a tu cuenta de CanAccesible para reportar incidencias, gestionar tu perfil y contribuir a un entorno más inclusivo.",
   "register_welcome": "¡Bienvenido/a a nuestra comunidad!",
+  "register_meta_title": "Registrarse - CanAccesible",
+  "register_meta_description": "Crea una cuenta en CanAccesible y únete a la comunidad de accesibilidad en Canarias. ¡Tu participación es clave!",
   "error_user_not_found": "Usuario no encontrado",
   "error_invalid_password": "Contraseña incorrecta",
   "error_email_registered": "El correo electrónico ya está registrado",
@@ -40,6 +44,8 @@
 
   "hero_text1": "Por unas islas",
   "hero_text2": "accesibles para todos",
+  "home_meta_title": "CanAccesible - Por unas islas para todos",
+  "home_meta_description": "Plataforma comunitaria para reportar y mejorar la accesibilidad en Canarias. Únete y ayuda a crear unas islas más inclusivas.",
   "our_mission": "Nuestra Misión",
   "mission_text": "CanAccesible es una plataforma comunitaria diseñada para transformar las Islas Canarias en un referente de accesibilidad. <br /><br /> Permite que cualquier persona pueda registrar, compartir y mejorar la accesibilidad de lugares públicos y privados, fomentando un entorno más inclusivo para toda la comunidad.",
 
@@ -96,6 +102,8 @@
 
   "contact_title": "¿En qué podemos ayudarte?",
   "contact_subtitle": "Selecciona una opción para continuar",
+  "contact_meta_title": "Contacto - CanAccesible",
+  "contact_meta_description": "Contacta con el equipo de CanAccesible. Resuelve dudas, reporta incidencias y obtén soporte sobre accesibilidad en Canarias.",
   "contact_account_support": "Soporte de cuenta",
   "contact_account_support_desc": "¿Tiene problemas con su cuenta o necesita asistencia con su perfil?",
   "contact_report_incident": "Reportar una incidencia",
@@ -130,6 +138,8 @@
   "blog_not_found_desc": "El artículo que buscas no existe.",
 
   "incidents_title": "Gestión de Incidencias",
+  "incidents_meta_title": "Incidencias de Accesibilidad - CanAccesible",
+  "incidents_meta_description": "Explora y reporta barreras arquitectónicas en Canarias. Ayuda a identificar y solucionar problemas de accesibilidad en nuestras islas.",
   "incidents_new": "Nueva Incidencia",
   "incidents_login_to_create": "Inicia sesión para crear una incidencia",
   "incidents_sent_for_review": "La incidencia ha sido enviada para ser revisada.",
@@ -140,6 +150,8 @@
   "incident_back": "Volver a Incidencias",
 
   "map_title": "En este mapa puedes ver las incidencias",
+  "map_meta_title": "Mapa de Accesibilidad - CanAccesible",
+  "map_meta_description": "Mapa interactivo de accesibilidad en Canarias. Encuentra y reporta puntos accesibles y barreras arquitectónicas cerca de ti.",
 
   "dashboard_hello": "Hola {{name}},",
   "dashboard_subtitle": "descubre todas tus publicaciones aquí",
