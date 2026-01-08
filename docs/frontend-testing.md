@@ -24,6 +24,8 @@ Complete testing documentation for the CanAccesible frontend.
 - **Integration:** `IncidentDataFlow` (`tests/integration/IncidentCRUDFlow.test.jsx`)
 - **Utilities:** `incidentHelpers` (`tests/unit/incidentHelpers.test.js`)
 
+---
+
 ## Requirements / Setup
 
 - **Node.js**: LTS recommended (v18+)
