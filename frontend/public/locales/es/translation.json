@@ -28,7 +28,11 @@
   "upload_image": "Subir imagen",
 
   "login_welcome_back": "¡Bienvenido/a de vuelta a nuestra comunidad!",
+  "login_meta_title": "Iniciar Sesión - CanAccesible",
+  "login_meta_description": "Accede a tu cuenta de CanAccesible para reportar incidencias, gestionar tu perfil y contribuir a un entorno más inclusivo.",
   "register_welcome": "¡Bienvenido/a a nuestra comunidad!",
+  "register_meta_title": "Registrarse - CanAccesible",
+  "register_meta_description": "Crea una cuenta en CanAccesible y únete a la comunidad de accesibilidad en Canarias. ¡Tu participación es clave!",
   "error_user_not_found": "Usuario no encontrado",
   "error_invalid_password": "Contraseña incorrecta",
   "error_email_registered": "El correo electrónico ya está registrado",

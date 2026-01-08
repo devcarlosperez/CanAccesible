@@ -28,7 +28,11 @@
   "upload_image": "Upload image",
 
   "login_welcome_back": "Welcome back to our community!",
+  "login_meta_title": "Login - CanAccesible",
+  "login_meta_description": "Access your CanAccesible account to report incidents, manage your profile, and contribute to a more inclusive environment.",
   "register_welcome": "Welcome to our community!",
+  "register_meta_title": "Sign Up - CanAccesible",
+  "register_meta_description": "Create an account on CanAccesible and join the accessibility community in the Canary Islands. Your participation is key!",
   "error_user_not_found": "User not found",
   "error_invalid_password": "Invalid password",
   "error_email_registered": "Email already registered",
