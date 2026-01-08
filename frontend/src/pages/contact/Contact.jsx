@@ -2,12 +2,13 @@ import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -36,29 +37,29 @@ const Contact = () => {
 
   const contactLiveChats = [
     {
-      title: t('contact_account_support'),
-      description: t('contact_account_support_desc'),
+      title: t("contact_account_support"),
+      description: t("contact_account_support_desc"),
       icon: "fa-user",
       iconType: "fa-solid",
       apiType: "soporte de cuenta",
     },
     {
-      title: t('contact_report_incident'),
-      description: t('contact_report_incident_desc'),
+      title: t("contact_report_incident"),
+      description: t("contact_report_incident_desc"),
       icon: "fa-triangle-exclamation",
       iconType: "fa-solid",
       apiType: "reportar una incidencia",
     },
     {
-      title: t('contact_accessibility_resources'),
-      description: t('contact_accessibility_resources_desc'),
+      title: t("contact_accessibility_resources"),
+      description: t("contact_accessibility_resources_desc"),
       icon: "fa-wheelchair-move",
       iconType: "fa-solid",
       apiType: "recursos de accesibilidad",
     },
     {
-      title: t('contact_general_inquiry'),
-      description: t('contact_general_inquiry_desc'),
+      title: t("contact_general_inquiry"),
+      description: t("contact_general_inquiry_desc"),
       icon: "fa-lightbulb",
       iconType: "fa-solid",
       apiType: "consulta general",
@@ -66,45 +67,59 @@ const Contact = () => {
   ];
 
   const handleStartChat = async (apiType) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      showErrorToast(t('contact_login_required'));
+      showErrorToast(t("contact_login_required"));
       return;
     }
     const type = apiType;
 
     try {
       // First, check if a conversation of this type already exists for the user
-      const conversationsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/conversations`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const conversationsResponse = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/conversations`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      const existingConversation = conversationsResponse.data.find(conv => conv.type === type);
+      const existingConversation = conversationsResponse.data.find(
+        (conv) => conv.type === type
+      );
 
       if (existingConversation) {
         // If exists, redirect to it
         navigate(`/conversations/${existingConversation.id}`);
       } else {
         // If not, create new one
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/conversations`, { type }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/conversations`,
+          { type },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         navigate(`/conversations/${response.data.id}`);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        showErrorToast(t('contact_login_required'));
+        showErrorToast(t("contact_login_required"));
       }
     }
   };
 
   return (
     <>
+      <Helmet>
+        <title>CanAccesible - {t("contact_title")}</title>
+        <meta name="description" content={t("contact_subtitle")} />
+        <link rel="canonical" href="https://canaccesible.es/contact" />
+      </Helmet>
       <Header transparent={false} />
 
       {/* Main Content */}
@@ -121,13 +136,13 @@ const Contact = () => {
               className="text-3xl md:text-4xl font-poppins font-bold mb-4"
               style={{ color: "var(--color-neutral-2)" }}
             >
-              {t('contact_title')}
+              {t("contact_title")}
             </h1>
             <p
               className="text-base font-roboto"
               style={{ color: "var(--color-neutral-3)" }}
             >
-              {t('contact_subtitle')}
+              {t("contact_subtitle")}
             </p>
           </motion.div>
 
@@ -177,7 +192,7 @@ const Contact = () => {
                   onClick={() => handleStartChat(option.apiType)}
                   className="bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer mt-4"
                 >
-                  {t('contact_start_chat')}
+                  {t("contact_start_chat")}
                 </button>
               </div>
             ))}
@@ -196,7 +211,7 @@ const Contact = () => {
             className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center px-4 md:px-0"
             style={{ color: "var(--color-neutral-2)" }}
           >
-            {t('contact_info_title')}
+            {t("contact_info_title")}
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 items-stretch px-4 md:px-8 lg:px-0">
@@ -215,7 +230,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    {t('contact_email')}
+                    {t("contact_email")}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2"
@@ -234,7 +249,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    {t('contact_phone')}
+                    {t("contact_phone")}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2"
@@ -253,7 +268,7 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    {t('contact_location')}
+                    {t("contact_location")}
                   </p>
                   <p
                     className="font-roboto text-base border-b-2 mb-4"
@@ -272,13 +287,13 @@ const Contact = () => {
                     className="font-poppins font-semibold mb-2"
                     style={{ color: "var(--color-neutral-2)" }}
                   >
-                    {t('contact_accessibility_support')}
+                    {t("contact_accessibility_support")}
                   </p>
                   <p
                     className="font-roboto text-base"
                     style={{ color: "var(--color-neutral-3)" }}
                   >
-                    {t('contact_accessibility_support_desc')}
+                    {t("contact_accessibility_support_desc")}
                   </p>
                 </div>
               </div>
@@ -319,7 +334,7 @@ const Contact = () => {
                 color: "#ffffff",
               }}
             >
-              {t('contact_view_map')}
+              {t("contact_view_map")}
               <i className="fa-solid fa-location-dot ml-3"></i>
             </a>
           </div>
