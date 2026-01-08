@@ -116,8 +116,8 @@ const Contact = () => {
   return (
     <>
       <Helmet>
-        <title>CanAccesible - {t("contact_title")}</title>
-        <meta name="description" content={t("contact_subtitle")} />
+        <title>{t("contact_meta_title")}</title>
+        <meta name="description" content={t("contact_meta_description")} />
         <link rel="canonical" href="https://canaccesible.es/contact" />
       </Helmet>
       <Header transparent={false} />
