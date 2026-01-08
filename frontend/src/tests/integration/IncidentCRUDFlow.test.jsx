@@ -4,6 +4,12 @@ import { BrowserRouter } from "react-router-dom";
 import IncidentPage from "../../pages/incidents/Incident";
 import api from "../../services/api";
 
+// Mock react-helmet-async to avoid resolution/context issues
+vi.mock("react-helmet-async", () => ({
+  Helmet: ({ children }) => <>{children}</>,
+  HelmetProvider: ({ children }) => <>{children}</>,
+}));
+
 vi.mock("../../services/api", () => {
   const mockApi = {
     get: vi.fn(),
@@ -105,8 +111,17 @@ describe("Integration Flow: Incidents CRUD (Flow 2)", () => {
             { id: 99, name: "New Integration Incident", isApproved: true, user: { id: 1 } }
         ];
 
-        api.get.mockResolvedValueOnce({ data: initialList }) 
-               .mockResolvedValueOnce({ data: updatedList }); 
+        api.get.mockResolvedValueOnce({ data: initialList }); 
+
+        api.get.mockImplementation(async (url) => {
+            if (url === '/incidents') {
+                return { data: updatedList };
+            }
+            if (url && url.includes('incidentFollows')) {
+                return { data: [] };
+            }
+            return { data: [] };
+        });
 
         api.post.mockResolvedValue({ data: { id: 99 } });
 
