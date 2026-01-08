@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { toast } from "react-toastify"; // Importar toast
+import { startCoordinatesValidation } from "../../utils/incidentHelpers";
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -66,6 +67,13 @@ function ClickMarker({ setFormData, initialPosition }) {
     useMapEvents({
         async click(e) {
             const { lat, lng } = e.latlng;
+            
+            // Use Helper to validate coordinates
+            if (!startCoordinatesValidation(lat, lng)) {
+                console.error("Invalid coordinates selected");
+                return;
+            }
+
             setPosition([lat, lng]);
             try {
                 const result = await reverseGeocode(lat, lng);
