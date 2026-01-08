@@ -41,7 +41,7 @@ describe("Component Test: BlogCard", () => {
     });
 
     it("should render article details correctly (title, description, image)", () => {
-        render(
+        const { container } = render(
             <BrowserRouter>
                 <BlogCard article={mockArticle} />
             </BrowserRouter>
@@ -49,7 +49,7 @@ describe("Component Test: BlogCard", () => {
 
         expect(screen.getByText("Test Article")).toBeInTheDocument();
         expect(screen.getByText("Test Description")).toBeInTheDocument();
-        expect(screen.getByRole("img")).toHaveAttribute("src", "test.jpg");
+        expect(container.querySelector("img")).toHaveAttribute("src", "test.jpg");
     });
 
     it("should call translation service and update store when translating", async () => {

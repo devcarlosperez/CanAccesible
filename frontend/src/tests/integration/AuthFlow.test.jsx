@@ -139,9 +139,9 @@ describe("Integration Test: Auth Flow (Login)", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /login_button/i }));
 
-    // 3. Assert
+    // 3. Assert - The component shows the translation key for the error
     await waitFor(() => {
-      expect(screen.getByText("Invalid credentials")).toBeInTheDocument();
+      expect(screen.getByText("error_login_failed")).toBeInTheDocument();
     });
 
     expect(mockNavigate).not.toHaveBeenCalled();

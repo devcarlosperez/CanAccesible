@@ -2,6 +2,8 @@
 
 Complete testing documentation for the CanAccesible frontend.
 
+---
+
 ## Requirements / Setup
 
 - **Node.js**: LTS recommended (v18+)
@@ -10,6 +12,8 @@ Complete testing documentation for the CanAccesible frontend.
 cd frontend
 npm install
 ```
+
+---
 
 ## How to Run Tests
 
@@ -42,6 +46,8 @@ Report is generated in `coverage/`. Open `coverage/index.html` in browser for de
 - Functions: >85%
 - Branches: >80%
 
+---
+
 ## Test File Structure
 
 ```
@@ -59,19 +65,7 @@ frontend/src/tests/
     └── ChatFlow.test.jsx
 ```
 
-### Naming Convention
-
-- Files: `*.test.js` or `*.test.jsx`
-- Location: `src/tests/[type]/`
-
-## What is Being Tested
-
-| Type | Files | Description |
-|------|-------|-------------|
-| **Logic (Unit)** | `dateUtils`, `textUtils` | Pure utility functions |
-| **Data/API** | `blogArticleService` | API service layer |
-| **Interface** | `Footer`, `LoginForm`, `BlogCard` | React components |
-| **Integration** | `AuthFlow`, `ChatFlow` | Complete user flows |
+---
 
 ## Writing Tests Guide
 
@@ -113,6 +107,8 @@ it("should call translation service when translating", async () => {
 });
 ```
 
+---
+
 ## Mocks and Isolation
 
 ### API Mocking
@@ -145,19 +141,3 @@ beforeEach(() => {
     vi.clearAllMocks();
 });
 ```
-
-## Troubleshooting
-
-| Error | Solution |
-|-------|----------|
-| `ReferenceError: fetch is not defined` | Use `vi.stubGlobal('fetch', vi.fn())` or mock axios |
-| `Cannot find module 'react-i18next'` | Add mock for react-i18next in test file |
-| `document is not defined` | Check `vite.config.js` has `environment: 'jsdom'` |
-
-## Available Scripts
-
-| Script | Command | Description |
-|--------|---------|-------------|
-| `test` | `vitest` | Run tests in watch mode |
-| `test:run` | `vitest run` | Run tests once |
-| `test:coverage` | `vitest run --coverage` | Generate coverage report |
