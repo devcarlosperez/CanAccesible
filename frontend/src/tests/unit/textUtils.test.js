@@ -3,7 +3,6 @@ import { truncateText, isValidMessage } from "../../utils/textUtils";
 
 describe("Unit Test: textUtils", () => {
     describe("truncateText", () => {
-        // Parameterized test using it.each as per rubric
         it.each([
             ["Hello World", 5, "Hello..."],
             ["Short", 10, "Short"],
@@ -11,13 +10,13 @@ describe("Unit Test: textUtils", () => {
             ["", 5, ""],
             [null, 5, ""],
             [undefined, 5, ""]
-        ])("should return '%s' when text is '%s' and maxLength is %i", (text, maxLength, expected) => {
+        ])("truncateText('%s', %i) should return '%s'", (text, maxLength, expected) => {
             expect(truncateText(text, maxLength)).toBe(expected);
         });
 
         it("should use default maxLength of 100 if not provided", () => {
             const longText = "a".repeat(105);
-            expect(truncateText(longText).length).toBe(103); // 100 chars + "..."
+            expect(truncateText(longText).length).toBe(103);
             expect(truncateText(longText).endsWith("...")).toBe(true);
         });
     });
@@ -30,7 +29,7 @@ describe("Unit Test: textUtils", () => {
             ["   ", false],
             [null, false],
             [123, false]
-        ])("should return %s for input '%s'", (input, expected) => {
+        ])("isValidMessage('%s') should return %s", (input, expected) => {
             expect(isValidMessage(input)).toBe(expected);
         });
     });

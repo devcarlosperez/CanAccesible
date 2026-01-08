@@ -49,6 +49,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3dSP8Yt) - Complete API endpoint documentation.
 - [API Documentation in Swagger](https://canaccesible.es/api-docs) - Interactive API documentation.
+- [Frontend Testing Guide](./docs/frontend-testing.md) - Complete testing documentation for React + Vitest.
 - [OpenLDAP Setup](./docs/openldap-setup.md) - Technical documentation for the OpenLDAP server setup and configuration.
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
