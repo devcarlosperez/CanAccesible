@@ -4,10 +4,31 @@ Complete testing documentation for the CanAccesible frontend.
 
 ---
 
+## Work Distribution
+
+### Carlos
+
+- **Components:** `BlogCard` (`tests/components/BlogCard.test.jsx`)
+- **Integration:** `ChatFlow` (`tests/integration/ChatFlow.test.jsx`)
+- **Utilities:** `textUtils` (`tests/unit/textUtils.test.js`), `blogArticleService` (`tests/unit/blogArticleService.test.js`)
+
+### Jonathan
+
+- **Components:** `Footer` (`tests/components/Footer.test.jsx`), `LoginForm` (`tests/components/LoginForm.test.jsx`)
+- **Integration:** `AuthFlow` (`tests/integration/AuthFlow.test.jsx`)
+- **Utilities:** `dateUtils` (`tests/unit/dateUtils.test.js`)
+
+### Iriome
+
+- **Components:** `Incident` (`tests/components/Incident.test.jsx`)
+- **Integration:** `IncidentDataFlow` (`tests/integration/IncidentCRUDFlow.test.jsx`)
+- **Utilities:** `incidentHelpers` (`tests/unit/incidentHelpers.test.js`)
+
 ## Requirements / Setup
 
 - **Node.js**: LTS recommended (v18+)
 - **Install dependencies**:
+
 ```bash
 cd frontend
 npm install
@@ -41,11 +62,6 @@ npx vitest run --coverage
 
 Report is generated in `coverage/`. Open `coverage/index.html` in browser for details.
 
-**Target Metrics**:
-- Lines: >85%
-- Functions: >85%
-- Branches: >80%
-
 ---
 
 ## Test File Structure
@@ -53,16 +69,19 @@ Report is generated in `coverage/`. Open `coverage/index.html` in browser for de
 ```
 frontend/src/tests/
 ├── unit/                    # Pure logic tests (utils, services)
+│   ├── blogArticleService.test.js
 │   ├── dateUtils.test.js
-│   ├── textUtils.test.js
-│   └── blogArticleService.test.js
+│   ├── incidentHelpers.test.js
+│   └── textUtils.test.js
 ├── components/              # React component tests
+│   ├── BlogCard.test.jsx
 │   ├── Footer.test.jsx
-│   ├── LoginForm.test.jsx
-│   └── BlogCard.test.jsx
+│   ├── Incident.test.jsx
+│   └── LoginForm.test.jsx
 └── integration/             # Full flow tests
     ├── AuthFlow.test.jsx
-    └── ChatFlow.test.jsx
+    ├── ChatFlow.test.jsx
+    └── IncidentCRUDFlow.test.jsx
 ```
 
 ---
@@ -74,17 +93,17 @@ frontend/src/tests/
 All tests must follow this structure:
 
 ```javascript
-it('should fetch all blog articles successfully', async () => {
-    // ARRANGE
-    const mockArticles = [{ id: 1, title: "Article 1" }];
-    api.get.mockResolvedValue({ data: mockArticles });
+it("should fetch all blog articles successfully", async () => {
+  // ARRANGE
+  const mockArticles = [{ id: 1, title: "Article 1" }];
+  api.get.mockResolvedValue({ data: mockArticles });
 
-    // ACT
-    const result = await getAllBlogArticles();
+  // ACT
+  const result = await getAllBlogArticles();
 
-    // ASSERT
-    expect(api.get).toHaveBeenCalledWith("/blogArticles");
-    expect(result).toEqual(mockArticles);
+  // ASSERT
+  expect(api.get).toHaveBeenCalledWith("/blogArticles");
+  expect(result).toEqual(mockArticles);
 });
 ```
 
@@ -92,18 +111,24 @@ it('should fetch all blog articles successfully', async () => {
 
 ```javascript
 it("should call translation service when translating", async () => {
-    // ARRANGE
-    mockStore.isTranslated.mockReturnValue(false);
-    TranslationService.translateText.mockResolvedValue("Translated");
+  // ARRANGE
+  mockStore.isTranslated.mockReturnValue(false);
+  TranslationService.translateText.mockResolvedValue("Translated");
 
-    // ACT
-    render(<BrowserRouter><BlogCard article={mockArticle} /></BrowserRouter>);
-    fireEvent.click(screen.getByTitle("blog_card_translate_to_english"));
+  // ACT
+  render(
+    <BrowserRouter>
+      <BlogCard article={mockArticle} />
+    </BrowserRouter>
+  );
 
-    // ASSERT
-    await waitFor(() => {
-        expect(TranslationService.translateText).toHaveBeenCalled();
-    });
+  // Simulate interaction
+  fireEvent.click(screen.getByTitle("blog_card_translate_to_english"));
+
+  // ASSERT
+  await waitFor(() => {
+    expect(TranslationService.translateText).toHaveBeenCalled();
+  });
 });
 ```
 
@@ -115,10 +140,13 @@ it("should call translation service when translating", async () => {
 
 ```javascript
 vi.mock("../../services/api", () => ({
-    default: {
-        get: vi.fn(),
-        post: vi.fn(),
-    },
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    defaults: { headers: { common: {} } },
+  },
 }));
 ```
 
@@ -126,11 +154,11 @@ vi.mock("../../services/api", () => ({
 
 ```javascript
 vi.mock("react-i18next", () => ({
-    useTranslation: () => ({ t: (key) => key }),
+  useTranslation: () => ({ t: (key) => key }),
 }));
 
 vi.mock("../../stores/blogTranslationStore", () => ({
-    useBlogTranslationStore: vi.fn(),
+  useBlogTranslationStore: vi.fn(),
 }));
 ```
 
@@ -138,6 +166,6 @@ vi.mock("../../stores/blogTranslationStore", () => ({
 
 ```javascript
 beforeEach(() => {
-    vi.clearAllMocks();
+  vi.clearAllMocks();
 });
 ```
