@@ -110,8 +110,17 @@ describe("Integration Flow: Incidents CRUD (Flow 2)", () => {
             { id: 99, name: "New Integration Incident", isApproved: true, user: { id: 1 } }
         ];
 
-        api.get.mockResolvedValueOnce({ data: initialList }) 
-               .mockResolvedValueOnce({ data: updatedList }); 
+        api.get.mockResolvedValueOnce({ data: initialList }); 
+
+        api.get.mockImplementation(async (url) => {
+            if (url === '/incidents') {
+                return { data: updatedList };
+            }
+            if (url && url.includes('incidentFollows')) {
+                return { data: [] };
+            }
+            return { data: [] };
+        });
 
         api.post.mockResolvedValue({ data: { id: 99 } });
 
