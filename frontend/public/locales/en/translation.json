@@ -40,6 +40,8 @@
 
   "hero_text1": "For islands",
   "hero_text2": "accessible to all",
+  "home_meta_title": "CanAccesible - For islands accessible to all",
+  "home_meta_description": "Community platform to report and improve accessibility in the Canary Islands. Join us and help create more inclusive islands.",
   "our_mission": "Our Mission",
   "mission_text": "CanAccesible is a community platform designed to transform the Canary Islands into a benchmark for accessibility. <br /><br /> It allows anyone to register, share, and improve the accessibility of public and private places, fostering a more inclusive environment for the entire community.",
 
@@ -132,6 +134,8 @@
   "blog_not_found_desc": "The article you're looking for does not exist.",
 
   "incidents_title": "Incident Management",
+  "incidents_meta_title": "Accessibility Incidents - CanAccesible",
+  "incidents_meta_description": "Explore and report architectural barriers in the Canary Islands. Help identify and solve accessibility issues on our islands.",
   "incidents_new": "New Incident",
   "incidents_login_to_create": "Log in to create an incident",
   "incidents_sent_for_review": "The incident has been sent for review.",
@@ -142,6 +146,8 @@
   "incident_back": "Back to Incidents",
 
   "map_title": "On this map you can see the incidents",
+  "map_meta_title": "Accessibility Map - CanAccesible",
+  "map_meta_description": "Interactive map of accessibility in the Canary Islands. Find and report accessible points and architectural barriers near you.",
 
   "dashboard_hello": "Hello {{name}},",
   "dashboard_subtitle": "discover all your posts here",

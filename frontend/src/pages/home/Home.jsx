@@ -14,9 +14,9 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>CanAccesible - {t("hero_text1")}</title>
-        <meta name="description" content={t("mission_text")} />
-        <link rel="canonical" href="https://canaccesible.com/" />
+        <title>{t("home_meta_title")}</title>
+        <meta name="description" content={t("home_meta_description")} />
+        <link rel="canonical" href="https://canaccesible.es/" />
       </Helmet>
       <section className="relative min-h-screen overflow-hidden flex flex-col">
         <Background />

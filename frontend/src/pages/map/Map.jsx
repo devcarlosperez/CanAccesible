@@ -55,8 +55,8 @@ const Map = () => {
   return (
     <>
       <Helmet>
-        <title>CanAccesible - {t("map_title")}</title>
-        <meta name="description" content={t("service_map_desc")} />
+        <title>{t("map_meta_title")}</title>
+        <meta name="description" content={t("map_meta_description")} />
         <link rel="canonical" href="https://canaccesible.es/map" />
       </Helmet>
       <Header transparent={false} className="fixed z-50" />

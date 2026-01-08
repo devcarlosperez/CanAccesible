@@ -257,8 +257,8 @@ const Incident = () => {
   return (
     <>
       <Helmet>
-        <title>CanAccesible - {t("incidents_title")}</title>
-        <meta name="description" content={t("service_report_desc")} />
+        <title>{t("incidents_meta_title")}</title>
+        <meta name="description" content={t("incidents_meta_description")} />
         <link rel="canonical" href="https://canaccesible.es/incidents" />
       </Helmet>
       <Header transparent={false} />
