@@ -17,14 +17,16 @@ exports.signIn = async (req, res) => {
       const base64Credentials = authHeader.split(" ")[1];
       const decoded = Buffer.from(base64Credentials, "base64").toString("utf8");
       [email, password] = decoded.split(":");
-    } 
+    }
     // 2. Try Request Body (JSON or URL-encoded)
     else if (req.body.email && req.body.password) {
       email = req.body.email;
       password = req.body.password;
-    } 
-    else {
-      return res.status(400).json({ message: "Missing credentials. Please provide Basic Auth header or email/password in body." });
+    } else {
+      return res.status(400).json({
+        message:
+          "Missing credentials. Please provide Basic Auth header or email/password in body.",
+      });
     }
 
     const user = await User.findOne({
@@ -102,6 +104,15 @@ exports.signIn = async (req, res) => {
     });
   } catch (error) {
     console.error("[AUTH] SignIn error:", error);
+    if (error.message === "User not found") {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (
+      error.message.includes("Invalid password") ||
+      error.message.includes("Invalid credentials")
+    ) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
     res.status(500).json({ message: "Server error" });
   }
 };
