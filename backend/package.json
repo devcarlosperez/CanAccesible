@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:setup": "npm run openldap:test:up && npm run db:create:test && npm run db:migrate:test && npm run db:seed:test",
+    "test:teardown": "npm run openldap:test:down && npm run db:drop:test",
     "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
     "db:drop:test": "cross-env NODE_ENV=test npx sequelize-cli db:drop",
     "db:migrate:test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate",
@@ -42,7 +44,10 @@
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
+    "jest": "^29.7.0",
     "postman-to-openapi": "^1.2.0",
-    "sequelize-cli": "^6.6.3"
+    "sequelize-cli": "^6.6.3",
+    "sinon": "^18.0.0",
+    "supertest": "^7.0.1"
   }
 }
