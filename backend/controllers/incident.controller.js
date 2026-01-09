@@ -1,7 +1,6 @@
 const db = require("../models");
 const axios = require("axios");
 const { deleteImageFromStorage } = require("../config/doSpacesClient");
-const transporter = require("../config/mailer");
 const incidentObject = db.incident;
 const Notification = db.notification;
 
@@ -152,7 +151,11 @@ exports.update = async (req, res) => {
 
     // Check permissions: only creator or admin can update
     if (req.user.id !== incident.userId && req.user.roleId !== 2) {
-      return res.status(403).json({ message: "You do not have permission to update this incident." });
+      return res
+        .status(403)
+        .json({
+          message: "You do not have permission to update this incident.",
+        });
     }
 
     if (req.body.latitude !== undefined && req.body.longitude !== undefined) {
@@ -231,7 +234,11 @@ exports.delete = async (req, res) => {
 
     // Check permissions: only creator or admin can delete
     if (req.user.id !== incident.userId && req.user.roleId !== 2) {
-      return res.status(403).json({ message: "You do not have permission to delete this incident." });
+      return res
+        .status(403)
+        .json({
+          message: "You do not have permission to delete this incident.",
+        });
     }
 
     await deleteImageFromStorage(incident.nameFile);

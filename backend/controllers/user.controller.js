@@ -2,7 +2,6 @@ const db = require("../models");
 const User = db.user;
 const userService = require("../services/user.service");
 const { deleteImageFromStorage } = require("../config/doSpacesClient");
-const transporter = require("../config/mailer");
 const { createLog } = require("../services/log.service");
 
 exports.create = async (req, res) => {
@@ -10,7 +9,12 @@ exports.create = async (req, res) => {
     const { firstName, lastName, email, password, roleId } = req.body;
 
     if (!firstName || !lastName || !email || !password || !roleId) {
-      return res.status(400).json({ message: "Missing required fields: firstName, lastName, email, password, roleId" });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Missing required fields: firstName, lastName, email, password, roleId",
+        });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,24 +37,6 @@ exports.create = async (req, res) => {
     await createLog(actorId, "CREATE", "User", result.id);
 
     res.status(201).json(result);
-
-    // Send welcome email asynchronously
-    setImmediate(async () => {
-      try {
-        await transporter.sendMail({
-          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-          to: email,
-          subject: "¡Bienvenido/a a CANACCESIBLE! 😎🔥",
-          html: `
-        <h2>Hola ${firstName}!</h2>
-        <p>Tu cuenta ha sido creada con éxito.</p>
-        <p>Ya puedes iniciar sesión y disfrutar de la plataforma brooo 😎</p>
-      `,
-        });
-      } catch (emailError) {
-        console.error("Error sending welcome email:", emailError);
-      }
-    });
   } catch (err) {
     res.status(500).json({ message: err.message || "Error creating the user" });
   }

@@ -4,7 +4,7 @@ const userService = require("../services/user.service");
 const User = db.user;
 const Notification = db.notification;
 const { jwtConfig } = require("../config/jwt");
-const transporter = require("../config/mailer");
+const resend = require("../config/resend");
 const { createLog } = require("../services/log.service");
 
 exports.signIn = async (req, res) => {
@@ -87,9 +87,9 @@ exports.signIn = async (req, res) => {
 
     setImmediate(async () => {
       try {
-        await transporter.sendMail({
-          from: `"CANACCESIBLE" <${process.env.SMTP_USER}>`,
-          to: user.email,
+        const { data, error } = await resend.emails.send({
+          from: "CANACCESIBLE <onboarding@resend.dev>",
+          to: [user.email],
           subject: "Inicio de sesión detectado",
           html: `
             <h2>Hola ${user.firstName}!</h2>
@@ -98,6 +98,12 @@ exports.signIn = async (req, res) => {
             <p>Si NO fuiste tú: cambia tu contraseña YA 🛑🔥</p>
           `,
         });
+
+        if (error) {
+          console.error("[MAIL] Resend error:", error);
+        } else {
+          console.log("[MAIL] Email sent successfully:", data);
+        }
       } catch (emailError) {
         console.error("[MAIL] Send error:", emailError);
       }
