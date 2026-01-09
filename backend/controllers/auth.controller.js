@@ -1,5 +1,6 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const userService = require("../services/user.service");
 const User = db.user;
 const Notification = db.notification;
@@ -144,4 +145,49 @@ exports.logout = async (req, res) => {
     res.clearCookie("connect.sid");
     res.status(200).json({ message: "Session closed successfully" });
   });
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+    // Save to DB
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetTokenExpiry;
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    const { data, error } = await resend.emails.send({
+      from: "CANACCESIBLE <onboarding@resend.dev>",
+      to: [user.email],
+      subject: "Recuperación de contraseña",
+      html: `
+        <h2>Hola ${user.firstName},</h2>
+        <p>Has solicitado restablecer tu contraseña.</p>
+        <p>Haz clic en el siguiente enlace para continuar:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>Este enlace expirará en 1 hora.</p>
+      `,
+    });
+
+    if (error) {
+      console.error("Resend error:", error);
+      return res.status(500).json({ message: "Error sending email" });
+    }
+
+    res.status(200).json({ message: "Password reset email sent" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
