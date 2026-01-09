@@ -88,14 +88,23 @@ exports.signIn = async (req, res) => {
     setImmediate(async () => {
       try {
         const { data, error } = await resend.emails.send({
-          from: "CANACCESIBLE <onboarding@resend.dev>",
+          from: "noreply@canaccesible.es",
           to: [user.email],
           subject: "Inicio de sesión detectado",
           html: `
-            <h2>Hola ${user.firstName}!</h2>
-            <p>Acabas de iniciar sesión en tu cuenta.</p>
-            <p>Si fuiste tú: todo bajo control brooo 😎</p>
-            <p>Si NO fuiste tú: cambia tu contraseña YA 🛑🔥</p>
+            <h2>Hola ${user.firstName},</h2>
+            <p>
+              Hemos detectado un inicio de sesión reciente en tu cuenta.
+            </p>
+            <p>
+              Si has sido tú, no es necesario que realices ninguna acción.
+            </p>
+            <p>
+              Si no reconoces este inicio de sesión, te recomendamos cambiar tu contraseña de inmediato y revisar la seguridad de tu cuenta.
+            </p>
+            <p>
+              Si necesitas ayuda, contacta con nuestro equipo de soporte.
+            </p>
           `,
         });
 

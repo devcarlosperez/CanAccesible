@@ -126,7 +126,7 @@ const ProfileForm = ({
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder={t("profile_email_placeholder")}
+                placeholder={t("profile_email")}
               />
             </div>
 
