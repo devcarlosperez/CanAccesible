@@ -16,8 +16,22 @@ const config = {
     port: Number(process.env.DB_PORT),
     dialect: "mysql",
     dialectOptions: {
-      ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+      ssl:
+        process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
     },
+  },
+  test: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    dialect: "mysql",
+    dialectOptions: {
+      ssl:
+        process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+    },
+    logging: false, // Disable logging for tests
   },
   production: {
     username: process.env.DB_USER,
@@ -27,7 +41,8 @@ const config = {
     port: Number(process.env.DB_PORT),
     dialect: "mysql",
     dialectOptions: {
-      ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+      ssl:
+        process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
     },
   },
 };

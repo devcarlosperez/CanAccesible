@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
+    "db:migrate:test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate",
     "db:migrate": "cross-env NODE_ENV=development npx sequelize-cli db:migrate",
     "db:seed": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
     "dev": "cross-env NODE_ENV=development node index.js"
