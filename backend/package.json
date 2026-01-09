@@ -9,8 +9,10 @@
     "db:drop:test": "cross-env NODE_ENV=test npx sequelize-cli db:drop",
     "db:migrate:test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate",
     "db:seed:test": "cross-env NODE_ENV=test npx sequelize-cli db:seed:all",
-    "db:migrate": "cross-env NODE_ENV=development npx sequelize-cli db:migrate",
-    "db:seed": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
+    "db:create:dev": "cross-env NODE_ENV=development npx sequelize-cli db:create",
+    "db:drop:dev": "cross-env NODE_ENV=development npx sequelize-cli db:drop",
+    "db:migrate:dev": "cross-env NODE_ENV=development npx sequelize-cli db:migrate",
+    "db:seed:dev": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
     "dev": "cross-env NODE_ENV=development node index.js"
   },
   "author": "",
