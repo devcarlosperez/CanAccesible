@@ -1,6 +1,7 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { Op } = require("sequelize");
 const userService = require("../services/user.service");
 const User = db.user;
 const Notification = db.notification;
@@ -186,6 +187,39 @@ exports.forgotPassword = async (req, res) => {
     }
 
     res.status(200).json({ message: "Password reset email sent" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    const user = await User.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { [Op.gt]: new Date() },
+      },
+      include: [{ model: db.role, as: "role" }],
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Password reset token is invalid or has expired",
+      });
+    }
+
+    await userService.resetPassword(user.email, newPassword);
+
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    await createLog(user.id, "PASSWORD_RESET", "User", user.id);
+
+    res.status(200).json({ message: "Password has been updated" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

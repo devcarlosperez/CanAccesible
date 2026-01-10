@@ -5,5 +5,6 @@ module.exports = (app) => {
   router.post("/signin", auth.signIn);
   router.post("/logout", auth.logout);
   router.post("/forgot-password", auth.forgotPassword);
+  router.post("/reset-password", auth.resetPassword);
   app.use("/api/auth", router);
 };

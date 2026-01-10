@@ -1,5 +1,5 @@
-const ldap = require('ldapjs');
-const crypto = require('crypto');
+const ldap = require("ldapjs");
+const crypto = require("crypto");
 
 class LDAPService {
   constructor() {
@@ -7,9 +7,11 @@ class LDAPService {
     this.adminDN = process.env.LDAP_ADMIN_DN;
     this.adminPassword = process.env.LDAP_ADMIN_PASSWORD;
     this.ldapUrl = process.env.LDAP_URL;
-    
+
     if (!this.baseDN || !this.adminDN || !this.adminPassword || !this.ldapUrl) {
-      console.warn('[LDAP] Warning: LDAP environment variables are not fully defined.');
+      console.warn(
+        "[LDAP] Warning: LDAP environment variables are not fully defined."
+      );
     }
 
     // Organizational Units mapped by role
@@ -28,13 +30,15 @@ class LDAPService {
   }
 
   // Get OU based on role
-  getOrganizationalUnitByRole(role = 'usuario') {
-    return this.organizationalUnitMap[role] || this.organizationalUnitMap['usuario'];
+  getOrganizationalUnitByRole(role = "usuario") {
+    return (
+      this.organizationalUnitMap[role] || this.organizationalUnitMap["usuario"]
+    );
   }
 
   // Get Group DN based on role
-  getGroupDNByRole(role = 'usuario') {
-    return this.groupDNMap[role] || this.groupDNMap['usuario'];
+  getGroupDNByRole(role = "usuario") {
+    return this.groupDNMap[role] || this.groupDNMap["usuario"];
   }
 
   async createConnection() {
@@ -44,13 +48,13 @@ class LDAPService {
         timeout: 5000,
       });
 
-      client.on('error', (err) => {
-        console.error('LDAP Connection Error:', err);
+      client.on("error", (err) => {
+        console.error("LDAP Connection Error:", err);
         reject(err);
       });
 
-      client.on('connect', () => {
-        console.log('[LDAP] Connected to server');
+      client.on("connect", () => {
+        console.log("[LDAP] Connected to server");
         resolve(client);
       });
     });
@@ -73,48 +77,51 @@ class LDAPService {
   async search(client, searchBase, options) {
     return new Promise((resolve, reject) => {
       const entries = [];
-      
+
       client.search(searchBase, options, (err, res) => {
         if (err) {
-          console.error('[LDAP] Search error:', err);
+          console.error("[LDAP] Search error:", err);
           reject(err);
           return;
         }
 
-        res.on('searchEntry', (entry) => {
+        res.on("searchEntry", (entry) => {
           // entry.object can be null/undefined in some ldapjs versions or configurations
           // entry.pojo is usually reliable for raw data
           const user = entry.pojo || {};
           // Ensure we have a valid object to attach properties to
           const resultUser = { ...user };
-          
+
           // entry.objectName is the DN string
           if (entry.objectName) {
             resultUser.dn = entry.objectName.toString();
           } else if (entry.dn) {
-             resultUser.dn = entry.dn.toString();
+            resultUser.dn = entry.dn.toString();
           }
-          
+
           // Map attributes if they are inside an 'attributes' array (common in pojo)
           if (user.attributes) {
-             user.attributes.forEach(attr => {
-                 resultUser[attr.type] = attr.values && attr.values.length === 1 ? attr.values[0] : attr.values;
-             });
+            user.attributes.forEach((attr) => {
+              resultUser[attr.type] =
+                attr.values && attr.values.length === 1
+                  ? attr.values[0]
+                  : attr.values;
+            });
           }
 
           entries.push(resultUser);
         });
 
-        res.on('searchReference', (referral) => {
-          console.log('[LDAP] Referral:', referral.uris);
+        res.on("searchReference", (referral) => {
+          console.log("[LDAP] Referral:", referral.uris);
         });
 
-        res.on('error', (err) => {
-          console.error('[LDAP] Search stream error:', err);
+        res.on("error", (err) => {
+          console.error("[LDAP] Search stream error:", err);
           reject(err);
         });
 
-        res.on('end', (result) => {
+        res.on("end", (result) => {
           if (result.status !== 0) {
             reject(new Error(`LDAP search error: ${result.status}`));
           } else {
@@ -156,7 +163,7 @@ class LDAPService {
   async close(client) {
     return new Promise((resolve) => {
       client.unbind(() => {
-        console.log('[LDAP] Connection closed');
+        console.log("[LDAP] Connection closed");
         resolve();
       });
     });
@@ -164,24 +171,24 @@ class LDAPService {
 
   encryptSSHA(password) {
     const salt = crypto.randomBytes(4);
-    const sha = crypto.createHash('sha1');
+    const sha = crypto.createHash("sha1");
     sha.update(password);
     sha.update(salt);
     const hash = sha.digest();
     const ssha = Buffer.concat([hash, salt]);
-    return '{SSHA}' + ssha.toString('base64');
+    return "{SSHA}" + ssha.toString("base64");
   }
 
   async addUserToGroup(client, userUid, role) {
     return new Promise((resolve, reject) => {
       const groupDN = this.getGroupDNByRole(role);
-      
+
       const change = new ldap.Change({
-        operation: 'add',
+        operation: "add",
         modification: new ldap.Attribute({
-          type: 'memberUid',
-          values: [userUid]
-        })
+          type: "memberUid",
+          values: [userUid],
+        }),
       });
 
       client.modify(groupDN, change, (err) => {
@@ -191,7 +198,10 @@ class LDAPService {
             console.log(`[LDAP] User already in group: ${groupDN}`);
             resolve();
           } else {
-            console.error(`[LDAP] Add to group failed: ${groupDN}`, err.message);
+            console.error(
+              `[LDAP] Add to group failed: ${groupDN}`,
+              err.message
+            );
             reject(err);
           }
         } else {
@@ -208,7 +218,8 @@ class LDAPService {
       client = await this.createConnection();
       await this.bind(client, this.adminDN, this.adminPassword);
 
-      const { uid, firstName, lastName, email, password, telephone, role } = userData;
+      const { uid, firstName, lastName, email, password, telephone, role } =
+        userData;
       // Get OU based on user role
       const userOu = this.getOrganizationalUnitByRole(role);
       const userDN = `uid=${uid},${userOu}`;
@@ -216,7 +227,7 @@ class LDAPService {
       const displayName = `${firstName} ${lastName}`;
 
       const attributes = {
-        objectClass: ['inetOrgPerson', 'organizationalPerson', 'person', 'top'],
+        objectClass: ["inetOrgPerson", "organizationalPerson", "person", "top"],
         uid: uid,
         cn: displayName,
         displayName: displayName,
@@ -231,22 +242,24 @@ class LDAPService {
         await this.add(client, userDN, attributes);
       } catch (err) {
         if (err.code === 68) {
-          console.log(`[LDAP] User already exists, proceeding to group assignment: ${userDN}`);
+          console.log(
+            `[LDAP] User already exists, proceeding to group assignment: ${userDN}`
+          );
         } else {
           throw err;
         }
       }
-      
+
       // Add user to corresponding group
       await this.addUserToGroup(client, uid, role);
-      
+
       return {
         success: true,
         message: `User created in LDAP: ${userDN}`,
         userDN,
       };
     } catch (error) {
-      console.error('[LDAP] Create user error:', error.message);
+      console.error("[LDAP] Create user error:", error.message);
       throw error;
     } finally {
       if (client) await this.close(client);
@@ -261,14 +274,22 @@ class LDAPService {
 
       const filter = `(|(uid=${searchValue})(mail=${searchValue}))`;
       console.log(`[LDAP] Forward lookup for: ${searchValue}`);
-      
+
       // Search in all role-based OUs and user OU
       for (const role of Object.keys(this.organizationalUnitMap)) {
         const userOrganizationalUnit = this.getOrganizationalUnitByRole(role);
         const entries = await this.search(client, userOrganizationalUnit, {
           filter,
-          scope: 'sub',
-          attributes: ['uid', 'cn', 'mail', 'givenName', 'sn', 'telephoneNumber', 'displayName'],
+          scope: "sub",
+          attributes: [
+            "uid",
+            "cn",
+            "mail",
+            "givenName",
+            "sn",
+            "telephoneNumber",
+            "displayName",
+          ],
         });
 
         if (entries.length > 0) {
@@ -288,10 +309,10 @@ class LDAPService {
         }
       }
 
-      console.log('[LDAP] User not found');
+      console.log("[LDAP] User not found");
       return null;
     } catch (error) {
-      console.error('[LDAP] Forward lookup error:', error.message);
+      console.error("[LDAP] Forward lookup error:", error.message);
       return null;
     } finally {
       if (client) await this.close(client);
@@ -304,18 +325,18 @@ class LDAPService {
       console.log(`[LDAP] Authenticating: ${userDN}`);
       client = await this.createConnection();
       await this.bind(client, userDN, password);
-      console.log('[LDAP] Authentication successful');
-      
+      console.log("[LDAP] Authentication successful");
+
       return {
         success: true,
-        message: 'Authentication successful',
+        message: "Authentication successful",
         userDN,
       };
     } catch (error) {
-      console.log('[LDAP] Authentication failed:', error.message);
+      console.log("[LDAP] Authentication failed:", error.message);
       return {
         success: false,
-        message: 'Invalid password or user not found',
+        message: "Invalid password or user not found",
         error: error.message,
       };
     } finally {
@@ -329,15 +350,15 @@ class LDAPService {
       if (!user) {
         return {
           success: false,
-          message: 'User not found',
+          message: "User not found",
         };
       }
       return await this.authenticate(user.dn, password);
     } catch (error) {
-      console.error('[LDAP] Auth by email error:', error.message);
+      console.error("[LDAP] Auth by email error:", error.message);
       return {
         success: false,
-        message: 'Authentication error: ' + error.message,
+        message: "Authentication error: " + error.message,
       };
     }
   }
@@ -349,30 +370,34 @@ class LDAPService {
 
       // Extract uid from DN if full DN provided, else assume it's uid
       let uid;
-      if (userIdentifier.includes('=')) {
+      if (userIdentifier.includes("=")) {
         // It's a DN, extract uid
-        const dnParts = userIdentifier.split(',');
-        const uidPart = dnParts.find(part => part.startsWith('uid='));
+        const dnParts = userIdentifier.split(",");
+        const uidPart = dnParts.find((part) => part.startsWith("uid="));
         if (!uidPart) {
           await this.close(client);
           return {
             success: false,
-            message: 'Invalid DN format',
+            message: "Invalid DN format",
           };
         }
-        uid = uidPart.split('=')[1];
+        uid = uidPart.split("=")[1];
       } else {
         uid = userIdentifier;
       }
 
       // Search all groups in ou=groups
       const searchOptions = {
-        scope: 'one',
-        filter: '(objectClass=groupOfNames)',
-        attributes: ['cn', 'memberUid'],
+        scope: "one",
+        filter: "(objectClass=groupOfNames)",
+        attributes: ["cn", "memberUid"],
       };
 
-      const groups = await this.search(client, this.groupsOrganizationalUnit, searchOptions);
+      const groups = await this.search(
+        client,
+        this.groupsOrganizationalUnit,
+        searchOptions
+      );
       const userGroups = [];
 
       for (const group of groups) {
@@ -391,14 +416,42 @@ class LDAPService {
         groups: userGroups,
       };
     } catch (error) {
-      console.error('[LDAP] Reverse lookup error:', error.message);
+      console.error("[LDAP] Reverse lookup error:", error.message);
       return {
         success: false,
-        message: 'Reverse lookup error: ' + error.message,
+        message: "Reverse lookup error: " + error.message,
       };
     }
   }
 
+  async updatePassword(email, newPassword) {
+    let client;
+    try {
+      const user = await this.forwardLookup(email);
+      if (!user) throw new Error("User not found in LDAP");
+
+      client = await this.createConnection();
+      await this.bind(client, this.adminDN, this.adminPassword);
+
+      const sshaPassword = this.encryptSSHA(newPassword);
+
+      const change = new ldap.Change({
+        operation: "replace",
+        modification: new ldap.Attribute({
+          type: "userPassword",
+          values: [sshaPassword],
+        }),
+      });
+
+      await this.modify(client, user.dn, change);
+      return { success: true };
+    } catch (error) {
+      console.error("[LDAP] Update password error:", error.message);
+      throw error;
+    } finally {
+      if (client) await this.close(client);
+    }
+  }
 }
 
 module.exports = new LDAPService();
