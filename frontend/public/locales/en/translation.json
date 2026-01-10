@@ -454,5 +454,15 @@
   "check_email_description": "We have sent a recovery link to {{email}}",
   "back_to_login": "Back to Login",
   "send_reset_link": "Send recovery link",
-  "or_label": "Or"
+  "or_label": "Or",
+
+  "reset_password_title": "Reset Password",
+  "new_password_label": "New Password",
+  "confirm_password_label": "Confirm Password",
+  "new_password_placeholder": "Enter your new password",
+  "confirm_password_placeholder": "Repeat your new password",
+  "reset_password_button": "Change Password",
+  "passwords_do_not_match": "Passwords do not match",
+  "password_reset_success": "Password updated successfully",
+  "password_reset_error": "The link is invalid or has expired"
 }

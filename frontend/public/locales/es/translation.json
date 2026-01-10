@@ -453,5 +453,15 @@
   "check_email_description": "Hemos enviado un enlace de recuperación a {{email}}",
   "back_to_login": "Volver a Iniciar Sesión",
   "send_reset_link": "Enviar enlace de recuperación",
-  "or_label": "O"
+  "or_label": "O",
+
+  "reset_password_title": "Restablecer Contraseña",
+  "new_password_label": "Nueva Contraseña",
+  "confirm_password_label": "Confirmar Contraseña",
+  "new_password_placeholder": "Introduce tu nueva contraseña",
+  "confirm_password_placeholder": "Repite tu nueva contraseña",
+  "reset_password_button": "Cambiar Contraseña",
+  "passwords_do_not_match": "Las contraseñas no coinciden",
+  "password_reset_success": "Contraseña actualizada correctamente",
+  "password_reset_error": "El enlace es inválido o ha expirado"
 }
