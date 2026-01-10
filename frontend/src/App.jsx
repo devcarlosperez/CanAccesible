@@ -13,6 +13,7 @@ import IncidentDetail from "./pages/incidents/IncidentDetail";
 import Map from "./pages/map/Map";
 import Register from "./pages/users/register/Register";
 import Login from "./pages/users/login/Login";
+import ForgotPassword from "./pages/users/login/ForgotPassword";
 import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
 import BlogArticleDetail from "./pages/blog/BlogArticleDetail";
@@ -87,6 +88,14 @@ function AppContent() {
           element={
             <PublicRoute>
               <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
             </PublicRoute>
           }
         />

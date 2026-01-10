@@ -69,9 +69,12 @@ const LoginForm = () => {
         />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-6 gap-2">
-          <a href="#" className="text-primary-2 hover:underline">
+          <Link
+            to="/forgot-password"
+            className="text-primary-2 hover:underline"
+          >
             {t("login_forgot_password")}
-          </a>
+          </Link>
         </div>
 
         {error && (
