@@ -225,3 +225,30 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id; // From verifyToken middleware
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    try {
+      await userService.authenticate(user.email, currentPassword);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid current password" });
+    }
+
+    await userService.resetPassword(user.email, newPassword);
+
+    await createLog(userId, "PASSWORD_CHANGE", "User", userId);
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
