@@ -11,48 +11,27 @@ describe('ConversationMessage API (JWT Auth)', () => {
   let messageId;
 
   beforeAll(async () => {
-    // Buscar cualquier conversación existente primero
-    let conversation = await Conversation.findOne();
+    // 1. Find an existing conversation (using data from seeders)
+    const conversation = await Conversation.findOne();
     
-    if (conversation) {
-      // Usar la conversación existente y su usuario
-      conversationId = conversation.id;
-      userId = conversation.userId;
-      
-      const user = await User.findByPk(userId);
-      userToken = jwt.sign(
-        { id: user.id, email: user.email, role: 'usuario' },
-        jwtConfig.secret
-      );
-    } else {
-      // Crear datos de prueba si no existen
-      let role = await Role.findOne({ where: { role: 'usuario' } });
-      if (!role) {
-        role = await Role.create({ role: 'usuario' });
-      }
-
-      let user = await User.findOne({ where: { email: 'test_conv_user@example.com' } });
-      if (!user) {
-        user = await User.create({
-          firstName: 'Test',
-          lastName: 'Conv User',
-          email: 'test_conv_user@example.com',
-          roleId: role.id
-        });
-      }
-      userId = user.id;
-
-      conversation = await Conversation.create({
-        userId: user.id,
-        type: 'soporte de cuenta'
-      });
-      conversationId = conversation.id;
-
-      userToken = jwt.sign(
-        { id: user.id, email: user.email, role: 'usuario' },
-        jwtConfig.secret
-      );
+    if (!conversation) {
+      throw new Error('No conversations found in DB. Make sure to run seeders: npm run db:seed:test');
     }
+
+    conversationId = conversation.id;
+    userId = conversation.userId;
+    
+    // 2. Get the owner of that conversation
+    const user = await User.findByPk(userId);
+    if (!user) {
+        throw new Error('User for existing conversation not found.');
+    }
+
+    // 3. Generate token for that user
+    userToken = jwt.sign(
+      { id: user.id, email: user.email, role: 'usuario' },
+      jwtConfig.secret
+    );
   });
 
   afterAll(async () => {
