@@ -445,5 +445,29 @@
   "profile_saving": "Guardando...",
   "notifications_title": "Notificaciones",
   "notifications_empty": "No tienes notificaciones.",
-  "notifications_delete": "Borrar notificación"
+  "notifications_delete": "Borrar notificación",
+
+  "forgot_password_title": "Recuperar Contraseña",
+  "forgot_password_success": "Se ha enviado un correo con las instrucciones",
+  "check_email_title": "Revisa tu correo",
+  "check_email_description": "Hemos enviado un enlace de recuperación a {{email}}",
+  "back_to_login": "Volver a Iniciar Sesión",
+  "send_reset_link": "Enviar enlace de recuperación",
+  "or_label": "O",
+
+  "reset_password_title": "Restablecer Contraseña",
+  "new_password_label": "Nueva Contraseña",
+  "confirm_password_label": "Confirmar Contraseña",
+  "new_password_placeholder": "Introduce tu nueva contraseña",
+  "confirm_password_placeholder": "Repite tu nueva contraseña",
+  "reset_password_button": "Cambiar Contraseña",
+  "passwords_do_not_match": "Las contraseñas no coinciden",
+  "password_reset_success": "Contraseña actualizada correctamente",
+  "password_reset_error": "El enlace es inválido o ha expirado",
+  "current_password_label": "Contraseña Actual",
+  "current_password_placeholder": "Introduce tu contraseña actual",
+  "change_password_title": "Cambiar Contraseña",
+  "change_password_success": "Contraseña cambiada exitosamente",
+  "change_password_error": "Error al cambiar la contraseña",
+  "security_settings_title": "Seguridad"
 }

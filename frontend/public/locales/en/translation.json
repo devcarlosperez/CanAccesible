@@ -446,5 +446,29 @@
   "profile_saving": "Saving...",
   "notifications_title": "Notifications",
   "notifications_empty": "You have no notifications.",
-  "notifications_delete": "Delete notification"
+  "notifications_delete": "Delete notification",
+
+  "forgot_password_title": "Reset Password",
+  "forgot_password_success": "An email has been sent with instructions",
+  "check_email_title": "Check your email",
+  "check_email_description": "We have sent a recovery link to {{email}}",
+  "back_to_login": "Back to Login",
+  "send_reset_link": "Send recovery link",
+  "or_label": "Or",
+
+  "reset_password_title": "Reset Password",
+  "new_password_label": "New Password",
+  "confirm_password_label": "Confirm Password",
+  "new_password_placeholder": "Enter your new password",
+  "confirm_password_placeholder": "Repeat your new password",
+  "reset_password_button": "Change Password",
+  "passwords_do_not_match": "Passwords do not match",
+  "password_reset_success": "Password updated successfully",
+  "password_reset_error": "The link is invalid or has expired",
+  "current_password_label": "Current Password",
+  "current_password_placeholder": "Enter your current password",
+  "change_password_title": "Change Password",
+  "change_password_success": "Password changed successfully",
+  "change_password_error": "Error changing password",
+  "security_settings_title": "Security"
 }
