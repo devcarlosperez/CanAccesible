@@ -219,6 +219,23 @@ exports.resetPassword = async (req, res) => {
 
     await createLog(user.id, "PASSWORD_RESET", "User", user.id);
 
+    setImmediate(async () => {
+      try {
+        await resend.emails.send({
+          from: "noreply@canaccesible.es",
+          to: [user.email],
+          subject: "Contraseña actualizada",
+          html: `
+            <h2>Hola ${user.firstName},</h2>
+            <p>Tu contraseña ha sido restablecida correctamente.</p>
+            <p>Si no has realizado esta acción, por favor contacta con soporte inmediatamente.</p>
+          `,
+        });
+      } catch (error) {
+        console.error("[MAIL] Error sending reset confirmation:", error);
+      }
+    });
+
     res.status(200).json({ message: "Password has been updated" });
   } catch (err) {
     console.error(err);
@@ -245,6 +262,23 @@ exports.changePassword = async (req, res) => {
     await userService.resetPassword(user.email, newPassword);
 
     await createLog(userId, "PASSWORD_CHANGE", "User", userId);
+
+    setImmediate(async () => {
+      try {
+        await resend.emails.send({
+          from: "noreply@canaccesible.es",
+          to: [user.email],
+          subject: "Contraseña actualizada",
+          html: `
+            <h2>Hola ${user.firstName},</h2>
+            <p>Tu contraseña ha sido actualizada desde tu perfil.</p>
+            <p>Si no has realizado esta acción, por favor contacta con soporte inmediatamente.</p>
+          `,
+        });
+      } catch (error) {
+        console.error("[MAIL] Error sending change confirmation:", error);
+      }
+    });
 
     res.status(200).json({ message: "Password updated successfully" });
   } catch (err) {
