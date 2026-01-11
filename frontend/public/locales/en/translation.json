@@ -464,5 +464,11 @@
   "reset_password_button": "Change Password",
   "passwords_do_not_match": "Passwords do not match",
   "password_reset_success": "Password updated successfully",
-  "password_reset_error": "The link is invalid or has expired"
+  "password_reset_error": "The link is invalid or has expired",
+  "current_password_label": "Current Password",
+  "current_password_placeholder": "Enter your current password",
+  "change_password_title": "Change Password",
+  "change_password_success": "Password changed successfully",
+  "change_password_error": "Error changing password",
+  "security_settings_title": "Security"
 }

@@ -11,6 +11,7 @@ import {
   unsubscribeFromPushNotifications,
 } from "../../services/pushNotificationService";
 import ProfileForm from "./ProfileForm";
+import ChangePassword from "./ChangePassword";
 import { motion } from "motion/react";
 
 const Profile = () => {
@@ -204,6 +205,7 @@ const Profile = () => {
           pushEnabled={pushEnabled}
           handlePushToggle={handlePushToggle}
         />
+        <ChangePassword />
       </motion.main>
 
       <Footer />

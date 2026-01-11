@@ -463,5 +463,11 @@
   "reset_password_button": "Cambiar Contraseña",
   "passwords_do_not_match": "Las contraseñas no coinciden",
   "password_reset_success": "Contraseña actualizada correctamente",
-  "password_reset_error": "El enlace es inválido o ha expirado"
+  "password_reset_error": "El enlace es inválido o ha expirado",
+  "current_password_label": "Contraseña Actual",
+  "current_password_placeholder": "Introduce tu contraseña actual",
+  "change_password_title": "Cambiar Contraseña",
+  "change_password_success": "Contraseña cambiada exitosamente",
+  "change_password_error": "Error al cambiar la contraseña",
+  "security_settings_title": "Seguridad"
 }
