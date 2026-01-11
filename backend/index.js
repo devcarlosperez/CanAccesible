@@ -100,6 +100,11 @@ sessionStore.sync();
 
 // Use environment variable for port or default to 8080
 const port = 85;
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}.`);
-});
+
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port, () => {
+    console.log(`Server is running on port ${port}.`);
+  });
+}
+
+module.exports = server;
