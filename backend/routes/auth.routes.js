@@ -8,5 +8,6 @@ module.exports = (app) => {
   router.post("/forgot-password", auth.forgotPassword);
   router.post("/reset-password", auth.resetPassword);
   router.post("/change-password", verifyToken, auth.changePassword);
+  router.get("/me", verifyToken, auth.getMe);
   app.use("/api/auth", router);
 };
