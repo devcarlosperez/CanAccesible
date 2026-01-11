@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  openldap-test:
+    image: osixia/openldap:latest
+    container_name: openldap-test
+    environment:
+      LDAP_ORGANISATION: "CanAccesible"
+      LDAP_DOMAIN: "canaccesible.es"
+      LDAP_ADMIN_PASSWORD: "admin"
+    ports:
+      - "3891:389"
+      - "6361:636"
+    volumes:
+      - ./ldap/data.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/data.ldif
+      - ldap_data_test:/var/lib/ldap
+      - ldap_config_test:/etc/ldap/slapd.d
+    command: --copy-service
+    networks:
+      - canaccesible-test-network
+
+networks:
+  canaccesible-test-network:
+    driver: bridge
+
+volumes:
+  ldap_data_test:
+  ldap_config_test:

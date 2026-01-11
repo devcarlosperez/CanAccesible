@@ -121,12 +121,8 @@ module.exports = {
     const dbUsers = users.map(({ roleName, password, ...user }) => user);
     await queryInterface.bulkInsert("Users", dbUsers, {});
 
-    // Insert into LDAP
-    // Note: This might slow down seeding significantly
-    if (process.env.NODE_ENV !== "test") {
-      for (const user of users) {
-        await seedLDAPUser(user, user.password, user.roleName);
-      }
+    for (const user of users) {
+      await seedLDAPUser(user, user.password, user.roleName);
     }
   },
 
