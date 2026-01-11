@@ -8,6 +8,12 @@ jest.mock('../middlewares/auth.middleware', () => {
       req.user = { id: 1, role: 'admin', email: 'admin@example.com' };
       req.session = { userId: 1, role: 'admin', email: 'admin@example.com' }; 
       next();
+    },
+    verifyAdmin: (req, res, next) => {
+        // Build the req.user object as expected by verifyAdmin
+        req.user = { id: 1, role: 'admin', email: 'admin@example.com', firstName:'Admin', lastName:'Test' };
+        req.session = { userId: 1, role: 'admin', email: 'admin@example.com', firstName:'Admin', lastName:'Test' };
+        next();
     }
   };
 });
@@ -92,5 +98,27 @@ describe('BlogArticle API (Session Auth)', () => {
     
     const check = await BlogArticle.findByPk(articleId);
     expect(check).toBeNull();
+  });
+
+  // 5. ERROR HANDLING (Validation)
+  test('POST /api/blogArticles - Should fail validation if title is missing', async () => {
+    const res = await request(app)
+      .post('/api/blogArticles')
+      // Missing title field
+      .field('description', 'Missing Title Test')
+      .attach('image', Buffer.from('fake'), 'test.jpg');
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.message).toContain('title'); // Checks that error mentions 'title'
+  });
+
+  // 6. DASHBOARD QUERY (Specific Dashboard Route)
+  // This satisfies the "consulta del dashboard" requirement
+  test('GET /dashboard-admin/blog-articles - Should access dashboard view', async () => {
+    const res = await request(app).get('/dashboard-admin/blog-articles');
+
+    expect(res.statusCode).toEqual(200);
+    // As it renders a view, content-type should be html
+    expect(res.headers['content-type']).toMatch(/html/);
   });
 });

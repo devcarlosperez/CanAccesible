@@ -87,4 +87,23 @@ describe('ConversationMessage API (JWT Auth)', () => {
 
     expect(res.statusCode).toEqual(200);
   });
+
+  // 6. ERROR HANDLING (Validation)
+  test('POST /api/conversationMessages/:conversationId - Should fail if message is empty', async () => {
+    const res = await request(app)
+      .post(`/api/conversationMessages/${conversationId}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({}); // Empty body
+
+    expect(res.statusCode).toEqual(400); // Bad Request
+  });
+
+  // 7. ERROR HANDLING (Unauthorized)
+  test('GET /api/conversationMessages/:conversationId - Should fail without token', async () => {
+    const res = await request(app)
+      .get(`/api/conversationMessages/${conversationId}`);
+      // No Authorization header
+
+    expect(res.statusCode).toEqual(403); // Forbidden/Unauthorized
+  });
 });
