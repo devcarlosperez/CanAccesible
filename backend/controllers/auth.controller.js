@@ -168,7 +168,7 @@ exports.forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "CANACCESIBLE <onboarding@resend.dev>",
       to: [user.email],
       subject: "Recuperación de contraseña",
