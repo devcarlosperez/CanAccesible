@@ -13,25 +13,28 @@ const isTokenExpired = (token) => {
   }
 };
 
-const getDecodedUser = () => {
+const initializeToken = () => {
   const token = localStorage.getItem("token");
-  if (!token || isTokenExpired(token)) {
+  if (!token) return null;
+
+  if (isTokenExpired(token)) {
     localStorage.removeItem("token");
     delete api.defaults.headers.common["Authorization"];
     return null;
   }
 
   api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  const user = token ? jwtDecode(token) : null;
-  return user;
+  return token;
 };
+
+const initialToken = initializeToken();
 
 const useAuthStore = create((set) => ({
   // Load initial state from localStorage
-  user: getDecodedUser(),
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
-  isAdmin: getDecodedUser()?.role === "admin",
+  user: null,
+  token: initialToken,
+  isAuthenticated: !!initialToken,
+  isAdmin: false,
   loading: false,
   error: null,
 
@@ -39,21 +42,27 @@ const useAuthStore = create((set) => ({
   setUser: (userData) => {
     set((state) => ({
       user: { ...state.user, ...userData },
+      isAdmin: userData.role === "admin",
     }));
   },
 
   // Fetch fresh user data from backend
   fetchCurrentUser: async () => {
     const state = useAuthStore.getState();
-    if (!state.token || !state.user?.id) return;
+    if (!state.token) return;
 
     try {
-      const res = await api.get(`/users/${state.user.id}`);
+      const res = await api.get("/auth/me");
       set((state) => ({
         user: { ...state.user, ...res.data },
+        isAdmin: res.data.role === "admin",
       }));
     } catch (err) {
       console.error("Failed to fetch current user:", err);
+      // If unauthorized, clear session
+      if (err.response && err.response.status === 401) {
+        state.logout();
+      }
     }
   },
 
@@ -73,6 +82,7 @@ const useAuthStore = create((set) => ({
       });
 
       const token = res.data.token;
+      const userData = res.data.user;
 
       if (isTokenExpired(token)) {
         return set({
@@ -85,12 +95,11 @@ const useAuthStore = create((set) => ({
 
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const user = jwtDecode(token);
       set({
         token,
-        user,
+        user: userData,
         isAuthenticated: true,
-        isAdmin: user.role === "admin",
+        isAdmin: userData.role === "admin",
         loading: false,
       });
     } catch (err) {
