@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../index'); // Ensure app is exported in index.js
-const { sequelize, User, Conversation, ConversationMessage, Role } = require('../models');
+const app = require('../index'); 
+const { sequelize, user: User, conversation: Conversation, conversationMessage: ConversationMessage, role: Role } = require('../models');
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config/jwt');
 
@@ -11,28 +11,48 @@ describe('ConversationMessage API (JWT Auth)', () => {
   let messageId;
 
   beforeAll(async () => {
-    // 1. Find an existing Conversation (populated by seeders)
-    const conversation = await Conversation.findOne();
-    if (!conversation) {
-      throw new Error('No conversation found in DB. Ensure seeders are run.');
-    }
-    conversationId = conversation.id;
-
-    // 2. Find the owner of that conversation to generate the token
-    const user = await User.findByPk(conversation.userId, {
-      include: [{ model: Role, as: 'role' }] 
-    });
+    // Buscar cualquier conversación existente primero
+    let conversation = await Conversation.findOne();
     
-    if (!user) {
-      throw new Error('User for the conversation not found.');
-    }
-    userId = user.id;
+    if (conversation) {
+      // Usar la conversación existente y su usuario
+      conversationId = conversation.id;
+      userId = conversation.userId;
+      
+      const user = await User.findByPk(userId);
+      userToken = jwt.sign(
+        { id: user.id, email: user.email, role: 'usuario' },
+        jwtConfig.secret
+      );
+    } else {
+      // Crear datos de prueba si no existen
+      let role = await Role.findOne({ where: { role: 'usuario' } });
+      if (!role) {
+        role = await Role.create({ role: 'usuario' });
+      }
 
-    // 3. Create JWT Token for that existing user
-    userToken = jwt.sign(
-      { id: user.id, email: user.email, role: user.role ? user.role.role : 'usuario' },
-      jwtConfig.secret
-    );
+      let user = await User.findOne({ where: { email: 'test_conv_user@example.com' } });
+      if (!user) {
+        user = await User.create({
+          firstName: 'Test',
+          lastName: 'Conv User',
+          email: 'test_conv_user@example.com',
+          roleId: role.id
+        });
+      }
+      userId = user.id;
+
+      conversation = await Conversation.create({
+        userId: user.id,
+        type: 'soporte de cuenta'
+      });
+      conversationId = conversation.id;
+
+      userToken = jwt.sign(
+        { id: user.id, email: user.email, role: 'usuario' },
+        jwtConfig.secret
+      );
+    }
   });
 
   afterAll(async () => {

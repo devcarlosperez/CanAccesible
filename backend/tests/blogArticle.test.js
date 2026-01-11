@@ -1,38 +1,60 @@
-// Mock authentication BEFORE importing the app
+// Mock authentication
 jest.mock('../middlewares/auth.middleware', () => {
   const originalModule = jest.requireActual('../middlewares/auth.middleware');
+  const mockSession = { 
+    userId: 1, 
+    role: 'admin', 
+    email: 'admin@example.com', 
+    firstName: 'Admin', 
+    lastName: 'Test',
+    cookie: {
+      originalMaxAge: 3600000,
+      secure: false,
+      httpOnly: true,
+      path: '/'
+    },
+    save: (cb) => { if(cb) cb(); },
+    destroy: (cb) => { if(cb) cb(); },
+    touch: () => {}
+  };
+
   return {
     ...originalModule,
     verifySession: (req, res, next) => {
-      // Simulate that an admin session is active
-      req.user = { id: 1, role: 'admin', email: 'admin@example.com' };
-      req.session = { userId: 1, role: 'admin', email: 'admin@example.com' }; 
+      req.user = { ...mockSession };
+      req.session = mockSession; 
       next();
     },
     verifyAdmin: (req, res, next) => {
-        // Build the req.user object as expected by verifyAdmin
-        req.user = { id: 1, role: 'admin', email: 'admin@example.com', firstName:'Admin', lastName:'Test' };
-        req.session = { userId: 1, role: 'admin', email: 'admin@example.com', firstName:'Admin', lastName:'Test' };
+        req.user = { ...mockSession };
+        req.session = mockSession;
         next();
     }
   };
 });
 
-// Mock image upload to avoid real calls to AWS/S3/DO Spaces
-jest.mock('../middlewares/blogArticleImageUpload', () => ({
-  single: () => (req, res, next) => {
-    // Simulate that multer processed the file correctly
-    req.file = {
-      location: 'https://fake-url.com/image.jpg',
-      originalname: 'test.jpg'
-    };
-    next();
-  }
-}));
+// Mock image upload
+jest.mock('../middlewares/blogArticleImageUpload', () => {
+  const multer = require('multer');
+  const storage = multer.memoryStorage();
+  const upload = multer({ storage });
+  return {
+    single: (fieldName) => (req, res, next) => {
+       upload.single(fieldName)(req, res, (err) => {
+           if (err) return next(err);
+           // Manually add location for the controller
+           if (req.file) {
+             req.file.location = 'https://fake-url.com/image.jpg';
+           }
+           next();
+       });
+    }
+  };
+});
 
 const request = require('supertest');
 const app = require('../index');
-const { sequelize, BlogArticle } = require('../models');
+const { sequelize, blogArticle: BlogArticle } = require('../models');
 
 describe('BlogArticle API (Session Auth)', () => {
   let articleId;
@@ -53,7 +75,6 @@ describe('BlogArticle API (Session Auth)', () => {
       .field('description', 'Short description')
       .field('content', 'Full article content...')
       .field('dateCreation', '2025-01-01')
-      // Even though the mock ignores it, we send an attachment to simulate multipart form-data
       .attach('image', Buffer.from('fake image'), 'test.jpg');
 
     expect(res.statusCode).toEqual(201);
@@ -69,7 +90,11 @@ describe('BlogArticle API (Session Auth)', () => {
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
-    expect(res.body[0].title).toBe('New Accessibility Article');
+    
+    // Find our created article
+    const created = res.body.find(a => a.id === articleId);
+    expect(created).toBeDefined();
+    expect(created.title).toBe('New Accessibility Article');
   });
 
   // 3. UPDATE (PUT)
@@ -109,7 +134,7 @@ describe('BlogArticle API (Session Auth)', () => {
       .attach('image', Buffer.from('fake'), 'test.jpg');
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body.message).toContain('title'); // Checks that error mentions 'title'
+    expect(res.body.message).toContain('title');
   });
 
   // 6. DASHBOARD QUERY (Specific Dashboard Route)
