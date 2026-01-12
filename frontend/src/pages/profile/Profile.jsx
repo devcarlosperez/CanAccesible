@@ -16,7 +16,7 @@ import { motion } from "motion/react";
 
 const Profile = () => {
   const { t } = useTranslation();
-  const { user: authUser, setUser } = useAuthStore();
+  const { user: authUser, setUser, isCheckingAuth } = useAuthStore();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,9 @@ const Profile = () => {
   const [pushEnabled, setPushEnabled] = useState(false);
 
   useEffect(() => {
+    // If still verifying token/session, wait.
+    if (isCheckingAuth) return;
+
     if (!authUser) {
       navigate("/login");
       return;
@@ -70,7 +73,7 @@ const Profile = () => {
     };
 
     fetchUser();
-  }, [authUser?.id, navigate, setUser]);
+  }, [authUser, isCheckingAuth, navigate, setUser]);
 
   const handlePushToggle = async () => {
     try {
@@ -166,7 +169,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
+  if (loading || isCheckingAuth) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header transparent={false} />

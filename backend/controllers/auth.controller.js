@@ -49,12 +49,6 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        roleId: user.roleId,
-        role: user.role.role,
-        nameFile: user.nameFile,
       },
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresIn }
@@ -283,6 +277,34 @@ exports.changePassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully" });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      include: [{ model: db.role, as: "role" }],
+      attributes: {
+        exclude: ["password", "resetPasswordToken", "resetPasswordExpires"],
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      roleId: user.roleId,
+      role: user.role ? user.role.role : null,
+      nameFile: user.nameFile,
+    });
+  } catch (error) {
+    console.error("[AUTH] getMe error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
