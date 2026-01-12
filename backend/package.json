@@ -7,6 +7,8 @@
     "test": "cross-env NODE_ENV=test jest",
     "test:setup": "npm run openldap:test:up && npm run db:create:test && npm run db:migrate:test && npm run db:seed:test",
     "test:teardown": "npm run openldap:test:down && npm run db:drop:test",
+    "openldap:test:up": "docker compose -f ../docker-compose.test.yml up -d openldap-test",
+    "openldap:test:down": "docker compose -f ../docker-compose.test.yml down",
     "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
     "db:drop:test": "cross-env NODE_ENV=test npx sequelize-cli db:drop",
     "db:migrate:test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate",
