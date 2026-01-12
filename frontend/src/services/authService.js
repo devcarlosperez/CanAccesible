@@ -34,6 +34,7 @@ const useAuthStore = create((set) => ({
   user: null,
   token: initialToken,
   isAuthenticated: !!initialToken,
+  isCheckingAuth: !!initialToken, // Start true if we have a token to verify
   isAdmin: false,
   loading: false,
   error: null,
@@ -49,7 +50,10 @@ const useAuthStore = create((set) => ({
   // Fetch fresh user data from backend
   fetchCurrentUser: async () => {
     const state = useAuthStore.getState();
-    if (!state.token) return;
+    if (!state.token) {
+      set({ isCheckingAuth: false });
+      return;
+    }
 
     try {
       const res = await api.get("/auth/me");
@@ -63,6 +67,8 @@ const useAuthStore = create((set) => ({
       if (err.response && err.response.status === 401) {
         state.logout();
       }
+    } finally {
+      set({ isCheckingAuth: false });
     }
   },
 
