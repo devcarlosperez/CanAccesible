@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
     port: config.port,
     dialect: config.dialect,
     dialectOptions: config.dialectOptions,
+    logging: process.env.NODE_ENV === "test" ? false : console.log,
   }
 );
 
