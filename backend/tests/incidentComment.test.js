@@ -11,16 +11,19 @@ const { jwtConfig } = require("../config/jwt");
 
 describe("IncidentComment API (JWT Auth)", () => {
   let userToken;
+  let otherUserToken; // Token for a different user
   let userId;
+  let otherUserId;
   let incidentId;
   let commentId;
 
   // Runs before all tests
   beforeAll(async () => {
-    // 1. Find an existing user for testing
-    let user = await User.findOne();
+    // 1. Find an existing user for testing or create one
+    let user = await User.findOne({
+      where: { email: "test_comment_user@example.com" },
+    });
 
-    // If there are no users, create a basic one (assuming roles already exist via seeders)
     if (!user) {
       user = await User.create({
         firstName: "Test",
@@ -39,7 +42,27 @@ describe("IncidentComment API (JWT Auth)", () => {
       jwtConfig.secret
     );
 
-    // 3. Find an existing incident
+    // 3. Create a second user to test permissions
+    let otherUser = await User.findOne({
+      where: { email: "other_comment_user@example.com" },
+    });
+    if (!otherUser) {
+      otherUser = await User.create({
+        firstName: "Other",
+        lastName: "User",
+        email: "other_comment_user@example.com",
+        password: "password123",
+        roleId: 1,
+        dateRegister: new Date(),
+      });
+    }
+    otherUserId = otherUser.id;
+    otherUserToken = jwt.sign(
+      { id: otherUser.id, email: otherUser.email, role: "usuario" },
+      jwtConfig.secret
+    );
+
+    // 4. Find an existing incident
     let incident = await Incident.findOne();
 
     // If it doesn't exist, try to create one (requires status/severity/type with ID 1 to exist)
@@ -132,5 +155,53 @@ describe("IncidentComment API (JWT Auth)", () => {
       });
 
     expect(res.statusCode).toEqual(400);
+  });
+
+  // 5. Update comment (PUT)
+  test("PUT /api/incident-comments/:id - Should update own comment", async () => {
+    const res = await request(app)
+      .put(`/api/incident-comments/${commentId}`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({
+        comment: "Updated comment by owner",
+      });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.comment).toBe("Updated comment by owner");
+  });
+
+  test("PUT /api/incident-comments/:id - Should NOT update other user's comment", async () => {
+    const res = await request(app)
+      .put(`/api/incident-comments/${commentId}`)
+      .set("Authorization", `Bearer ${otherUserToken}`)
+      .send({
+        comment: "Hacked comment",
+      });
+
+    expect(res.statusCode).toEqual(403);
+  });
+
+  // 6. Delete comment (DELETE)
+  test("DELETE /api/incident-comments/:id - Should NOT delete other user's comment", async () => {
+    const res = await request(app)
+      .delete(`/api/incident-comments/${commentId}`)
+      .set("Authorization", `Bearer ${otherUserToken}`);
+
+    expect(res.statusCode).toEqual(403);
+  });
+
+  test("DELETE /api/incident-comments/:id - Should delete own comment", async () => {
+    const res = await request(app)
+      .delete(`/api/incident-comments/${commentId}`)
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.statusCode).toEqual(200);
+
+    // Verify it's gone
+    const check = await IncidentComment.findByPk(commentId);
+    expect(check).toBeNull();
+
+    // Clear commentId so afterAll doesn't try to delete it again
+    commentId = null;
   });
 });
