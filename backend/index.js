@@ -64,7 +64,7 @@ app.use(
 
 // Swagger Documentation
 // Swagger Configuration
-require('./config/swagger')(app);
+require("./config/swagger")(app);
 
 // Dashboard admin routes (before API routes)
 require("./routes/dashboard-admin/main.routes")(app);
@@ -85,7 +85,9 @@ require("./routes/log.routes")(app);
 
 // Initialize scheduled tasks
 const { scheduleLogCleanup } = require("./services/logCleanup.service");
-scheduleLogCleanup();
+if (process.env.NODE_ENV !== "test") {
+  scheduleLogCleanup();
+}
 
 const env = process.env.NODE_ENV;
 
@@ -101,7 +103,7 @@ sessionStore.sync();
 // Use environment variable for port or default to 8080
 const port = 85;
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   server.listen(port, () => {
     console.log(`Server is running on port ${port}.`);
   });
