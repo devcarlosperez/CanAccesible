@@ -6,6 +6,9 @@ import { getMyIncidents } from "../../services/incidentService";
 import { getAllNotifications } from "../../services/notificationService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Chip, Typography } from "@mui/material";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloseIcon from '@mui/icons-material/Close';
 
 const DashboardUser = () => {
   const { t } = useTranslation();
@@ -14,11 +17,17 @@ const DashboardUser = () => {
   const [incidents, setIncidents] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Modal state
+  const [openModal, setOpenModal] = useState(false);
+  const [modalCategory, setModalCategory] = useState(null);
+
   const [stats, setStats] = useState({
     pending: 0,
     published: 0,
     inProgress: 0,
     resolved: 0,
+    rejected: 0,
   });
 
   useEffect(() => {
@@ -43,14 +52,14 @@ const DashboardUser = () => {
           published: 0,
           inProgress: 0,
           resolved: 0,
+          rejected: 0,
         };
 
         incidentsData.forEach((inc) => {
-          // Assuming status IDs: 1=Pending, 2=In Progress, 3=Resolved
-          // And assuming "Published" means Approved
           if (inc.incidentStatusId === 1) newStats.pending++;
           if (inc.incidentStatusId === 2) newStats.inProgress++;
           if (inc.incidentStatusId === 3) newStats.resolved++;
+          if (!inc.isApproved) newStats.rejected++;
           if (inc.isApproved) newStats.published++;
         });
 
@@ -64,6 +73,43 @@ const DashboardUser = () => {
 
     fetchData();
   }, [isAuthenticated, navigate]);
+
+  const handleOpenModal = (category) => {
+    setModalCategory(category);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setModalCategory(null);
+  };
+
+  const getFilteredIncidents = () => {
+    if (!modalCategory) return [];
+    return incidents.filter((inc) => {
+      // Logic matching the stats calculation above
+      if (modalCategory === 'published') return inc.isApproved;
+      if (modalCategory === 'rejected') return !inc.isApproved;
+      return false;
+    });
+  };
+
+  const getStatusChipProps = (statusId) => {
+    switch (statusId) {
+      case 1: return { label: t('incident_status_pending', 'Pendiente'), color: "warning" };
+      case 2: return { label: t('incident_status_in_progress', 'En Progreso'), color: "info" };
+      case 3: return { label: t('incident_status_resolved', 'Resuelta'), color: "success" };
+      default: return { label: t('incident_status_pending'), color: "default" };
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (modalCategory) {
+      case 'published': return t('dashboard_published');
+      case 'rejected': return t('dashboard_pending_approval', 'Incidencias pendientes por aprobar');
+      default: return t('incidents');
+    }
+  };
 
   // Get top 5 most liked incidents
   const topLikedIncidents = [...incidents]
@@ -107,26 +153,20 @@ const DashboardUser = () => {
           </h1>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 mt-8">
-            <StatCard
-              title={t('dashboard_pending')}
-              count={stats.pending}
-              color="text-gray-800"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 mt-8">
             <StatCard
               title={t('dashboard_published')}
               count={stats.published}
-              color="text-red-700"
-            />
-            <StatCard
-              title={t('dashboard_in_progress')}
-              count={stats.inProgress}
               color="text-green-700"
+              onOpen={() => handleOpenModal('published')}
+              btnText={t('view_details', 'Ver detalles')}
             />
             <StatCard
-              title={t('dashboard_resolved')}
-              count={stats.resolved}
-              color="text-green-800"
+              title={t('dashboard_pending_approval', 'Incidencias pendientes por aprobar')}
+              count={stats.rejected}
+              color="text-gray-800"
+              onOpen={() => handleOpenModal('rejected')}
+              btnText={t('view_details', 'Ver detalles')}
             />
           </div>
 
@@ -176,6 +216,104 @@ const DashboardUser = () => {
             </div>
           </div>
         </div>
+
+        {/* Modal for Incidents List */}
+        <Dialog
+          open={openModal}
+          onClose={handleCloseModal}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {getModalTitle()}
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseModal}
+              sx={{
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent dividers>
+            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+              {getFilteredIncidents().length > 0 ? (
+                getFilteredIncidents().map((incident) => (
+                  <ListItem
+                    key={incident.id}
+                    disablePadding
+                    sx={{
+                      py: 2,
+                      px: 2,
+                      borderBottom: '1px solid #eee',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      gap: 2,
+                      display: 'flex',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                      {incident.nameFile && (
+                        <img
+                          src={incident.nameFile}
+                          alt={incident.name}
+                          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                        />
+                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <ListItemText
+                          primary={incident.name}
+                          secondary={
+                            <>
+                              <span className="block text-sm text-gray-500 flex items-center gap-2">
+                                {new Date(incident.dateIncident).toLocaleDateString()} - {incident.island}
+                                <Chip 
+                                  label={getStatusChipProps(incident.incidentStatusId).label} 
+                                  color={getStatusChipProps(incident.incidentStatusId).color} 
+                                  size="small" 
+                                  sx={{ height: 20, fontSize: '0.7rem' }} 
+                                />
+                              </span>
+                              <span className="block text-xs text-gray-400 mt-1 line-clamp-2">
+                                {incident.description}
+                              </span>
+                            </>
+                          }
+                          sx={{ m: 0 }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex-shrink-0 ml-auto mt-2 sm:mt-0">
+                      {modalCategory !== 'rejected' && (
+                       <Button 
+                         variant="outlined" 
+                         size="small" 
+                         startIcon={<VisibilityIcon />}
+                         onClick={() => navigate(`/incidents/${incident.id}`)}
+                       >
+                         {t('view_details', 'Ver')}
+                       </Button>
+                      )}
+                    </div>
+                  </ListItem>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-8">
+                  {t('no_incidents_in_category', 'No hay incidencias en esta categoría')}
+                </p>
+              )}
+            </List>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              {t('close', 'Cerrar')}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </main>
 
       <Footer />
@@ -183,14 +321,23 @@ const DashboardUser = () => {
   );
 };
 
-const StatCard = ({ title, count, color }) => (
+const StatCard = ({ title, count, color, onOpen, btnText }) => (
   <div className="bg-white p-6 rounded-lg shadow flex flex-col justify-between h-32">
-    <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
-      {title}
-    </span>
+    <div className="flex justify-between items-start w-full">
+      <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+        {title}
+      </span>
+      {onOpen && (
+        <button
+          onClick={onOpen}
+          className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
+        >
+          {btnText}
+        </button>
+      )}
+    </div>
     <div className="flex justify-between items-end">
       <span className="text-4xl font-bold text-gray-800">{count}</span>
-      <span className={`text-sm font-bold ${color}`}>+36% ↑</span>
     </div>
   </div>
 );
@@ -205,9 +352,8 @@ const NotificationItem = ({ notification, t }) => {
     <div className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
       <div className="flex items-center gap-4 flex-1">
         <span
-          className={`px-3 py-1 rounded-full text-xs font-bold ${
-            isRead ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
+          className={`px-3 py-1 rounded-full text-xs font-bold ${isRead ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
         >
           {isRead ? t('dashboard_read') : t('dashboard_unread')}
         </span>

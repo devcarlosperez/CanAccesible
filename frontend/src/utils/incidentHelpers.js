@@ -18,21 +18,6 @@ export const validateIncidentData = (data) => {
 };
 
 /**
- * Returns the readable label for a given status ID.
- * @param {number} statusId 
- * @returns {string} translation key or unknown
- */
-export const getIncidentStatusLabel = (statusId) => {
-    switch (statusId) {
-        case 1: return "incident_status_pending";
-        case 2: return "incident_status_progress";
-        case 3: return "incident_status_resolved";
-        case 4: return "incident_status_rejected";
-        default: return "incident_status_unknown";
-    }
-};
-
-/**
  * Checks if latitude and longitude are within valid ranges.
  * Lat: -90 to 90
  * Lng: -180 to 180

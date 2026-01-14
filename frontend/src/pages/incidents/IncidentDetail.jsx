@@ -14,7 +14,6 @@ import { useIncidentTranslationStore } from "../../stores/incidentTranslationSto
 
 import { Chip, IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { getIncidentStatusLabel } from "../../utils/incidentHelpers";
 
 const IncidentDetail = () => {
   const { t, i18n } = useTranslation();
@@ -132,7 +131,20 @@ const IncidentDetail = () => {
     );
   }
 
-  const statusLabel = t(getIncidentStatusLabel(incident.incidentStatusId));
+  const getIncidentStatusLabel = (statusId) => {
+    switch (statusId) {
+      case 1:
+        return t('incident_status_pending');
+      case 2:
+        return t('incident_status_progress');
+      case 3:
+        return t('incident_status_resolved');
+      case 4:
+        return t('incident_status_rejected');
+      default:
+        return t('incident_status_unknown');
+    }
+  };
 
   const getIncidentTypeLabel = (typeId) => {
     if (i18n.language === 'en') {
@@ -200,7 +212,7 @@ const IncidentDetail = () => {
                   </button>
                 </div>
                 <Chip
-                  label={statusLabel}
+                  label={getIncidentStatusLabel(incident.incidentStatusId)}
                   color={getStatusColor(incident.incidentStatusId)}
                   variant="filled"
                 />
