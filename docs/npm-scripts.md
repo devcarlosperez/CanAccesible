@@ -54,7 +54,7 @@ Run these commands inside the `frontend` directory.
 | `npm run preview` | Locally previews the final build (`build`). |
 | `npm run lint` | Checks code for style errors. |
 
-### Frontend Tests
+### Tests
 
 | Command | Function |
 | :--- | :--- |

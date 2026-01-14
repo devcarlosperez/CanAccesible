@@ -60,7 +60,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
 - [Security Guide](./docs/security.md) - Overview of authentication, data protection, and security protocols.
-- [NPM Scripts Reference](./docs/scripts.md) - Detailed explained list of all available commands in package.json.
+- [NPM Scripts Reference](./docs/npm-scripts.md) - Detailed explained list of all available commands in package.json.
 
 ---
 
@@ -116,6 +116,7 @@ backend/
 ├── seeders/              # Database seeders
 ├── services/             # Business logic (Socket, LogCleanup, etc.)
 ├── sockets/              # Socket.io handlers
+├── tests/                # Backend tests
 ├── views/                # EJS views for Admin Dashboard
 ├── db.js                 # Database connection
 ├── index.js              # Server entry point
@@ -130,8 +131,11 @@ frontend/
 │   ├── pages/            # View components/Pages
 │   ├── routes/           # Frontend routing configuration
 │   ├── services/         # API service calls
+│   ├── stores/           # Global state (Zustand)
+│   ├── tests/            # Frontend unit & integration tests
 │   ├── utils/            # Utility functions
 │   ├── App.jsx           # Main application component
+│   ├── i18n.js           # Internationalization configuration
 │   └── main.jsx          # Entry point
 ├── vite.config.js        # Vite configuration
 └── package.json          # Frontend dependencies
