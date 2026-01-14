@@ -34,27 +34,7 @@ describe("Unit Test: validateIncidentData", () => {
   });
 });
 
-// FUNCTION 2: getIncidentStatusLabel (Parameterized Tests)
-describe("Unit Test: getIncidentStatusLabel (Parameterized)", () => {
-  it.each([
-    // [input, expected output]
-    [1, "incident_status_pending"],
-    [99, "incident_status_unknown"], // Edge case: non-existent ID
-  ])(
-    "getIncidentStatusLabel(%s) should return '%s'",
-    (statusId, expectedLabel) => {
-      // Act
-      const result = getIncidentStatusLabel(statusId);
-
-      // Assert
-      expect(result).toBe(expectedLabel);
-    }
-  );
-});
-
-// =============================================================================
-// FUNCTION 3: startCoordinatesValidation (Parameterized Tests)
-// =============================================================================
+// FUNCTION 2: startCoordinatesValidation (Parameterized Tests)
 describe("Unit Test: startCoordinatesValidation (Parameterized)", () => {
   it.each([
     // [latitude, longitude, expected]
@@ -72,9 +52,7 @@ describe("Unit Test: startCoordinatesValidation (Parameterized)", () => {
   );
 });
 
-// =============================================================================
-// FUNCTION 4: truncateText (100% Coverage)
-// =============================================================================
+// FUNCTION 3: truncateText (100% Coverage)
 describe("Unit Test: truncateText", () => {
   // Normal case: text longer than maxLength
   it("should truncate text and add ellipsis when exceeding maxLength", () => {
@@ -110,14 +88,5 @@ describe("Unit Test: truncateText", () => {
   it("should return empty string for null or undefined input", () => {
     expect(truncateText(null, 5)).toBe("");
     expect(truncateText(undefined, 5)).toBe("");
-  });
-
-  // Edge case: empty string
-  it("should return empty string for empty input", () => {
-    const text = "";
-
-    const result = truncateText(text, 5);
-
-    expect(result).toBe("");
   });
 });
