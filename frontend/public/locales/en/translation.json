@@ -369,6 +369,12 @@
   "incident_view_original": "View original",
   "incident_translate_to_english": "Translate to English",
 
+  "incident_status_pending": "Pending",
+  "incident_status_progress": "In Progress",
+  "incident_status_resolved": "Resolved",
+  "incident_status_rejected": "Rejected",
+  "incident_status_unknown": "Unknown",
+
   "form_edit_incident": "Edit Incident",
   "form_new_incident": "New Incident",
   "form_name": "Name",
