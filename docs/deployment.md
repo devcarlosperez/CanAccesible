@@ -142,11 +142,10 @@ pm2 status
 ### 1. Environment Variables
 
 *   Created `.env.production` files for both backend and frontend with secure credentials.
-*   **Backend:** Configured to connect to DigitalOcean Managed MySQL. Added SMTP, JWT, Session, and DigitalOcean Spaces configurations.
+*   **Backend:** Configured to connect to DigitalOcean Managed MySQL. Added Resend, JWT, Session, and DigitalOcean Spaces configurations.
     ```env
-    # SMTP Configuration
-    SMTP_USER=canaccesible@gmail.com
-    SMTP_PASS=rgsamiqztuuoilaq
+    # Email Configuration (Resend)
+    RESEND_API=re_aULKe6uz_7CLFHMaAWcxPhrzGBYpHxJhX
 
     # Security Secrets
     JWT_SECRET=Canaccesible_ultra_super_secret_key_2025

@@ -260,7 +260,6 @@ FRONTEND_URL=http://localhost:5173            # Your frontend url
 # Authentication
 JWT_SECRET=your_super_secret_jwt_key_here     # Secret key for JWT token generation and validation
 SESSION_SECRET=your_super_secret_session_key_here  # Secret key for session generation and validation
-RESEND_API=your_resend_api_key_here           # Resend API Key for sending emails
 
 # DigitalOcean Spaces (Image Storage) - Optional for local development
 DO_ACCESS_KEY=your_digitalocean_access_key   # DigitalOcean Spaces API access key
@@ -268,9 +267,8 @@ DO_SECRET_KEY=your_digitalocean_secret_key   # DigitalOcean Spaces API secret ke
 DO_SPACE_NAME=your_space_name                # DigitalOcean Spaces bucket name
 DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
 
-# Email Configuration (Gmail SMTP)
-SMTP_USER=your_email@gmail.com               # Gmail address for sending emails
-SMTP_PASS=your_gmail_app_password            # Gmail App Password (not your regular password)
+# Email Configuration (Resend)
+RESEND_API=your_resend_api_key_here          # Resend API Key for sending emails
 
 # LDAP Configuration
 LDAP_URL=ldap://localhost:389                # LDAP server URL
