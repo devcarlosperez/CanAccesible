@@ -16,7 +16,6 @@ export const validateIncidentData = (data) => {
 
     return true;
 };
-
 /**
  * Checks if latitude and longitude are within valid ranges.
  * Lat: -90 to 90
