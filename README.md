@@ -60,6 +60,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
 - [Security Guide](./docs/security.md) - Overview of authentication, data protection, and security protocols.
+- [NPM Scripts Reference](./docs/scripts.md) - Detailed explained list of all available commands in package.json.
 
 ---
 
@@ -224,10 +225,20 @@ Navigate to the backend directory:
 cd backend
 ```
 
-**Copy the environment file:**
+**Setup environment variables:**
+
+You need to create two environment files: one for local development (`.env.development`) and one for testing (`.env.test`).
+
+1. **Create Development Environment:**
 
 ```bash
 cp .env.example .env.development
+```
+
+2. **Create Test Environment:**
+
+```bash
+cp .env.example .env.test
 ```
 
 **Edit `.env.development` with your credentials:**
@@ -249,6 +260,7 @@ FRONTEND_URL=http://localhost:5173            # Your frontend url
 # Authentication
 JWT_SECRET=your_super_secret_jwt_key_here     # Secret key for JWT token generation and validation
 SESSION_SECRET=your_super_secret_session_key_here  # Secret key for session generation and validation
+RESEND_API=your_resend_api_key_here           # Resend API Key for sending emails
 
 # DigitalOcean Spaces (Image Storage) - Optional for local development
 DO_ACCESS_KEY=your_digitalocean_access_key   # DigitalOcean Spaces API access key
@@ -270,6 +282,9 @@ LDAP_ADMIN_PASSWORD=admin                    # Password for the LDAP admin user
 VAPID_PUBLIC_KEY=your_vapid_public_key       # Public key for web push notifications
 VAPID_PRIVATE_KEY=your_vapid_private_key     # Private key for web push notifications
 ```
+
+**Note for `.env.test`:**
+Ensure `DB_NAME` is different (e.g., `db_canaccesible_test`) to avoid overwriting your development data during tests. Set `NODE_ENV=test`.
 
 **Install dependencies:**
 
