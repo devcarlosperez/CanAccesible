@@ -6,14 +6,14 @@ Complete testing documentation for the CanAccesible backend.
 
 ## Test Structure
 
-The tests are located in the `tests/` directory and cover various controllers and functionalities of the API:
+The tests are organized key functional areas within the `tests/` directory:
 
-- **Blog Articles:** `tests/blogArticle.test.js`
-- **Conversation Messages:** `tests/conversationMessage.test.js`
-- **Dashboard Users:** `tests/dashboard.users.test.js`
-- **Incidents:** `tests/incident.test.js`
-- **Incident Comments:** `tests/incidentComment.test.js`
-- **Notifications:** `tests/notification.test.js`
+- **Blog Articles:** `tests/blogArticle.test.js` - Tests CRUD operations and retrieval of blog content.
+- **Conversation Messages:** `tests/conversationMessage.test.js` - Tests the messaging functionality and history.
+- **Dashboard Users:** `tests/dashboard.users.test.js` - Tests user management features for the admin dashboard.
+- **Incidents:** `tests/incident.test.js` - Tests the full lifecycle of accessibility incidents (reporting, updating, viewing).
+- **Incident Comments:** `tests/incidentComment.test.js` - Tests interacting with incidents through comments.
+- **Notifications:** `tests/notification.test.js` - Tests the alert and notification system.
 
 ---
 
@@ -61,3 +61,25 @@ After finishing the tests, clean up the environment:
 npm run test:teardown
 ```
 *This command stops the OpenLDAP container and drops the test database.*
+
+---
+
+## Test File Structure
+
+```
+backend/tests/
+├── blogArticle.test.js          # Blog endpoints & logic
+├── conversationMessage.test.js  # Chat messaging
+├── dashboard.users.test.js      # User management
+├── incident.test.js             # Incident CRUD & flows
+├── incidentComment.test.js      # Commenting system
+└── notification.test.js         # User notifications
+```
+
+---
+
+## Important Notes
+
+- **Environment context:** Tests run with `NODE_ENV=test`.
+- **Database:** A separate MySQL database is used for testing to avoid affecting development data.
+- **Authentication:** Tests involving protected routes simulate authentication or use the OpenLDAP mock setup.
