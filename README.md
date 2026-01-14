@@ -77,18 +77,22 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - **State Management:** ![Zustand](https://img.shields.io/badge/Zustand-4.5-blue?logo=zustand&logoColor=white)
 - **Maps:** ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-blue?logo=leaflet&logoColor=white)
 - **File Uploads:** ![Multer](https://img.shields.io/badge/Multer-1.4-blue?logo=multer&logoColor=white)
-- **Email Service:** ![Nodemailer](https://img.shields.io/badge/Nodemailer-6.9-blue?logo=nodemailer&logoColor=white)
+- **Email Service:** ![Resend](https://img.shields.io/badge/Resend-6.7-black?logo=resend&logoColor=white)
+- **Real-time Communication:** ![Socket.io](https://img.shields.io/badge/Socket.io-4.8-black?logo=socket.io&logoColor=white)
 - **Translation API:** ![MyMemory](https://img.shields.io/badge/MyMemory-API-blue?logo=google-translate&logoColor=white)
 - **Internationalization:** ![react-i18next](https://img.shields.io/badge/react--i18next-14.1-blue?logo=react&logoColor=white)
+- **Testing:** ![Vitest](https://img.shields.io/badge/Vitest-4.0-yellow?logo=vitest&logoColor=white) ![Jest](https://img.shields.io/badge/Jest-29.7-red?logo=jest&logoColor=white)
 
 ### Additional Technologies
 
 - **React-Router-Dom:** Library for managing routes and navigation within the React application dynamically.
 - **Motion (Framer Motion):** Library for animations and smooth transitions in React components, improving user experience.
 - **Headless UI:** Unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
+- **React Toastify:** Easy to use toast notifications for React.
 - **Embla Carousel:** A lightweight carousel library with fluid motion and great touch precision.
-- **MUI Icons & Font Awesome:** Comprehensive icon libraries for visual elements.
+- **MUI Icons & Lucide React:** Comprehensive icon libraries for visual elements.
 - **DigitalOcean (Droplets, Spaces, Managed DB):** Cloud infrastructure for hosting, storage, and database management.
+
 - **Nominatim API:** External geolocation API used for reverse geocoding to convert coordinates into location names.
 - **OpenLDAP:** Directory service for centralized user authentication and management.
 - **LDAP JS:** Node.js library for interacting with LDAP servers.

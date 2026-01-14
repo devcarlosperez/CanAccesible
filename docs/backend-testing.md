@@ -75,11 +75,3 @@ backend/tests/
 ├── incidentComment.test.js      # Commenting system
 └── notification.test.js         # User notifications
 ```
-
----
-
-## Important Notes
-
-- **Environment context:** Tests run with `NODE_ENV=test`.
-- **Database:** A separate MySQL database is used for testing to avoid affecting development data.
-- **Authentication:** Tests involving protected routes simulate authentication or use the OpenLDAP mock setup.
