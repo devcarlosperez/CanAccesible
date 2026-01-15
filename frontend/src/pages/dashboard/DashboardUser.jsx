@@ -496,7 +496,7 @@ const LikabilityBar = ({ incident, maxLikes }) => {
   const width = maxLikes > 0 ? (incident.likesCount / maxLikes) * 100 : 0;
 
   const handleClick = () => {
-    navigate(`/incidents?incidentId=${incident.id}`);
+    navigate(`/incidents/${incident.id}`);
   };
 
   return (
