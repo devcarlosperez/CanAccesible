@@ -24,6 +24,11 @@ Commands to manage your local database while coding.
 
 | Command | Function |
 | :--- | :--- |
+| `npm run dev:setup` | **Setup:** Starts Docker (LDAP), creates DB, runs migrations, and seeds data. |
+| `npm run dev:teardown` | **Clean Up:** Stops Docker and drops the development database. |
+| `npm run dev:reset` | **Hard Reset:** Runs teardown + setup. Use this to fix conflicts. |
+| `npm run openldap:dev:up` | Starts only the OpenLDAP container for development. |
+| `npm run openldap:dev:down` | Stops the OpenLDAP container. |
 | `npm run db:create:dev` | Creates an empty development database. |
 | `npm run db:migrate:dev` | Applies pending changes (new tables) to the database. |
 | `npm run db:seed:dev` | Populates the database with fake test data. |

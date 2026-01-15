@@ -20,6 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   const allowedOrigins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:85",
     "https://canaccesible.es",
     "https://www.canaccesible.es",
