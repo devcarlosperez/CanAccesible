@@ -123,14 +123,6 @@ const Footer = () => {
                   {t('privacy_policy')}
                 </Link>
               </li>
-              <li>
-                <Link
-                  to={"/push-notifications-guide"}
-                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
-                >
-                  {t('push_notifications_guide')}
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

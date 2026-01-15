@@ -101,6 +101,44 @@ cron.schedule('0 0 * * *', async () => {
 });
 ```
 
+---
+
+## Production Log Management
+
+In the production environment (deployment), logs are distributed between services. This is how to access them for debugging:
+
+### Backend Logs (Node.js)
+
+The backend runs under **PM2**. To view real-time logs from the application (including API errors, database queries, and general output):
+
+```bash
+# View all logs
+pm2 logs
+
+# View specific process logs (usually 'index' or 'app')
+pm2 logs index
+```
+
+### OpenLDAP Logs
+
+The LDAP server runs as a **Docker container**, not under PM2. authentication and user creation logs are found here:
+
+```bash
+# View OpenLDAP container logs
+docker logs openldap
+
+# Follow logs in real-time
+docker logs -f openldap
+```
+
+### Frontend Logs
+
+Since the frontend is a static application served by NGINX:
+*   **Client-side errors:** Visible only in the user's browser console (F12).
+*   **Serving errors (404, 500):** Check NGINX logs (`/var/log/nginx/error.log`).
+
+---
+
 ## Log Management Dashboard
 
 Administrators have access to a dedicated interface to view and analyze application logs.

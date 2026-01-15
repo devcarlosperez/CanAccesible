@@ -138,14 +138,6 @@ const ProfileForm = ({
                 <p className="text-xs text-gray-500 mt-1">
                   {t("profile_push_desc")}
                 </p>
-                <a
-                  href="/push-notifications-guide"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 mt-1 inline-block"
-                >
-                  {t("profile_push_how_to")}
-                </a>
               </div>
               <button
                 type="button"

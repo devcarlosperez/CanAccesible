@@ -23,7 +23,6 @@ import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
-import PushNotificationsGuide from "./pages/push-notifications-guide/PushNotificationsGuide.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import DashboardUser from "./pages/dashboard/DashboardUser.jsx";
 import { ToastContainer } from "react-toastify";
@@ -126,10 +125,6 @@ function AppContent() {
         />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
-        <Route
-          path="/push-notifications-guide"
-          element={<PushNotificationsGuide />}
-        />
       </Routes>
     </>
   );
