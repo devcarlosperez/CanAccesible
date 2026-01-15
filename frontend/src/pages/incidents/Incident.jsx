@@ -59,7 +59,7 @@ const Incident = () => {
     incidentStatusId: 3,
     incidentTypeId: 1,
     incidentSeverityId: 1,
-    userId: isAuthenticated ? user.id : null,
+    userId: user?.id || null,
     island: "",
     area: "",
     latitude: "",

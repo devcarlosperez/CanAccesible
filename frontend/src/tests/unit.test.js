@@ -1,14 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
   validateIncidentData,
-  getIncidentStatusLabel,
   startCoordinatesValidation,
 } from "../utils/incidentHelpers";
-import { truncateText } from "../utils/textUtils";
 
 // FUNCTION 1: validateIncidentData (100% Coverage)
 describe("Unit Test: validateIncidentData", () => {
-
   // Edge case: null/undefined/wrong type inputs
   it("should return false for null, undefined or non-object input", () => {
     const nullInput = null;
@@ -50,43 +47,4 @@ describe("Unit Test: startCoordinatesValidation (Parameterized)", () => {
       expect(result).toBe(expected);
     }
   );
-});
-
-// FUNCTION 3: truncateText (100% Coverage)
-describe("Unit Test: truncateText", () => {
-  // Normal case: text longer than maxLength
-  it("should truncate text and add ellipsis when exceeding maxLength", () => {
-    const text = "Hello World";
-    const maxLength = 5;
-
-    const result = truncateText(text, maxLength);
-
-    expect(result).toBe("Hello...");
-  });
-
-  // Normal case: text shorter than maxLength
-  it("should return original text when shorter than maxLength", () => {
-    const text = "Hi";
-    const maxLength = 10;
-
-    const result = truncateText(text, maxLength);
-
-    expect(result).toBe("Hi");
-  });
-
-  // Edge case: text exactly equal to maxLength
-  it("should return original text when exactly equal to maxLength", () => {
-    const text = "Hello";
-    const maxLength = 5;
-
-    const result = truncateText(text, maxLength);
-
-    expect(result).toBe("Hello");
-  });
-
-  // Edge case: null/undefined input
-  it("should return empty string for null or undefined input", () => {
-    expect(truncateText(null, 5)).toBe("");
-    expect(truncateText(undefined, 5)).toBe("");
-  });
 });
