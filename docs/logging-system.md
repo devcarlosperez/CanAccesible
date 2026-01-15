@@ -70,9 +70,16 @@ The application maintains a detailed audit trail of critical user actions within
 
 ### Logged Actions
 
-The system automatically records the following critical events:
-*   **Authentication:** Login, Logout.
-*   **User Management:** User creation, updates, deletion.
+The system currently tracks critical security and user management events initiated by users or administrators:
+*   **Authentication:**
+    *   `LOGIN`: When a user successfully logs in.
+    *   `LOGOUT`: When a user logs out.
+    *   `PASSWORD_RESET`: When a password is reset via email token.
+    *   `PASSWORD_CHANGE`: When a logged-in user changes their password.
+*   **User Management:**
+    *   `CREATE`: When a new user is registered (by self or admin).
+    *   `UPDATE`: When a user profile is updated.
+    *   `DELETE`: When a user account is deleted.
 
 ### Database Structure (`Logs` Table)
 

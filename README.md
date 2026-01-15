@@ -209,19 +209,7 @@ git clone https://github.com/devcarlosperez/CanAccesible.git
 cd CanAccesible
 ```
 
-### 1. Database Setup
-
-First, you need to create the MySQL database manually:
-
-**Open MySQL and execute:**
-
-```sql
-CREATE DATABASE canaccesible_db;
-```
-
-Make sure you have a MySQL user with appropriate permissions. You can use the default `root` user or create a new one.
-
-### 2. Backend Configuration
+### 1. Database Setup & Backend Configuration
 
 Navigate to the backend directory:
 
@@ -294,41 +282,21 @@ Ensure `DB_NAME` is different (e.g., `db_canaccesible_test`) to avoid overwritin
 npm install
 ```
 
-**Start the OpenLDAP server:**
+**Initialize the Environment:**
 
-Before running migrations and seeders, you need to start the OpenLDAP container for user authentication:
-
-```bash
-# From the project root directory
-docker-compose up -d
-```
-
-Verify it's running:
+Use the automated setup script to start OpenLDAP, create the database, and run migrations/seeders:
 
 ```bash
-docker ps
+# Quick Setup (Docker + Database + LDAP + Seeds)
+npm run dev:setup
 ```
 
-**Run database migrations and seeders:**
-
-You can run the commands directly or use the npm scripts defined in `package.json`:
-
-```bash
-# Option 1: Using npm scripts (Recommended)
-npm run db:migrate
-npm run db:seed
-
-# Option 2: Manual execution
-NODE_ENV=development npx sequelize-cli db:migrate
-NODE_ENV=development npx sequelize-cli db:seed:all
-```
-NODE_ENV=development npx sequelize-cli db:seed:all
-```
+*(Note: If you need to reset the data later, use `npm run dev:reset`)*
 
 **Start the backend server:**
 
 ```bash
-NODE_ENV=development node index.js
+npm run dev
 ```
 
 The backend will be running on `http://localhost:85`
