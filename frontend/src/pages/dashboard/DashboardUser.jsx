@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/header/Header";
-import Footer from "../../components/footer/Footer";
-import useAuthStore from "../../services/authService";
-import { getMyIncidents } from "../../services/incidentService";
-import { getAllNotifications } from "../../services/notificationService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Chip, Typography } from "@mui/material";
+import { toast } from "react-toastify";
+import Header from "../../components/header/Header";
+import Footer from "../../components/footer/Footer";
+import IncidentForm from "../../components/incidents/IncidentForm";
+import useAuthStore from "../../services/authService";
+import { getMyIncidents, updateIncident, deleteIncident } from "../../services/incidentService";
+import { createNotification, getAllNotifications } from "../../services/notificationService";
+import { getIncidentFollowsByIncidentId } from "../../services/incidentFollowsService";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, IconButton, Chip } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const DashboardUser = () => {
   const { t } = useTranslation();
@@ -30,49 +35,135 @@ const DashboardUser = () => {
     rejected: 0,
   });
 
+  const initialFormData = {
+    name: "",
+    description: "",
+    incidentStatusId: 3,
+    incidentTypeId: 1,
+    incidentSeverityId: 1,
+    userId: user?.id,
+    island: "",
+    area: "",
+    latitude: "",
+    longitude: "",
+    isApproved: false,
+    dateIncident: new Date().toISOString().split("T")[0],
+  };
+
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingIncident, setEditingIncident] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+
+  const fetchData = async () => {
+    try {
+      const [incidentsData, notificationsData] = await Promise.all([
+        getMyIncidents(),
+        getAllNotifications(),
+      ]);
+
+      setIncidents(incidentsData);
+      setNotifications(notificationsData);
+
+      // Calculate stats
+      const newStats = {
+        pending: 0,
+        published: 0,
+        inProgress: 0,
+        resolved: 0,
+        rejected: 0,
+      };
+
+      incidentsData.forEach((inc) => {
+        if (inc.incidentStatusId === 1) newStats.pending++;
+        if (inc.incidentStatusId === 2) newStats.inProgress++;
+        if (inc.incidentStatusId === 3) newStats.resolved++;
+        if (!inc.isApproved) newStats.rejected++;
+        if (inc.isApproved) newStats.published++;
+      });
+
+      setStats(newStats);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
 
-    const fetchData = async () => {
-      try {
-        const [incidentsData, notificationsData] = await Promise.all([
-          getMyIncidents(),
-          getAllNotifications(),
-        ]);
-
-        setIncidents(incidentsData);
-        setNotifications(notificationsData);
-
-        // Calculate stats
-        const newStats = {
-          pending: 0,
-          published: 0,
-          inProgress: 0,
-          resolved: 0,
-          rejected: 0,
-        };
-
-        incidentsData.forEach((inc) => {
-          if (inc.incidentStatusId === 1) newStats.pending++;
-          if (inc.incidentStatusId === 2) newStats.inProgress++;
-          if (inc.incidentStatusId === 3) newStats.resolved++;
-          if (!inc.isApproved) newStats.rejected++;
-          if (inc.isApproved) newStats.published++;
-        });
-
-        setStats(newStats);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [isAuthenticated, navigate]);
+
+  const handleDelete = async (id) => {
+    if (window.confirm(t('confirm_delete_incident', '¿Estás seguro de que quieres eliminar esta incidencia?'))) {
+        try {
+            await deleteIncident(id);
+            toast.success(t('incident_deleted', 'Incidencia eliminada con éxito'));
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            toast.error(t('error_deleting', 'Error al eliminar la incidencia'));
+        }
+    }
+  };
+
+  const handleEdit = (incident) => {
+    setEditingIncident(incident);
+    setFormData({ ...incident }); 
+    setShowEditForm(true);
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const preparedData = {
+        ...formData,
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+      };
+      const data = new FormData();
+      Object.keys(preparedData).forEach((key) => {
+        if (key !== "imageFile") {
+          data.append(key, preparedData[key]);
+        }
+      });
+      if (formData.imageFile) {
+        data.append("image", formData.imageFile);
+      }
+      
+      await updateIncident(editingIncident.id, data);
+      
+      setFormData(initialFormData);
+      setEditingIncident(null);
+      setShowEditForm(false);
+      
+       // Notify followers
+       try {
+         const followers = await getIncidentFollowsByIncidentId(editingIncident.id);
+         for (const follower of followers) {
+            await createNotification({
+              userId: follower.userId,
+              message: t("incident_updated", { name: formData.name }),
+              entity: "IncidentFollow",
+              entityId: editingIncident.id,
+              dateNotification: new Date().toISOString().split("T")[0],
+            });
+         }
+       } catch (notifError) {
+         console.error("Error sending notifications", notifError);
+       }
+      
+      toast.success(t('incident_updated_success', 'Incidencia actualizada'));
+      fetchData();
+    } catch (err) {
+      console.error("Error guardando incidencia:", err);
+      toast.error(t('error_updating', 'Error al actualizar la incidencia'));
+    }
+  };
 
   const handleOpenModal = (category) => {
     setModalCategory(category);
@@ -287,7 +378,7 @@ const DashboardUser = () => {
                       </div>
                     </div>
 
-                    <div className="flex-shrink-0 ml-auto mt-2 sm:mt-0">
+                    <div className="flex-shrink-0 ml-auto mt-2 sm:mt-0 flex items-center gap-1">
                       {modalCategory !== 'rejected' && (
                        <Button 
                          variant="outlined" 
@@ -298,6 +389,12 @@ const DashboardUser = () => {
                          {t('view_details', 'Ver')}
                        </Button>
                       )}
+                      <IconButton onClick={() => handleEdit(incident)} size="small" color="primary" aria-label="edit">
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton onClick={() => handleDelete(incident.id)} size="small" color="error" aria-label="delete">
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
                     </div>
                   </ListItem>
                 ))
@@ -313,6 +410,30 @@ const DashboardUser = () => {
               {t('close', 'Cerrar')}
             </Button>
           </DialogActions>
+        </Dialog>
+
+        {/* Modal for Editing Incident */}
+        <Dialog
+          open={showEditForm}
+          onClose={() => setShowEditForm(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogContent>
+            <IncidentForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleFormSubmit}
+              editingIncident={editingIncident}
+              onCancel={() => {
+                setShowEditForm(false);
+                setFormData(initialFormData);
+                setEditingIncident(null);
+              }}
+              open={showEditForm}
+              setOpen={setShowEditForm}
+            />
+          </DialogContent>
         </Dialog>
       </main>
 
