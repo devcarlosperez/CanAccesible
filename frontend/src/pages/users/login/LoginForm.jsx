@@ -45,11 +45,11 @@ const LoginForm = () => {
         className="w-full max-w-md font-roboto mt-11"
       >
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
-          {t('login_email_label')}
+          {t("login_email_label")}
         </label>
         <input
           type="email"
-          placeholder={t('login_email_placeholder')}
+          placeholder={t("login_email_placeholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -57,11 +57,11 @@ const LoginForm = () => {
         />
 
         <label className="block mb-2 font-medium text-gray-700 text-sm sm:text-base">
-          {t('login_password_label')}
+          {t("login_password_label")}
         </label>
         <input
           type="password"
-          placeholder={t('login_password_placeholder')}
+          placeholder={t("login_password_placeholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -69,17 +69,16 @@ const LoginForm = () => {
         />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-6 gap-2">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="accent-primary-2" />
-            {t('login_remember_me')}
-          </label>
-          <a href="#" className="text-primary-2 hover:underline">
-            {t('login_forgot_password')}
-          </a>
+          <Link
+            to="/forgot-password"
+            className="text-primary-2 hover:underline"
+          >
+            {t("login_forgot_password")}
+          </Link>
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm text-center mb-2">{error}</p>
+          <p className="text-red-500 text-sm text-center mb-2">{t(error)}</p>
         )}
 
         <button
@@ -87,16 +86,16 @@ const LoginForm = () => {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition font-semibold cursor-pointer disabled:opacity-70"
         >
-          {loading ? t('login_loading') : t('login_button')}
+          {loading ? t("login_loading") : t("login_button")}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          {t('login_no_account')}{" "}
+          {t("login_no_account")}{" "}
           <a
             href="/register"
             className="text-primary-2 font-medium hover:underline"
           >
-            {t('login_register_link')}
+            {t("login_register_link")}
           </a>
         </p>
       </form>

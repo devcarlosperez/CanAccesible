@@ -39,7 +39,7 @@ export const subscribeToPushNotifications = async () => {
     // Check if already subscribed
     const existingSubscription = await registration.pushManager.getSubscription();
     if (existingSubscription) {
-        // Optional: Send to backend to ensure it's synced
+        // Send to backend to ensure it's synced
         await sendSubscriptionToBackend(existingSubscription);
         return existingSubscription;
     }

@@ -28,6 +28,21 @@ exports.getConversations = async (req, res) => {
 
     // Fetch all conversations with user details
     const conversations = await db.conversation.findAll({
+      attributes: {
+        include: [
+          [
+            db.sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM ConversationMessages AS cm
+              WHERE
+                cm.conversationId = Conversation.id
+                AND cm.seen = 0
+                AND cm.senderId = Conversation.userId
+            )`),
+            'unreadCount'
+          ]
+        ]
+      },
       include: [
         {
           model: db.user,
@@ -37,7 +52,7 @@ exports.getConversations = async (req, res) => {
         {
           model: db.conversationMessage,
           as: "messages",
-          attributes: ["id", "message", "dateMessage"],
+          attributes: ["id", "message", "dateMessage", "senderId"],
           order: [["createdAt", "DESC"]],
           limit: 1,
         },

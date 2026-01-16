@@ -7,8 +7,6 @@ const envPath = path.resolve(__dirname, "..", `.env.${env}`);
 dotenv.config({ path: envPath });
 
 // VAPID Keys should be stored in environment variables
-// If not present, we use the ones generated (ONLY FOR DEV/DEMO PURPOSES)
-// In production, these MUST be in the .env file
 const publicVapidKey = process.env.VAPID_PUBLIC_KEY;
 const privateVapidKey = process.env.VAPID_PRIVATE_KEY;
 

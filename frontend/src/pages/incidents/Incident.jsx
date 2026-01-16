@@ -1,9 +1,23 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getAllIncidents, createIncident, updateIncident, deleteIncident } from "../../services/incidentService";
-import { getIncidentLikeByIncidentAndUserId, createIncidentLike, deleteIncidentLike } from "../../services/incidentLikesService";
-import { getIncidentFollowsByIncidentId, getIncidentFollowByIncidentAndUserId, createIncidentFollow, deleteIncidentFollow } from "../../services/incidentFollowsService.js";
+import {
+  getAllIncidents,
+  createIncident,
+  updateIncident,
+  deleteIncident,
+} from "../../services/incidentService";
+import {
+  getIncidentLikeByIncidentAndUserId,
+  createIncidentLike,
+  deleteIncidentLike,
+} from "../../services/incidentLikesService";
+import {
+  getIncidentFollowsByIncidentId,
+  getIncidentFollowByIncidentAndUserId,
+  createIncidentFollow,
+  deleteIncidentFollow,
+} from "../../services/incidentFollowsService.js";
 import { createNotification } from "../../services/notificationService.js";
 
 import useAuthStore from "../../services/authService.js";
@@ -17,6 +31,7 @@ import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -44,7 +59,7 @@ const Incident = () => {
     incidentStatusId: 3,
     incidentTypeId: 1,
     incidentSeverityId: 1,
-    userId: isAuthenticated ? user.id : null,
+    userId: user?.id || null,
     island: "",
     area: "",
     latitude: "",
@@ -114,7 +129,7 @@ const Incident = () => {
         for (const follower of followers) {
           await createNotification({
             userId: follower.userId,
-            message: t('incident_updated', { name: formData.name }),
+            message: t("incident_updated", { name: formData.name }),
             entity: "IncidentFollow",
             entityId: updatedIncidentId,
             dateNotification: new Date().toISOString().split("T")[0],
@@ -123,7 +138,7 @@ const Incident = () => {
       }
 
       if (!editingIncident) {
-        toast.success(t('incidents_sent_for_review'));
+        toast.success(t("incidents_sent_for_review"));
       }
     } catch (err) {
       console.error("Error guardando incidencia:", err);
@@ -168,7 +183,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast(t('incidents_like_login'));
+        showErrorToast(t("incidents_like_login"));
         return;
       }
 
@@ -200,7 +215,7 @@ const Incident = () => {
     try {
       // If the user is not logged in, show an error and return
       if (!isAuthenticated) {
-        showErrorToast(t('incidents_follow_login'));
+        showErrorToast(t("incidents_follow_login"));
         return;
       }
 
@@ -241,6 +256,11 @@ const Incident = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{t("incidents_meta_title")}</title>
+        <meta name="description" content={t("incidents_meta_description")} />
+        <link rel="canonical" href="https://canaccesible.es/incidents" />
+      </Helmet>
       <Header transparent={false} />
       <motion.main
         initial={{ opacity: 0, y: 20 }}
@@ -252,7 +272,7 @@ const Incident = () => {
           className="text-3xl md:text-4xl font-poppins font-bold mb-8 text-center"
           style={{ color: "var(--color-neutral-2)" }}
         >
-          {t('incidents_title')}
+          {t("incidents_title")}
         </h1>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           {!showForm && (
@@ -271,8 +291,8 @@ const Incident = () => {
               }}
             >
               {isAuthenticated
-                ? t('incidents_new')
-                : t('incidents_login_to_create')}
+                ? t("incidents_new")
+                : t("incidents_login_to_create")}
             </Button>
           )}
         </div>

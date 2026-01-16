@@ -13,27 +13,64 @@ const isTokenExpired = (token) => {
   }
 };
 
-const getDecodedUser = () => {
+const initializeToken = () => {
   const token = localStorage.getItem("token");
-  if (!token || isTokenExpired(token)) {
+  if (!token) return null;
+
+  if (isTokenExpired(token)) {
     localStorage.removeItem("token");
     delete api.defaults.headers.common["Authorization"];
     return null;
   }
 
   api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  const user = token ? jwtDecode(token) : null;
-  return user;
+  return token;
 };
+
+const initialToken = initializeToken();
 
 const useAuthStore = create((set) => ({
   // Load initial state from localStorage
-  user: getDecodedUser(),
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
-  isAdmin: getDecodedUser()?.role === "admin",
+  user: null,
+  token: initialToken,
+  isAuthenticated: !!initialToken,
+  isCheckingAuth: !!initialToken, // Start true if we have a token to verify
+  isAdmin: false,
   loading: false,
   error: null,
+
+  // Update user in store manually
+  setUser: (userData) => {
+    set((state) => ({
+      user: { ...state.user, ...userData },
+      isAdmin: userData.role === "admin",
+    }));
+  },
+
+  // Fetch fresh user data from backend
+  fetchCurrentUser: async () => {
+    const state = useAuthStore.getState();
+    if (!state.token) {
+      set({ isCheckingAuth: false });
+      return;
+    }
+
+    try {
+      const res = await api.get("/auth/me");
+      set((state) => ({
+        user: { ...state.user, ...res.data },
+        isAdmin: res.data.role === "admin",
+      }));
+    } catch (err) {
+      console.error("Failed to fetch current user:", err);
+      // If unauthorized, clear session
+      if (err.response && err.response.status === 401) {
+        state.logout();
+      }
+    } finally {
+      set({ isCheckingAuth: false });
+    }
+  },
 
   // Login function (Basic Auth + JWT + Session)
   login: async (email, password) => {
@@ -51,10 +88,11 @@ const useAuthStore = create((set) => ({
       });
 
       const token = res.data.token;
+      const userData = res.data.user;
 
       if (isTokenExpired(token)) {
         return set({
-          error: "Token already expired",
+          error: "error_token_expired",
           loading: false,
         });
       }
@@ -63,17 +101,22 @@ const useAuthStore = create((set) => ({
 
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const user = jwtDecode(token);
       set({
         token,
-        user,
+        user: userData,
         isAuthenticated: true,
-        isAdmin: user.role === "admin",
+        isAdmin: userData.role === "admin",
         loading: false,
       });
     } catch (err) {
+      const msg = err.response?.data?.message;
+      const errorMap = {
+        "User not found": "error_user_not_found",
+        "Invalid password": "error_invalid_password",
+      };
+
       set({
-        error: err.response?.data?.message || "Login failed",
+        error: errorMap[msg] || "error_login_failed",
         loading: false,
       });
     }

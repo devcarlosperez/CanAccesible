@@ -142,7 +142,7 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    // Comparación estricta de tipos
+    // Strict type comparison
     const commentUserId = parseInt(comment.userId);
     const requestUserId = parseInt(req.user.id);
 
@@ -210,7 +210,7 @@ exports.delete = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    // Comparación estricta de tipos
+    // Strict type comparison
     const commentUserId = parseInt(comment.userId);
     const requestUserId = parseInt(req.user.id);
 

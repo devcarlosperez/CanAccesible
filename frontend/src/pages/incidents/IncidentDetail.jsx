@@ -131,24 +131,18 @@ const IncidentDetail = () => {
     );
   }
 
-  const getStatusLabel = (statusId) => {
-    if (i18n.language === 'en') {
-      switch (statusId) {
-        case 1: return "Pending";
-        case 2: return "In Progress";
-        case 3: return "Resolved";
-        default: return "Unknown";
-      }
-    }
+  const getIncidentStatusLabel = (statusId) => {
     switch (statusId) {
       case 1:
-        return "Pendiente";
+        return t('incident_status_pending');
       case 2:
-        return "En progreso";
+        return t('incident_status_progress');
       case 3:
-        return "Resuelto";
+        return t('incident_status_resolved');
+      case 4:
+        return t('incident_status_rejected');
       default:
-        return "Desconocido";
+        return t('incident_status_unknown');
     }
   };
 
@@ -218,7 +212,7 @@ const IncidentDetail = () => {
                   </button>
                 </div>
                 <Chip
-                  label={getStatusLabel(incident.incidentStatusId)}
+                  label={getIncidentStatusLabel(incident.incidentStatusId)}
                   color={getStatusColor(incident.incidentStatusId)}
                   variant="filled"
                 />

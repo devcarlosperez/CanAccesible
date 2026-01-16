@@ -31,9 +31,23 @@ module.exports = (io, socket) => {
         dateMessage,
       });
 
+      // Fetch the message with sender info to emit complete data
+      const messageWithSender = await ConversationMessage.findByPk(newMessage.id, {
+        include: [{
+          model: db.user,
+          as: 'sender',
+          attributes: ['id', 'firstName', 'lastName', 'nameFile'],
+          include: [{
+            model: db.role,
+            as: 'role',
+            attributes: ['role']
+          }]
+        }]
+      });
+
       // Emit to room (use string for consistency)
       const roomId = String(conversationId);
-      io.to(roomId).emit("newMessage", newMessage);
+      io.to(roomId).emit("newMessage", messageWithSender);
 
       // Send Push Notification if Admin is replying to User
       const senderId = socket.user.id;
@@ -58,7 +72,7 @@ module.exports = (io, socket) => {
           const payload = {
             title: `Nueva respuesta de CanAccesible`,
             body: `Desde el chat de ${conversation.type}: ${message.length > 50 ? message.substring(0, 50) + "..." : message}`,
-            url: `/dashboard/chat`,
+            url: `/conversations/${conversationId}`,
             data: { conversationId: conversationId }
           };
           pushSubscriptionController.sendNotificationToUser(conversation.userId, payload)

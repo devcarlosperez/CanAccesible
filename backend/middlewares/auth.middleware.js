@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { jwtConfig } = require("../config/jwt");
+const db = require("../models");
 
 const verifyToken = (req, res, next) => {
   let token = req.headers["authorization"];
@@ -12,12 +13,35 @@ const verifyToken = (req, res, next) => {
     return res.status(403).json({ message: "Token not provided." });
   }
 
-  jwt.verify(token, jwtConfig.secret, (err, decoded) => {
+  jwt.verify(token, jwtConfig.secret, async (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: "Invalid token." });
     }
-    req.user = decoded;
-    next();
+
+    try {
+      const user = await db.user.findByPk(decoded.id, {
+        include: [{ model: db.role, as: "role" }],
+      });
+
+      if (!user) {
+        return res.status(401).json({ message: "User not found." });
+      }
+
+      req.user = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        roleId: user.roleId,
+        role: user.role ? user.role.role : null,
+        nameFile: user.nameFile,
+      };
+
+      next();
+    } catch (error) {
+      console.error("Auth Middleware Error:", error);
+      return res.status(500).json({ message: "Internal Auth Error" });
+    }
   });
 };
 

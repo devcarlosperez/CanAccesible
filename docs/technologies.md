@@ -34,7 +34,8 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 
 ### Communication & Notifications
 
-- **Nodemailer**: Module for sending emails from the server (e.g., confirmations, notifications).
+- **Resend**: Email API key platform used to send transactional emails (welcome emails, password resets, etc.) reliably.
+- **Socket.io**: Library that enables real-time, bidirectional and event-based communication between the web client and the server.
 - **Web Push API**: Browser API for sending push notifications to users. Implemented using the `web-push` library for server-side notification delivery.
 - **VAPID (Voluntary Application Server Identification)**: Protocol for identifying the application server when sending push notifications, ensuring secure and authenticated delivery.
 - **Service Workers**: JavaScript files that run in the background to handle push notification events and display them to users.
@@ -44,6 +45,7 @@ The backend is built on **Node.js** using an architecture based on controllers, 
 
 - **Dotenv**: Loads environment variables from a `.env` file to manage sensitive configurations (API keys, DB credentials) outside the source code.
 - **Axios**: Promise-based HTTP client, used if the backend needs to communicate with other external APIs.
+- **Swagger UI Express**: Middleware that automatically generates and serves interactive API documentation from a JSON definition.
 
 ---
 
@@ -54,13 +56,15 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 ### Core
 
 - **React (v19)**: Main library for building the component-based user interface.
-- **Vite**: Fast build tool (bundler) and development server.
+- **Vite (v7)**: Fast build tool (bundler) and development server.
 - **React Router DOM**: Handles client-side routing, allowing navigation between different views without page reloads.
+- **React Helmet Async**: Component to manage changes to the document head (title, meta tags) dynamically for SEO and accessibility.
 
 ### State & Data Management
 
 - **Zustand**: Lightweight and fast library for global application state management (e.g., authenticated user, preferences).
 - **Axios**: HTTP client for making requests to the backend API.
+- **Socket.io Client**: Client-side library to establish real-time connection with the backend Socket.io server.
 
 ### UI & Styles
 
@@ -69,6 +73,7 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 - **Emotion**: Library for writing CSS styles with JavaScript, used internally by MUI.
 - **Headless UI**: Unstyled UI components (accessible and functional) that integrate well with Tailwind CSS.
 - **MUI Icons, Font Awesome & Lucide React**: Comprehensive collections of icons, providing a wide range of SVG icons for the interface.
+- **React Toastify**: Library for displaying toast notifications (popups) to provide user feedback (success, error, warning).
 
 ### Internationalization (i18n)
 
@@ -98,6 +103,23 @@ The frontend is a Single Page Application (SPA) built with **React** and **Vite*
 ### Security & SSL
 
 - **Let's Encrypt**: Certificate Authority that provides free X.509 certificates for TLS encryption.
+
+---
+
+## Testing
+
+### Backend Testing
+
+- **Jest**: Delightful JavaScript Testing Framework with a focus on simplicity.
+- **Supertest**: Library for testing HTTP servers using a fluent API.
+- **Cross-Env**: Script to set environment variables across different platforms (used to set `NODE_ENV=test`).
+
+### Frontend Testing
+
+- **Vitest**: Blazing fast unit test framework powered by Vite.
+- **React Testing Library**: Light-weight solution for testing React components.
+- **JSDOM**: Implementations of web standards for use with Node.js, allowing DOM testing without a browser.
+
 - **Certbot**: Tool used to automatically obtain and renew SSL certificates from Let's Encrypt.
 
 ### Cloud Storage

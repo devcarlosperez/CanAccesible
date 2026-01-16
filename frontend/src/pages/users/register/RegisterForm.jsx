@@ -6,6 +6,7 @@ import useAuthStore from "../../../services/authService.js";
 import logo from "../../../assets/canaccesible-logo-2.webp";
 import { createUser } from "../../../services/userService.js";
 import { subscribeToPushNotifications } from "../../../services/pushNotificationService.js";
+import AvatarSelector from "../../../components/utils/AvatarSelector";
 
 const RegisterForm = () => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const RegisterForm = () => {
     avatar: null,
   });
   const [enablePush, setEnablePush] = useState(false);
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
 
   const [error, setError] = useState(null);
 
@@ -37,6 +39,11 @@ const RegisterForm = () => {
 
   const handleFileChange = (e) => {
     setNewUser({ ...newUser, avatar: e.target.files[0] });
+  };
+
+  const handleAvatarSelect = (file) => {
+    setNewUser({ ...newUser, avatar: file });
+    setShowAvatarSelector(false);
   };
 
   const handleSubmit = async (e) => {
@@ -64,7 +71,12 @@ const RegisterForm = () => {
 
       navigate("/home");
     } catch (err) {
-      setError(t('register_error'));
+      const msg = err.response?.data?.message;
+      const errorMap = {
+        "Email already registered": "error_email_registered",
+        "Email format is invalid": "error_email_invalid",
+      };
+      setError(errorMap[msg] || "register_error");
     }
   };
 
@@ -87,7 +99,7 @@ const RegisterForm = () => {
           <input
             type="text"
             name="firstName"
-            placeholder={t('register_name_placeholder')}
+            placeholder={t("register_name_placeholder")}
             value={newUser.firstName}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
@@ -96,7 +108,7 @@ const RegisterForm = () => {
           <input
             type="text"
             name="lastName"
-            placeholder={t('register_lastname_placeholder')}
+            placeholder={t("register_lastname_placeholder")}
             value={newUser.lastName}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
@@ -107,7 +119,7 @@ const RegisterForm = () => {
         <input
           type="email"
           name="email"
-          placeholder={t('register_email_placeholder')}
+          placeholder={t("register_email_placeholder")}
           value={newUser.email}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
@@ -117,7 +129,7 @@ const RegisterForm = () => {
         <input
           type="password"
           name="password"
-          placeholder={t('register_password_placeholder')}
+          placeholder={t("register_password_placeholder")}
           value={newUser.password}
           onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 mt-4"
@@ -127,36 +139,51 @@ const RegisterForm = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <div>
             <label className="block mb-1 font-medium text-gray-700 text-sm">
-              {t('register_profile_pic_label')}
+              {t("register_profile_pic_label")}
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="w-full p-2 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
-            />
-            {newUser.avatar && (
-              <img
-                src={URL.createObjectURL(newUser.avatar)}
-                alt="preview"
-                className="mt-2 w-24 h-24 object-cover rounded-full border border-gray-500"
-              />
-            )}
+
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => setShowAvatarSelector(true)}
+                className="w-full bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <i className="fa-solid fa-image text-gray-900"></i>
+                {t("choose_avatar") || "Elegir foto de perfil"}
+              </button>
+
+              {newUser.avatar && (
+                <div className="relative w-24 h-24 mx-auto mt-2">
+                  <img
+                    src={URL.createObjectURL(newUser.avatar)}
+                    alt="preview"
+                    className="w-full h-full object-cover rounded-full border-2 border-blue-500 shadow-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewUser({ ...newUser, avatar: null })}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors cursor-pointer shadow-sm"
+                  >
+                    <i className="fa-solid fa-times"></i>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div>
             <label className="block mb-1 font-medium text-gray-700 text-sm">
-              {t('register_account_type_label')}
+              {t("register_account_type_label")}
             </label>
             <select
               value={newUser.rol}
               onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2"
+              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary-2 cursor-pointer"
               required
             >
-              <option value="">{t('register_select_type')}</option>
-              <option value="1">{t('register_type_user')}</option>
-              <option value="3">{t('register_type_municipality')}</option>
+              <option value="">{t("register_select_type")}</option>
+              <option value="1">{t("register_type_user")}</option>
+              <option value="3">{t("register_type_municipality")}</option>
             </select>
           </div>
         </div>
@@ -173,12 +200,12 @@ const RegisterForm = () => {
             htmlFor="push-notifications"
             className="ml-2 block text-sm text-gray-900"
           >
-            {t('register_enable_push')}
+            {t("register_enable_push")}
           </label>
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm text-center mt-3">{error}</p>
+          <p className="text-red-500 text-sm text-center mt-3">{t(error)}</p>
         )}
 
         <button
@@ -186,19 +213,26 @@ const RegisterForm = () => {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 hover:bg-blue-700 transition font-semibold"
         >
-          {loading ? t('register_loading') : t('register_button')}
+          {loading ? t("register_loading") : t("register_button")}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          {t('register_already_account')}{" "}
+          {t("register_already_account")}{" "}
           <a
             href="/login"
             className="text-primary-2 font-medium hover:underline"
           >
-            {t('register_login_link')}
+            {t("register_login_link")}
           </a>
         </p>
       </form>
+
+      {showAvatarSelector && (
+        <AvatarSelector
+          onSelect={handleAvatarSelect}
+          onCancel={() => setShowAvatarSelector(false)}
+        />
+      )}
     </div>
   );
 };

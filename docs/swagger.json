@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "CanAccesible APIs",
-    "description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api\n\nFor endpoints protected by JWT, users must sign in using POST /auth/signin, copy the token from the response, and paste it in the Authorize button.",
+    "description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api\n\nThese URLs are prefixes for API endpoints (e.g., /users) and refer to the API root path.\n\nFor endpoints protected by JWT, users must sign in using POST /auth/signin, copy the token from the response, and paste it in the Authorize button.",
     "version": "1.0.0"
   },
   "servers": [
@@ -1921,7 +1921,7 @@
           "ConversationMessages"
         ],
         "summary": "findAll",
-        "description": "Retrieves all messages in a conversation.",
+        "description": "Retrieves all messages in a conversation. Messages not sent by the current user will be marked as seen.",
         "parameters": [
           {
             "name": "conversationId",

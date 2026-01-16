@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import { useEffect } from "react";
 import "./App.css";
 import Home from "./pages/home/Home";
 import Incident from "./pages/incidents/Incident";
@@ -6,6 +13,8 @@ import IncidentDetail from "./pages/incidents/IncidentDetail";
 import Map from "./pages/map/Map";
 import Register from "./pages/users/register/Register";
 import Login from "./pages/users/login/Login";
+import ForgotPassword from "./pages/users/login/ForgotPassword";
+import ResetPassword from "./pages/users/login/ResetPassword";
 import Contact from "./pages/contact/Contact";
 import Blog from "./pages/blog/Blog";
 import BlogArticleDetail from "./pages/blog/BlogArticleDetail";
@@ -14,16 +23,47 @@ import ErrorPage from "./pages/others/ErrorPage";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy.jsx";
 import ScrollToTopRoutes from "./components/utils/ScrollToTopRoutes.jsx";
 import TermsConditions from "./pages/terms-conditions/TermsConditions.jsx";
-import PushNotificationsGuide from "./pages/push-notifications-guide/PushNotificationsGuide.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import DashboardUser from "./pages/dashboard/DashboardUser.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Conversation from "./pages/conversation/Conversation.jsx";
+import useAuthStore from "./services/authService.js";
 
 function App() {
   return (
     <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
+
+function AppContent() {
+  const navigate = useNavigate();
+  const { fetchCurrentUser, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCurrentUser();
+    }
+  }, [isAuthenticated, fetchCurrentUser]);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.action === "navigate") {
+        navigate(event.data.url);
+      }
+    };
+
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handleMessage);
+    };
+  }, [navigate]);
+
+  return (
+    <>
       <ScrollToTopRoutes />
       <ToastContainer
         position="bottom-right"
@@ -52,6 +92,22 @@ function App() {
           }
         />
         <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
           path="/register"
           element={
             <PublicRoute>
@@ -63,12 +119,14 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogArticleDetail />} />
         <Route path="/error" element={<ErrorPage />} />
-        <Route path="/conversations/:conversationId" element={<Conversation/>}/>
+        <Route
+          path="/conversations/:conversationId"
+          element={<Conversation />}
+        />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
-        <Route path="/push-notifications-guide" element={<PushNotificationsGuide />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

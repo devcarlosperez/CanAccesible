@@ -53,7 +53,7 @@ const BlogCard = ({ article }) => {
         {article.nameFile ? (
           <img
             src={article.nameFile}
-            alt={article.title}
+            alt=""
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
         ) : (
@@ -108,6 +108,7 @@ const BlogCard = ({ article }) => {
             <Link
               to={`/blog/${article.id}`}
               className="text-blue-600 hover:text-blue-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap"
+              aria-label={`${t('blog_card_read_more')} ${isTranslated && cachedTranslation?.title ? cachedTranslation.title : article.title}`}
             >
               {t('blog_card_read_more')}
             </Link>

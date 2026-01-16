@@ -5,6 +5,7 @@ import BlogArticlesList from "../../components/blog/BlogArticlesList";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 const Blog = () => {
   const { t } = useTranslation();
@@ -12,6 +13,11 @@ const Blog = () => {
 
   return (
     <>
+      <Helmet>
+        <title>CanAccesible - {t("blog_title")}</title>
+        <meta name="description" content={t("blog_subtitle")} />
+        <link rel="canonical" href="https://canaccesible.es/blog" />
+      </Helmet>
       <Header transparent={false} />
 
       {/* Main Content */}
@@ -27,13 +33,13 @@ const Blog = () => {
             className="text-3xl md:text-4xl font-poppins font-bold mb-4"
             style={{ color: "var(--color-neutral-2)" }}
           >
-            {t('blog_title')}
+            {t("blog_title")}
           </h1>
           <p
             className="text-base font-roboto"
             style={{ color: "var(--color-neutral-3)" }}
           >
-            {t('blog_subtitle')}
+            {t("blog_subtitle")}
           </p>
         </motion.div>
 
@@ -46,7 +52,7 @@ const Blog = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center mb-16"
           >
-            <BlogSlider articleIds={[1, 2, 4, 5]}/>
+            <BlogSlider articleIds={[1, 2, 4, 5]} />
           </motion.div>
         )}
 
@@ -62,7 +68,7 @@ const Blog = () => {
             className="text-2xl md:text-3xl font-poppins font-bold mb-8 text-center"
             style={{ color: "var(--color-neutral-2)" }}
           >
-            {t('blog_all_articles')}
+            {t("blog_all_articles")}
           </h2>
           <div className="px-4 md:px-6 lg:px-0 flex justify-center">
             <div className="w-full max-w-sm md:max-w-4xl lg:max-w-6xl">

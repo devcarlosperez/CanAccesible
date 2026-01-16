@@ -4,19 +4,19 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 
 i18n
-  // Carga traducciones usando http (archivos en public/locales)
+  // Loads translations using http (files in public/locales)
   .use(Backend)
-  // Detecta el idioma del navegador
+  // Detects browser language
   .use(LanguageDetector)
-  // Pasa la instancia a react-i18next
+  // Passes instance to react-i18next
   .use(initReactI18next)
-  // Inicializa i18next
+  // Initialize i18next
   .init({
-    fallbackLng: 'es', // Idioma por defecto si falla la detección
-    debug: true, // Útil para desarrollo, verás logs en la consola
+    fallbackLng: 'es', // Default language if detection fails
+    debug: true, // Useful for development, logs to console
 
     interpolation: {
-      escapeValue: false, // React ya protege contra XSS
+      escapeValue: false, // React already protects against XSS
     }
   });
 

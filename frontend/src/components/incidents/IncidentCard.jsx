@@ -3,14 +3,11 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { Card, CardHeader, CardContent, CardActions, CardMedia, Avatar, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, InputAdornment } from "@mui/material";
 import { red } from "@mui/material/colors";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import TranslateIcon from "@mui/icons-material/Translate";
 
 import { getIncidentLikeByIncidentAndUserId } from "../../services/incidentLikesService";
 import { getIncidentFollowByIncidentAndUserId } from "../../services/incidentFollowsService";
@@ -229,18 +226,6 @@ const IncidentCard = ({
               isTranslated ? 'EN' : 'ES'
             )}
           </button>
-
-          {/* Edit and delete buttons */}
-          {user?.id === incident.userId && (
-            <>
-              <IconButton onClick={() => onEdit(incident)} aria-label="editar">
-                <EditIcon color="info" />
-              </IconButton>
-              <IconButton onClick={() => onDelete(incident.id)} aria-label="eliminar">
-                <DeleteIcon color="error" />
-              </IconButton>
-            </>
-          )}
 
           {/* More information button */}
           <Button

@@ -15,6 +15,7 @@ const Hero = ({ heroData }) => {
           direction="top"
           onAnimationComplete={handleAnimationComplete}
           className="text-4xl md:text-6xl font-bold drop-shadow-lg mb-4"
+          tagName="h1"
         />
         <BlurText
           text={heroData.text2}

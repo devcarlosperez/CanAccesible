@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import AvatarSelector from "../../components/utils/AvatarSelector";
 
 const ProfileForm = ({
   userData,
@@ -13,6 +15,18 @@ const ProfileForm = ({
   handlePushToggle,
 }) => {
   const { t } = useTranslation();
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+
+  const handleAvatarSelect = (file) => {
+    // Create a fake event object to reuse handleImageChange
+    const fakeEvent = {
+      target: {
+        files: [file],
+      },
+    };
+    handleImageChange(fakeEvent);
+    setShowAvatarSelector(false);
+  };
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -38,20 +52,16 @@ const ProfileForm = ({
                 </div>
               )}
             </div>
-            <label
-              htmlFor="image-upload"
-              className="absolute bottom-0 right-0 bg-white text-blue-600 p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-100 transition-colors"
-              title={t('profile_change_photo')}
-            >
-              <i className="fa-solid fa-camera"></i>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </label>
+            <div className="absolute -bottom-2 right-0 transform translate-x-4">
+              <button
+                type="button"
+                onClick={() => setShowAvatarSelector(true)}
+                className="bg-white text-blue-600 p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-100 transition-colors w-11 h-11 flex items-center justify-center mr-4"
+                title={t("profile_change_photo")}
+              >
+                <i className="fa-solid fa-camera"></i>
+              </button>
+            </div>
           </div>
           <h1 className="mt-4 text-2xl font-bold text-white">
             {userData.firstName} {userData.lastName}
@@ -67,7 +77,7 @@ const ProfileForm = ({
                   htmlFor="firstName"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  {t('profile_firstname')}
+                  {t("profile_firstname")}
                 </label>
                 <input
                   type="text"
@@ -77,7 +87,7 @@ const ProfileForm = ({
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder={t('profile_firstname_placeholder')}
+                  placeholder={t("profile_firstname_placeholder")}
                 />
               </div>
 
@@ -86,7 +96,7 @@ const ProfileForm = ({
                   htmlFor="lastName"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  {t('profile_lastname')}
+                  {t("profile_lastname")}
                 </label>
                 <input
                   type="text"
@@ -96,7 +106,7 @@ const ProfileForm = ({
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder={t('profile_lastname_placeholder')}
+                  placeholder={t("profile_lastname_placeholder")}
                 />
               </div>
             </div>
@@ -106,7 +116,7 @@ const ProfileForm = ({
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                {t('profile_email')}
+                {t("profile_email")}
               </label>
               <input
                 type="email"
@@ -116,31 +126,23 @@ const ProfileForm = ({
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                placeholder={t('profile_email_placeholder')}
+                placeholder={t("profile_email")}
               />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div>
                 <h3 className="text-sm font-medium text-gray-900">
-                  {t('profile_push_title')}
+                  {t("profile_push_title")}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {t('profile_push_desc')}
+                  {t("profile_push_desc")}
                 </p>
-                <a
-                  href="/push-notifications-guide"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 mt-1 inline-block"
-                >
-                  {t('profile_push_how_to')}
-                </a>
               </div>
               <button
                 type="button"
                 onClick={handlePushToggle}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   pushEnabled ? "bg-blue-600" : "bg-gray-200"
                 }`}
                 role="switch"
@@ -161,7 +163,7 @@ const ProfileForm = ({
                 onClick={onCancel}
                 className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors cursor-pointer"
               >
-                {t('profile_cancel')}
+                {t("profile_cancel")}
               </button>
               <button
                 type="submit"
@@ -173,16 +175,22 @@ const ProfileForm = ({
                 {updating ? (
                   <span className="flex items-center gap-2">
                     <i className="fa-solid fa-circle-notch fa-spin"></i>
-                    {t('profile_saving')}
+                    {t("profile_saving")}
                   </span>
                 ) : (
-                  t('profile_save')
+                  t("profile_save")
                 )}
               </button>
             </div>
           </form>
         </div>
       </div>
+      {showAvatarSelector && (
+        <AvatarSelector
+          onSelect={handleAvatarSelect}
+          onCancel={() => setShowAvatarSelector(false)}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuthStore from "../../services/authService.js";
 import NotificationDropdown from "./NotificationDropdown.jsx";
@@ -43,12 +43,16 @@ const HeaderDesktop = ({
         <ul className="flex list-none gap-6 sm:gap-8 md:gap-12 lg:gap-14 xl:gap-16 font-semibold">
           {menuItems.slice(0, 5).map((item) => (
             <li key={item.text}>
-              <Link
+              <NavLink
                 to={item.to}
-                className="hover:text-blue-700 transition-colors"
+                className={({ isActive }) =>
+                  `hover:text-blue-700 transition-colors ${
+                    isActive ? "text-blue-700" : ""
+                  }`
+                }
               >
                 {item.text}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -75,7 +79,7 @@ const HeaderDesktop = ({
             to="/login"
             className="bg-blue-600 text-neutral-1 px-3 py-1.5 sm:px-5 sm:py-2 md:px-7 md:py-2.5 lg:px-9 lg:py-3 xl:px-11 xl:py-3.5 lg:text-md xl:text-base rounded-xl font-semibold hover:bg-blue-700 hover:scale-105 transition-all duration-200"
           >
-            {t('login')}
+            {t("login")}
           </Link>
         )}
       </div>

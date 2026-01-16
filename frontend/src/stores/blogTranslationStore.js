@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
 export const useBlogTranslationStore = create((set, get) => ({
-  // Almacena los textos traducidos por ID de artículo
-  // Estructura: { [id]: { title: "...", description: "...", content: "..." } }
+  // Stores translated texts by article ID
+  // Structure: { [id]: { title: "...", description: "...", content: "..." } }
   translations: {},
 
-  // Almacena el estado actual (si se debe mostrar traducido o no)
-  // Estructura: { [id]: boolean }
+  // Stores current status (whether to show translated or not)
+  // Structure: { [id]: boolean }
   translationStatus: {},
 
-  // Guarda los textos traducidos para no volver a llamar a la API
+  // Saves translated texts to avoid calling the API again
   setTranslatedText: (id, data) => set((state) => ({
     translations: { 
       ...state.translations, 
@@ -17,7 +17,7 @@ export const useBlogTranslationStore = create((set, get) => ({
     }
   })),
 
-  // Cambia el estado de visualización (ES <-> EN)
+  // Toggles display status (ES <-> EN)
   toggleTranslationStatus: (id) => set((state) => ({
     translationStatus: { 
       ...state.translationStatus, 
@@ -25,7 +25,7 @@ export const useBlogTranslationStore = create((set, get) => ({
     }
   })),
 
-  // Establece un estado específico
+  // Sets a specific status
   setTranslationStatus: (id, status) => set((state) => ({
     translationStatus: { 
       ...state.translationStatus, 
@@ -33,9 +33,9 @@ export const useBlogTranslationStore = create((set, get) => ({
     }
   })),
 
-  // Helper para obtener si está traducido
+  // Helper to check if it is translated
   isTranslated: (id) => get().translationStatus[id] || false,
 
-  // Helper para obtener textos (devuelve undefined si no existen)
+  // Helper to get texts (returns undefined if they don't exist)
   getTranslation: (id) => get().translations[id],
 }));

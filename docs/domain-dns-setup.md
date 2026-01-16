@@ -17,11 +17,15 @@ To link the domain with the server, the DNS records were configured in the **Nom
 **Steps taken in Nominalia:**
 1.  Accessed the **Domain Management** section for `canaccesible.es`.
 2.  Navigated to **DNS & Name Servers** > **DNS Zone Management**.
-3.  Added/Modified the **A Record** to point to the DigitalOcean Droplet:
-    *   **Host/Name:** `@` (represents the root domain `canaccesible.es`)
-    *   **Type:** `A`
-    *   **Value/Destination:** `[DROPLET_IP]` (The public IP address of the DigitalOcean Droplet)
-    *   **TTL:** Default (usually 1 hour or 3600 seconds)
+3.  Configured the following records based on the project requirements (Access, FTP, WWW, and Email):
+
+    | Name | Type | Value (Destination) |
+    | :--- | :--- | :--- |
+    | `canaccesible.es` | **A** | `64.227.124.155` |
+    | `ftp.canaccesible.es` | **CNAME** | `canaccesible.es` |
+    | `www.canaccesible.es` | **CNAME** | `canaccesible.es` |
+    | `send.canaccesible.es` | **MX 10** | `feedback-smtp.eu-west-1.amazonses.com` |
+
 4.  Ensured **NS Records (Name Servers)** are set to Nominalia's default servers to allow management via their panel.
 
 > **Note on Propagation:** DNS changes are not instantaneous. They typically take between **5 minutes and 24 hours** to propagate globally.

@@ -23,36 +23,44 @@ const Footer = () => {
             {t('footer_description')}
           </p>
 
-          <div className="flex gap-6 text-3xl">
-            <a
-              href="https://www.youtube.com/channel/UC_IICs-9f1KYxOuIBQxfQ0g"
-              className="text-neutral-800 hover:text-red-600 transition-colors"
-              aria-label="Visita nuestro canal de YouTube"
-            >
-              <i className="fa-brands fa-youtube"></i>
-            </a>
-            <a
-              href="https://www.instagram.com/canaccesible/"
-              className="text-neutral-800 hover:text-pink-600 transition-colors"
-              aria-label="Visita nuestro perfil de Instagram"
-            >
-              <i className="fa-brands fa-instagram"></i>
-            </a>
-            <a
-              href="https://www.tiktok.com/@canaccesible"
-              className="text-neutral-800 hover:text-black transition-colors"
-              aria-label="Visita nuestro perfil de TikTok"
-            >
-              <i className="fa-brands fa-tiktok"></i>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/canaccesible-el-rinc%C3%B3n-83b8a83a0/"
-              className="text-neutral-800 hover:text-blue-700 transition-colors"
-              aria-label="Visita nuestro perfil de LinkedIn"
-            >
-              <i className="fa-brands fa-linkedin"></i>
-            </a>
-          </div>
+          <ul className="flex gap-6 text-3xl">
+            <li>
+              <a
+                href="https://www.youtube.com/channel/UC_IICs-9f1KYxOuIBQxfQ0g"
+                className="text-neutral-800 hover:text-red-600 transition-colors"
+                aria-label="Visita nuestro canal de YouTube"
+              >
+                <i className="fa-brands fa-youtube"></i>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.instagram.com/canaccesible/"
+                className="text-neutral-800 hover:text-pink-600 transition-colors"
+                aria-label="Visita nuestro perfil de Instagram"
+              >
+                <i className="fa-brands fa-instagram"></i>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.tiktok.com/@canaccesible"
+                className="text-neutral-800 hover:text-black transition-colors"
+                aria-label="Visita nuestro perfil de TikTok"
+              >
+                <i className="fa-brands fa-tiktok"></i>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/canaccesible-el-rinc%C3%B3n-83b8a83a0/"
+                className="text-neutral-800 hover:text-blue-700 transition-colors"
+                aria-label="Visita nuestro perfil de LinkedIn"
+              >
+                <i className="fa-brands fa-linkedin"></i>
+              </a>
+            </li>
+          </ul>
         </div>
         <div className="flex flex-row justify-evenly md:justify-around text-center md:text-left w-full md:w-2/3">
           <div className="text-left">
@@ -113,14 +121,6 @@ const Footer = () => {
                   className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
                 >
                   {t('privacy_policy')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={"/push-notifications-guide"}
-                  className="hover:text-blue-600 transition-colors cursor-pointer inline-block"
-                >
-                  {t('push_notifications_guide')}
                 </Link>
               </li>
             </ul>
