@@ -2,6 +2,8 @@
 
 This document describes the integration of [Resend](https://resend.com/) as the email service provider for the CanAccesible application.
 
+---
+
 ## Overview
 
 Resend is a modern email API service that allows developers to send transactional emails easily. In our application, we use Resend for:
@@ -9,6 +11,8 @@ Resend is a modern email API service that allows developers to send transactiona
 - **Login notifications** - Alert users when a login is detected on their account
 - **Password recovery** - Send password reset links to users
 - **Password change confirmations** - Notify users when their password has been updated
+
+---
 
 ## Current Plan
 
@@ -21,6 +25,8 @@ We are currently using the **Free Plan** which includes:
 
 > 💡 For higher volume needs, consider upgrading to a paid plan. See [Resend Pricing](https://resend.com/pricing) for more details.
 
+---
+
 ## Installation
 
 The Resend SDK was installed via npm:
@@ -30,6 +36,8 @@ npm install resend
 ```
 
 **Package version:** `^6.7.0`
+
+---
 
 ## Configuration
 
@@ -55,6 +63,8 @@ const resend = new Resend(process.env.RESEND_API);
 module.exports = resend;
 ```
 
+---
+
 ## Usage
 
 ### Importing the Client
@@ -79,6 +89,8 @@ if (error) {
   console.error("Resend error:", error);
 }
 ```
+
+---
 
 ## Implementation Examples
 
@@ -157,6 +169,8 @@ setImmediate(async () => {
 });
 ```
 
+---
+
 ## Email Sender Addresses
 
 | Use Case                     | From Address                           |
@@ -166,6 +180,8 @@ setImmediate(async () => {
 | Password change confirmation | `noreply@canaccesible.es`              |
 
 > **Note:** To use a custom domain (e.g., `@canaccesible.es`), you must verify the domain in your Resend dashboard.
+
+---
 
 ## Domain Verification (Production)
 
@@ -177,6 +193,8 @@ To send emails from your own domain instead of `@resend.dev`:
 4. Add the provided DNS records (SPF, DKIM, DMARC) to your domain
 5. Wait for verification (usually takes a few minutes)
 6. Update the `from` address in your code to use your verified domain
+
+---
 
 ## Error Handling
 
@@ -197,6 +215,8 @@ try {
 }
 ```
 
+---
+
 ## Best Practices
 
 1. **Asynchronous Sending**: Use `setImmediate()` for non-critical emails to avoid blocking API responses
@@ -204,6 +224,8 @@ try {
 3. **Environment Variables**: Keep API keys in environment variables, never hardcode them
 4. **HTML Templates**: Use proper HTML formatting for better email rendering across clients
 5. **Personalization**: Include user's name in emails for a better experience
+
+---
 
 ## Troubleshooting
 
@@ -213,6 +235,8 @@ try {
 | Emails not being received   | Check spam folder; verify domain if using custom domain |
 | `from` address rejected     | Use `@resend.dev` domain or verify your custom domain   |
 | Rate limiting errors        | Check Resend's rate limits for your plan                |
+
+---
 
 ## Resources
 
