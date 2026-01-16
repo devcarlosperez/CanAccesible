@@ -398,6 +398,87 @@ FRONTEND_URL=https://canaccesible.es
 
 ---
 
+## Sprint 5: Updates & Maintenance (Jonathan)
+
+### 1. Update Codebase
+
+Log in to the VPS and pull the latest changes from the main branch. Also, update dependencies.
+
+```bash
+cd CanAccesible
+git pull origin main
+
+# Install dependencies for backend
+cd backend
+npm install
+
+# Install dependencies for frontend
+cd ../frontend
+npm install
+
+# Return to root
+cd ..
+```
+
+### 2. Configuration Updates
+
+Update `backend/.env.production` to reflect new changes, such as adding Resend API keys and removing obsolete SMTP configurations.
+
+```bash
+nano backend/.env.production
+```
+
+### 3. Service Reset (Database & LDAP)
+
+Due to schema changes, clean up the existing state (migrations) and restart the LDAP service to ensure a fresh environment.
+
+**Reset OpenLDAP:**
+Remove the existing OpenLDAP container and volume (if necessary) and recreate it.
+
+```bash
+# Stop and remove the OpenLDAP container
+docker compose down
+
+# Start the container again directly (detached)
+docker compose up -d
+```
+
+### 4. Database Initialization
+
+Run the migrations and seeders again to apply the new schema and populate the database (and the fresh LDAP instance).
+
+```bash
+cd backend
+
+# Run migrations (ensure database is in sync with new schema)
+NODE_ENV=production npx sequelize-cli db:migrate
+
+# Run seeders (populate initial data)
+NODE_ENV=production npx sequelize-cli db:seed:all
+```
+
+### 5. Frontend Redeployment
+
+Build the updated frontend and deploy the static files to the Nginx web root.
+
+```bash
+cd ../frontend
+npm run build
+
+# Update the served files
+sudo cp -r dist/* /var/www/canaccesible/
+```
+
+### 6. Restart Backend
+
+Apply the changes to the running backend process.
+
+```bash
+pm2 restart backend
+```
+
+---
+
 ## Current Architecture Summary
 
 1.  **User Request** -> **Nginx (Port 443)**
