@@ -17,7 +17,13 @@
     "db:drop:dev": "cross-env NODE_ENV=development npx sequelize-cli db:drop",
     "db:migrate:dev": "cross-env NODE_ENV=development npx sequelize-cli db:migrate",
     "db:seed:dev": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
-    "dev": "cross-env NODE_ENV=development node index.js"
+    "openldap:dev:up": "docker compose -f ../docker-compose.yml up -d openldap",
+    "openldap:dev:down": "docker compose -f ../docker-compose.yml down",
+    "dev:setup": "npm run openldap:dev:up && npm run db:create:dev && npm run db:migrate:dev && npm run db:seed:dev",
+    "dev:teardown": "npm run openldap:dev:down && npm run db:drop:dev",
+    "dev:reset": "npm run dev:teardown && npm run dev:setup",
+    "dev": "cross-env NODE_ENV=development node index.js",
+    "start": "cross-env NODE_ENV=production node index.js"
   },
   "author": "",
   "license": "ISC",

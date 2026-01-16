@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "166bf4b5-edfa-4117-b931-6d73e4a6f0cf",
 		"name": "CanAccesible APIs",
-		"description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api",
+		"description": "API collection for the Canaccesible platform. A system for reporting and managing accessibility issues in the Canary Islands.\n\nThis project uses two different environments:\n- Development - Base URL: http://localhost:85/api\n- Production - Base URL: https://canaccesible.es/api\n\nThese URLs are prefixes for API endpoints (e.g., /users) and refer to the API root path.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "48689306",
 		"_collection_link": "https://carlosperezsantana04-7850126.postman.co/workspace/0b5e8e5b-5d4b-4149-9378-b040a32e3145/collection/48689306-166bf4b5-edfa-4117-b931-6d73e4a6f0cf?action=share&source=collection_link&creator=48689306"

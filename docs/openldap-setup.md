@@ -312,6 +312,7 @@ A successful response will return the authenticated DN (e.g., `dn:uid=ldap@gmail
 ## Troubleshooting
 
 ### Problem: Docker container fails to start
+
 **Description**: `docker-compose up` fails or the container exits immediately.
 **Cause**: Port conflicts, volume issues, or invalid environment variables.
 **Solution**:
@@ -321,6 +322,7 @@ A successful response will return the authenticated DN (e.g., `dn:uid=ldap@gmail
 - Restart: `docker-compose down && docker-compose up -d`.
 
 ### Problem: Group membership not found
+
 **Description**: User is created but not assigned to groups, or reverse lookup fails.
 **Cause**: LDIF not loaded correctly, or `memberUid` not set.
 **Solution**:

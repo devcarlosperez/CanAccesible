@@ -4,25 +4,13 @@ Complete testing documentation for the CanAccesible frontend.
 
 ---
 
-## Work Distribution
+## Test Structure
 
-### Carlos
+The tests are organized into three main files within the `src/tests` directory:
 
-- **Components:** `BlogCard` (`tests/components/BlogCard.test.jsx`)
-- **Integration:** `ChatFlow` (`tests/integration/ChatFlow.test.jsx`)
-- **Utilities:** `textUtils` (`tests/unit/textUtils.test.js`), `blogArticleService` (`tests/unit/blogArticleService.test.js`)
-
-### Jonathan
-
-- **Components:** `Footer` (`tests/components/Footer.test.jsx`), `LoginForm` (`tests/components/LoginForm.test.jsx`)
-- **Integration:** `AuthFlow` (`tests/integration/AuthFlow.test.jsx`)
-- **Utilities:** `dateUtils` (`tests/unit/dateUtils.test.js`)
-
-### Iriome
-
-- **Components:** `Incident` (`tests/components/Incident.test.jsx`)
-- **Integration:** `IncidentDataFlow` (`tests/integration/IncidentCRUDFlow.test.jsx`)
-- **Utilities:** `incidentHelpers` (`tests/unit/incidentHelpers.test.js`)
+- **Components:** `tests/components.test.jsx` - Tests individual UI components.
+- **Integration:** `tests/integration.test.jsx` - Tests flows and component interactions.
+- **Unit:** `tests/unit.test.js` - Tests pure logic and utilities.
 
 ---
 
@@ -50,7 +38,7 @@ npm test
 npx vitest --watch
 
 # Run a specific file
-npx vitest src/tests/unit/textUtils.test.js
+npx vitest src/tests/unit.test.js
 
 # Run tests matching a pattern
 npx vitest -t "should fetch all blog articles"
@@ -70,20 +58,9 @@ Report is generated in `coverage/`. Open `coverage/index.html` in browser for de
 
 ```
 frontend/src/tests/
-├── unit/                    # Pure logic tests (utils, services)
-│   ├── blogArticleService.test.js
-│   ├── dateUtils.test.js
-│   ├── incidentHelpers.test.js
-│   └── textUtils.test.js
-├── components/              # React component tests
-│   ├── BlogCard.test.jsx
-│   ├── Footer.test.jsx
-│   ├── Incident.test.jsx
-│   └── LoginForm.test.jsx
-└── integration/             # Full flow tests
-    ├── AuthFlow.test.jsx
-    ├── ChatFlow.test.jsx
-    └── IncidentCRUDFlow.test.jsx
+├── components.test.jsx      # React component tests
+├── integration.test.jsx     # Integration/Flow tests
+└── unit.test.js             # Unit tests
 ```
 
 ---

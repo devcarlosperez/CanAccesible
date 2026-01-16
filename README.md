@@ -1,5 +1,7 @@
 # CANACCESIBLE
 
+**Live Project:** [https://canaccesible.es](https://canaccesible.es)
+
 **CanAccesible** is a comprehensive web platform designed for the Canary Islands, empowering citizens to actively participate in improving accessibility across the archipelago.
 
 ---
@@ -48,6 +50,8 @@ CanAccesible incorporates several modern web development approaches to enhance f
 ## Documentation
 
 - [API Documentation in Postman](https://documenter.getpostman.com/view/48689306/2sB3dSP8Yt) - Complete API endpoint documentation.
+- [Frontend Testing Documentation](docs/frontend-testing.md) - Guide for running and understanding frontend tests.
+- [Backend Testing Documentation](docs/backend-testing.md) - Guide for running and understanding backend tests.
 - [API Documentation in Swagger](https://canaccesible.es/api-docs) - Interactive API documentation.
 - [Frontend Testing Guide](./docs/frontend-testing.md) - Complete testing documentation for React + Vitest.
 - [OpenLDAP Setup](./docs/openldap-setup.md) - Technical documentation for the OpenLDAP server setup and configuration.
@@ -58,6 +62,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
 - [Security Guide](./docs/security.md) - Overview of authentication, data protection, and security protocols.
+- [NPM Scripts Reference](./docs/npm-scripts.md) - Detailed explained list of all available commands in package.json.
 
 ---
 
@@ -75,18 +80,22 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - **State Management:** ![Zustand](https://img.shields.io/badge/Zustand-4.5-blue?logo=zustand&logoColor=white)
 - **Maps:** ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-blue?logo=leaflet&logoColor=white)
 - **File Uploads:** ![Multer](https://img.shields.io/badge/Multer-1.4-blue?logo=multer&logoColor=white)
-- **Email Service:** ![Nodemailer](https://img.shields.io/badge/Nodemailer-6.9-blue?logo=nodemailer&logoColor=white)
+- **Email Service:** ![Resend](https://img.shields.io/badge/Resend-6.7-black?logo=resend&logoColor=white)
+- **Real-time Communication:** ![Socket.io](https://img.shields.io/badge/Socket.io-4.8-black?logo=socket.io&logoColor=white)
 - **Translation API:** ![MyMemory](https://img.shields.io/badge/MyMemory-API-blue?logo=google-translate&logoColor=white)
 - **Internationalization:** ![react-i18next](https://img.shields.io/badge/react--i18next-14.1-blue?logo=react&logoColor=white)
+- **Testing:** ![Vitest](https://img.shields.io/badge/Vitest-4.0-yellow?logo=vitest&logoColor=white) ![Jest](https://img.shields.io/badge/Jest-29.7-red?logo=jest&logoColor=white)
 
 ### Additional Technologies
 
 - **React-Router-Dom:** Library for managing routes and navigation within the React application dynamically.
 - **Motion (Framer Motion):** Library for animations and smooth transitions in React components, improving user experience.
 - **Headless UI:** Unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
+- **React Toastify:** Easy to use toast notifications for React.
 - **Embla Carousel:** A lightweight carousel library with fluid motion and great touch precision.
-- **MUI Icons & Font Awesome:** Comprehensive icon libraries for visual elements.
+- **MUI Icons & Lucide React:** Comprehensive icon libraries for visual elements.
 - **DigitalOcean (Droplets, Spaces, Managed DB):** Cloud infrastructure for hosting, storage, and database management.
+
 - **Nominatim API:** External geolocation API used for reverse geocoding to convert coordinates into location names.
 - **OpenLDAP:** Directory service for centralized user authentication and management.
 - **LDAP JS:** Node.js library for interacting with LDAP servers.
@@ -109,6 +118,7 @@ backend/
 ├── seeders/              # Database seeders
 ├── services/             # Business logic (Socket, LogCleanup, etc.)
 ├── sockets/              # Socket.io handlers
+├── tests/                # Backend tests
 ├── views/                # EJS views for Admin Dashboard
 ├── db.js                 # Database connection
 ├── index.js              # Server entry point
@@ -123,8 +133,11 @@ frontend/
 │   ├── pages/            # View components/Pages
 │   ├── routes/           # Frontend routing configuration
 │   ├── services/         # API service calls
+│   ├── stores/           # Global state (Zustand)
+│   ├── tests/            # Frontend unit & integration tests
 │   ├── utils/            # Utility functions
 │   ├── App.jsx           # Main application component
+│   ├── i18n.js           # Internationalization configuration
 │   └── main.jsx          # Entry point
 ├── vite.config.js        # Vite configuration
 └── package.json          # Frontend dependencies
@@ -198,19 +211,7 @@ git clone https://github.com/devcarlosperez/CanAccesible.git
 cd CanAccesible
 ```
 
-### 1. Database Setup
-
-First, you need to create the MySQL database manually:
-
-**Open MySQL and execute:**
-
-```sql
-CREATE DATABASE canaccesible_db;
-```
-
-Make sure you have a MySQL user with appropriate permissions. You can use the default `root` user or create a new one.
-
-### 2. Backend Configuration
+### 1. Database Setup & Backend Configuration
 
 Navigate to the backend directory:
 
@@ -218,10 +219,20 @@ Navigate to the backend directory:
 cd backend
 ```
 
-**Copy the environment file:**
+**Setup environment variables:**
+
+You need to create two environment files: one for local development (`.env.development`) and one for testing (`.env.test`).
+
+1. **Create Development Environment:**
 
 ```bash
 cp .env.example .env.development
+```
+
+2. **Create Test Environment:**
+
+```bash
+cp .env.example .env.test
 ```
 
 **Edit `.env.development` with your credentials:**
@@ -250,9 +261,8 @@ DO_SECRET_KEY=your_digitalocean_secret_key   # DigitalOcean Spaces API secret ke
 DO_SPACE_NAME=your_space_name                # DigitalOcean Spaces bucket name
 DO_SPACE_ENDPOINT=your_endpoint_space        # DigitalOcean Spaces endpoint URL
 
-# Email Configuration (Gmail SMTP)
-SMTP_USER=your_email@gmail.com               # Gmail address for sending emails
-SMTP_PASS=your_gmail_app_password            # Gmail App Password (not your regular password)
+# Email Configuration (Resend)
+RESEND_API=your_resend_api_key_here          # Resend API Key for sending emails
 
 # LDAP Configuration
 LDAP_URL=ldap://localhost:389                # LDAP server URL
@@ -265,47 +275,30 @@ VAPID_PUBLIC_KEY=your_vapid_public_key       # Public key for web push notificat
 VAPID_PRIVATE_KEY=your_vapid_private_key     # Private key for web push notifications
 ```
 
+**Note for `.env.test`:**
+Ensure `DB_NAME` is different (e.g., `db_canaccesible_test`) to avoid overwriting your development data during tests. Set `NODE_ENV=test`.
+
 **Install dependencies:**
 
 ```bash
 npm install
 ```
 
-**Start the OpenLDAP server:**
+**Initialize the Environment:**
 
-Before running migrations and seeders, you need to start the OpenLDAP container for user authentication:
-
-```bash
-# From the project root directory
-docker-compose up -d
-```
-
-Verify it's running:
+Use the automated setup script to start OpenLDAP, create the database, and run migrations/seeders:
 
 ```bash
-docker ps
+# Quick Setup (Docker + Database + LDAP + Seeds)
+npm run dev:setup
 ```
 
-**Run database migrations and seeders:**
-
-You can run the commands directly or use the npm scripts defined in `package.json`:
-
-```bash
-# Option 1: Using npm scripts (Recommended)
-npm run db:migrate
-npm run db:seed
-
-# Option 2: Manual execution
-NODE_ENV=development npx sequelize-cli db:migrate
-NODE_ENV=development npx sequelize-cli db:seed:all
-```
-NODE_ENV=development npx sequelize-cli db:seed:all
-```
+*(Note: If you need to reset the data later, use `npm run dev:reset`)*
 
 **Start the backend server:**
 
 ```bash
-NODE_ENV=development node index.js
+npm run dev
 ```
 
 The backend will be running on `http://localhost:85`

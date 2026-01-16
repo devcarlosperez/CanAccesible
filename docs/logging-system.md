@@ -70,9 +70,16 @@ The application maintains a detailed audit trail of critical user actions within
 
 ### Logged Actions
 
-The system automatically records the following critical events:
-*   **Authentication:** Login, Logout.
-*   **User Management:** User creation, updates, deletion.
+The system currently tracks critical security and user management events initiated by users or administrators:
+*   **Authentication:**
+    *   `LOGIN`: When a user successfully logs in.
+    *   `LOGOUT`: When a user logs out.
+    *   `PASSWORD_RESET`: When a password is reset via email token.
+    *   `PASSWORD_CHANGE`: When a logged-in user changes their password.
+*   **User Management:**
+    *   `CREATE`: When a new user is registered (by self or admin).
+    *   `UPDATE`: When a user profile is updated.
+    *   `DELETE`: When a user account is deleted.
 
 ### Database Structure (`Logs` Table)
 
@@ -100,6 +107,44 @@ cron.schedule('0 0 * * *', async () => {
     // ... logic to delete logs older than retentionDays
 });
 ```
+
+---
+
+## Production Log Management
+
+In the production environment (deployment), logs are distributed between services. This is how to access them for debugging:
+
+### Backend Logs (Node.js)
+
+The backend runs under **PM2**. To view real-time logs from the application (including API errors, database queries, and general output):
+
+```bash
+# View all logs
+pm2 logs
+
+# View specific process logs (usually 'index' or 'app')
+pm2 logs index
+```
+
+### OpenLDAP Logs
+
+The LDAP server runs as a **Docker container**, not under PM2. authentication and user creation logs are found here:
+
+```bash
+# View OpenLDAP container logs
+docker logs openldap
+
+# Follow logs in real-time
+docker logs -f openldap
+```
+
+### Frontend Logs
+
+Since the frontend is a static application served by NGINX:
+*   **Client-side errors:** Visible only in the user's browser console (F12).
+*   **Serving errors (404, 500):** Check NGINX logs (`/var/log/nginx/error.log`).
+
+---
 
 ## Log Management Dashboard
 
