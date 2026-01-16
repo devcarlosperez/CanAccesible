@@ -58,6 +58,7 @@ CanAccesible incorporates several modern web development approaches to enhance f
 - [Deployment Guide](./docs/deployment.md) - Complete step-by-step guide for deploying CanAccesible to production.
 - [Domain & DNS Setup](./docs/domain-dns-setup.md) - Guide on domain acquisition and DNS configuration.
 - [Logging System & Rotation](./docs/logging-system.md) - Guide on server and application log management.
+- [Resend Email Service Setup](./docs/resend.md) - Guide for configuring Resend API for email notifications.
 - [System Diagrams](./docs/diagrams.md) - Architecture, database, and component diagrams.
 - [Technologies & Tools](./docs/technologies.md) - Detailed overview of the tech stack, libraries, and external services.
 - [Team Workflow](./docs/workflow.md) - Guide on version control, branching strategy, and collaboration process.
